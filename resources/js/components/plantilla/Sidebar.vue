@@ -65,6 +65,14 @@
                     Catalogos
                 </vs-sidebar-item>
 
+                <vs-sidebar-item id="usuario.perfil" to="/perfil">
+                    <template #icon>
+                        <span class="material-symbols-rounded">
+                            account_circle
+                        </span>
+                    </template>
+                    Mi Perfil
+                </vs-sidebar-item>
 
                 <!-- <vs-sidebar-item id="admin.preferencias" to="/preferenciasInterfaz">
                     <template #icon>
