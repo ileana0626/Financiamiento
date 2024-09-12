@@ -195,11 +195,13 @@ class UsersController extends Controller
         if (!$request->ajax())  return redirect('/');
 
         $tipo = $request->tipo;
+        $consulta = $request->consulta;
 
         $tipo = ($tipo == NULL) ? 0 : $tipo;
+        $consulta = ($consulta == NULL) ? 0 : $consulta;
 
         try {
-            $rpta = DB::select('call sp_ConsultarDatos( ? )', [$tipo]);
+            $rpta = DB::select('call sp_ConsultarDatos( ?, ? )', [$tipo, $consulta]);
 
             return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {
@@ -221,7 +223,7 @@ class UsersController extends Controller
         }
     }
 
-    public function getSolocitudes(Request $request)
+    public function getSolicitudes(Request $request)
     {
         if (!$request->ajax())  return redirect('/');
 
@@ -269,6 +271,122 @@ class UsersController extends Controller
 
         try {
             $rpta = DB::select('call sp_ActualizarCatalogos( ?, ? , ?)', [  $tipo, $id, $nombre ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function consultarRegistros(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $tipo = $request->tipo;
+        $nombre = $request->nombre;
+
+        $tipo = ($tipo == NULL) ? 0 : $tipo;
+        $nombre = ($nombre == NULL) ? '' : $nombre;
+
+        try {
+            $rpta = DB::select('call sp_Consultar_RegistrosDuplicados( ?, ? )', [  $tipo, $nombre ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function desactivar(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $tipo = $request->tipo;
+        $id = $request->id;
+        $estatus = $request->estatus;
+
+        $tipo = ($tipo == NULL) ? 0 : $tipo;
+        $id = ($id == NULL) ? 0 : $id;
+        $estatus = ($estatus == NULL) ? '' : $estatus;
+
+        try {
+            $rpta = DB::select('call sp_DesactivarRegistros( ?, ? , ?)', [  $tipo, $id, $estatus ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    
+    public function guardarSolicitud(Request $request) 
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $numeroConsecutivo = $request->numeroConsecutivo;
+        $numeroSolicitud = $request->numeroSolicitud;
+        $fechaRecibido = $request->fechaRecibido;
+        $remitente = $request->remitente;
+        $otroRemitente = $request->otroRemitente;
+        $cargo = $request->cargo;
+        $otroCargo = $request->otroCargo;
+        $asunto = $request->asunto;
+        $termino = $request->termino;
+        $fechaTermino = $request->fechaTermino;
+        $diasTermino = $request->diasTermino;
+        $respuesta = $request->respuesta;
+        $seguimiento = $request->seguimiento;
+        $areaAsignada = $request->areaAsignada;
+        $tipo = $request->tipo;
+        $fechaAsignacion = $request->fechaAsignacion;
+        $estatus = $request->estatus;
+        $observaciones = $request->observaciones;
+        $idArchivo = $request->idArchivo;
+
+        $numeroConsecutivo = ( $numeroConsecutivo == NULL ) ? 0 : $numeroConsecutivo;
+        $numeroSolicitud = ( $numeroSolicitud == NULL ) ? 0 : $numeroSolicitud;
+        $fechaRecibido = ( $fechaRecibido == NULL ) ? NULL : $fechaRecibido;
+        $remitente = ( $remitente == NULL ) ? 0 : $remitente;
+        $otroRemitente = ( $otroRemitente == NULL ) ? NULL : $otroRemitente;
+        $cargo = ( $cargo == NULL ) ? 0 : $cargo;
+        $otroCargo = ( $otroCargo == NULL ) ? NULL : $otroCargo;
+        $asunto = ( $asunto == NULL ) ? 0 : $asunto;
+        $termino = ( $termino == NULL ) ? 0 : $termino;
+        $fechaTermino = ( $fechaTermino == NULL ) ? NULL : $fechaTermino;
+        $diasTermino = ( $diasTermino == NULL ) ? 0 : $diasTermino;
+        $respuesta = ( $respuesta == NULL ) ? 0 : $respuesta;
+        $seguimiento = ( $seguimiento == NULL ) ? 0 : $seguimiento;
+        $areaAsignada = ( $areaAsignada == NULL ) ? 0 : $areaAsignada;
+        $tipo = ( $tipo == NULL ) ? 0 : $tipo;
+        $fechaAsignacion = ( $fechaAsignacion == NULL ) ? NULL : $fechaAsignacion;
+        $estatus = ( $estatus == NULL ) ? 0 : $estatus;
+        $observaciones = ( $observaciones == NULL ) ? '' : $observaciones;
+        $idArchivo = ( $idArchivo == NULL ) ? NULL : $idArchivo;
+
+        try {
+            $rpta = DB::select('call sp_RegistrarSolicitud( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [  $numeroConsecutivo, $numeroSolicitud, $fechaRecibido, $remitente, $otroRemitente, $cargo, $otroCargo, $asunto, $termino, $fechaTermino, $diasTermino, $respuesta, $seguimiento, $areaAsignada, $tipo, $fechaAsignacion, $estatus, $observaciones,$idArchivo]);
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+
+    }
+
+    public function archivoContestacion(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $archivoid = $request->archivoid;
+        $idsolicitud = $request->idsolicitud;
+
+        $archivoid = ($archivoid == NULL) ? 0 : $archivoid;
+        $idsolicitud = ($idsolicitud == NULL) ? 0 : $idsolicitud;
+
+        try {
+            $rpta = DB::select('call sp_Solicitudes_Contestacion( ?, ? )', [  $archivoid, $idsolicitud]);
 
             return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {

@@ -27,13 +27,21 @@ Route::group(['middleware' => ['auth']], function () {
     /****CODI****/  
     /*****Registro de Solicitudes*****/
     Route::get('/administracion/usuario/obtenerDatos', 'Administracion\UsersController@obtenerDatos');
+    Route::post('/administracion/usuario/guardarSolicitud', 'Administracion\UsersController@guardarSolicitud');
     /*****CALENDARIO*****/
     Route::get('/administracion/usuario/getFechasPeriodos', 'Administracion\UsersController@getFechasPeriodos');
     /*****Lista de Solicitudes*****/
-    Route::get('/administracion/usuario/getSolocitudes', 'Administracion\UsersController@getSolocitudes');
+    Route::get('/administracion/usuario/getSolicitudes', 'Administracion\UsersController@getSolicitudes');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');
+    Route::get('/administracion/usuario/consultarRegistros', 'Administracion\UsersController@consultarRegistros');
+    Route::post('/administracion/usuario/desactivar', 'Administracion\UsersController@desactivar');
+    /*****CAMBIAR ESTATUS SOLICITUD*****/ 
+    Route::post('/administracion/usuario/archivoContestacion', 'Administracion\UsersController@archivoContestacion');
+
+    /*****SUBIR ARCHIVO *****/
+    Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');
 
 });
 
