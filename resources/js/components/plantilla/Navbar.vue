@@ -111,7 +111,6 @@ export default {
         },
 
         switchTheme() {
-
             if (localStorage.getItem('theme') == 'light') {
                 localStorage.setItem('theme', 'dark');
                 document.documentElement.setAttribute('data-theme', 'dark');
@@ -123,6 +122,7 @@ export default {
             this.darkmode = !this.darkmode;
             // console.log(localStorage.getItem('theme'));
             // console.log(this.darkmode);
+            EventBus.$emit('darkMode',this.darkmode);
         },
 
         getCurrentTime() {

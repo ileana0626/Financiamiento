@@ -8,6 +8,8 @@ import listaSolicitudes from "./components/modulos/ver/versolicitudes.vue";
 import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
 
+import Perfil from './components/modulos/usuario/perfil.vue';
+
 import Error404 from './components/plantilla/404.vue';
 import SADecoder from './components/modulos/superadmin/decoder.vue';
 
@@ -58,6 +60,7 @@ export default new Router({
         { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes  },
         { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio  },
         { path: '/catalogos', name: 'admin.catalogos', component: Catalogos  },
+        { path: '/perfil', name: 'usuario.perfil', component: Perfil},
         { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz  },
         { path: '*', component: Error404 }
 
