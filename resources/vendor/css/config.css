@@ -1191,6 +1191,36 @@ h4 {
     pointer-events: none;
 }
 
+.portrait-perfil{
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    border: 1px solid #595959;
+    overflow: hidden;
+    box-shadow: 0 2px 2px 2px var(--dorado);
+}
+.nametag-perfil{
+    font-weight: 700;
+    font-size: large;
+    text-align: center;
+    text-decoration-line: underline;
+    text-decoration-color: var(--dorado);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+.edit-btn-perfil{
+    position: absolute;
+    bottom: 1rem; 
+    right: 35%;    
+}
+.rounded-soft{
+    border-radius: 1.2125rem;
+}
+@media screen and (min-width: 768px) {
+    .edit-btn-perfil{
+        right: 2rem;    
+    }
+}
 
 @media screen and (max-width: 1300px) {
     .vs-card__img {
