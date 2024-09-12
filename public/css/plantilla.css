@@ -52,6 +52,7 @@
     --iee-black: #000000;
     --iee-green2: #008000;
     --iee-teal: #319795;
+    --btn-txt-color: #f5f5f5; 
 }
 
 [data-theme="dark"] {
@@ -90,6 +91,7 @@
     --iee-black: #2e2e2e;
     --iee-green2: #84ce84;
     --iee-teal: #81dddc;
+    --btn-txt-color: #595959; 
 }
 
 body {
@@ -1215,6 +1217,7 @@ h4 {
     border: 1px solid #595959;
     overflow: hidden;
     box-shadow: 0 2px 2px 2px var(--dorado);
+    background-color: var(--iee-white);
 }
 .nametag-perfil{
     font-weight: 700;
@@ -1232,6 +1235,15 @@ h4 {
 }
 .rounded-soft{
     border-radius: 1.2125rem;
+}
+.iee-white{
+    background-color: var(--iee-white);
+}
+.font-txt-theme{
+    color: var(--text-color);
+}
+.shadow-lg-dark{
+   box-shadow: 0 1rem 3rem rgba(255,255,255,.175);
 }
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{

@@ -20,11 +20,11 @@
         <div class="px-3 px-md-5 container-fluid">
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
-                <div class="card cardRounded shadow-lg py-3 px-3 px-md-5">
+                <div class="card cardRounded py-3 px-3 px-md-5" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow-lg'" :key="'c1' + darkMode">
                     <div class="row pb-4 d-flex justify-content-center justify-content-lg-start mb-3">
-                        <div class="col-12 col-lg-6 col-xl-4 row justify-content-center mb-lg-0 bg-white rounded-soft p-3">
+                        <div class="col-12 col-lg-6 col-xl-4 row justify-content-center mb-lg-0 rounded-soft p-3 iee-white">
                             <div class="col-12 d-flex justify-content-center pb-2">
-                                <div class="portrait-perfil">
+                                <div class="portrait-perfil bg-white">
                                     <img src="/img/user_default.svg" alt="Foto de perfil">
                                 </div>
                             </div>
@@ -37,24 +37,26 @@
                         </div>
                         <div class="col-12 col-lg-6 col-xl-4 ml-0 ml-md-3 d-flex justify-content-center row center">
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="far fa-envelope"></i><span class="pl-3">Email</span>
+                                <i class="far fa-envelope font-txt-theme"></i><span class="pl-3">Email</span>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-mobile-alt"></i><span class="pl-3">Teléfono Celular</span>
+                                <i class="fas fa-mobile-alt font-txt-theme"></i><span class="pl-3">Teléfono Celular</span>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-calendar-day"></i><span class="pl-3">Fecha de nacimiento</span>
+                                <i class="fas fa-calendar-day font-txt-theme"></i><span class="pl-3">Fecha de nacimiento</span>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-birthday-cake"></i><span class="pl-3">Edad</span>
+                                <i class="fas fa-birthday-cake font-txt-theme"></i><span class="pl-3">Edad</span>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
                             </div>
                         </div>
                     </div>
                     <div class="edit-btn-perfil">
-                        <vs-button block dark>
-                            <i class="fas fa-pencil-alt pr-2"></i>Editar
+                        <vs-button block :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'edit'+darkMode">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Editar
+                            </div>
                         </vs-button>
                     </div>
                 </div>
@@ -65,7 +67,14 @@
 
 <script>
 export default {
-
+    data() {
+        return {
+            darkMode: localStorage.getItem('theme') == 'dark',
+        }
+    },
+    created(){
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
+    }
 }
 </script>
 
