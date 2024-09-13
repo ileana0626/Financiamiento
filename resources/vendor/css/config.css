@@ -1229,6 +1229,9 @@ h4 {
 .font-txt-theme{
     color: var(--text-color);
 }
+.shadow-dark{
+    box-shadow: 0 .5rem 1rem rgba(255,255,255,.15);
+}
 .shadow-lg-dark{
    box-shadow: 0 1rem 3rem rgba(255,255,255,.175);
 }
@@ -1248,6 +1251,12 @@ h4 {
     cursor: pointer;
 }
 
+.el-upload-dragger {
+    background-color: var(--iee-white) !important;
+}
+.el-upload-dragger i, .el-upload-dragger .el-upload__text{
+    color: var(--iee-white-dark) !important;
+}
 .el-upload-dragger .el-upload__text em {
     color: var(--dorado) !important;
 }
@@ -1275,7 +1284,7 @@ h4 {
     min-width: 350px;
     width: 350px;
     max-width: 350px;
-    background: #f1f1f1;
+    background: var(--iee-bg-color);
     border-radius: 8px;
 }
 

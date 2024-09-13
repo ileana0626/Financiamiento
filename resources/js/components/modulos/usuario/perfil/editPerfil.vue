@@ -47,11 +47,11 @@
                                     </template>
                                     <template v-else>
                                         <div>
-                                            <div class="d-flex justify-content-between p-2 shadow cardFile">
+                                            <div class="d-flex justify-content-between p-2 cardFile" :class="!!darkMode ? 'shadow-dark' : 'shadow'">
                                                 <!-- Tipo -->
                                                 <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex">
-                                                    <i class="fa fa-file-excel m-2 mr-3" style="font-size: 32px;"></i>
+                                                    <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
                                                     <div class="d-flex flex-column filenameContainer">
                                                     <span class="errorDesc">Nombre</span>
                                                     <el-tooltip class="item" effect="dark" :content="fileComprobante[0].name" placement="right">
@@ -126,7 +126,7 @@
                                     placeholder="Teléfono celular" autocomplete="off">
                                 </vs-input>
                             </div>
-                            <div class="col-12 px-3 d-flex justify-content-center">
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row pt-2">
                                 <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia2'+darkMode">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
