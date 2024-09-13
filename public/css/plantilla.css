@@ -1249,6 +1249,130 @@ h4 {
 .shadow-lg-dark{
    box-shadow: 0 1rem 3rem rgba(255,255,255,.175);
 }
+
+.docDownload {
+    color: black;
+    border-bottom: 2px solid black;
+    transition: all 0.25s ease;
+    padding-right: 4px;
+}
+
+.docDownload:hover {
+    color: var(--dorado);
+    border-bottom: 2px solid var(--dorado);
+    transition: all 0.25s ease;
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+
+.el-upload-dragger .el-upload__text em {
+    color: var(--dorado) !important;
+}
+
+.el-upload-dragger:hover {
+    border-color: var(--dorado) !important;
+}
+
+.el-upload:focus {
+    color: var(--dorado) !important;
+    border-color: var(--dorado) !important;
+}
+
+.el-upload:focus .el-upload-dragger {
+    border-color: var(--dorado) !important;
+}
+
+.el-upload__text {
+    text-wrap: wrap;
+}
+
+.cardFile {
+    position: relative;
+    top: 5px;
+    min-width: 350px;
+    width: 350px;
+    max-width: 350px;
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+.filenameContainer {
+    width: 230px;
+}
+
+.fileNameClass {
+    width: 100%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+}
+
+.cardFileRemoveIcon {
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 6px;
+    margin-left: 30px;
+    margin-right: 10px;
+}
+
+.cardFileRemoveIcon>i {
+    font-size: 20px;
+    color: red;
+    border-radius: 50%;
+}
+
+.cardFileRemoveIcon:hover {
+    /* transform: translateY(-2px); */
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.card-publi-img {
+    width: 90%;
+    height: 600px;
+    background-repeat: no-repeat;
+    background-size: 100% 600px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    overflow: hidden;
+}
+
+.card-publi-img>img {
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: fill !important;
+    align-self: center !important;
+}
+
+@media screen and (max-width: 500px) {
+    .el-upload-dragger {
+        width: 100%;
+    }
+
+    .cardFile {
+        min-width: 250px;
+        width: 250px;
+        max-width: 250px;
+    }
+}
+
+.cardless {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: none;
+    border-radius: 0;
+}
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{
         right: 2rem;    

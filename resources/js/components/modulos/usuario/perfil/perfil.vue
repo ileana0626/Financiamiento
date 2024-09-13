@@ -86,7 +86,7 @@
                                     </vs-input>
                                 </div>
                                 <div class="col-12 px-3 d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="limpiarContrasena()">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarContrasena()">
                                         <div style="color: var(--btn-txt-color); font-weight: 700;">
                                             <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                         </div>
