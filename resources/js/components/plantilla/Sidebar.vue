@@ -21,13 +21,13 @@
                 </vs-sidebar-item>
             </template>
             <template>
-                <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
                     to="/consultaErrorcodes">
                     <template #icon>
                         <i class="fa fa-search"></i>
                     </template>
                     Consulta de Errores
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
                 <vs-sidebar-item id="solicitudes.captura" to="/captura">
                     <template #icon>
@@ -38,14 +38,14 @@
                     Captura
                 </vs-sidebar-item>
 
-                <vs-sidebar-item id="recordatorios.captura" to="/recordatorios">
+                <!-- <vs-sidebar-item id="recordatorios.captura" to="/recordatorios">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             notifications
                         </span>
                     </template>
                     Notificaciones
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
                 <vs-sidebar-item id="solicitudes.ver" to="/solicitudes">
                     <template #icon>
@@ -88,7 +88,7 @@
                     <vs-tooltip top>
                         <vs-button id="faqBtn" size="large" icon href="/faq"
                             v-loading.fullscreen.lock="fullscreenLoading"
-                            style="cursor: pointer; background-color: var(--text-color);">
+                            style="cursor: pointer; background-color: var(--iee-white-dark);">
                             <span class="material-symbols-rounded" style="color: var(--iee-bg-color) !important;">
                                 help
                             </span>

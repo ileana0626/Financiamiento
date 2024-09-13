@@ -123,8 +123,8 @@
                     <template v-if="termino == 1">
                         <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                             <label class="col-form-label">Fecha de Termino</label>
-                            <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2" format="dd-MM-yyyy"
-                                value-format="yyyy-MM-dd" v-model="fechaTermino">
+                            <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaTermino">
                             </el-date-picker>
                             <div class="danger-message">
                                 <template v-if="errorFechaTermino.length > 0">
@@ -149,7 +149,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Requiere Respuesta</label>
                         <vs-select placeholder="Seleccione una opción" v-model="respuesta" v-if="selectSiNo.length > 0"
-                            :color="colors[0].color" filter autocomplete="off">
+                            :color="colors[0].color" filter autocomplete="off" @change="mostrarRespuesta">
                             <template #message-danger v-if="errorRespuesta.length > 0">
                                 {{ errorRespuesta }}
                             </template>
@@ -159,7 +159,8 @@
                             </vs-option>
                         </vs-select>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
                         <label class="col-form-label">Seguimiento</label>
                         <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
                             v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
@@ -172,8 +173,8 @@
                             </vs-option>
                         </vs-select>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                        <label class="col-form-label">Área Asignada</label>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
+                        <label class="col-form-label">Quién Contesta</label>
                         <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
                             v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
                             <template #message-danger v-if="errorAreaAsignada.length > 0">
@@ -185,7 +186,7 @@
                             </vs-option>
                         </vs-select>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
                         <label class="col-form-label">Tipo</label>
                         <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" v-model="tipo"
                             v-if="cat_tipo.length > 0" autocomplete="off">
@@ -211,7 +212,7 @@
                     </div>
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Estatus</label>
-                        <vs-select placeholder="Seleccione un Estatus" v-model="estatus" v-if="cat_estutus.length > 0"
+                        <vs-select placeholder="Seleccione un estatus" v-model="estatus" v-if="cat_estutus.length > 0"
                             :color="colors[0].color" filter autocomplete="off">
                             <template #message-danger v-if="errorEstatus.length > 0">
                                 {{ errorEstatus }}
@@ -258,7 +259,8 @@
                     <div class="row mx-12 mb-12 p-4">
                         <div class="col-sm-12 col-md-8 col-xl-6 px-0 pr-sm-5 pb-3">
                             <center>
-                                <vs-button style="width: 19vw; " color="#a5904a" block @click.prevent="">
+                                <vs-button style="width: 19vw; " color="#a5904a" block
+                                    @click.prevent="guardarSolicitud">
                                     <b style="font-size: medium !important;">
                                         Registrar
                                     </b>
@@ -350,6 +352,7 @@ export default {
                     return time.getTime() < Date.now();
                 },
             },
+            mostrardatos: ''
         }
     },
     mounted() {
@@ -368,7 +371,8 @@ export default {
             let url = '/administracion/usuario/obtenerDatos'
             axios.get(url, {
                 params: {
-                    'tipo': tipo
+                    'tipo': tipo,
+                    'consulta' : 1
                 }
             }).then(response => {
                 switch (tipo) {
@@ -468,9 +472,74 @@ export default {
             return file.raw;
             // }
         },
-        validarSolicitud() {
+        mostrarRespuesta() {
+            this.tipo = ''
+            this.estatus = ''
+            if (this.respuesta == 1) {
+                this.mostrardatos = 1
+                this.tipo = 1
+            } else if (this.respuesta == 2) {
+                this.mostrardatos = 2
+                this.estatus = 1
+            }
+        },
+        async guardarSolicitud() {
+            let idF1 = 0
+            if (this.documentos.F1.size > 0) {
+                idF1 = await this.setRegistrarArchivo(this.documentos.F1, "");
+            }
+            let url = '/administracion/usuario/guardarSolicitud'
+            axios.post(url, {
+                'numeroConsecutivo': this.nConsecutivo,
+                'numeroSolicitud': this.nSolicitud,
+                'fechaRecibido': this.fechaRecibido,
+                'remitente': this.remitente,
+                'otroRemitente': this.otroRemitente,
+                'cargo': this.cargo,
+                'otroCargo': this.otroCargo,
+                'asunto': this.asunto,
+                'termino': this.termino,
+                'fechaTermino': this.fechaTermino,
+                'diasTermino': this.diaTermino,
+                'respuesta': this.respuesta,
+                'seguimiento': this.seguimiento,
+                'areaAsignada': this.areaAsignada,
+                'tipo': this.tipo,
+                'fechaAsignacion': this.fechaAsignacion,
+                'estatus': this.estatus,
+                'observaciones': this.observaciones,
+                'idArchivo': idF1
+            }).then(response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registrado correctamente',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch(error => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
 
-        }
+            });
+        },
+        async setRegistrarArchivo(oDocumento, fileExt) {
+            let idArchivo = 0;
+            this.form.set('archivo', oDocumento);
+            this.form.set('filename', oDocumento.name);
+            this.form.set('extension', fileExt);
+
+            const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+            var url = '/archivos/subirArchivo';
+            await axios.post(url, this.form, config).then(response => {
+                idArchivo = response.data[0].idDOCUMENTO
+            }).catch((error) => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+
+            return idArchivo;
+        },
     }
 };
 

@@ -177,10 +177,6 @@ export default {
     white-space: nowrap;
 }
 
-.swal2-actions {
-    margin-left: 1px !important;
-}
-
 @media screen and (max-width: 768px) {
     .username-navbar {
         white-space: normal;
