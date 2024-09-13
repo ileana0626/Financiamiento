@@ -65,7 +65,7 @@
                     Catalogos
                 </vs-sidebar-item>
 
-                <vs-sidebar-item id="usuario.perfil" to="/perfil">
+                <vs-sidebar-item id="perfil.index" to="/perfil">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             account_circle
@@ -119,7 +119,7 @@ export default {
     watch: {
         $route(to, from) {            
             if (this.$route.name != null) {
-                this.active = this.$route.name;
+                this.setActive();
             }
         }
     },
@@ -129,7 +129,7 @@ export default {
         }
     },
     created() {
-        this.active = this.$route.name;
+        this.setActive();
         window.removeEventListener('resize', this.onWindowSizeChange);
     },
     destroyed() {
@@ -162,6 +162,14 @@ export default {
                     sidebarElem.classList.remove("reduce")
                     sidebarElem.classList.remove("hover-expand")
                 }
+            }
+        },
+        /** Agrega la validación necesaria para mantener el resaltado de una sección principal en el sidebar cuando se accede a una subsección*/
+        setActive(){
+            if(this.$route.name === 'perfil.editar'){
+                this.active = 'perfil.index';
+            } else{
+                this.active = this.$route.name;
             }
         },
     }
