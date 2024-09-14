@@ -346,13 +346,29 @@ export default {
       }
       return this.error;
     },
-    loginSuccess(loading) {
+    async loginSuccess(loading) {
       this.setTotalIntentos(0);
+      await this.getSaludoInicio();
       // loading.close();
       setTimeout(() => {
         this.$router.push({ name: "dashboard.index" });
         location.reload();
       }, 1000);
+    },
+    async getSaludoInicio(){
+      const url = "/administracion/usuario/getSaludoInicio";
+
+      try {
+        const response = await axios.get(url);
+        if(response.status === 200){
+          sessionStorage.setItem('saludo', response.data[0].mensaje);
+        } else {
+          sessionStorage.setItem('saludo', '¡Ten un buen día para trabajar!');
+        }
+      } catch (error) {
+        sessionStorage.setItem('saludo', '¡Ten un buen día para trabajar!');
+      }
+      
     },
     async getListarRolPermisosByUsuario(authUser, loading) {
       let ruta = "/administracion/usuario/getListarRolPermisosByUsuario";

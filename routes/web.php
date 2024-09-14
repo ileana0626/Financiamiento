@@ -12,6 +12,7 @@ Route::post('/administracion/usuario/logout', 'Administracion\UsersController@lo
 Route::post('/administracion/usuario/setInterfaceSettings', 'Administracion\UsersController@setInterfaceSettings'); 
 
 Route::get('/administracion/usuario/getCurrentTime', 'Administracion\UsersController@getCurrentTime'); 
+Route::get('/administracion/usuario/getSaludoInicio', 'Administracion\UsersController@getSaludoInicio'); 
 
 Route::group(['middleware' => ['auth']], function () {
 

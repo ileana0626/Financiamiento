@@ -8,7 +8,7 @@
                             ¡Hola, {{ cfullname }}!
                         </h5>
                         <h6 class="subtituloin font-weight-bold subtituloin">
-                            ¡Ten un buen día para trabajar!
+                            {{ saludo }}
                         </h6>
                     </div>
                     <img src="/img/imglogro.webp" class="img-fluid imgCard">
@@ -62,6 +62,8 @@ export default {
             renderComponent: true,
             periodos: [],
             attrsRegistro: [],
+
+            saludo: (sessionStorage.getItem('saludo')) ? sessionStorage.getItem('saludo') : 'N/A',
         }
     },
     mounted() {
