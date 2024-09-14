@@ -56,12 +56,12 @@ export default new Router({
         { path: '/login', name: 'login', component: Login, beforeEnter: (to, from, next) => { let authUser = JSON.parse(sessionStorage.getItem('authUser')); if (authUser) { next({ name: 'dashboard.index' }); } else { next(); } } },
         { path: '/', name: 'dashboard.index', component: Dashboard, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/consultaErrorcodes', name: 'errores.index', component: SADecoder , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
-        { path: '/captura', name: 'solicitudes.captura', component: Captura  },
-        { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes  },
-        { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio  },
-        { path: '/catalogos', name: 'admin.catalogos', component: Catalogos  },
-        { path: '/perfil', name: 'usuario.perfil', component: Perfil},
-        { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz  },
+        { path: '/captura', name: 'solicitudes.captura', component: Captura,beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
+        { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
+        { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
+        { path: '/catalogos', name: 'admin.catalogos', component: Catalogos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
+        { path: '/perfil', name: 'usuario.perfil', component: Perfil, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '*', component: Error404 }
 
     ],

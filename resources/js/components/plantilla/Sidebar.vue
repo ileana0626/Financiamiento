@@ -21,15 +21,15 @@
                 </vs-sidebar-item>
             </template>
             <template>
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
+                <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
                     to="/consultaErrorcodes">
                     <template #icon>
                         <i class="fa fa-search"></i>
                     </template>
                     Consulta de Errores
-                </vs-sidebar-item> -->
-
-                <vs-sidebar-item id="solicitudes.captura" to="/captura">
+                </vs-sidebar-item>
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" 
+                id="solicitudes.captura" to="/captura">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             app_registration
@@ -38,16 +38,16 @@
                     Captura
                 </vs-sidebar-item>
 
-                <!-- <vs-sidebar-item id="recordatorios.captura" to="/recordatorios">
+                <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')"  id="recordatorios.captura" to="/recordatorios">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             notifications
                         </span>
                     </template>
                     Notificaciones
-                </vs-sidebar-item> -->
+                </vs-sidebar-item>
 
-                <vs-sidebar-item id="solicitudes.ver" to="/solicitudes">
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')"  id="solicitudes.ver" to="/solicitudes">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             list_alt
@@ -56,7 +56,7 @@
                     Solicitudes
                 </vs-sidebar-item>
 
-                <vs-sidebar-item id="admin.catalogos" to="/catalogos">
+                <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')"  id="admin.catalogos" to="/catalogos">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             menu_book
@@ -65,7 +65,7 @@
                     Catalogos
                 </vs-sidebar-item>
 
-                <vs-sidebar-item id="usuario.perfil" to="/perfil">
+                <vs-sidebar-item v-if="listPermisos.includes('usuario.perfil')"  id="usuario.perfil" to="/perfil">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             account_circle
@@ -74,14 +74,14 @@
                     Mi Perfil
                 </vs-sidebar-item>
 
-                <!-- <vs-sidebar-item id="admin.preferencias" to="/preferenciasInterfaz">
+                <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')"  id="admin.preferencias" to="/preferenciasInterfaz">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             draw
                         </span>
                     </template>
                     Configuraciones
-                </vs-sidebar-item> -->
+                </vs-sidebar-item>
             </template>
             <template #footer>
                 <vs-row justify="space-between" v-if="listPermisos.includes('faq.index')">

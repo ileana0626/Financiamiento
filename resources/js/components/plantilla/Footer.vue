@@ -9,7 +9,7 @@
                 <small>Desarrollado por la Dirección Administrativa / Coordinación de Informática</small>
             </div>
             <div class="d-sm-block ml-2 text-right text-sm-center">
-                <small>Versión 1.5.4.12092024</small>
+                <small>Versión 1.5.7.13092024</small>
             </div>
         </div>
     </footer>

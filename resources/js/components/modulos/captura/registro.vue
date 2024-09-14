@@ -146,6 +146,19 @@
                             </vs-select>
                         </div>
                     </template>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" >
+                        <label class="col-form-label">Quién Contesta</label>
+                        <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                            v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
+                            <template #message-danger v-if="errorAreaAsignada.length > 0">
+                                {{ errorAreaAsignada }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
+                                :value="item.id">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Requiere Respuesta</label>
                         <vs-select placeholder="Seleccione una opción" v-model="respuesta" v-if="selectSiNo.length > 0"
@@ -169,19 +182,6 @@
                             </template>
                             <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
                                 :value="item.idSeguimiento">
-                                {{ item.nombre }}
-                            </vs-option>
-                        </vs-select>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
-                        <label class="col-form-label">Quién Contesta</label>
-                        <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
-                            v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
-                            <template #message-danger v-if="errorAreaAsignada.length > 0">
-                                {{ errorAreaAsignada }}
-                            </template>
-                            <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                :value="item.id">
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>
@@ -484,6 +484,12 @@ export default {
             }
         },
         async guardarSolicitud() {
+            const loading = this.$vs.loading({
+            type: 'square',
+            color: '#00a19a',
+            background: '#FFFFFF',
+            text: 'Cargando...'
+        });
             let idF1 = 0
             if (this.documentos.F1.size > 0) {
                 idF1 = await this.setRegistrarArchivo(this.documentos.F1, "");
@@ -510,6 +516,7 @@ export default {
                 'observaciones': this.observaciones,
                 'idArchivo': idF1
             }).then(response => {
+                loading.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Registrado correctamente',
@@ -517,6 +524,7 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             }).catch(error => {
+                loading.close();
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
 

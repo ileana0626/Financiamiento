@@ -126,7 +126,9 @@ body {
 /* .vc-day .vc-day-content.vc-focusable{
     color: white;
 } */
-
+.vs-dialog__close{
+    background-color: red !important;
+}
 .colorTituloCard {
     background-color: var(--acentoOscuro) !important;
 }
@@ -1049,7 +1051,7 @@ footer {
 
 .vs-icon-close.vs-icon-hover-x::before,
 .vs-icon-close.vs-icon-hover-x::after {
-    background-color: var(--text-color) !important;
+    background-color: white !important;
 }
 
 .vs-dialog img {
