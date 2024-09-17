@@ -10,7 +10,7 @@
                                 class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
                         </li>
                         <li>
-                            <router-link to="/perfil"><span>
+                            <router-link :to="'/perfil/' + id"><span>
                                 Mi Perfil
                             </span></router-link>
                         </li>
@@ -73,7 +73,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-12 px-3 d-flex justify-content-center">
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <!-- <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia1'+darkMode">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
@@ -90,48 +90,48 @@
                         <div class="row">
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Nombre(s)</label>
-                                <vs-input id="Nombres" type="text" color="#C2B280" icon-after
+                                <vs-input id="Nombres" type="text" color="#C2B280" icon-after v-model="datosPersonales.Nombre"
                                     placeholder="Nombre(s)" autocomplete="off">
                                 </vs-input>
                             </div>
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Primer Apellido</label>
-                                <vs-input id="Apaterno" type="text" color="#C2B280" icon-after
+                                <vs-input id="Apaterno" type="text" color="#C2B280" icon-after v-model="datosPersonales.Apaterno"
                                     placeholder="Primer Apellido" autocomplete="off">
                                 </vs-input>
                             </div>
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Segundo Apellido</label>
-                                <vs-input id="Amaterno" type="text" color="#C2B280" icon-after
+                                <vs-input id="Amaterno" type="text" color="#C2B280" icon-after v-model="datosPersonales.Amaterno"
                                     placeholder="Segundo Apellido" autocomplete="off">
                                 </vs-input>
                             </div>
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Correo electrónico</label>
-                                <vs-input id="email" type="email" color="#C2B280" icon-after
+                                <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosPersonales.email"
                                     placeholder="Correo electrónico" autocomplete="off">
                                 </vs-input>
                             </div>
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Fecha de nacimiento</label>
                                 <div class="d-block">
-                                    <el-date-picker v-model="value1" type="date" placeholder="Seleccione su fecha de nacimiento"
+                                    <el-date-picker v-model="datosPersonales.fechaNacimiento" type="date" placeholder="Seleccione su fecha de nacimiento"
                                         :picker-options="pickerOptions" :default-value="fechaValida" format="dd/MM/yyyy">
                                     </el-date-picker>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Teléfono celular</label>
-                                <vs-input id="celular" type="number" color="#C2B280" icon-after
+                                <vs-input id="celular" type="number" color="#C2B280" icon-after v-model="datosPersonales.numCelular"
                                     placeholder="Teléfono celular" autocomplete="off">
                                 </vs-input>
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row pt-2">
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia2'+darkMode">
+                                <!-- <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia2'+darkMode">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
-                                </vs-button>      
+                                </vs-button>       -->
                                 <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion2'+darkMode">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos
@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import methods from '../../../../methods.js';
 export default {
     props: ['id'],
     data() {
@@ -155,7 +156,16 @@ export default {
             
             fileComprobante: [],
             og: window.location.origin + '/',
-
+            
+            datosPersonales: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: '',
+                id_DP: null,
+                fechaNacimiento: '',
+                numCelular: '',
+            },
             
             fechaValida: new Date().setFullYear( new Date().getFullYear() - 18),
             pickerOptions: {
@@ -171,7 +181,37 @@ export default {
     created(){
         EventBus.$on('darkMode', (data)=>{this.darkMode = data})
     },
+    async mounted(){
+        const load = methods.loading( this.$vs );
+        await this.getDatosPersonalesById();
+        load.close();
+    },
     methods: {
+        async getDatosPersonalesById() {
+            const url = '/administracion/usuario/getDatosPersonalesById';
+
+            try {
+                const response = await axios.get(url, {
+                    params: {
+                        'nId': this.id
+                    }
+                });
+
+                if(response.status === 200){
+                    let datos = response.data[0];
+                    this.datosPersonales.Nombre = datos.Nombre;
+                    this.datosPersonales.Apaterno = datos.Apaterno;
+                    this.datosPersonales.Amaterno = datos.Amaterno;
+                    this.datosPersonales.email = datos.email;
+                    this.datosPersonales.id_DP = datos.id_DP,
+                    this.datosPersonales.fechaNacimiento = datos.fechaNacimiento ? new Date(datos.fechaNacimiento + 'T00:00:00-05:00') : '';
+                    this.datosPersonales.numCelular = datos.numCelular;
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
         handlePreview(file) {
         },
         handleRemove(file, fileList) {

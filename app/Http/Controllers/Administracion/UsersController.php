@@ -408,4 +408,23 @@ class UsersController extends Controller
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+    public function getDatosPersonalesById(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $nId = $request->nId;
+        $nId = ($nId == NULL) ? 0 : $nId;
+
+        try {
+            $rpta = DB::select('call sp_getDatosPersonalesById(?)',[
+                $nId
+            ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }

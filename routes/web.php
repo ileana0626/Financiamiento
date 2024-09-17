@@ -47,6 +47,9 @@ Route::group(['middleware' => ['auth']], function () {
     /**Validación de acceso para una ruta con id de usuario */
     Route::get('/administracion/admin/isUserValid','Administracion\AdminController@isUserValid');
 
+    /**Mi Perfil */
+    Route::get('/administracion/usuario/getDatosPersonalesById','Administracion\UsersController@getDatosPersonalesById');
+
 });
 
 Route::get('/{optional?}', function () {
