@@ -51,6 +51,46 @@ function verificarAcceso(to, from, next) {
     }
 }
 
+async function verificarUsuarioAutenticado(to,from,next){
+    const url = '/administracion/admin/isUserValid';
+    const nId = to.params.id;
+    try {
+        let authUser = JSON.parse(sessionStorage.getItem('authUser'));
+        if(authUser){
+            // bloque provisional hasta que se definan los permisos apropiados
+            const response = await axios.get(url,{
+                params: {'reqId': nId}
+            });
+            const datos = response.data;
+            if(!!datos){
+                next();
+            } else {
+                next('*');
+            }            
+
+            // eliminar el bloque anterior y descomentar el siguiente cuando se defina el permiso
+            // let listRolPermisosByUsuario = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
+            // if (listRolPermisosByUsuario.includes(to.name)) {
+            //     const response = await axios.get(url,{
+            //         params: {'reqId': nId}
+            //     });
+            //     const datos = response.data;
+            //     if(!!datos){
+            //         next();
+            //     } else {
+            //         next('*');
+            //     }
+            // } else {
+            //     next('/');
+            // }            
+        } else {
+            next('/');
+        }
+    } catch (error) {
+        next('*');
+        console.log(error);
+    }
+}
 
 export default new Router({
     routes: [
@@ -61,8 +101,8 @@ export default new Router({
         { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes  },
         { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio  },
         { path: '/catalogos', name: 'admin.catalogos', component: Catalogos  },
-        { path: '/perfil', name: 'perfil.index', component: Perfil},
-        { path: '/perfil/editar', name: 'perfil.editar', component: EditPerfil},
+        { path: '/perfil/:id', name: 'perfil.index',props: true, component: Perfil, beforeEnter:async (to, from, next)=>{await verificarUsuarioAutenticado(to, from, next); }},
+        { path: '/perfil/editar/:id', name: 'perfil.editar', props:true, component: EditPerfil, beforeEnter: async (to, from, next) => {await verificarUsuarioAutenticado( to, from, next); }},
         { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz  },
         { path: '*', component: Error404 }
 

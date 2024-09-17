@@ -65,7 +65,7 @@
                     Catalogos
                 </vs-sidebar-item>
 
-                <vs-sidebar-item id="perfil.index" to="/perfil">
+                <vs-sidebar-item id="perfil.index" :to="'/perfil/' + usuario.id">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             account_circle

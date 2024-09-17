@@ -44,6 +44,9 @@ Route::group(['middleware' => ['auth']], function () {
     /*****SUBIR ARCHIVO *****/
     Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');
 
+    /**Validación de acceso para una ruta con id de usuario */
+    Route::get('/administracion/admin/isUserValid','Administracion\AdminController@isUserValid');
+
 });
 
 Route::get('/{optional?}', function () {

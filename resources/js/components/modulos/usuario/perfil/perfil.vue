@@ -108,6 +108,7 @@
 
 <script>
 export default {
+    props:['id'],
     data() {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
@@ -122,7 +123,7 @@ export default {
     },
     methods: {
         editRedirect(){
-            this.$router.push('/perfil/editar');
+            this.$router.push(`/perfil/editar/${this.id}`);
         },
         limpiarContrasena(){
             this.passActual = '';

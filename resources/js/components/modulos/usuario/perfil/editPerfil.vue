@@ -148,6 +148,7 @@
 
 <script>
 export default {
+    props: ['id'],
     data() {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
