@@ -444,6 +444,11 @@ class UsersController extends Controller
         $nIdAuth = $request->nIdAuth;
         $fAccion = $request->fAccion;
 
+        $cNombre = ($cNombre == NULL) ? '' : $cNombre;
+        $cApaterno = ($cApaterno == NULL) ? '' : $cApaterno;
+        $cAmaterno = ($cAmaterno == NULL) ? '' : $cAmaterno;
+        $fNacimiento = ($fNacimiento == NULL) ? NULL : $fNacimiento;
+
         DB::beginTransaction();
         try {
             DB::select('call sp_setUpdateInfoUserById(?,?,?,?,?,?)',[
