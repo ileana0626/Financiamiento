@@ -123,7 +123,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Teléfono celular</label>
                                 <vs-input id="celular" type="number" color="#C2B280" icon-after v-model="datosPersonales.numCelular"
-                                    placeholder="Teléfono celular" autocomplete="off">
+                                    placeholder="Teléfono celular" autocomplete="off" max="10">
                                 </vs-input>
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row pt-2">
@@ -132,7 +132,7 @@
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
                                 </vs-button>       -->
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion2'+darkMode">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion2'+darkMode" @click.prevent="setDatosPersonalesFormById()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos
                                     </div>
@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import methods from '../../../../methods.js';
 export default {
     props: ['id'],
@@ -203,13 +204,48 @@ export default {
                     this.datosPersonales.Apaterno = datos.Apaterno;
                     this.datosPersonales.Amaterno = datos.Amaterno;
                     this.datosPersonales.email = datos.email;
-                    this.datosPersonales.id_DP = datos.id_DP,
+                    this.datosPersonales.id_DP = datos.id_DP;
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento ? new Date(datos.fechaNacimiento + 'T00:00:00-05:00') : '';
                     this.datosPersonales.numCelular = datos.numCelular;
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
+        async setDatosPersonalesFormById() {
+            const url = '/administracion/usuario/setDatosPersonalesFormById';
+            const load = methods.loading( this.$vs );
+            try {
+                let temp = this.datosPersonales.fechaNacimiento;
+                let fNac = temp.getFullYear() + '-' + String((Number(temp.getMonth() + 1))).padStart(2,'0')+ '-' + temp.getDate(); 
+
+                const response = await axios.post(url, {
+                    'nIdRegistro': this.datosPersonales.id_DP ? this.datosPersonales.id_DP : 0,
+                    'nIdUser': this.id,
+                    'cNombre': this.datosPersonales.Nombre,
+                    'cApaterno': this.datosPersonales.Apaterno,
+                    'cAmaterno': this.datosPersonales.Amaterno,
+                    'cEmail': this.datosPersonales.email,
+                    'fNacimiento': fNac,
+                    'cCelular': this.datosPersonales.numCelular,
+                    'nIdAuth': this.id,
+                    'fAccion': methods.getTimestamp(),
+                });
+                if(response.status === 200){
+                    this.datosPersonales.id_DP = response.data[0].id_DP;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Datos actualizados correctamente',
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo',
+                    });                    
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            } finally {
+                load.close();
             }
         },
         handlePreview(file) {
