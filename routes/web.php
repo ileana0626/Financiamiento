@@ -12,6 +12,7 @@ Route::post('/administracion/usuario/logout', 'Administracion\UsersController@lo
 Route::post('/administracion/usuario/setInterfaceSettings', 'Administracion\UsersController@setInterfaceSettings'); 
 
 Route::get('/administracion/usuario/getCurrentTime', 'Administracion\UsersController@getCurrentTime'); 
+Route::get('/administracion/usuario/getSaludoInicio', 'Administracion\UsersController@getSaludoInicio'); 
 
 Route::group(['middleware' => ['auth']], function () {
 
@@ -42,6 +43,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     /*****SUBIR ARCHIVO *****/
     Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');
+
+    /**Validación de acceso para una ruta con id de usuario */
+    Route::get('/administracion/admin/isUserValid','Administracion\AdminController@isUserValid');
+
+    /**Mi Perfil */
+    Route::get('/administracion/usuario/getDatosPersonalesById','Administracion\UsersController@getDatosPersonalesById');
+    Route::post('/administracion/usuario/setDatosPersonalesFormById', 'Administracion\UsersController@setDatosPersonalesFormById');
 
 });
 

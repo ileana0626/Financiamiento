@@ -394,4 +394,82 @@ class UsersController extends Controller
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+    public function getSaludoInicio(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_getSaludoInicio');
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function getDatosPersonalesById(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $nId = $request->nId;
+        $nId = ($nId == NULL) ? 0 : $nId;
+
+        try {
+            $rpta = DB::select('call sp_getDatosPersonalesById(?)',[
+                $nId
+            ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function setDatosPersonalesFormById(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $nIdRegistro = $request->nIdRegistro;
+        $nIdUser = $request->nIdUser;
+        $cNombre = $request->cNombre;
+        $cApaterno = $request->cApaterno;
+        $cAmaterno = $request->cAmaterno;
+        $cEmail = $request->cEmail;
+        $fNacimiento = $request->fNacimiento;
+        $cCelular = $request->cCelular;
+
+        $nIdAuth = $request->nIdAuth;
+        $fAccion = $request->fAccion;
+
+        DB::beginTransaction();
+        try {
+            DB::select('call sp_setUpdateInfoUserById(?,?,?,?,?,?)',[
+                $nIdUser,
+                $cNombre,
+                $cApaterno,
+                $cAmaterno,
+                $cEmail,
+                $fAccion,
+            ]);
+
+            $DatosP = DB::select('call sp_setUpdateDatosPById(?,?,?,?,?,?)',[
+                $nIdRegistro,
+                $nIdUser,
+                $fNacimiento,
+                $cCelular,
+                $nIdAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $DatosP;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // $errorCode = $e->errorInfo[1];
+            throw new \Exception($e);
+        }
+    }
 }

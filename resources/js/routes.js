@@ -8,7 +8,8 @@ import listaSolicitudes from "./components/modulos/ver/versolicitudes.vue";
 import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
 
-import Perfil from './components/modulos/usuario/perfil.vue';
+import Perfil from './components/modulos/usuario/perfil/perfil.vue';
+import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
 
 import Error404 from './components/plantilla/404.vue';
 import SADecoder from './components/modulos/superadmin/decoder.vue';
@@ -50,6 +51,46 @@ function verificarAcceso(to, from, next) {
     }
 }
 
+async function verificarUsuarioAutenticado(to,from,next){
+    const url = '/administracion/admin/isUserValid';
+    const nId = to.params.id;
+    try {
+        let authUser = JSON.parse(sessionStorage.getItem('authUser'));
+        if(authUser){
+            // bloque provisional hasta que se definan los permisos apropiados
+            const response = await axios.get(url,{
+                params: {'reqId': nId}
+            });
+            const datos = response.data;
+            if(!!datos){
+                next();
+            } else {
+                next('*');
+            }            
+
+            // eliminar el bloque anterior y descomentar el siguiente cuando se defina el permiso
+            // let listRolPermisosByUsuario = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
+            // if (listRolPermisosByUsuario.includes(to.name)) {
+            //     const response = await axios.get(url,{
+            //         params: {'reqId': nId}
+            //     });
+            //     const datos = response.data;
+            //     if(!!datos){
+            //         next();
+            //     } else {
+            //         next('*');
+            //     }
+            // } else {
+            //     next('/');
+            // }            
+        } else {
+            next('/');
+        }
+    } catch (error) {
+        next('*');
+        console.log(error);
+    }
+}
 
 export default new Router({
     routes: [
@@ -60,8 +101,9 @@ export default new Router({
         { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/catalogos', name: 'admin.catalogos', component: Catalogos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
-        { path: '/perfil', name: 'usuario.perfil', component: Perfil, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
+        { path: '/perfil/:id', name: 'perfil.index',props: true, component: Perfil, beforeEnter:async (to, from, next)=>{await verificarUsuarioAutenticado(to, from, next); }},
+        { path: '/perfil/editar/:id', name: 'perfil.editar', props:true, component: EditPerfil, beforeEnter: async (to, from, next) => {await verificarUsuarioAutenticado( to, from, next); }},
         { path: '*', component: Error404 }
 
     ],
