@@ -29,24 +29,52 @@
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-center pb-2">
-                                <span class="nametag-perfil">Nombre Nombre Apellido Apellido</span>
+                                <span class="nametag-perfil">{{ nombreCompleto }}</span>
                             </div>
                             <div class="col-12 d-flex justify-content-center">
-                                <span class="badge bg-light" style="font-size: small;">Rol usuario</span>
+                                <span class="badge bg-light" style="font-size: small;">{{ datosPersonales.rol }}</span>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 col-xl-4 ml-0 ml-md-3 d-flex justify-content-center row center">
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="far fa-envelope font-txt-theme"></i><span class="pl-3">Email</span>
+                                <el-tooltip placement="top-start" :visible-arrow="false">
+                                    <div>
+                                        <i class="far fa-envelope font-txt-theme"></i><span class="pl-3">{{ datosPersonales.email }}</span>
+                                    </div>
+                                    <div slot="content">
+                                        Correo electrónico
+                                    </div>
+                                </el-tooltip>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-mobile-alt font-txt-theme"></i><span class="pl-3">Teléfono Celular</span>
+                                <el-tooltip placement="top-start" :visible-arrow="false">
+                                    <div>
+                                        <i class="fas fa-mobile-alt font-txt-theme"></i><span class="pl-3">{{ datosPersonales.numCelular }}</span>
+                                    </div>
+                                    <div slot="content">
+                                        Teléfono celular
+                                    </div>
+                                </el-tooltip>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-calendar-day font-txt-theme"></i><span class="pl-3">Fecha de nacimiento</span>
+                                <el-tooltip placement="top-start" :visible-arrow="false">
+                                    <div>
+                                        <i class="fas fa-calendar-day font-txt-theme"></i><span class="pl-3">{{ formatoFecha(datosPersonales.fechaNacimiento) }}</span>
+                                    </div>
+                                    <div slot="content">
+                                        Fecha de nacimiento
+                                    </div>
+                                </el-tooltip>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
-                                <i class="fas fa-birthday-cake font-txt-theme"></i><span class="pl-3">Edad</span>
+                                <el-tooltip placement="top-start" :visible-arrow="false">
+                                    <div>
+                                        <i class="fas fa-birthday-cake font-txt-theme"></i><span class="pl-3">{{ calculaEdad(datosPersonales.fechaNacimiento) }}</span>
+                                    </div>
+                                    <div slot="content">
+                                        Edad
+                                    </div>
+                                </el-tooltip>
                             </div>
                             <div class="col-12 col-md-6 col-lg-12 pb-1 pb-md-2 pb-lg-1">
                             </div>
@@ -107,6 +135,7 @@
 </template>
 
 <script>
+import methods from '../../../../methods';
 export default {
     props:['id'],
     data() {
@@ -116,10 +145,51 @@ export default {
             passActual: '',
             passNueva: '',
             passConfirmar: '',
+            
+            datosPersonales: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: 'No disponible',
+                id_DP: null,
+                fechaNacimiento: 'No disponible',
+                numCelular: 'No disponible',
+                edad: 'No disponible',
+                rol: 'No disponible'
+            },
         }
     },
     created(){
         EventBus.$on('darkMode', (data)=>{this.darkMode = data})
+    },
+    async mounted(){
+        const load = methods.loading( this.$vs );
+        await this.getDatosPersonalesById();
+        load.close();
+    },
+    computed:{
+        nombreCompleto(){
+            return this.datosPersonales.Nombre + ' ' + this.datosPersonales.Apaterno + ' ' + this.datosPersonales.Amaterno;
+        },
+        formatoFecha() {
+            return( strFecha ) => {
+                if(strFecha){
+                    let temp = strFecha;
+                    const dFecha = new Date(temp + " 00:00:00-05:00");
+                    return dFecha.toLocaleString('es-Es',{day:'2-digit', month:'long', year: 'numeric'});
+                } else return 'No disponible';
+            }
+        },
+        calculaEdad() {
+            return( strFecha ) => {
+                if(strFecha){
+                    let temp = strFecha;
+                    const dFecha = new Date(temp + " 00:00:00-05:00");
+                    const hoy = new Date();
+                    return `${hoy.getFullYear() - dFecha.getFullYear()} años`;
+                } else return 'No disponible';
+            }
+        },
     },
     methods: {
         editRedirect(){
@@ -129,6 +199,32 @@ export default {
             this.passActual = '';
             this.passNueva = '';
             this.passConfirmar = '';
+        },
+        async getDatosPersonalesById() {
+            const url = '/administracion/usuario/getDatosPersonalesById';
+
+            try {
+                const response = await axios.get(url, {
+                    params: {
+                        'nId': this.id
+                    }
+                });
+
+                if(response.status === 200){
+                    let datos = response.data[0];
+                    this.datosPersonales.Nombre = datos.Nombre;
+                    this.datosPersonales.Apaterno = datos.Apaterno;
+                    this.datosPersonales.Amaterno = datos.Amaterno;
+                    this.datosPersonales.email = (datos.email) ? datos.email : 'No disponible';
+                    this.datosPersonales.id_DP = datos.id_DP;
+                    this.datosPersonales.fechaNacimiento = datos.fechaNacimiento;
+                    this.datosPersonales.numCelular = (datos.numCelular) ? datos.numCelular : 'No disponible';
+                    this.datosPersonales.rol = datos.rol;
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            }
         },
     }
 }
