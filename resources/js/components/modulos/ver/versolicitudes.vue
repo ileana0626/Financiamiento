@@ -72,7 +72,7 @@
                                     Seguimiento
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
-                                    Área de Seguimiento
+                                    Quien Contesta
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
                                     Tipo

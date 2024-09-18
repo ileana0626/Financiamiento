@@ -108,88 +108,9 @@
                         </vs-input>
                     </div>
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                        <label class="col-form-label">Termino</label>
-                        <vs-select placeholder="Seleccione una opción" v-model="termino" v-if="catTermino.length > 0"
-                            :color="colors[0].color" filter autocomplete="off">
-                            <template #message-danger v-if="errorTermino.length > 0">
-                                {{ errorTermino }}
-                            </template>
-                            <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
-                                :value="item.idTermino">
-                                {{ item.nombre }}
-                            </vs-option>
-                        </vs-select>
-                    </div>
-                    <template v-if="termino == 1">
-                        <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                            <label class="col-form-label">Fecha de Termino</label>
-                            <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
-                                format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaTermino">
-                            </el-date-picker>
-                            <div class="danger-message">
-                                <template v-if="errorFechaTermino.length > 0">
-                                    {{ errorFechaTermino }}
-                                </template>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                            <label class="col-form-label">Días de Termino</label>
-                            <vs-select placeholder="Seleccione una opción" v-model="diaTermino" :color="colors[0].color"
-                                filter v-if="cat_diasTermino.length > 0" autocomplete="off">
-                                <template #message-danger v-if="errorDiasTermino.length > 0">
-                                    {{ errorDiasTermino }}
-                                </template>
-                                <vs-option v-for="(item, index) in cat_diasTermino" :key="index" :label="item.dias"
-                                    :value="item.idDiasTermino">
-                                    {{ item.dias }}
-                                </vs-option>
-                            </vs-select>
-                        </div>
-                    </template>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" >
-                        <label class="col-form-label">Quién Contesta</label>
-                        <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
-                            v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
-                            <template #message-danger v-if="errorAreaAsignada.length > 0">
-                                {{ errorAreaAsignada }}
-                            </template>
-                            <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                :value="item.id">
-                                {{ item.nombre }}
-                            </vs-option>
-                        </vs-select>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                        <label class="col-form-label">Requiere Respuesta</label>
-                        <vs-select placeholder="Seleccione una opción" v-model="respuesta" v-if="selectSiNo.length > 0"
-                            :color="colors[0].color" filter autocomplete="off" @change="mostrarRespuesta">
-                            <template #message-danger v-if="errorRespuesta.length > 0">
-                                {{ errorRespuesta }}
-                            </template>
-                            <vs-option v-for="(item, index) in selectSiNo" :key="index" :label="item.opcion"
-                                :value="item.idSelect">
-                                {{ item.opcion }}
-                            </vs-option>
-                        </vs-select>
-                    </div>
-
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
-                        <label class="col-form-label">Seguimiento</label>
-                        <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
-                            v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
-                            <template #message-danger v-if="errorSeguimiento.length > 0">
-                                {{ errorSeguimiento }}
-                            </template>
-                            <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                :value="item.idSeguimiento">
-                                {{ item.nombre }}
-                            </vs-option>
-                        </vs-select>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
                         <label class="col-form-label">Tipo</label>
                         <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" v-model="tipo"
-                            v-if="cat_tipo.length > 0" autocomplete="off">
+                            v-if="cat_tipo.length > 0" autocomplete="off" @change="bloqueardatos">
                             <template #message-danger v-if="errorTipo.length > 0">
                                 {{ errorTipo }}
                             </template>
@@ -200,9 +121,92 @@
                         </vs-select>
                     </div>
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                        <label class="col-form-label">Termino</label>
+                        <vs-select placeholder="Seleccione una opción" v-model="termino" v-if="catTermino.length > 0"
+                            :color="colors[0].color" filter autocomplete="off" :disabled="bloqueo">
+                            <template #message-danger v-if="errorTermino.length > 0">
+                                {{ errorTermino }}
+                            </template>
+                            <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
+                                :value="item.idTermino" :disabled="bloqueo">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
+                    <template v-if="termino == 1">
+                        <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                            <label class="col-form-label">Fecha de Termino</label>
+                            <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
+                                format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaTermino"
+                                :disabled="bloqueo">
+                            </el-date-picker>
+                            <div class="danger-message">
+                                <template v-if="errorFechaTermino.length > 0">
+                                    {{ errorFechaTermino }}
+                                </template>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                            <label class="col-form-label">Días de Termino</label>
+                            <vs-select placeholder="Seleccione una opción" v-model="diaTermino" :color="colors[0].color"
+                                filter v-if="cat_diasTermino.length > 0" autocomplete="off" :disabled="bloqueo">
+                                <template #message-danger v-if="errorDiasTermino.length > 0">
+                                    {{ errorDiasTermino }}
+                                </template>
+                                <vs-option v-for="(item, index) in cat_diasTermino" :key="index" :label="item.dias"
+                                    :value="item.idDiasTermino" :disabled="bloqueo">
+                                    {{ item.dias }}
+                                </vs-option>
+                            </vs-select>
+                        </div>
+                    </template>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                        <label class="col-form-label">Quién Contesta</label>
+                        <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                            v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off"
+                            :disabled="bloqueo">
+                            <template #message-danger v-if="errorAreaAsignada.length > 0">
+                                {{ errorAreaAsignada }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
+                                :value="item.id" :disabled="bloqueo">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                        <label class="col-form-label">Requiere Respuesta</label>
+                        <vs-select placeholder="Seleccione una opción" v-model="respuesta" v-if="selectSiNo.length > 0"
+                            :color="colors[0].color" filter autocomplete="off" @change="mostrarRespuesta"
+                            :disabled="bloqueo">
+                            <template #message-danger v-if="errorRespuesta.length > 0">
+                                {{ errorRespuesta }}
+                            </template>
+                            <vs-option v-for="(item, index) in selectSiNo" :key="index" :label="item.opcion"
+                                :disabled="bloqueo" :value="item.idSelect">
+                                {{ item.opcion }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
+                        <label class="col-form-label">Seguimiento</label>
+                        <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
+                            v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
+                            <template #message-danger v-if="errorSeguimiento.length > 0" :disabled="bloqueo">
+                                {{ errorSeguimiento }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
+                                :value="item.idSeguimiento" :disabled="bloqueo">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Fecha de Asignación</label>
                         <el-date-picker type="date" placeholder="Fecha de Asignación" format="dd-MM-yyyy"
-                            value-format="yyyy-MM-dd" v-model="fechaAsignacion" :picker-options="pickerOptions2">
+                            value-format="yyyy-MM-dd" v-model="fechaAsignacion" :picker-options="pickerOptions2"
+                            :disabled="bloqueo">
                         </el-date-picker>
                         <div class="danger-message">
                             <template v-if="errorFechaAsignacion.length > 0">
@@ -210,7 +214,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                    <!-- <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Estatus</label>
                         <vs-select placeholder="Seleccione un estatus" v-model="estatus" v-if="cat_estutus.length > 0"
                             :color="colors[0].color" filter autocomplete="off">
@@ -222,7 +226,7 @@
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>
-                    </div>
+                    </div> -->
                     <div class="col-sm-5 col-md-5 col-xl-5 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Archivo</label>
                         <div class="row px-0 pr-sm-5 pb-3">
@@ -249,11 +253,27 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-7 col-md-7 col-xl-7 px-0 pr-sm-7 pb-3">
+
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3" >
+                        <label class="col-form-label">Quién Contesta</label>
+                        <vs-select multiple filter :placeholder="(copiasConocimiento.length > 0) ? '':'Seleccione una opción'"
+                            v-model="copiasConocimiento" v-if="cat_departamentos.length > 0" autocomplete="off">
+                            <template #message-danger v-if="errorCopiasConocimiento.length > 0">
+                                {{ errorCopiasConocimiento }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
+                                :value="item.id" >
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
                     <div class="col-sm-12 col-md-12 col-xl-12 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Observaciones</label>
                         <br>
                         <el-input id="observaciones" color="#C2B280" placeholder="Escriba sus Observaciones"
-                            type="textarea" :rows="2" v-model="observaciones" autocomplete="off">
+                            type="textarea" :rows="2" v-model="observaciones" autocomplete="off" :disabled="bloqueo">
                         </el-input>
                     </div>
                     <div class="row mx-12 mb-12 p-4">
@@ -284,6 +304,7 @@ export default {
                 },
 
             ],
+            copiasConocimiento:[],
             otroRemitente: '',
             otroCargo: '',
             nConsecutivo: '',
@@ -298,10 +319,11 @@ export default {
             diaTermino: '',
             seguimiento: '',
             areaAsignada: '',
-            tipo: '',
+            tipo: 3,
             fechaAsignacion: '',
-            estatus: '',
+            estatus: 1,
             observaciones: '',
+            error: 0,
             errorOtroRemitente: '',
             errorOtroCargo: '',
             errorNConsecutivo: '',
@@ -320,6 +342,7 @@ export default {
             errorFechaAsignacion: '',
             errorEstatus: '',
             errorF1: '',
+            errorCopiasConocimiento:'',
             catRemitente: [],
             catCargos: [],
             catTermino: [],
@@ -349,10 +372,13 @@ export default {
             },
             pickerOptions2: {
                 disabledDate(time) {
-                    return time.getTime() < Date.now();
+                    var date = new Date();
+                    date.setDate(date.getDate() - 1);
+                    return time.getTime() < date;
                 },
             },
-            mostrardatos: ''
+            mostrardatos: '',
+            bloqueo: true
         }
     },
     mounted() {
@@ -367,12 +393,20 @@ export default {
         this.obtenerDatos(8)
     },
     methods: {
+        bloqueardatos() {
+            if (this.tipo == 3) {
+                this.bloqueo = true
+            } else {
+                this.bloqueo = false
+            }
+        },
         obtenerDatos(tipo) {
+            var dia = 1 * 24 * 60 * 60;
             let url = '/administracion/usuario/obtenerDatos'
             axios.get(url, {
                 params: {
                     'tipo': tipo,
-                    'consulta' : 1
+                    'consulta': 1
                 }
             }).then(response => {
                 switch (tipo) {
@@ -485,11 +519,11 @@ export default {
         },
         async guardarSolicitud() {
             const loading = this.$vs.loading({
-            type: 'square',
-            color: '#00a19a',
-            background: '#FFFFFF',
-            text: 'Cargando...'
-        });
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
             let idF1 = 0
             if (this.documentos.F1.size > 0) {
                 idF1 = await this.setRegistrarArchivo(this.documentos.F1, "");
@@ -548,6 +582,62 @@ export default {
 
             return idArchivo;
         },
+        validar() {
+            this.error = 0
+            if (this.documentos.F1.size == 0) {
+                this.error = 1
+                this.errorF1 = 1
+            }
+            if (this.nConsecutivo.length == 0) {
+                this.error = 1
+                this.errorNConsecutivo = 'Coloque el Número Consecutivo'
+            }
+            if (this.errorNSolicitud.length == 0) {
+                this.error = 1
+                this.errorNSolicitud = 'Coloque el número de solicitud'
+            }
+            if (this.fechaRecibido.length == 0) {
+                this.error = 1
+                this.errorFechaRecibido = 'Coloque la fecha de recibido'
+            }
+            if (this.remitente.length == 0) {
+                this.error = 1
+                this.errorRemitente = 'Seleccione el remitente'
+            }
+            if (this.remitente == 1 && this.otroRemitente.length == 0) {
+                this.error = 1
+                this.errorOtroRemitente = 'Coloque el nombre del remitente'
+            }
+            if (this.cargo.length == 0) {
+                this.error = 1
+                this.errorCargo = 'Seleccione el cargo'
+            }
+            if (this.cargo == 1 && this.otroCargo.length == 0) {
+                this.error = 1
+                this.errorCargo = 'Coloque el cargo'
+            }
+            if (this.asunto.length == 0) {
+                this.error = 1
+                this.errorAsunto = 'Escriba el asunto'
+            }
+            if (this.termino.length == 0) {
+                this.error = 1
+                this.errorTermino = 'Seleccione el termino'
+            }
+            if (this.termino.length == 1) {
+                if (this.fechaTermino.length == 0) {
+                    this.error = 1
+                    this.errorFechaTermino = 'Seleccione la fecha termino'
+                }
+                if (this.diaTermino.length == 0) {
+                    this.error = 1
+                    this.errorDiasTermino = 'Seleccione el/los días de termino'
+                }
+            }
+            if (this.areaAsignada) {
+
+            }
+        }
     }
 };
 

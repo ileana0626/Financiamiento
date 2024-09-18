@@ -911,7 +911,6 @@ export default {
         },
         async registrar() {
             await this.consultarRegistros(this.table, this.registro)
-            console.log(this.datosDuplicados >= 1);
             if (this.datosDuplicados >= 1) {
                 Swal.fire({
                     icon: 'info',
@@ -920,8 +919,9 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             } else {
-                this.validar()
-                if (this.error = 1) {
+                this.validar(1)
+
+                if (this.error == 1) {
                     return
                 } else {
                     let url = '/administracion/usuario/registrar'
@@ -929,6 +929,7 @@ export default {
                         'tipo': this.table,
                         'nombre': this.registro
                     }).then(response => {
+
                         this.obtenerDatos(this.table)
                         this.active = !this.active
                         this.registro = ''
@@ -955,8 +956,9 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             } else {
-                this.validar()
-                if (this.error = 1) {
+
+                this.validar(2)
+                if (this.error == 1) {
                     return
                 } else {
                     let url = '/administracion/usuario/editar'
@@ -982,23 +984,26 @@ export default {
                 }
             }
         },
-        validar() {
+        validar(tipo) {
             this.error = 0;
             this.errorGuardar = ''
             this.errorEditar = ''
-            if (this.registro.length == 0) {
-                this.registro.trim()
-                if (/^[0-9]{0,10}$/.test(this.registro)) {
-                    this.error = 1;
-                    this.errorGuardar = 'Caracteres no validos'
+            if (tipo == 1) {
+                if (this.registro.length == 0) {
+                    this.registro.trim()
+                    if (/^[0-9]{0,10}$/.test(this.registro)) {
+                        this.error = 1;
+                        this.errorGuardar = 'Caracteres no validos'
+                    }
                 }
-            }
-            if (this.nombreEditado.length == 0) {
+            }else{
+                if (this.nombreEditado.length == 0) {
                 this.nombreEditado.trim()
                 if (/^[0-9]{0,10}$/.test(this.nombreEditado)) {
                     this.error = 1;
                     this.errorEditar = 'Caracteres no validos'
                 }
+            }
             }
         },
         async consultarRegistros(tipo, nombre) {
