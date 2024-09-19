@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
     /*****Registro de Solicitudes*****/
     Route::get('/administracion/usuario/obtenerDatos', 'Administracion\UsersController@obtenerDatos');
     Route::post('/administracion/usuario/guardarSolicitud', 'Administracion\UsersController@guardarSolicitud');
+    Route::post('/administracion/usuario/guardarCopiasConocimiento', 'Administracion\UsersController@guardarCopiasConocimiento');
     /*****CALENDARIO*****/
     Route::get('/administracion/usuario/getFechasPeriodos', 'Administracion\UsersController@getFechasPeriodos');
     /*****Lista de Solicitudes*****/

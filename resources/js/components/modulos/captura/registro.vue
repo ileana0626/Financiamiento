@@ -22,8 +22,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Número Consecutivo</label>
                         <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after
-                            placeholder="Número Consecutivo" v-model="nConsecutivo"
-                            :state="(errorNConsecutivo.length > 0) ? 'danger' : ''" autocomplete="off">
+                            placeholder="Número Consecutivo" v-model="nConsecutivo" autocomplete="off">
                             <template #message-danger v-if="errorNConsecutivo.length > 0">
                                 {{ errorNConsecutivo }}
                             </template>
@@ -32,8 +31,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Número de Solicitud</label>
                         <vs-input id="numeroSolicitud" type="tel" color="#C2B280" icon-after
-                            placeholder="Número de Solicitud" v-model="nSolicitud"
-                            :state="(errorNSolicitud.length > 0) ? 'danger' : ''" autocomplete="off">
+                            placeholder="Número de Solicitud" v-model="nSolicitud" autocomplete="off">
                             <template #message-danger v-if="errorNSolicitud.length > 0">
                                 {{ errorNSolicitud }}
                             </template>
@@ -53,7 +51,8 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Remitente</label>
                         <vs-select placeholder="Seleccione una opción" v-model="remitente"
-                            v-if="catRemitente.length > 0" filter :color="colors[0].color" autocomplete="off">
+                            v-if="catRemitente.length > 0" filter :color="colors[0].color" autocomplete="off"
+                            @change="limpiarOtroRemitente">
                             <template #message-danger v-if="errorRemitente.length > 0">
                                 {{ errorRemitente }}
                             </template>
@@ -77,7 +76,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Cargo</label>
                         <vs-select placeholder="Seleccione una opción" v-model="cargo" v-if="catCargos.length > 0"
-                            filter :color="colors[0].color" autocomplete="off">
+                            filter :color="colors[0].color" autocomplete="off" @change="limpiarOtroCargo">
                             <template #message-danger v-if="errorCargo.length > 0">
                                 {{ errorCargo }}
                             </template>
@@ -101,7 +100,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Asunto</label>
                         <vs-input id="asunto" color="#C2B280" icon-after placeholder="Asunto" v-model="asunto"
-                            :state="(errorAsunto.length > 0) ? 'danger' : ''" autocomplete="off">
+                            autocomplete="off">
                             <template #message-danger v-if="errorAsunto.length > 0">
                                 {{ errorAsunto }}
                             </template>
@@ -123,7 +122,8 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Termino</label>
                         <vs-select placeholder="Seleccione una opción" v-model="termino" v-if="catTermino.length > 0"
-                            :color="colors[0].color" filter autocomplete="off" :disabled="bloqueo">
+                            :color="colors[0].color" filter autocomplete="off" :disabled="bloqueo"
+                            @change="limpiartermino">
                             <template #message-danger v-if="errorTermino.length > 0">
                                 {{ errorTermino }}
                             </template>
@@ -177,7 +177,7 @@
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Requiere Respuesta</label>
                         <vs-select placeholder="Seleccione una opción" v-model="respuesta" v-if="selectSiNo.length > 0"
-                            :color="colors[0].color" filter autocomplete="off" @change="mostrarRespuesta"
+                            :color="colors[0].color" filter autocomplete="off" @change="limpiarRespuesta"
                             :disabled="bloqueo">
                             <template #message-danger v-if="errorRespuesta.length > 0">
                                 {{ errorRespuesta }}
@@ -189,7 +189,7 @@
                         </vs-select>
                     </div>
 
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="mostrardatos == 1">
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="respuesta == 1">
                         <label class="col-form-label">Seguimiento</label>
                         <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
                             v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
@@ -256,15 +256,16 @@
                     <div class="col-sm-7 col-md-7 col-xl-7 px-0 pr-sm-7 pb-3">
 
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3" >
-                        <label class="col-form-label">Quién Contesta</label>
-                        <vs-select multiple filter :placeholder="(copiasConocimiento.length > 0) ? '':'Seleccione una opción'"
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3">
+                        <label class="col-form-label">Copias de Conocimiento</label>
+                        <vs-select multiple filter
+                            :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
                             v-model="copiasConocimiento" v-if="cat_departamentos.length > 0" autocomplete="off">
                             <template #message-danger v-if="errorCopiasConocimiento.length > 0">
                                 {{ errorCopiasConocimiento }}
                             </template>
                             <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                :value="item.id" >
+                                :value="item.id">
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>
@@ -275,6 +276,11 @@
                         <el-input id="observaciones" color="#C2B280" placeholder="Escriba sus Observaciones"
                             type="textarea" :rows="2" v-model="observaciones" autocomplete="off" :disabled="bloqueo">
                         </el-input>
+                        <div class="danger-message">
+                            <template v-if="errorObservaciones.length > 0">
+                                Seleccione un archivo para subir
+                            </template>
+                        </div>
                     </div>
                     <div class="row mx-12 mb-12 p-4">
                         <div class="col-sm-12 col-md-8 col-xl-6 px-0 pr-sm-5 pb-3">
@@ -285,6 +291,12 @@
                                         Registrar
                                     </b>
                                 </vs-button>
+                                <!-- <vs-button style="width: 19vw; " color="#a5904a" block
+                                    @click.prevent="guardarCopiasConocimiento">
+                                    <b style="font-size: medium !important;">
+                                        Registrar
+                                    </b>
+                                </vs-button> -->
                             </center>
                         </div>
                     </div>
@@ -304,7 +316,7 @@ export default {
                 },
 
             ],
-            copiasConocimiento:[],
+            copiasConocimiento: [],
             otroRemitente: '',
             otroCargo: '',
             nConsecutivo: '',
@@ -342,7 +354,8 @@ export default {
             errorFechaAsignacion: '',
             errorEstatus: '',
             errorF1: '',
-            errorCopiasConocimiento:'',
+            errorObservaciones: '',
+            errorCopiasConocimiento: '',
             catRemitente: [],
             catCargos: [],
             catTermino: [],
@@ -396,12 +409,33 @@ export default {
         bloqueardatos() {
             if (this.tipo == 3) {
                 this.bloqueo = true
+                this.termino = ''
+                this.fechaTermino = ''
+                this.diaTermino = ''
+                this.areaAsignada = ''
+                this.respuesta = ''
+                this.seguimiento = ''
+                this.fechaAsignacion = ''
+                this.observaciones = ''
             } else {
                 this.bloqueo = false
+                this.copiasConocimiento = ''
             }
         },
+        limpiartermino() {
+            this.fechaTermino = ''
+            this.diaTermino = ''
+        },
+        limpiarRespuesta() {
+            this.seguimiento = ''
+        },
+        limpiarOtroRemitente() {
+            this.otroRemitente = ''
+        },
+        limpiarOtroCargo() {
+            this.otroCargo = ''
+        },
         obtenerDatos(tipo) {
-            var dia = 1 * 24 * 60 * 60;
             let url = '/administracion/usuario/obtenerDatos'
             axios.get(url, {
                 params: {
@@ -506,17 +540,6 @@ export default {
             return file.raw;
             // }
         },
-        mostrarRespuesta() {
-            this.tipo = ''
-            this.estatus = ''
-            if (this.respuesta == 1) {
-                this.mostrardatos = 1
-                this.tipo = 1
-            } else if (this.respuesta == 2) {
-                this.mostrardatos = 2
-                this.estatus = 1
-            }
-        },
         async guardarSolicitud() {
             const loading = this.$vs.loading({
                 type: 'square',
@@ -524,45 +547,63 @@ export default {
                 background: '#FFFFFF',
                 text: 'Cargando...'
             });
-            let idF1 = 0
-            if (this.documentos.F1.size > 0) {
-                idF1 = await this.setRegistrarArchivo(this.documentos.F1, "");
-            }
-            let url = '/administracion/usuario/guardarSolicitud'
-            axios.post(url, {
-                'numeroConsecutivo': this.nConsecutivo,
-                'numeroSolicitud': this.nSolicitud,
-                'fechaRecibido': this.fechaRecibido,
-                'remitente': this.remitente,
-                'otroRemitente': this.otroRemitente,
-                'cargo': this.cargo,
-                'otroCargo': this.otroCargo,
-                'asunto': this.asunto,
-                'termino': this.termino,
-                'fechaTermino': this.fechaTermino,
-                'diasTermino': this.diaTermino,
-                'respuesta': this.respuesta,
-                'seguimiento': this.seguimiento,
-                'areaAsignada': this.areaAsignada,
-                'tipo': this.tipo,
-                'fechaAsignacion': this.fechaAsignacion,
-                'estatus': this.estatus,
-                'observaciones': this.observaciones,
-                'idArchivo': idF1
-            }).then(response => {
+
+            this.validar()
+
+            if (this.error == 1) {
                 loading.close();
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Registrado correctamente',
+                    icon: 'warning',
+                    title: 'Algunos de los campos se encuentran vacíos. \n Verifique los datos e inténtelo de nuevo.',
                     showConfirmButton: true,
                     confirmButtonText: 'De acuerdo'
                 });
-            }).catch(error => {
-                loading.close();
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
 
-            });
+            } else {
+                let idF1 = 0
+                if (this.documentos.F1.size > 0) {
+                    idF1 = await this.setRegistrarArchivo(this.documentos.F1, "");
+                }
+                let url = '/administracion/usuario/guardarSolicitud'
+                axios.post(url, {
+                    'numeroConsecutivo': this.nConsecutivo,
+                    'numeroSolicitud': this.nSolicitud,
+                    'fechaRecibido': this.fechaRecibido,
+                    'remitente': this.remitente,
+                    'otroRemitente': this.otroRemitente,
+                    'cargo': this.cargo,
+                    'otroCargo': this.otroCargo,
+                    'asunto': this.asunto,
+                    'termino': this.termino,
+                    'fechaTermino': this.fechaTermino,
+                    'diasTermino': this.diaTermino,
+                    'respuesta': this.respuesta,
+                    'seguimiento': this.seguimiento,
+                    'areaAsignada': this.areaAsignada,
+                    'tipo': this.tipo,
+                    'fechaAsignacion': this.fechaAsignacion,
+                    'estatus': this.estatus,
+                    'observaciones': this.observaciones,
+                    'idArchivo': idF1
+                }).then(response => {
+                    if (this.tipo == 3) {
+                        this.guardarCopiasConocimiento(response.data[0].id, loading)
+                    } else {
+                        loading.close();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registrado correctamente',
+                            showConfirmButton: true,
+                            confirmButtonText: 'De acuerdo'
+                        });
+                    }
+                }).catch(error => {
+                    loading.close();
+                    let nombreMetodo = url.split('/');
+                    methods.catchHandler(error, nombreMetodo[3]);
+
+                });
+            }
         },
         async setRegistrarArchivo(oDocumento, fileExt) {
             let idArchivo = 0;
@@ -584,7 +625,9 @@ export default {
         },
         validar() {
             this.error = 0
-            if (this.documentos.F1.size == 0) {
+            this.limpiarErrores()
+
+            if (this.documentos.F1.length == 0) {
                 this.error = 1
                 this.errorF1 = 1
             }
@@ -592,7 +635,7 @@ export default {
                 this.error = 1
                 this.errorNConsecutivo = 'Coloque el Número Consecutivo'
             }
-            if (this.errorNSolicitud.length == 0) {
+            if (this.nSolicitud.length == 0) {
                 this.error = 1
                 this.errorNSolicitud = 'Coloque el número de solicitud'
             }
@@ -620,23 +663,90 @@ export default {
                 this.error = 1
                 this.errorAsunto = 'Escriba el asunto'
             }
-            if (this.termino.length == 0) {
-                this.error = 1
-                this.errorTermino = 'Seleccione el termino'
-            }
-            if (this.termino.length == 1) {
-                if (this.fechaTermino.length == 0) {
+            if (this.tipo == 3) {
+                if (this.copiasConocimiento.length == 0) {
                     this.error = 1
-                    this.errorFechaTermino = 'Seleccione la fecha termino'
+                    this.errorCopiasConocimiento = 'Seleccione aquien va la copia de conocimiento'
                 }
-                if (this.diaTermino.length == 0) {
+            } else {
+                if (this.termino.length == 0) {
                     this.error = 1
-                    this.errorDiasTermino = 'Seleccione el/los días de termino'
+                    this.errorTermino = 'Seleccione el termino'
+                }
+                if (this.termino == 1) {
+                    if (this.fechaTermino.length == 0) {
+                        this.error = 1
+                        this.errorFechaTermino = 'Seleccione la fecha termino'
+                    }
+                    if (this.diaTermino.length == 0) {
+                        this.error = 1
+                        this.errorDiasTermino = 'Seleccione el/los días de termino'
+                    }
+                }
+                if (this.areaAsignada.length == 0) {
+                    this.error = 1
+                    this.errorAreaAsignada = 'Seleccione quién contesta'
+                }
+                if (this.respuesta.length == 0) {
+                    this.error = 1
+                    this.errorRespuesta = 'Seleccione una opción'
+                }
+                if (this.respuesta == 1) {
+                    if (this.seguimiento.length == 0) {
+                        this.error = 1
+                        this.errorSeguimiento = 'Seleccione una opción'
+                    }
+                }
+                if (this.fechaAsignacion.length == 0) {
+                    this.error = 1
+                    this.errorFechaAsignacion = 'Seleccione la fecha de asignación'
+                }
+                if (this.observaciones.length == 0) {
+                    this.error = 1
+                    this.errorObservaciones = 'Escriba la observación'
                 }
             }
-            if (this.areaAsignada) {
+        },
+        guardarCopiasConocimiento(id,loading) {
+            let url = '/administracion/usuario/guardarCopiasConocimiento'
+            axios.post(url, {
+                'idSolicitud': id,
+                'departamentos': this.copiasConocimiento,
+                'estatus': 'N'
+            }).then(response => {
+                
+                loading.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registrado correctamente',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch((error) => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        },
+        limpiarErrores() {
+            this.errorF1 = ''
+            this.errorNConsecutivo = ''
+            this.errorNSolicitud = ''
+            this.errorFechaRecibido = ''
+            this.errorRemitente = ''
+            this.errorOtroRemitente = ''
+            this.errorCargo = ''
+            this.errorCargo = ''
+            this.errorAsunto = ''
+            this.errorTermino = ''
+            this.errorFechaTermino = ''
+            this.errorDiasTermino = ''
+            this.errorAreaAsignada = ''
+            this.errorRespuesta = ''
+            this.errorSeguimiento = ''
+            this.errorFechaAsignacion = ''
+            this.errorObservaciones = ''
+            this.errorCopiasConocimiento = ''
 
-            }
         }
     }
 };
