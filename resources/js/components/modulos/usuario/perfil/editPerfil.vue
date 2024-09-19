@@ -25,7 +25,7 @@
         <div class="px-3 px-md-5 container-fluid">
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
-                <div class="card-info">
+                <div class="card-info pb-4">
                     <div class="card-header d-flex">
                         <h3 class="card-title font-weight-bold">Editar perfil</h3>
                     </div>
@@ -91,7 +91,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Nombre(s)</label>
                                 <vs-input id="Nombres" type="text" color="#C2B280" icon-after v-model="datosPersonales.Nombre" @input="inputNombr('nombre')"
-                                    placeholder="Nombre(s)" autocomplete="off">
+                                    placeholder="Nombre(s)" autocomplete="off" :state="error.Nombre ? 'danger': ''">
                                     <template #message-danger v-if="error.Nombre.length > 0">
                                         {{ error.Nombre }}
                                     </template>
@@ -100,7 +100,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Primer Apellido</label>
                                 <vs-input id="Apaterno" type="text" color="#C2B280" icon-after v-model="datosPersonales.Apaterno" @input="inputNombr('app')"
-                                    placeholder="Primer Apellido" autocomplete="off">
+                                    placeholder="Primer Apellido" autocomplete="off" :state="error.Apaterno ? 'danger': ''">
                                     <template #message-danger v-if="error.Apaterno.length > 0">
                                         {{ error.Apaterno }}
                                     </template>
@@ -109,7 +109,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Segundo Apellido</label>
                                 <vs-input id="Amaterno" type="text" color="#C2B280" icon-after v-model="datosPersonales.Amaterno" @input="inputNombr('apm')"
-                                    placeholder="Segundo Apellido" autocomplete="off">
+                                    placeholder="Segundo Apellido" autocomplete="off" :state="error.Amaterno ? 'danger' : ''">
                                     <template #message-danger v-if="error.Amaterno.length > 0">
                                         {{ error.Amaterno }}
                                     </template>
@@ -118,7 +118,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Correo electrónico</label>
                                 <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosPersonales.email"
-                                    placeholder="Correo electrónico" autocomplete="off">
+                                    placeholder="Correo electrónico" autocomplete="off" :state="error.email ? 'danger' : ''">
                                     <template #message-danger v-if="error.email.length > 0">
                                         {{ error.email }}
                                     </template>
@@ -142,7 +142,7 @@
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Teléfono celular</label>
                                 <vs-input id="celular" type="text" color="#C2B280" icon-after v-model="datosPersonales.numCelular" @input="inputNumCel()"
-                                    placeholder="Teléfono celular" autocomplete="off">
+                                    placeholder="Teléfono celular" autocomplete="off" :state="error.numCelular ? 'danger' : ''">
                                     <template #message-danger v-if="error.numCelular.length > 0">
                                         {{ error.numCelular }}
                                     </template>
@@ -207,7 +207,6 @@ export default {
                     return time.getTime() > date;
                     },
                 },
-            value1: '',
         }
     },
     created(){
