@@ -37,4 +37,44 @@ class FileController extends Controller
         return  $rpta;
     }   
 
+    /**Cargar la foto en storage y guardar la ruta en BD */
+    public function setSubirFP(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $file = $request->file('archivo');
+        $fActualizado = $request->fActualizado;
+        $idAuth = $request->idAuth;
+        $extension = $request->extension;
+
+        DB::beginTransaction();
+        try {
+            $idAuth = ($idAuth == NULL) ? Auth::id() : $idAuth;
+            $fActualizado = ($fActualizado == NULL) ? date('Y-m-d H:m:s') : $fActualizado;
+            
+            if($file != ""){
+                $fileExtension = $request->file('archivo')->extension();
+            }
+            else{
+                $fileExtension = $extension;
+            }
+            $fileserver = $nId . '_' . 'Foto' . '_' . 'Usuario' . '.' . $fileExtension;
+    
+            Storage::putFileAs('public\\users\\' . $nId . '\\', $file, $fileserver);
+    
+            DB::select('call sp_setSubirFP(?,?,?,?)', [
+                $nId,
+                'storage/users/' . $nId . '/' . $fileserver,
+                $idAuth,
+                $fActualizado,
+            ]);
+
+            $rpta = DB::table('fotos_personal')->select('id as id_FP','ruta as rutaFP')->where([["fotos_personal.user","=",$nId]])->get();
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e); 
+        }
+    }   
 }

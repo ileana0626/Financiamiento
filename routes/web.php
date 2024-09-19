@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
     /**Mi Perfil */
     Route::get('/administracion/usuario/getDatosPersonalesById','Administracion\UsersController@getDatosPersonalesById');
     Route::post('/administracion/usuario/setDatosPersonalesFormById', 'Administracion\UsersController@setDatosPersonalesFormById');
+    Route::post('/archivos/setSubirFP','FileController@setSubirFP');
 
 });
 
