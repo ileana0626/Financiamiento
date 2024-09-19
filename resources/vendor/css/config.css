@@ -35,6 +35,7 @@
     --iee-black: #000000;
     --iee-green2: #008000;
     --iee-teal: #319795;
+    --btn-txt-color: #f5f5f5;
     --scroll-color: black;
     --scroll-color-back: grey;
 }
@@ -76,6 +77,7 @@
     --iee-black: #2e2e2e;
     --iee-green2: #84ce84;
     --iee-teal: #81dddc;
+    --btn-txt-color: #595959;
     --scroll-color-back: white;
 }
 
@@ -355,6 +357,15 @@ strong,
     transition: all 0.2s ease;
 }
 
+.error-slide-enter-active,
+.error-slide-leave-active {
+    transition: transform 200ms, opacity 200ms ease-in-out;
+}
+.error-slide-enter,
+.error-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-50%);
+}
 .wFull {
     max-width: 100% !important;
 }
@@ -1196,7 +1207,147 @@ h4 {
     transform: rotate(-30deg);
     pointer-events: none;
 }
+.portrait-perfil{
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    border: 1px solid #595959;
+    overflow: hidden;
+    box-shadow: 0 2px 2px 2px var(--dorado);
+    background-color: var(--iee-white);
+}
+.nametag-perfil{
+    font-weight: 700;
+    font-size: large;
+    text-align: center;
+    text-decoration-line: underline;
+    text-decoration-color: var(--dorado);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+.edit-btn-perfil{
+    position: absolute;
+    bottom: 1rem;
+    right: 35%;
+}
+.rounded-soft{
+    border-radius: 1.2125rem;
+}
+.iee-white{
+    background-color: var(--iee-white);
+}
+.font-txt-theme{
+    color: var(--text-color);
+}
+.shadow-dark{
+    box-shadow: 0 .5rem 1rem rgba(255,255,255,.15);
+}
+.shadow-lg-dark{
+   box-shadow: 0 1rem 3rem rgba(255,255,255,.175);
+}
 
+.el-upload-dragger {
+    background-color: var(--iee-white) !important;
+}
+.el-upload-dragger i, .el-upload-dragger .el-upload__text{
+    color: var(--iee-white-dark) !important;
+}
+.el-upload-dragger .el-upload__text em {
+    color: var(--dorado) !important;
+}
+
+.el-upload-dragger:hover {
+    border-color: var(--dorado) !important;
+}
+
+.el-upload:focus {
+    color: var(--dorado) !important;
+    border-color: var(--dorado) !important;
+}
+
+.el-upload:focus .el-upload-dragger {
+    border-color: var(--dorado) !important;
+}
+
+.el-upload__text {
+    text-wrap: wrap;
+}
+
+.cardFile {
+    position: relative;
+    top: 5px;
+    min-width: 350px;
+    width: 350px;
+    max-width: 350px;
+    background: var(--iee-bg-color);
+    border-radius: 8px;
+}
+
+.filenameContainer {
+    width: 230px;
+}
+
+.fileNameClass {
+    width: 100%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+}
+
+.cardFileRemoveIcon {
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 6px;
+    margin-left: 30px;
+    margin-right: 10px;
+}
+
+.cardFileRemoveIcon>i {
+    font-size: 20px;
+    color: red;
+    border-radius: 50%;
+}
+
+.cardFileRemoveIcon:hover {
+    /* transform: translateY(-2px); */
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+
+@media screen and (max-width: 500px) {
+    .el-upload-dragger {
+        width: 100%;
+    }
+
+    .cardFile {
+        min-width: 250px;
+        width: 250px;
+        max-width: 250px;
+    }
+}
+
+.cardless {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: none;
+    border-radius: 0;
+}
+@media screen and (min-width: 768px) {
+    .edit-btn-perfil{
+        right: 2rem;
+    }
+}
 
 @media screen and (max-width: 1300px) {
     .vs-card__img {

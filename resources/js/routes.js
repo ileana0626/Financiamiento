@@ -57,32 +57,20 @@ async function verificarUsuarioAutenticado(to,from,next){
     try {
         let authUser = JSON.parse(sessionStorage.getItem('authUser'));
         if(authUser){
-            // bloque provisional hasta que se definan los permisos apropiados
-            const response = await axios.get(url,{
-                params: {'reqId': nId}
-            });
-            const datos = response.data;
-            if(!!datos){
-                next();
+            let listRolPermisosByUsuario = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
+            if (listRolPermisosByUsuario.includes(to.name)) {
+                const response = await axios.get(url,{
+                    params: {'reqId': nId}
+                });
+                const datos = response.data;
+                if(!!datos){
+                    next();
+                } else {
+                    next('*');
+                }
             } else {
-                next('*');
+                next('/');
             }            
-
-            // eliminar el bloque anterior y descomentar el siguiente cuando se defina el permiso
-            // let listRolPermisosByUsuario = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
-            // if (listRolPermisosByUsuario.includes(to.name)) {
-            //     const response = await axios.get(url,{
-            //         params: {'reqId': nId}
-            //     });
-            //     const datos = response.data;
-            //     if(!!datos){
-            //         next();
-            //     } else {
-            //         next('*');
-            //     }
-            // } else {
-            //     next('/');
-            // }            
         } else {
             next('/');
         }
