@@ -472,4 +472,33 @@ class UsersController extends Controller
             throw new \Exception($e);
         }
     }
+
+    public function guardarCopiasConocimiento(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+        $idSolicitud = $request->idSolicitud;
+        $departamentos = $request->departamentos;
+        $estatus = $request->estatus;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+        $departamentos = ($departamentos == NULL) ? 0 : $departamentos;
+        $estatus = ( $estatus == NULL ) ? 0 : $estatus;
+
+        try{
+            DB::beginTransaction();
+            $departamentosSize = sizeof($departamentos);
+            if( $departamentosSize > 0 ){
+                foreach( $departamentos as $key => $value ){
+                    $rpta =  DB::select('call sp_insertarCopiasConocimiento(?, ?, ?)', [$idSolicitud, $value, $estatus ]);
+                }
+            }
+            DB::commit();
+            return $rpta;
+        }catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+
+    }
 }
