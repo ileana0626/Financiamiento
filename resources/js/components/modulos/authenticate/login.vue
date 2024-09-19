@@ -412,6 +412,7 @@ export default {
         .then((response) => {
           idRol = response.data[0].idRol;
           sessionStorage.setItem("rolUsuario", JSON.stringify(idRol));
+          sessionStorage.setItem("idDepartamento", JSON.stringify(response.data[0].idDepartamento));
         })
         .catch((error) => {
           let nombreMetodo = url.split('/');
