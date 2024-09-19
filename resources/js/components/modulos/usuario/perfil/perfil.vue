@@ -25,7 +25,7 @@
                         <div class="col-12 col-lg-6 col-xl-4 row justify-content-center mb-lg-0 rounded-soft p-3 iee-white">
                             <div class="col-12 d-flex justify-content-center pb-2">
                                 <div class="portrait-perfil bg-white">
-                                    <img src="/img/user_default.svg" alt="Foto de perfil">
+                                    <img src="/img/user_default.svg" alt="Foto de perfil" class="portrait-adjust">
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-center pb-2">
