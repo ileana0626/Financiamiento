@@ -22,6 +22,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/administracion/usuario/getListarRolPermisosByUsuario', 'Administracion\UsersController@getListarRolPermisosByUsuario');
+    Route::get('/administracion/usuario/getListarAllUsers', 'Administracion\UsersController@getListarAllUsers');
     Route::get('/administracion/usuario/getUsuario', 'Administracion\UsersController@getUsuario');
     Route::get('/administracion/usuario/consultarRolUsuario', 'Administracion\UsersController@consultarRolUsuario');
 

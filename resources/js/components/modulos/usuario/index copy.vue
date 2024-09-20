@@ -1,65 +1,120 @@
 <template>
-    <div class="">
-        <div class="content-header">
-            <div class="container-fluid mb-md-3 pl-4 pl-md-3 pt-0">
-                <div class="float-sm-right mr-5">
-                    <!-- Breadcrumb (navegacion) -->
-                    <ul class="breadcrumb">
-                        <li>
-                            <router-link to="/"><span
-                                class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
-                        </li>
-                        <li class="breadActive">
-                            <span>Usuarios</span>
-                        </li>
-                    </ul>
-                </div>
+    <div class="content-header">
+        <div class="container-fluid mb-5">
+            <!-- Breadcrumb (navegacion) -->
+            <div class="float-sm-right mr-5">
+                <ul class="breadcrumb">
+                    <!-- <li>
+                        <a href="/">Inicio</a>
+                    </li> -->
+                    <li>
+                        <a href="/usuario">Administración</a>
+                    </li>
+                    <li class="breadActive">
+                        <span>Usuario</span>
+                    </li>
+                </ul>
             </div>
         </div>
-
-        <div class="px-3 px-md-5 container-fluid">
-            <div class="mx-3 mt-5 mt-md-4">
-                <!--Todo el contenido principal de la vista irá dentro de este div-->
-                <div class="card-info pb-4">
-                    <div class="card-header d-flex align-items-center">
-                        <h3 class="card-title font-weight-bold">Usuarios</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="WIP()"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+        <div class="content container-fluid">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title"> Búsqueda de usuarios </h3>
+                            <div class="card-tools">
+                                <template v-if="listRolPermisosByUsuario.includes('usuario.crear')">
+                                    <router-link class="btn btn-flat btn-sm btn-nuevos" :to="{ name: 'usuario.crear' }"
+                                        style=" color : white !important ;">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-plus pr-2"></i> <span> Nuevo Usuario </span>
+                                        </div>
+                                    </router-link>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form role="form" class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6 pr-lg-5">
+                                        <div class="form-group col">
+                                            <label class="row col-form-label">Nombre</label>
+                                            <div class="row">
+                                                <vs-input type="text" placeholder="Nombre"
+                                                    v-model="fillBsqUsuario.cNombre" @keyup.enter="getListarUsuarios">
+                                                </vs-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
+                                        <div class="form-group col">
+                                            <label class="row col-form-label">Usuario</label>
+                                            <div class="row">
+                                                <vs-input type="text" placeholder="Usuario"
+                                                    v-model="fillBsqUsuario.cUsuario" @keyup.enter="getListarUsuarios">
+                                                </vs-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-lg-5">
+                                        <div class="form-group col">
+                                            <label class="row col-form-label">Correo Electronico</label>
+                                            <div class="row">
+                                                <vs-input type="text" placeholder="Correo Electrónico"
+                                                    v-model="fillBsqUsuario.cCorreo" @keyup.enter="getListarUsuarios">
+                                                </vs-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
+                                        <div class="form-group col">
+                                            <label class="row col-form-label">Estado</label>
+                                            <div class="row">
+                                                <vs-select v-model="fillBsqUsuario.cEstado"
+                                                    placeholder="Seleccione un estado">
+                                                    <vs-option v-for="item in listaEstados" :key="item.value"
+                                                        :label="item.label" :value="item.value"> {{ item.label }}
+                                                    </vs-option>
+                                                </vs-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="d-flex flex-wrap flex-sm-nowrap flex-row mb-4 btnResSize mx-auto">
+                            <vs-button color="rgb(175, 137, 9)" class=" mr-1" warn block
+                                @click.prevent="getListarUsuarios">
                                 <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
+                                    Buscar
+                                </b>
+                            </vs-button>
+                            <vs-button transparent dark block black @click.prevent="limpiarCriteriosBsq">
+                                <b>
+                                    Limpiar
                                 </b>
                             </vs-button>
                         </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                         <div class="tableStyles">
                             <template v-if="listarUsuariosPaginated.length">
                                 <vs-table>
-                                    <template #header>
-                                        <vs-input v-model="searchTable" border placeholder="Escribe la información a buscar"
-                                            class="inputSearchPreguntas" />
-                                    </template>
                                     <template #thead>
                                         <vs-tr>
                                             <vs-th>#</vs-th>
                                             <vs-th>Nombre</vs-th>
                                             <vs-th>Correo</vs-th>
                                             <vs-th>Usuario</vs-th>
-                                            <vs-th>Rol</vs-th>
                                             <vs-th>Estado</vs-th>
                                             <vs-th>Acciones</vs-th>
                                         </vs-tr>
                                     </template>
                                     <template #tbody>
-                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)"
+                                        <vs-tr v-for="(item, index) in $vs.getPage(listaUsuario, page, max)"
                                             :key="index">
                                             <vs-td style="width: 2%; text-align:center;" v-text="index + 1" />
                                             <vs-td style="" v-text="item.fullname" />
                                             <vs-td style="" v-text="item.email" />
                                             <vs-td style="" v-text="item.username" />
-                                            <vs-td style="" v-text="item.nombreRol" />
                                             <vs-td style="width: 7%">
                                                 <template v-if="item.state == 'A'">
                                                     <span style="font-size: 12px !important;"
@@ -97,11 +152,8 @@
                                                     </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.desactivar')">
-                                                        <!-- <button class="btn btn-flat btn-danger btn-sm"
-                                                            @click.prevent="setCambiarEstadoUsuario(1, item.id)"
-                                                            style=" color : white !important ;"> -->
                                                         <button class="btn btn-flat btn-danger btn-sm"
-                                                            @click.prevent="WIP()"
+                                                            @click.prevent="setCambiarEstadoUsuario(1, item.id)"
                                                             style=" color : white !important ;">
                                                             <i class="fas fa-solid fa-thumbs-down pr-1" />
                                                             Desactivar
@@ -110,14 +162,9 @@
                                                 </template>
                                                 <template v-else>
                                                     <template
-                                                        v-if="listRolPermisosByUsuario.includes('usuario.activar')">
-                                                        <!-- <button
+                                                        v-if="listRolPermisosByUsuario.includes('usuario.activar')"><button
                                                             class="btn btn-flat btn-success btn-sm"
                                                             @click.prevent="setCambiarEstadoUsuario(2, item.id)"
-                                                            style=" color : white !important ;"> -->
-                                                            <button
-                                                            class="btn btn-flat btn-success btn-sm"
-                                                            @click.prevent="WIP()"
                                                             style=" color : white !important ;">
                                                             <i class="fas fa-check pr-1" />Activar
                                                         </button>
@@ -146,16 +193,14 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 </template>
 
 <script>
-import methods from '../../../methods';
 export default {
     data() {
         return {
-            searchTable: '',
             page: 1,
             max: 10,
             fillBsqUsuario: {
@@ -176,10 +221,12 @@ export default {
                 '12345'
             ],
             listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'))
+
+
         }
     },
     mounted() {
-        this.getListarAllUsers();
+        this.getListarUsuarios();
     },
     computed: {
         pageCount() {
@@ -233,10 +280,22 @@ export default {
         limpiarBandejaUsuarios() {
             this.listaUsuario = [];
         },
-        getListarAllUsers() {
-            const loading = methods.loading( this.$vs );
-            let url = '/administracion/usuario/getListarAllUsers';
-            axios.get(url).then(response => {
+        getListarUsuarios() {
+            const loading = this.$vs.loading({
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
+            let url = '/administracion/usuario/getListarUsuarios';
+            axios.get(url, {
+                params: {
+                    'cNombre': this.fillBsqUsuario.cNombre,
+                    'cUsuario': this.fillBsqUsuario.cUsuario,
+                    'cCorreo': this.fillBsqUsuario.cCorreo,
+                    'cEstado': this.fillBsqUsuario.cEstado
+                }
+            }).then(response => {
                 this.inicializarPaginacion();
                 this.listaUsuario = response.data;
                 setTimeout(() => {
@@ -272,8 +331,7 @@ export default {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: ((op == 1) ? 'Si, desactivar' : 'Si, activar'),
-                reverseButtons: true,
+                confirmButtonText: ((op == 1) ? 'Si, desactivar' : 'Si, activar')
             }).then((result) => {
                 if (result.value) {
                     const loading = this.$vs.loading({
@@ -296,7 +354,7 @@ export default {
                                 timer: 1500
                             });
                         }, 0);
-                        this.getListarAllUsers();
+                        this.getListarUsuarios();
                     }).catch(error => {
                         if (error.response.status == 401) {
                             setTimeout(() => {
@@ -309,15 +367,7 @@ export default {
                     });
                 }
             });
-        },
-        WIP() {
-          const wip = this.$vs.notification({
-            square: true,
-            color: 'dark',
-            position: 'bottom-center',
-            title: '<span class="text-white">Función en progreso</span>'
-          });
-        },
+        }
     }
 }
 </script>
