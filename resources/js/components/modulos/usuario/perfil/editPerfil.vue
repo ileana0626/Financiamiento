@@ -30,19 +30,41 @@
                         <h3 class="card-title font-weight-bold">Editar perfil</h3>
                     </div>
                     <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                        <h6 class="px-2 py-2 font-weight-bold">Fotografía</h6>
                         <div class="row">
+                            <div class="col-12 col-xl-3 px-4 pb-3">
+                                <div class="d-flex overflow-auto flex-column center">
+                                    <div class="portrait-perfil bg-white" v-if="loadedFoto.rutaFP">
+                                        <img draggable="false" :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil" class="portrait-adjust" @error="errorIMG">
+                                    </div>
+                                    <div class="portrait-perfil bg-white" v-else>
+                                        <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil" class="portrait-adjust">
+                                    </div>
+                                    <span class="pt-3 text-center">
+                                        {{ loadedFoto.tag }}
+                                    </span>
+                                </div>                                
+                            </div>
                             <div class="col-12 col-xl-6 px-3 pb-3">
-                                <label class="col-form-label">Fotografía</label>
                                 <div class="d-flex justify-content-center overflow-auto pb-4">
-                                    <template v-if="fileComprobante.length === 0">
-                                        <el-upload class="upload-demo my-4" :class="fileComprobante.length > 0 ? 'd-none' : 'd-block'" drag
+                                    <template v-if="fileFoto.length === 0">
+                                        <el-upload class="upload-demo my-4" :class="fileFoto.length > 0 ? 'd-none' : 'd-block'" drag
                                         action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove"
-                                        :on-change="handleChange" :file-list="fileComprobante" :on-exceed="handleExceed" :auto-upload="false" accept=".jpg,.jpeg,.png"
+                                        :on-change="handleChange" :file-list="fileFoto" :on-exceed="handleExceed" :auto-upload="false" accept=".jpg,.jpeg,.png"
                                         :limit="1" ref="upload">
                                         <i class="fa fa-cloud-upload-alt"
                                             style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
                                         <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para seleccionar</em></div>
-                                        <div slot="tip" class="el-upload__tip">Solo imágenes tipo JPG, JPEG o PNG con un tamaño menor a 5MB</div>
+                                        <div slot="tip" class="el-upload__tip">
+                                            Solo imágenes tipo JPG, JPEG o PNG con un tamaño menor a 5MB
+                                            <transition name="error-slide">
+                                                <div class="danger-message" v-if="errorFoto.length > 0">
+                                                    <template>
+                                                        {{ errorFoto }}
+                                                    </template>
+                                                </div>
+                                            </transition>
+                                        </div>
                                         </el-upload>
                                     </template>
                                     <template v-else>
@@ -54,9 +76,9 @@
                                                     <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
                                                     <div class="d-flex flex-column filenameContainer">
                                                     <span class="errorDesc">Nombre</span>
-                                                    <el-tooltip class="item" effect="dark" :content="fileComprobante[0].name" placement="right">
+                                                    <el-tooltip class="item" effect="dark" :content="fileFoto[0].name" placement="right">
                                                         <div>
-                                                        <span class="fileNameClass errorDescDesc bold" style=""> {{ fileComprobante[0].name }} </span>
+                                                        <span class="fileNameClass errorDescDesc bold" style=""> {{ fileFoto[0].name }} </span>
                                                         </div>
                                                     </el-tooltip>
                                                     </div>
@@ -70,7 +92,6 @@
                                             </div>
                                         </div>
                                     </template>
-
                                 </div>
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
@@ -79,7 +100,7 @@
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
                                 </vs-button>       -->
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion1'+darkMode">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion1'+darkMode" @click.prevent="accionFoto()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Fotografía
                                     </div>
@@ -161,6 +182,42 @@
                                 </vs-button>                                
                             </div>
                         </div>
+                        <el-divider></el-divider>
+                        <h6 class="px-2 py-2 font-weight-bold">Actualizar contraseña</h6>
+                        <div class="row">
+                            <div class="col-12 col-xl-4 px-3 pb-3">
+                                <label class="col-form-label">Contraseña actual</label>
+                                <vs-input id="contrasenaActual" type="password" color="#C2B280" icon-after v-model="passActual"
+                                    placeholder="Escriba su contraseña actual" autocomplete="off">
+                                </vs-input>
+                            </div>
+                            <div class="col-12 row">
+                                <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                    <label class="col-form-label">Nueva contraseña</label>
+                                    <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="passNueva"
+                                        placeholder="Escriba la nueva contraseña" autocomplete="off">
+                                    </vs-input>
+                                </div>
+                                <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                    <label class="col-form-label">Confirmar contraseña</label>
+                                    <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="passConfirmar"
+                                        placeholder="Confirme la nueva contraseña" autocomplete="off">
+                                    </vs-input>
+                                </div>
+                            </div>
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarContrasena()">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                                    </div>
+                                </vs-button>      
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar contraseña
+                                    </div>
+                                </vs-button>                                
+                            </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -177,8 +234,17 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             
-            fileComprobante: [],
+            fileFoto: [],
+            loadedFoto: {
+                id_FP: null,
+                rutaFP: null,
+                tag: 'No se ha cargado una imagen',
+            },
+            errorFoto: '',
+            fotoProcede: false,
+
             og: window.location.origin + '/',
+            stamp: this.getLocalStamp(),
             
             datosPersonales: {
                 Nombre: '',
@@ -207,6 +273,11 @@ export default {
                     return time.getTime() > date;
                     },
                 },
+            
+                
+            passActual: '',
+            passNueva: '',
+            passConfirmar: '',
         }
     },
     created(){
@@ -242,6 +313,10 @@ export default {
                     this.datosPersonales.id_DP = datos.id_DP;
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento ? new Date(datos.fechaNacimiento + 'T00:00:00-05:00') : '';
                     this.datosPersonales.numCelular = datos.numCelular;
+                    
+                    this.loadedFoto.id_FP = datos.id_FP;
+                    this.loadedFoto.rutaFP = datos.rutaFP; 
+                    this.loadedFoto.tag = datos.rutaFP ? 'Imagen cargada' : 'No se ha cargado una imagen';;
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
@@ -283,15 +358,55 @@ export default {
                 load.close();
             }
         },
+        async setSubirFP() {
+            const url = "/archivos/setSubirFP";
+
+            let form = new FormData;
+            form.set('nId',this.id);
+            form.set('archivo', this.fileFoto[0]);
+            form.set('fActualizado', methods.getTimestamp());
+            form.set('idAuth', this.id);
+
+            const config = {headers: { 'Content-Type': 'multipart/form-data'}};
+            const load = methods.loading( this.$vs );
+
+            try {
+                const response = await axios.post(url, form, config);
+                if(response.status === 200){
+                    let fDatos = response.data[0];  
+                    
+                    this.stamp = this.getLocalStamp();
+                    this.loadedFoto.id_FP = fDatos.id_FP;
+                    this.loadedFoto.rutaFP = fDatos.rutaFP; 
+                    this.loadedFoto.tag = 'Imagen cargada'
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Fotografía actualizada correctamente',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'De acuerdo',
+                    }).then(async (result) => {
+                        // const load = methods.loading( this.$vs );                       
+                        this.fileFoto = [];
+                        // load.close();
+                    })
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3])
+            } finally {
+                load.close();
+            }
+        },        
         handlePreview(file) {
         },
         handleRemove(file, fileList) {
-            this.fileComprobante.splice(0, this.fileComprobante.length)
+            this.fileFoto.splice(0, this.fileFoto.length)
         },
         handleExceed(files, fileList) {
             Swal.fire({
                 icon: 'error',
-                title: 'Solo puede subir un documento como comprobante.',
+                title: 'Solo puede subir una imagen.',
                 showConfirmButton: true,
                 confirmButtonText: 'De acuerdo',
             });
@@ -314,14 +429,14 @@ export default {
                         confirmButtonText: 'De acuerdo',
                     });
 
-                    this.fileComprobante.splice(0, this.fileComprobante.length);
+                    this.fileFoto.splice(0, this.fileFoto.length);
 
                 } else {
-                    this.fileComprobante.push(file.raw);
+                    this.fileFoto.push(file.raw);
                 }
             }
             else {
-                this.fileComprobante.splice(0, this.fileComprobante.length);
+                this.fileFoto.splice(0, this.fileFoto.length);
                 Swal.fire({
                     icon: 'error',
                     html: '<div class="col">'+
@@ -436,6 +551,51 @@ export default {
             this.error.email = '';
             this.error.fechaNacimiento = '';
             this.error.numCelular = '';
+        },
+
+        accionFoto() {
+            this.limpiaErrorFoto();
+            this.validarFoto();
+            if(this.fotoProcede) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Desea actualizar su fotografía?',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Cancelar',
+                }).then(async (result) => {
+                    if(result.isConfirmed){
+                       await this.setSubirFP();
+                    }
+                });                 
+            }
+        },
+        validarFoto(){
+            this.fotoProcede = true;
+            if(this.fileFoto.length === 0){
+                this.errorFoto = 'No se ha cargado una fotografía';
+                this.fotoProcede = false;
+            }
+        },
+        limpiaErrorFoto(){
+            this.errorFoto = '';
+        },
+        getLocalStamp(){
+            return '?stamp=' + new Date().getTime();
+        },
+        
+        errorIMG(e) {
+          e.target.src = '/img/LOGO_NUEVO.png';
+          this.loadedFoto.tag = 'No se pudo cargar la imagen';
+        },
+
+        // metodos contraseña
+        limpiarContrasena(){
+            this.passActual = '';
+            this.passNueva = '';
+            this.passConfirmar = '';
         },
     }
 }
