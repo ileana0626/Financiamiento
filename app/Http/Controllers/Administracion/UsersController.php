@@ -621,4 +621,52 @@ class UsersController extends Controller
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+    public function setUpdatePass(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $pass = $request->pass;
+        $newPass = $request->newPass;
+        $confirmPass = $request->confirmPass;
+        
+        $newPass = ($newPass == NULL) ? '-1' : $newPass;
+        $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+
+        DB::beginTransaction();
+        try {
+            $raw = DB::table('users')
+                ->select('password')
+                ->where([['users.id','=',$nId]])
+                ->get();
+            $hash = $raw[0]->password;
+            
+            $newHash = '';
+            $rpta = '';
+
+            if(password_verify($pass,$hash)){
+                if($newPass === $confirmPass){
+                    //crear hash
+                    $newHash = password_hash($newPass, PASSWORD_DEFAULT, ['cost' => 10]);
+                    //actualizar la pass
+                    $rpta = DB::select('call sp_setUpdatePassById(?,?)',[
+                        $nId,
+                        $newHash
+                    ]);
+
+                } else {
+                    //lanza error si la nueva pass y su confirmacion no coinciden
+                    throw new \ErrorException("Error en nueva contraseña, verifique la nueva contraseña y vuelva a intentarlo.". 400);
+                }
+            } else {
+                throw new \ErrorException("Error en contraseña actual, verifique la contraseña y vuelva a intentarlo.". 400);
+            }
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+
+    }
 }

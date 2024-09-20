@@ -188,20 +188,71 @@
                             <div class="col-12 col-xl-4 px-3 pb-3">
                                 <label class="col-form-label">Contraseña actual</label>
                                 <vs-input id="contrasenaActual" type="password" color="#C2B280" icon-after v-model="passActual"
-                                    placeholder="Escriba su contraseña actual" autocomplete="off">
-                                </vs-input>
+                                    placeholder="Escriba su contraseña actual" autocomplete="off"
+                                        :visiblePassword="visiblePSWD.actual" 
+                                        :state="errorPSWD.actual ? 'danger' : ''"
+                                        @click-icon="visiblePSWD.actual = !visiblePSWD.actual">
+                                        <template #message-danger v-if="errorPSWD.actual.length > 0">
+                                            {{ errorPSWD.actual }}
+                                        </template>
+                                        <template #icon>
+                                            <span
+                                            v-if="!visiblePSWD.actual"
+                                            class="material-symbols-rounded"
+                                            >
+                                            visibility
+                                            </span>
+                                            <span v-else class="material-symbols-rounded">
+                                            visibility_off
+                                            </span>
+                                        </template>
+                                    </vs-input>
                             </div>
                             <div class="col-12 row">
                                 <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
                                     <label class="col-form-label">Nueva contraseña</label>
                                     <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="passNueva"
-                                        placeholder="Escriba la nueva contraseña" autocomplete="off">
+                                        placeholder="Escriba la nueva contraseña" autocomplete="off" 
+                                        :visiblePassword="visiblePSWD.nueva" 
+                                        :state="errorPSWD.nueva ? 'danger' : ''"
+                                        @click-icon="visiblePSWD.nueva = !visiblePSWD.nueva">
+                                        <template #message-danger v-if="errorPSWD.nueva.length > 0">
+                                            {{ errorPSWD.nueva }}
+                                        </template>
+                                        <template #icon>
+                                            <span
+                                            v-if="!visiblePSWD.nueva"
+                                            class="material-symbols-rounded"
+                                            >
+                                            visibility
+                                            </span>
+                                            <span v-else class="material-symbols-rounded">
+                                            visibility_off
+                                            </span>
+                                        </template>
                                     </vs-input>
                                 </div>
                                 <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
                                     <label class="col-form-label">Confirmar contraseña</label>
                                     <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="passConfirmar"
-                                        placeholder="Confirme la nueva contraseña" autocomplete="off">
+                                        placeholder="Confirme la nueva contraseña" autocomplete="off"
+                                        :visiblePassword="visiblePSWD.confirmar" 
+                                        :state="errorPSWD.confirmar ? 'danger' : ''"
+                                        @click-icon="visiblePSWD.confirmar = !visiblePSWD.confirmar">
+                                        <template #message-danger v-if="errorPSWD.confirmar.length > 0">
+                                            {{ errorPSWD.confirmar }}
+                                        </template>
+                                        <template #icon>
+                                            <span
+                                            v-if="!visiblePSWD.confirmar"
+                                            class="material-symbols-rounded"
+                                            >
+                                            visibility
+                                            </span>
+                                            <span v-else class="material-symbols-rounded">
+                                            visibility_off
+                                            </span>
+                                        </template>
                                     </vs-input>
                                 </div>
                             </div>
@@ -211,7 +262,7 @@
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
                                 </vs-button>      
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionPass()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar contraseña
                                     </div>
@@ -278,6 +329,18 @@ export default {
             passActual: '',
             passNueva: '',
             passConfirmar: '',
+            passProcede: false,
+
+            errorPSWD: {
+                actual: '',
+                nueva: '',
+                confirmar: '',
+            },
+            visiblePSWD:{
+                actual: false,
+                nueva: false,
+                confirmar: false,
+            }
         }
     },
     created(){
@@ -592,10 +655,86 @@ export default {
         },
 
         // metodos contraseña
+        validarPass(){
+            this.passProcede = true;
+            if(this.passActual === ''){
+                this.errorPSWD.actual = 'La contraseña actual no puede ir vacia';
+                this.passProcede = false;
+            }
+            if(this.passNueva === ''){
+                this.errorPSWD.nueva = 'La nueva contraseña no puede ir vacia';
+                this.passProcede = false;
+            }  else if(this.passNueva.length < 8){
+                this.errorPSWD.nueva = 'La contraseña debe tener al menos 8 caracteres';
+                this.passProcede = false;
+            } else if(this.passNueva !== this.passConfirmar){
+                this.errorPSWD.nueva = 'Las contraseñas no coinciden';
+                this.errorPSWD.confirmar = 'Las contraseñas no coinciden';
+                this.passProcede = false;
+            }
+            // if(this.passConfirmar === ''){
+            //     this.errorPSWD.confirmar = 'La confirmación de contraseña no puede ir vacia';
+            //     this.passProcede = false;
+            // }
+        },
+        limpiarErrorPass() {
+            this.errorPSWD.nueva = '';
+            this.errorPSWD.actual = '';
+            this.errorPSWD.confirmar = '';
+        },
         limpiarContrasena(){
             this.passActual = '';
             this.passNueva = '';
             this.passConfirmar = '';
+            this.limpiarErrorPass();
+        },
+        async accionPass() {
+            this.limpiarErrorPass();
+            this.validarPass();
+            if(this.passProcede){
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Desea actualizar su contraseña?',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Cancelar',
+                }).then(async (result) => {
+                    if(result.isConfirmed){
+                       await this.setUpdatePass();
+                    }
+                });                  
+            }
+
+        },
+        async setUpdatePass() {
+            const url = '/administracion/usuario/setUpdatePass'
+            const load = methods.loading( this.$vs );    
+            try {
+                const response = await axios.post(url,{
+                    'nId': this.id,
+                    'pass': this.passActual,
+                    'newPass': this.passNueva,
+                    'confirmPass': this.passConfirmar,
+                });
+                if(response.status === 200){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Contraseña actualizada correctamente',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'De acuerdo',
+                    }).then(async (result) => {                   
+                        this.limpiarContrasena();
+                    })
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3])
+            } finally {
+                load.close();
+            }
         },
     }
 }
