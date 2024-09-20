@@ -62,6 +62,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/archivos/setSubirFP','FileController@setSubirFP');
     Route::post('/administracion/usuario/setUpdatePass','Administracion\UsersController@setUpdatePass');
 
+    /**Usuarios */
+    Route::get('/administracion/usuario/getRoles','Administracion\UsersController@getRoles');
+    Route::get('/administracion/usuario/getDepartamentos','Administracion\UsersController@getDepartamentos');
+
 });
 
 Route::get('/{optional?}', function () {

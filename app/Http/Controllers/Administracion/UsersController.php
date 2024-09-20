@@ -683,6 +683,32 @@ class UsersController extends Controller
             DB::rollBack();
             throw new \Exception($e);
         }
+    }
+    public function getRoles(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        
+        $nIdRol = $request->nIdRol;
+        $nIdRol = ($nIdRol == NULL) ? 0 : $nIdRol;
 
+        try {
+            $rpta = DB::select('call sp_getRoles(?)',[
+                $nIdRol
+            ]);
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function getDepartamentos(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_getDepartamentos');
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
     }
 }

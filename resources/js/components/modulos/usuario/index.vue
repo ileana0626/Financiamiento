@@ -238,9 +238,30 @@
                             </template>
                         </vs-input>
                     </div>
-                    <div class="col-12 col-lg-4 px-3 pb-3 d-none d-lg-flex">
-                    </div> 
-                    <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Confirmar Contraseña</label>
+                        <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswdConfirmar"
+                            placeholder="Escriba la nueva contraseña" autocomplete="off"
+                            :visiblePassword="visiblePSWD.confirmar" 
+                            :state="error.pswdConfirmar ? 'danger' : ''"
+                            @click-icon="visiblePSWD.confirmar = !visiblePSWD.confirmar">
+                            <template #message-danger v-if="error.pswd.length > 0">
+                                {{ error.pswd }}
+                            </template>
+                            <template #icon>
+                                <span
+                                v-if="!visiblePSWD.confirmar"
+                                class="material-symbols-rounded"
+                                >
+                                visibility
+                                </span>
+                                <span v-else class="material-symbols-rounded">
+                                visibility_off
+                                </span>
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-6 px-3 pb-3">
                         <label class="col-form-label">Rol</label>
                         <vs-select filter
                             :placeholder="'Seleccione un rol para el usuario'"
@@ -249,14 +270,14 @@
                                 {{ error.rol }}
                             </template>
                             <vs-option v-for="(item, index) in cat_rol" :key="index" :label="item.nombre"
-                                :value="item.id">
+                                :value="item.idRol">
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>                        
                     </div>
-                    <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                    <div class="col-12 col-lg-6 px-3 pb-3">
                         <label class="col-form-label">Departamento</label>
-                        <vs-select filter
+                        <vs-select filter :key="cat_DPTO.length"
                             :placeholder="'Seleccione un departamento para el usuario'"
                             v-model="datosUsuario.dpto" v-if="cat_DPTO.length > 0" autocomplete="off">
                             <template #message-danger v-if="error.dpto.length > 0">
@@ -289,6 +310,7 @@ import methods from '../../../methods';
 export default {
     data() {
         return {
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
             searchTable: '',
             page: 1,
             max: 10,
@@ -320,6 +342,7 @@ export default {
                 email: '',
                 username: '',
                 pswd: '',
+                pswdConfirmar: '',
                 rol: '',
                 dpto: '',
             },
@@ -331,25 +354,25 @@ export default {
                 email: '',
                 username: '',
                 pswd: '',
+                pswdConfirmar: '',
                 rol: '',
                 dpto: '',
             }, 
             visiblePSWD:{
                 nueva: false,
+                confirmar: false,
             },
         
-            cat_rol:[
-                {id: 1, nombre: 'Rol 1'},
-                {id: 2, nombre: 'Rol 2'},
-            ],
-            cat_DPTO:[
-                {id: 1, nombre: 'DPTO 1'},
-                {id: 2, nombre: 'DPTO 2'},
-            ]
+            cat_rol:[],
+            cat_DPTO:[],
         }
     },
-    mounted() {
-        this.getListarAllUsers();
+    async mounted() {
+        const load = methods.loading( this.$vs );
+        await this.getListarAllUsers();
+        await this.getRoles();
+        await this.getDepartamentos();
+        load.close();
     },
     computed: {
         pageCount() {
@@ -403,25 +426,18 @@ export default {
         limpiarBandejaUsuarios() {
             this.listaUsuario = [];
         },
-        getListarAllUsers() {
-            const loading = methods.loading( this.$vs );
+        async getListarAllUsers() {
             let url = '/administracion/usuario/getListarAllUsers';
-            axios.get(url).then(response => {
-                this.inicializarPaginacion();
-                this.listaUsuario = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0)
-            }).catch(error => {
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0)
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.inicializarPaginacion();
+                    this.listaUsuario = response.data;
                 }
-            });
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
         },
         nextPage() {
             this.pageNumber++;
@@ -519,6 +535,34 @@ export default {
             this.datosUsuario.email = '';
             this.datosUsuario.rol = '';
             this.datosUsuario.dpto = '';
+        },
+        async getRoles() {
+            let url = '/administracion/usuario/getRoles';
+            try {
+                const response = await axios.get(url,{
+                    params: {
+                        'nIdRol': this.rolUsuario
+                    }
+                });
+                if(response.status === 200){
+                    this.cat_rol = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
+        },
+        async getDepartamentos() {
+            let url = '/administracion/usuario/getDepartamentos';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.cat_DPTO = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
         },
     }
 }
