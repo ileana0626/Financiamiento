@@ -217,28 +217,107 @@
                                     </template>
                                 </vs-td>
                                 <vs-td class="d-flex align-items-center justify-content-center">
-                                    <template v-if="listaPermisos.includes('solicitudes.archivo')">
-                                        <el-tooltip class="item h-100" effect="dark" content="Cargar contestación"
-                                            placement="top" v-if="tr.rutaContestacion == null">
-                                            <vs-button id="logoutBtn" icon danger size="large"
-                                                @click.prevent="modalSubirArchivo(tr.id)">
-                                                <span class="material-symbols-rounded" style="color: white !important;">
-                                                    upload_file
-                                                </span>
-                                            </vs-button>
-                                        </el-tooltip>
+                                    <template v-if="idDepartamento == 0">
+                                        <template v-if="tr.idTipo == 3">
+                                            <template v-for="( de, i ) in tr.departamentosNoEnterados">
+                                                <template v-if="tr.NoEnterados == 0 && de == 0 && tr.estatus != 'CONCLUIDO'">
+                                                    <template v-if="de == idDepartamento">
+                                                        <el-tooltip class="item h-100" effect="dark"
+                                                            content="Todos Enterados" placement="top">
+                                                            <vs-button id="logoutBtn" icon color="rgb(58,197,55)"
+                                                                size="large"
+                                                                @click.prevent="todosEnteradoConcluido(tr.id)">
+                                                                <span class="material-symbols-rounded"
+                                                                    style="color: white !important;">
+                                                                    thumb_up
+                                                                </span>
+                                                            </vs-button>
+                                                        </el-tooltip>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <template v-if="listaPermisos.includes('solicitudes.archivo')">
+                                                <el-tooltip class="item h-100" effect="dark"
+                                                    content="Cargar contestación" placement="top"
+                                                    v-if="tr.rutaContestacion == null">
+                                                    <vs-button id="logoutBtn" icon danger size="large"
+                                                        @click.prevent="modalSubirArchivo(tr.id)">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: white !important;">
+                                                            upload_file
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template v-if="listaPermisos.includes('editar.solicitud')">
+                                                <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm "
+                                                        @click.prevent=""
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            edit
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                        </template>
                                     </template>
-                                    <template v-if="listaPermisos.includes('editar.solicitud')">
-                                        <el-tooltip class="item h-100" effect="dark" content="Editar" placement="top">
-                                            <vs-button class="btn btn-flat btn-sm "
-                                                @click.prevent="setCambiarEstadoPublicacion(1, tr.id)"
-                                                style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                                <span class="material-symbols-rounded"
-                                                    style="color: var(--text-color);">
-                                                    edit
-                                                </span>
-                                            </vs-button>
-                                        </el-tooltip>
+                                    <template v-else>
+                                        <template v-if="tr.idTipo == 3">
+                                            <template v-for="( de, i ) in tr.departamentosNoEnterados">
+                                                <template v-if="de == idDepartamento">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Enterado"
+                                                        placement="top">
+                                                        <vs-button id="logoutBtn" icon danger size="large"
+                                                            @click.prevent="CopiaEnterado(tr.id)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: white !important;">
+                                                                thumb_up
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </template>
+                                            </template>
+                                            <template v-for="( dee, i ) in tr.departamentosEnterados">
+                                                <template v-if="dee == idDepartamento">
+                                                    <br><br>
+                                                    <span class="badge rounded-pill"
+                                                        style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">ENTERADO</span>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <template v-if="listaPermisos.includes('solicitudes.archivo')">
+                                                <el-tooltip class="item h-100" effect="dark"
+                                                    content="Cargar contestación" placement="top"
+                                                    v-if="tr.rutaContestacion == null">
+                                                    <vs-button id="logoutBtn" icon danger size="large"
+                                                        @click.prevent="modalSubirArchivo(tr.id)">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: white !important;">
+                                                            upload_file
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template v-if="listaPermisos.includes('editar.solicitud')">
+                                                <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm "
+                                                        @click.prevent=""
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            edit
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                        </template>
                                     </template>
                                 </vs-td>
                             </vs-tr>
@@ -253,7 +332,7 @@
                         </template>
                     </vs-table>
                 </div>
-                <vs-dialog  not-padding v-model="active">
+                <vs-dialog not-padding v-model="active">
                     <center>
                         <object :data="archivoRuta" type="application/pdf" width="900rem" height="900rem">
                             <iframe :src="archivoRuta" width="900rem" height="900rem" style="border: none;">
@@ -331,9 +410,12 @@ export default {
                 F1: "",
             },
             errorF1: 0,
+            idDepartamento: ''
         }
     },
     created() {
+        this.idDepartamento = JSON.parse(sessionStorage.getItem('idDepartamento'))
+        this.listaPermisos = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'))
         const loading = this.$vs.loading({
             type: 'square',
             color: '#00a19a',
@@ -344,7 +426,7 @@ export default {
         this.checkCrear(loading);
     },
     mounted() {
-        this.listaPermisos = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
+
     },
     methods: {
         checkCrear(loading) {
@@ -356,7 +438,7 @@ export default {
 
             axios.get(url, {
                 params: {
-                    'tipo': 1
+                    'tipo': this.idDepartamento
                 }
             }).then((response) => {
                 this.listSolicitudes = response.data;
@@ -390,12 +472,19 @@ export default {
                     'seguimiento': x.seguimiento,
                     'areaAsignada': x.areaAsignada,
                     'tipo': x.tipo,
+                    'idTipo': x.idtipo,
                     'fechaAsignacion': x.fechaAsignacion,
                     'estatus': x.estatus,
                     'archivo': x.RUTA,
-                    'rutaContestacion': x.rutaContestacion
+                    'rutaContestacion': x.rutaContestacion,
+                    'departamentosNoEnterados': x.departamentosNoEnterados.split(','),
+                    'departamentosEnterados': x.departamentosEnterados.split(','),
+                    'Enterados': JSON.parse(x.Enterados),
+                    'NoEnterados': JSON.parse(x.NoEnterados)
                 })
             })
+
+
         },
         handleF1(file, fileList) {
             this.documentos.F1 = this.handleChange(file, fileList);
@@ -487,6 +576,60 @@ export default {
 
             return idArchivo;
         },
+        CopiaEnterado(id) {
+            let url = '/administracion/usuario/CopiaEnterado'
+            const loading = this.$vs.loading({
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
+
+            axios.post(url, {
+                'solicitud': id,
+                'departamento': this.idDepartamento
+            }).then((response) => {
+                loading.close();
+                this.getSolicitudes(loading);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Se a registrado el enterado correctamente',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch((error) => {
+                loading.close();
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        },
+        todosEnteradoConcluido(id) {
+            let url = '/administracion/usuario/todosEnteradoConcluido'
+            const loading = this.$vs.loading({
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
+
+            axios.post(url, {
+                'estatus': 4,
+                'solicitud': id
+            }).then((response) => {
+                loading.close();
+                this.getSolicitudes(loading);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Se a concluido correctamnete ',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch((error) => {
+                loading.close();
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        }
     }
 }
 </script>

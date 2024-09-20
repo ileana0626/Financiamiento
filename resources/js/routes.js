@@ -7,6 +7,7 @@ import Captura from "./components/modulos/captura/registro.vue";
 import listaSolicitudes from "./components/modulos/ver/versolicitudes.vue";
 import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
+import Cumplea from "./components/modulos/cumpleaños/index.vue";
 
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
 import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
@@ -92,6 +93,7 @@ export default new Router({
         { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/perfil/:id', name: 'perfil.index',props: true, component: Perfil, beforeEnter:async (to, from, next)=>{await verificarUsuarioAutenticado(to, from, next); }},
         { path: '/perfil/editar/:id', name: 'perfil.editar', props:true, component: EditPerfil, beforeEnter: async (to, from, next) => {await verificarUsuarioAutenticado( to, from, next); }},
+        { path: '/birthday', name: 'birthday.index', component: Cumplea },
         { path: '*', component: Error404 }
 
     ],
