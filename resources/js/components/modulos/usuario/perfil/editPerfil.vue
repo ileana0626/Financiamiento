@@ -30,7 +30,7 @@
                         <h3 class="card-title font-weight-bold">Editar perfil</h3>
                     </div>
                     <div class="card-body container-fluid" style="background-color: var(--iee-white);">
-                        <h6 class="px-3 py-2 font-weight-bold">Fotografía</h6>
+                        <h6 class="px-2 py-2 font-weight-bold">Fotografía</h6>
                         <div class="row">
                             <div class="col-12 col-xl-3 px-4 pb-3">
                                 <div class="d-flex overflow-auto flex-column center">
@@ -38,7 +38,7 @@
                                         <img draggable="false" :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil" class="portrait-adjust" @error="errorIMG">
                                     </div>
                                     <div class="portrait-perfil bg-white" v-else>
-                                        <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
+                                        <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil" class="portrait-adjust">
                                     </div>
                                     <span class="pt-3 text-center">
                                         {{ loadedFoto.tag }}
@@ -182,6 +182,42 @@
                                 </vs-button>                                
                             </div>
                         </div>
+                        <el-divider></el-divider>
+                        <h6 class="px-2 py-2 font-weight-bold">Actualizar contraseña</h6>
+                        <div class="row">
+                            <div class="col-12 col-xl-4 px-3 pb-3">
+                                <label class="col-form-label">Contraseña actual</label>
+                                <vs-input id="contrasenaActual" type="password" color="#C2B280" icon-after v-model="passActual"
+                                    placeholder="Escriba su contraseña actual" autocomplete="off">
+                                </vs-input>
+                            </div>
+                            <div class="col-12 row">
+                                <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                    <label class="col-form-label">Nueva contraseña</label>
+                                    <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="passNueva"
+                                        placeholder="Escriba la nueva contraseña" autocomplete="off">
+                                    </vs-input>
+                                </div>
+                                <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                    <label class="col-form-label">Confirmar contraseña</label>
+                                    <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="passConfirmar"
+                                        placeholder="Confirme la nueva contraseña" autocomplete="off">
+                                    </vs-input>
+                                </div>
+                            </div>
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarContrasena()">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                                    </div>
+                                </vs-button>      
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar contraseña
+                                    </div>
+                                </vs-button>                                
+                            </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -237,6 +273,11 @@ export default {
                     return time.getTime() > date;
                     },
                 },
+            
+                
+            passActual: '',
+            passNueva: '',
+            passConfirmar: '',
         }
     },
     created(){
@@ -275,7 +316,7 @@ export default {
                     
                     this.loadedFoto.id_FP = datos.id_FP;
                     this.loadedFoto.rutaFP = datos.rutaFP; 
-                    this.loadedFoto.tag = 'Imagen cargada';
+                    this.loadedFoto.tag = datos.rutaFP ? 'Imagen cargada' : 'No se ha cargado una imagen';;
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
@@ -337,7 +378,7 @@ export default {
                     this.stamp = this.getLocalStamp();
                     this.loadedFoto.id_FP = fDatos.id_FP;
                     this.loadedFoto.rutaFP = fDatos.rutaFP; 
-                    this.loadedFoto.tag = 'Imagen cargada';
+                    this.loadedFoto.tag = 'Imagen cargada'
                     Swal.fire({
                         icon: 'success',
                         title: 'Fotografía actualizada correctamente',
@@ -548,6 +589,13 @@ export default {
         errorIMG(e) {
           e.target.src = '/img/LOGO_NUEVO.png';
           this.loadedFoto.tag = 'No se pudo cargar la imagen';
+        },
+
+        // metodos contraseña
+        limpiarContrasena(){
+            this.passActual = '';
+            this.passNueva = '';
+            this.passConfirmar = '';
         },
     }
 }

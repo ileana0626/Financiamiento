@@ -22,10 +22,13 @@
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
                 <div class="card cardRounded py-3 px-3 px-md-5" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow-lg'" :key="'c1' + darkMode">
                     <div class="row pb-4 d-flex justify-content-center justify-content-lg-start mb-3">
-                        <div class="col-12 col-lg-6 col-xl-4 row justify-content-center mb-lg-0 rounded-soft p-3 iee-white">
+                        <div class="col-12 col-lg-6 col-xl-4 row justify-content-center mb-lg-0 rounded-soft p-3">
                             <div class="col-12 d-flex justify-content-center pb-2">
-                                <div class="portrait-perfil bg-white">
-                                    <img src="/img/user_default.svg" alt="Foto de perfil" class="portrait-adjust">
+                                <div class="portrait-perfil bg-white" v-if="loadedFoto.rutaFP">
+                                    <img draggable="false" :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil" class="portrait-adjust" @error="errorIMG">
+                                </div>
+                                <div class="portrait-perfil bg-white" v-else>
+                                    <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil" class="portrait-adjust">
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-center pb-2">
@@ -87,48 +90,7 @@
                             </div>
                         </vs-button>
                     </div>
-                </div>
-                <div class="row pt-4">
-                    <div class="col-12 col-md-6 card-info">
-                        <div class="card-header d-flex">
-                            <h3 class="card-title font-weight-bold">Actualizar contraseña</h3>
-                        </div>
-                        <div class="card-body container-fluid" style="background-color: var(--iee-white);">
-                            <div class="row">
-                                <div class="col-12 col-xl-10 px-3 pb-3">
-                                    <label class="col-form-label">Contraseña actual</label>
-                                    <vs-input id="contrasenaActual" type="password" color="#C2B280" icon-after v-model="passActual"
-                                        placeholder="Escriba su contraseña actual" autocomplete="off">
-                                    </vs-input>
-                                </div>
-                                <div class="col-12 col-xl-6 px-3 pb-3">
-                                    <label class="col-form-label">Nueva contraseña</label>
-                                    <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="passNueva"
-                                        placeholder="Escriba la nueva contraseña" autocomplete="off">
-                                    </vs-input>
-                                </div>
-                                <div class="col-12 col-xl-6 px-3 pb-3">
-                                    <label class="col-form-label">Confirmar contraseña</label>
-                                    <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="passConfirmar"
-                                        placeholder="Confirme la nueva contraseña" autocomplete="off">
-                                    </vs-input>
-                                </div>
-                                <div class="col-12 px-3 d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarContrasena()">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                        </div>
-                                    </vs-button>      
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar
-                                        </div>
-                                    </vs-button>                                
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>            
+                </div>           
             </div>
         </div>
     </div>
@@ -142,9 +104,8 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
 
-            passActual: '',
-            passNueva: '',
-            passConfirmar: '',
+            og: window.location.origin + '/',
+            stamp: this.getLocalStamp(),
             
             datosPersonales: {
                 Nombre: '',
@@ -156,6 +117,10 @@ export default {
                 numCelular: 'No disponible',
                 edad: 'No disponible',
                 rol: 'No disponible'
+            },
+            loadedFoto: {
+                id_FP: null,
+                rutaFP: null,
             },
         }
     },
@@ -195,11 +160,6 @@ export default {
         editRedirect(){
             this.$router.push(`/perfil/editar/${this.id}`);
         },
-        limpiarContrasena(){
-            this.passActual = '';
-            this.passNueva = '';
-            this.passConfirmar = '';
-        },
         async getDatosPersonalesById() {
             const url = '/administracion/usuario/getDatosPersonalesById';
 
@@ -220,11 +180,20 @@ export default {
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento;
                     this.datosPersonales.numCelular = (datos.numCelular) ? datos.numCelular : 'No disponible';
                     this.datosPersonales.rol = datos.rol;
+                    
+                    this.loadedFoto.id_FP = datos.id_FP;
+                    this.loadedFoto.rutaFP = datos.rutaFP; 
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
             }
+        },
+        errorIMG(e) {
+          e.target.src = '/img/LOGO_NUEVO.png';
+        },
+        getLocalStamp(){
+            return '?stamp=' + new Date().getTime();
         },
     }
 }
