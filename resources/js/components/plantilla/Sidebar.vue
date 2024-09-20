@@ -21,13 +21,13 @@
                 </vs-sidebar-item>
             </template>
             <template>
-                <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
                     to="/consultaErrorcodes">
                     <template #icon>
                         <i class="fa fa-search"></i>
                     </template>
                     Consulta de Errores
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
                 <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" 
                 id="solicitudes.captura" to="/captura">
                     <template #icon>
@@ -72,6 +72,15 @@
                         </span>
                     </template>
                     Mi Perfil
+                </vs-sidebar-item>
+
+                <vs-sidebar-item  id="birthday.index" to="/birthday">
+                    <template #icon>
+                        <span class="material-symbols-rounded">
+                            featured_seasonal_and_gifts
+                        </span>
+                    </template>
+                    Cumpleaños
                 </vs-sidebar-item>
 
                 <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')"  id="admin.preferencias" to="/preferenciasInterfaz">

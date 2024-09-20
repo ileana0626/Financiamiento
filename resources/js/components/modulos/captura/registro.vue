@@ -257,6 +257,19 @@
 
                     </div>
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3">
+                        <label class="col-form-label">Seguimiento</label>
+                        <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
+                            v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
+                            <template #message-danger v-if="errorSeguimiento.length > 0" >
+                                {{ errorSeguimiento }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
+                                :value="item.idSeguimiento" >
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3">
                         <label class="col-form-label">Copias de Conocimiento</label>
                         <vs-select multiple filter
                             :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
@@ -407,6 +420,7 @@ export default {
     },
     methods: {
         bloqueardatos() {
+            this.limpiarErrores()
             if (this.tipo == 3) {
                 this.bloqueo = true
                 this.termino = ''
@@ -420,6 +434,7 @@ export default {
             } else {
                 this.bloqueo = false
                 this.copiasConocimiento = ''
+                this.seguimiento = ''
             }
         },
         limpiartermino() {
@@ -664,6 +679,10 @@ export default {
                 this.errorAsunto = 'Escriba el asunto'
             }
             if (this.tipo == 3) {
+                if (this.seguimiento.length == 0) {
+                    this.error = 1
+                    this.errorSeguimiento = 'Seleccione una opción'
+                }
                 if (this.copiasConocimiento.length == 0) {
                     this.error = 1
                     this.errorCopiasConocimiento = 'Seleccione aquien va la copia de conocimiento'
@@ -707,14 +726,14 @@ export default {
                 }
             }
         },
-        guardarCopiasConocimiento(id,loading) {
+        guardarCopiasConocimiento(id, loading) {
             let url = '/administracion/usuario/guardarCopiasConocimiento'
             axios.post(url, {
                 'idSolicitud': id,
                 'departamentos': this.copiasConocimiento,
                 'estatus': 'N'
             }).then(response => {
-                
+
                 loading.close();
                 Swal.fire({
                     icon: 'success',

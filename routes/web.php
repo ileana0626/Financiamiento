@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/usuario/getFechasPeriodos', 'Administracion\UsersController@getFechasPeriodos');
     /*****Lista de Solicitudes*****/
     Route::get('/administracion/usuario/getSolicitudes', 'Administracion\UsersController@getSolicitudes');
+    Route::post('/administracion/usuario/CopiaEnterado', 'Administracion\UsersController@CopiaEnterado');
+    Route::post('/administracion/usuario/todosEnteradoConcluido', 'Administracion\UsersController@todosEnteradoConcluido');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');
@@ -41,6 +43,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/usuario/desactivar', 'Administracion\UsersController@desactivar');
     /*****CAMBIAR ESTATUS SOLICITUD*****/ 
     Route::post('/administracion/usuario/archivoContestacion', 'Administracion\UsersController@archivoContestacion');
+
+    /****CUMPLEAÑOS****/
+    Route::get('/administracion/usuario/getbirthday', 'Administracion\UsersController@getbirthday');
+    Route::post('/administracion/usuario/guardarBirthday', 'Administracion\UsersController@guardarBirthday');
+    Route::post('/administracion/usuario/EditarBirthday', 'Administracion\UsersController@EditarBirthday');
 
     /*****SUBIR ARCHIVO *****/
     Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');

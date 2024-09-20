@@ -227,8 +227,11 @@ class UsersController extends Controller
     {
         if (!$request->ajax())  return redirect('/');
 
+        $tipo = $request->tipo;
+        $tipo = ($tipo == NULL) ? 0 : $tipo;
+
         try {
-            $rpta = DB::select('call sp_listarSolicitudes( )');
+            $rpta = DB::select('call sp_listarSolicitudes( ? )', [ $tipo ]);
 
             return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {
@@ -505,5 +508,117 @@ class UsersController extends Controller
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
         }
 
+    }
+
+    public function CopiaEnterado(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $solicitud = $request->solicitud;
+        $departamento = $request->departamento;
+
+        $solicitud = ($solicitud == NULL) ? 0 : $solicitud;
+        $departamento = ($departamento == NULL) ? 0 : $departamento;
+
+        try {
+            $rpta = DB::select('call sp_Copia_Enterado( ?, ? )', [  $solicitud, $departamento]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function todosEnteradoConcluido(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $estatus = $request->estatus;
+        $solicitud = $request->solicitud;
+
+        $estatus = ($estatus == NULL) ? 0 : $estatus;
+        $solicitud = ($solicitud == NULL) ? 0 : $solicitud;
+
+        try {
+            $rpta = DB::select('call sp_Actualizar_Estatus_Solicitud( ?, ? )', [  $estatus, $solicitud]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function getbirthday(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        
+        try {
+            $rpta = DB::select('call sp_listado_birthday');
+        
+            return $rpta;
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function guardarBirthday(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+            $tipo = $request->tipo;
+            $id = $request->id;
+            $nombre = $request->nombre;
+            $adscripcion = $request->adscripcion;
+            $mes = $request->mes;
+            $dia = $request->dia;
+
+            $tipo = ( $tipo == NULL ) ? 0 : $tipo;
+            $id = ( $id == NULL ) ? 0 : $id;
+            $nombre = ( $nombre == NULL ) ? '': $nombre;
+            $adscripcion = ( $adscripcion == NULL ) ? 0 : $adscripcion;
+            $mes = ( $mes == NULL ) ? 0 : $mes;
+            $dia = ( $dia == NULL ) ? 0 : $dia;
+        
+        try {
+            $rpta = DB::select('call sp_birthday_acciones( ?, ?, ?, ?, ?, ?)', [$tipo,$adscripcion,$nombre,$dia,$mes,$id]);
+        
+            return $rpta;
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function EditarBirthday(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+            $tipo = $request->tipo;
+            $id = $request->id;
+            $nombre = $request->nombre;
+            $adscripcion = $request->adscripcion;
+            $mes = $request->mes;
+            $dia = $request->dia;
+
+            $tipo = ( $tipo == NULL ) ? 0 : $tipo;
+            $id = ( $id == NULL ) ? 0 : $id;
+            $nombre = ( $nombre == NULL ) ? '': $nombre;
+            $adscripcion = ( $adscripcion == NULL ) ? 0 : $adscripcion;
+            $mes = ( $mes == NULL ) ? 0 : $mes;
+            $dia = ( $dia == NULL ) ? 0 : $dia;
+        
+        try {
+            $rpta = DB::select('call sp_birthday_acciones( ?, ?, ?, ?, ?, ?)', [$tipo,$adscripcion,$nombre,$dia,$mes,$id]);
+        
+            return $rpta;
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
     }
 }
