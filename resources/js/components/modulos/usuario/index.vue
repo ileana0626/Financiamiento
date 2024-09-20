@@ -24,7 +24,7 @@
                     <div class="card-header d-flex align-items-center">
                         <h3 class="card-title font-weight-bold">Usuarios</h3>
                         <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="WIP()"
+                            <vs-button @click.prevent="showModalRegistrar = !showModalRegistrar"
                                 style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
                                 <b>
                                     <span class="material-symbols-rounded v-align-icon-bc"> add </span>
@@ -63,10 +63,10 @@
                                             <vs-td style="width: 7%">
                                                 <template v-if="item.state == 'A'">
                                                     <span style="font-size: 12px !important;"
-                                                        class="badge badge-success" v-text="item.state_alias"></span>
+                                                        class="badge bg-success" v-text="item.state_alias"></span>
                                                 </template>
                                                 <template v-else>
-                                                    <span style="font-size: 12px !important;" class="badge badge-danger"
+                                                    <span style="font-size: 12px !important;" class="badge bg-danger"
                                                         v-text="item.state_alias"></span>
                                                 </template>
                                             </vs-td>
@@ -100,12 +100,16 @@
                                                         <!-- <button class="btn btn-flat btn-danger btn-sm"
                                                             @click.prevent="setCambiarEstadoUsuario(1, item.id)"
                                                             style=" color : white !important ;"> -->
-                                                        <button class="btn btn-flat btn-danger btn-sm"
-                                                            @click.prevent="WIP()"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-solid fa-thumbs-down pr-1" />
-                                                            Desactivar
-                                                        </button>
+                                                        <el-tooltip placement="top">
+                                                            <button class="btn btn-flat btn-danger btn-sm p-2"
+                                                                @click.prevent="WIP()"
+                                                                style=" color : white !important ;">
+                                                                <i class="fas fa-solid fa-thumbs-down" />
+                                                            </button>
+                                                            <div slot="content">
+                                                                Desactivar usuario
+                                                            </div>
+                                                        </el-tooltip>
                                                     </template>
                                                 </template>
                                                 <template v-else>
@@ -115,12 +119,16 @@
                                                             class="btn btn-flat btn-success btn-sm"
                                                             @click.prevent="setCambiarEstadoUsuario(2, item.id)"
                                                             style=" color : white !important ;"> -->
-                                                            <button
-                                                            class="btn btn-flat btn-success btn-sm"
-                                                            @click.prevent="WIP()"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-check pr-1" />Activar
-                                                        </button>
+                                                        <el-tooltip placement="top">
+                                                            <button class="btn btn-flat btn-success btn-sm p-2"
+                                                                @click.prevent="WIP()"
+                                                                style=" color : white !important ;">
+                                                                <i class="fas fa-check" />
+                                                            </button>
+                                                            <div slot="content">
+                                                                Activar usuario
+                                                            </div>
+                                                        </el-tooltip>
                                                     </template>
                                                 </template>
                                             </vs-td>
@@ -146,7 +154,133 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>   
+        <vs-dialog blur v-model="showModalRegistrar" id="registrarUser" auto-width prevent-close>
+            <template #header>
+                <div class="col text-center">
+                    <div>
+                        <br>
+                        <h4 class="not-margin">
+                            <b>Registrar nuevo usuario</b>
+                        </h4>
+                    </div>
+                </div>
+            </template>
+            <div class="con-form">
+                <div class="row overflow-auto">
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Nombre(s)</label>
+                        <vs-input id="Nombres" type="text" color="#C2B280" icon-after v-model="datosUsuario.Nombre" @input="inputNombr('nombre')"
+                            placeholder="Nombre(s)" autocomplete="off" :state="error.Nombre ? 'danger': ''">
+                            <template #message-danger v-if="error.Nombre.length > 0">
+                                {{ error.Nombre }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Primer Apellido</label>
+                        <vs-input id="Apaterno" type="text" color="#C2B280" icon-after v-model="datosUsuario.Apaterno" @input="inputNombr('app')"
+                            placeholder="Primer Apellido" autocomplete="off" :state="error.Apaterno ? 'danger': ''">
+                            <template #message-danger v-if="error.Apaterno.length > 0">
+                                {{ error.Apaterno }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Segundo Apellido</label>
+                        <vs-input id="Amaterno" type="text" color="#C2B280" icon-after v-model="datosUsuario.Amaterno" @input="inputNombr('apm')"
+                            placeholder="Segundo Apellido" autocomplete="off" :state="error.Amaterno ? 'danger' : ''">
+                            <template #message-danger v-if="error.Amaterno.length > 0">
+                                {{ error.Amaterno }}
+                            </template>
+                        </vs-input>
+                    </div>  
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Correo electrónico</label>
+                        <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosUsuario.email"
+                            placeholder="Correo electrónico" autocomplete="off" :state="error.email ? 'danger' : ''">
+                            <template #message-danger v-if="error.email.length > 0">
+                                {{ error.email }}
+                            </template>
+                        </vs-input>
+                    </div> 
+                    <div class="col-12 col-lg-8 px-3 pb-3 d-none d-lg-flex">
+                    </div> 
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Usuario</label>
+                        <vs-input id="username" type="text" color="#C2B280" icon-after v-model="datosUsuario.username"
+                            placeholder="Nombre de usuario" autocomplete="off" :state="error.username ? 'danger' : ''">
+                            <template #message-danger v-if="error.username.length > 0">
+                                {{ error.username }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Contraseña</label>
+                        <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswd"
+                            placeholder="Escriba la nueva contraseña" autocomplete="off"
+                            :visiblePassword="visiblePSWD.nueva" 
+                            :state="error.pswd ? 'danger' : ''"
+                            @click-icon="visiblePSWD.nueva = !visiblePSWD.nueva">
+                            <template #message-danger v-if="error.pswd.length > 0">
+                                {{ error.pswd }}
+                            </template>
+                            <template #icon>
+                                <span
+                                v-if="!visiblePSWD.nueva"
+                                class="material-symbols-rounded"
+                                >
+                                visibility
+                                </span>
+                                <span v-else class="material-symbols-rounded">
+                                visibility_off
+                                </span>
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3 d-none d-lg-flex">
+                    </div> 
+                    <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                        <label class="col-form-label">Rol</label>
+                        <vs-select filter
+                            :placeholder="'Seleccione un rol para el usuario'"
+                            v-model="datosUsuario.rol" v-if="cat_rol.length > 0" autocomplete="off">
+                            <template #message-danger v-if="error.rol.length > 0">
+                                {{ error.rol }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_rol" :key="index" :label="item.nombre"
+                                :value="item.id">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>                        
+                    </div>
+                    <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                        <label class="col-form-label">Departamento</label>
+                        <vs-select filter
+                            :placeholder="'Seleccione un departamento para el usuario'"
+                            v-model="datosUsuario.dpto" v-if="cat_DPTO.length > 0" autocomplete="off">
+                            <template #message-danger v-if="error.dpto.length > 0">
+                                {{ error.dpto }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_DPTO" :key="index" :label="item.nombre"
+                                :value="item.id">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>                        
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <div class="footer-dialog">
+                    <div class="center">
+                        <vs-button style="background-color: var(--iee-black) !important; font-weight: 700;" id="pwdb"
+                            @click.prevent="WIP()">
+                            Registrar usuario
+                        </vs-button>
+                    </div>
+                </div>
+            </template>
+        </vs-dialog>     
     </div>
 </template>
 
@@ -175,7 +309,43 @@ export default {
             contrasena: [
                 '12345'
             ],
-            listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'))
+            listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario')),
+
+            showModalRegistrar: false,
+
+            datosUsuario: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: '',
+                username: '',
+                pswd: '',
+                rol: '',
+                dpto: '',
+            },
+            procede: false,
+            error: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: '',
+                username: '',
+                pswd: '',
+                rol: '',
+                dpto: '',
+            }, 
+            visiblePSWD:{
+                nueva: false,
+            },
+        
+            cat_rol:[
+                {id: 1, nombre: 'Rol 1'},
+                {id: 2, nombre: 'Rol 2'},
+            ],
+            cat_DPTO:[
+                {id: 1, nombre: 'DPTO 1'},
+                {id: 2, nombre: 'DPTO 2'},
+            ]
         }
     },
     mounted() {
@@ -317,6 +487,38 @@ export default {
             position: 'bottom-center',
             title: '<span class="text-white">Función en progreso</span>'
           });
+        },
+        // Funciones registrar usuario
+        inputNombr( cadena ){
+            let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
+            let temp = '';
+            switch (cadena){
+                case 'nombre':
+                    temp = this.datosUsuario.Nombre;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Nombre = temp.replace(regex,'');
+                    break;
+                case 'app':
+                    temp = this.datosUsuario.Apaterno;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Apaterno = temp.replace(regex,'');
+                    break;
+                case 'apm':
+                    temp = this.datosUsuario.Amaterno;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Amaterno = temp.replace(regex,'');
+                    break;
+            }
+        },     
+        limpiarFormRegistro() {
+            this.datosUsuario.Nombre = '';
+            this.datosUsuario.Apaterno = '';
+            this.datosUsuario.Amaterno = '';
+            this.datosUsuario.username = '';
+            this.datosUsuario.pswd = '';
+            this.datosUsuario.email = '';
+            this.datosUsuario.rol = '';
+            this.datosUsuario.dpto = '';
         },
     }
 }
