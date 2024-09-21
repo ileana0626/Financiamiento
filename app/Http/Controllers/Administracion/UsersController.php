@@ -711,4 +711,49 @@ class UsersController extends Controller
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function setRegistrarUser(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $cNombre = $request->cNombre;
+        $cApaterno = $request->cApaterno;
+        $cAmaterno = $request->cAmaterno;
+        $cUser = $request->cUser;
+        $pswd = $request->pswd;
+        $cEmail = $request->cEmail;
+        $nIdDPTO = $request->nIdDPTO;
+        $nIdRol = $request->nIdRol;
+        $fRegistro = $request->fRegistro;
+
+        $cAmaterno = ($cAmaterno == NULL) ? '' : $cAmaterno;
+        $fRegistro = ($fRegistro == NULL) ? date('Y-m-d h:m:s') : $fRegistro;
+
+        DB::beginTransaction();
+        try {
+            $userCheck = DB::select('call sp_Usuario_checkUsername(?)',[
+                $cUser
+            ]);
+            if(sizeof($userCheck) > 0){
+                throw new \ErrorException("Error: Usuario ya registrado; Escriba un nuevo usuario y vuelva a intentarlo.". 400);
+            }
+
+            $newHash = password_hash($pswd, PASSWORD_DEFAULT, ['cost' => 10]);
+
+            $rpta = DB::select('call sp_Usuario_setRegistrarUser(?,?,?,?,?,?,?,?,?)',[
+                $cNombre,
+                $cApaterno,
+                $cAmaterno,
+                $cUser,
+                $newHash,
+                $cEmail,
+                $nIdDPTO,
+                $nIdRol,
+                $fRegistro,
+            ]);
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }
 }
