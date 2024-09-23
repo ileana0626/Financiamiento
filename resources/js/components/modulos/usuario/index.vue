@@ -97,12 +97,9 @@
                                                     </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.desactivar')">
-                                                        <!-- <button class="btn btn-flat btn-danger btn-sm"
-                                                            @click.prevent="setCambiarEstadoUsuario(1, item.id)"
-                                                            style=" color : white !important ;"> -->
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-danger btn-sm p-2"
-                                                                @click.prevent="WIP()"
+                                                                @click.prevent="accionCambiarEstado(1, item.id)"
                                                                 style=" color : white !important ;">
                                                                 <i class="fas fa-solid fa-thumbs-down" />
                                                             </button>
@@ -115,13 +112,9 @@
                                                 <template v-else>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.activar')">
-                                                        <!-- <button
-                                                            class="btn btn-flat btn-success btn-sm"
-                                                            @click.prevent="setCambiarEstadoUsuario(2, item.id)"
-                                                            style=" color : white !important ;"> -->
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-success btn-sm p-2"
-                                                                @click.prevent="WIP()"
+                                                                @click.prevent="accionCambiarEstado(2, item.id)"
                                                                 style=" color : white !important ;">
                                                                 <i class="fas fa-check" />
                                                             </button>
@@ -470,7 +463,8 @@ export default {
         inicializarPaginacion() {
             this.pageNumber = 0;
         },
-        setCambiarEstadoUsuario(op, id) {
+        accionCambiarEstado(op, id){
+            const refId = id;
             Swal.fire({
                 title: '¿Está seguro de ' + ((op == 1) ? 'desactivar' : 'activar') + ' el usuario?',
                 icon: 'warning',
@@ -479,41 +473,37 @@ export default {
                 cancelButtonColor: '#d33',
                 confirmButtonText: ((op == 1) ? 'Si, desactivar' : 'Si, activar'),
                 reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {
-                    const loading = this.$vs.loading({
-                        type: 'square',
-                        color: '#00a19a',
-                        background: '#FFFFFF',
-                        text: 'Cargando...'
-                    });
-                    let url = '/administracion/usuario/setCambiarEstadoUsuario';
-                    axios.post(url, {
-                        'nIdUsuario': id,
-                        'cEstado': (op == 1) ? 'I' : 'A'
-                    }).then(response => {
-                        setTimeout(() => {
-                            loading.close();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Se ' + ((op == 1) ? 'desactivo' : 'activo') + ' el usuario',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }, 0);
-                        this.getListarAllUsers();
-                    }).catch(error => {
-                        if (error.response.status == 401) {
-                            setTimeout(() => {
-                                loading.close();
-                            }, 0)
-                            sessionStorage.clear();
-                            this.$router.push({ name: 'login' });
-                            location.reload();
-                        }
+            }).then(async (result) => {
+                if(result.isConfirmed){
+                    console.log(refId);
+                    await this.setCambiarEstadoById(op, refId);
+                }
+            })
+        },
+        async setCambiarEstadoById(op, id) {
+            let url = '/administracion/usuario/setCambiarEstadoById';
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.post(url,{
+                    'user_id': id,
+                    'estado': (op == 1) ? 'INACTIVO' : 'ACTIVO'
+                });
+                if(response.status === 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Se ' + ((op == 1) ? 'desactivo' : 'activo') + ' el usuario',
+                        showConfirmButton: false,
+                    }).then(async result => {
+                        this.listaUsuario = [];
+                        await this.getListarAllUsers();
                     });
                 }
-            });
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error,method[3]);
+            } finally {
+                load.close();
+            }
         },
         WIP() {
           const wip = this.$vs.notification({
