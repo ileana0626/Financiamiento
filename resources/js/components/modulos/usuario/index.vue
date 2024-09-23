@@ -55,11 +55,11 @@
                                     <template #tbody>
                                         <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)"
                                             :key="index">
-                                            <vs-td style="width: 2%; text-align:center;" v-text="index + 1" />
-                                            <vs-td style="" v-text="item.fullname" />
-                                            <vs-td style="" v-text="item.email" />
-                                            <vs-td style="" v-text="item.username" />
-                                            <vs-td style="" v-text="item.nombreRol" />
+                                            <vs-td style="width: 2%; text-align:center;" ><div v-text="index + 1"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.fullname"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.email"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.username"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.nombreRol"></div></vs-td>
                                             <vs-td style="width: 7%">
                                                 <template v-if="item.state == 'A'">
                                                     <span style="font-size: 12px !important;"
@@ -167,7 +167,7 @@
                 </div>
             </template>
             <div class="con-form">
-                <div class="row overflow-auto">
+                <div class="row overflow-hidden">
                     <div class="col-12 col-lg-4 px-3 pb-3">
                         <label class="col-form-label">Nombre(s)</label>
                         <vs-input id="Nombres" type="text" color="#C2B280" icon-after v-model="datosUsuario.Nombre" @input="inputNombr('nombre')"
@@ -197,28 +197,30 @@
                     </div>  
                     <div class="col-12 col-lg-4 px-3 pb-3">
                         <label class="col-form-label">Correo electrónico</label>
-                        <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosUsuario.email"
+                        <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosUsuario.email" :key="'em'+error.email.length"
                             placeholder="Correo electrónico" autocomplete="off" :state="error.email ? 'danger' : ''">
                             <template #message-danger v-if="error.email.length > 0">
                                 {{ error.email }}
                             </template>
                         </vs-input>
                     </div> 
-                    <div class="col-12 col-lg-8 px-3 pb-3 d-none d-lg-flex">
-                    </div> 
                     <div class="col-12 col-lg-4 px-3 pb-3">
                         <label class="col-form-label">Usuario</label>
-                        <vs-input id="username" type="text" color="#C2B280" icon-after v-model="datosUsuario.username"
-                            placeholder="Nombre de usuario" autocomplete="off" :state="error.username ? 'danger' : ''">
+                        <vs-input id="username" type="text" color="#C2B280" icon-after v-model="datosUsuario.username" @input="inputUsername()"
+                            placeholder="Nombre de usuario" autocomplete="off" :state="error.username ? 'danger' : ''" :key="'user' +error.username.length">
                             <template #message-danger v-if="error.username.length > 0">
                                 {{ error.username }}
                             </template>
                         </vs-input>
                     </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3 d-none d-lg-flex">
+                    </div> 
                     <div class="col-12 col-lg-4 px-3 pb-3">
-                        <label class="col-form-label">Contraseña</label>
+                        <label class="col-form-label" :title="passLabel">
+                            Contraseña
+                        </label>
                         <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswd"
-                            placeholder="Escriba la nueva contraseña" autocomplete="off"
+                            placeholder="Escriba la nueva contraseña" autocomplete="off" :key="'ps'+error.pswd.length"
                             :visiblePassword="visiblePSWD.nueva" 
                             :state="error.pswd ? 'danger' : ''"
                             @click-icon="visiblePSWD.nueva = !visiblePSWD.nueva">
@@ -241,7 +243,7 @@
                     <div class="col-12 col-lg-4 px-3 pb-3">
                         <label class="col-form-label">Confirmar Contraseña</label>
                         <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswdConfirmar"
-                            placeholder="Escriba la nueva contraseña" autocomplete="off"
+                            placeholder="Escriba la nueva contraseña" autocomplete="off" :key="'psc'+error.pswd.length"
                             :visiblePassword="visiblePSWD.confirmar" 
                             :state="error.pswdConfirmar ? 'danger' : ''"
                             @click-icon="visiblePSWD.confirmar = !visiblePSWD.confirmar">
@@ -263,7 +265,7 @@
                     </div>
                     <div class="col-12 col-lg-6 px-3 pb-3">
                         <label class="col-form-label">Rol</label>
-                        <vs-select filter
+                        <vs-select filter :state="error.rol.length > 0 ? 'danger': ''"
                             :placeholder="'Seleccione un rol para el usuario'"
                             v-model="datosUsuario.rol" v-if="cat_rol.length > 0" autocomplete="off">
                             <template #message-danger v-if="error.rol.length > 0">
@@ -277,7 +279,7 @@
                     </div>
                     <div class="col-12 col-lg-6 px-3 pb-3">
                         <label class="col-form-label">Departamento</label>
-                        <vs-select filter :key="cat_DPTO.length"
+                        <vs-select filter :key="cat_DPTO.length" :state="error.dpto.length ? 'danger': ''"
                             :placeholder="'Seleccione un departamento para el usuario'"
                             v-model="datosUsuario.dpto" v-if="cat_DPTO.length > 0" autocomplete="off">
                             <template #message-danger v-if="error.dpto.length > 0">
@@ -295,7 +297,7 @@
                 <div class="footer-dialog">
                     <div class="center">
                         <vs-button style="background-color: var(--iee-black) !important; font-weight: 700;" id="pwdb"
-                            @click.prevent="WIP()">
+                            @click.prevent="accionRegistrar()">
                             Registrar usuario
                         </vs-button>
                     </div>
@@ -365,6 +367,7 @@ export default {
         
             cat_rol:[],
             cat_DPTO:[],
+            passLabel: `Caracteres especiales permitidos: @#$!%*?&-_.,'="`
         }
     },
     async mounted() {
@@ -396,7 +399,13 @@ export default {
                 count++;
             }
             return pageArray;
-        }
+        },
+        validEmail() {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.datosUsuario.email);
+        },
+        validPSWD() {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&\-_.,'="])[A-Za-z\d@#$!%*?&\-_.,'="]{8,}$/.test(this.datosUsuario.pswd);
+        },
     },
     methods: {
         generarContrasenas() {
@@ -505,6 +514,10 @@ export default {
           });
         },
         // Funciones registrar usuario
+        accionRegistrar() {
+            this.limpiaErrorRegistro();
+            this.validarRegistroUser();
+        },
         inputNombr( cadena ){
             let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
             let temp = '';
@@ -525,7 +538,13 @@ export default {
                     this.datosUsuario.Amaterno = temp.replace(regex,'');
                     break;
             }
-        },     
+        }, 
+        inputUsername(){
+            let regex =  /[^a-zA-Z0-9\-_]/;
+            let temp = this.datosUsuario.username;
+            if(temp.length > 16) temp = temp.substring(0,16);
+            this.datosUsuario.username = temp.replace(regex,'');
+        }, 
         limpiarFormRegistro() {
             this.datosUsuario.Nombre = '';
             this.datosUsuario.Apaterno = '';
@@ -535,6 +554,60 @@ export default {
             this.datosUsuario.email = '';
             this.datosUsuario.rol = '';
             this.datosUsuario.dpto = '';
+        },
+        validarRegistroUser() {
+            this.procede = true;
+            if(this.datosUsuario.Nombre === ''){
+                this.procede = false;
+                this.error.Nombre = 'El nombre es obligatorio';
+            }
+            if(this.datosUsuario.Apaterno === ''){
+                this.procede = false;
+                this.error.Apaterno = 'El primer apellido es obligatorio';
+            }
+            if(this.datosUsuario.email === ''){
+                this.procede = false;
+                this.error.email = 'El correo electrónico es obligatorio';
+            } else if( !this.validEmail ){
+                this.procede = false;
+                this.error.email = 'El correo electrónico no tiene un formato valido';
+            }
+            if(this.datosUsuario.username === ''){
+                this.procede = false;
+                this.error.username = 'El nombre de usuario es obligatorio';
+            } else if( this.datosUsuario.username.length < 8){
+                this.procede = false;
+                this.error.username = 'El usuario debe contener al menos 8 caracteres';
+            }
+            if(this.datosUsuario.pswd === ''){
+                this.procede = false;
+                this.error.pswd = 'La contraseña es obligatoria';
+            } else if(!this.validPSWD){
+                this.procede = false;
+                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayuscula, un número y un caracter especial';
+            } else if(this.datosUsuario.pswd !== this.datosUsuario.pswdConfirmar) {
+                this.procede = false;
+                this.error.pswd = 'Las contraseñas no coinciden';
+                this.error.pswdConfirmar = 'Las contraseñas no coinciden';
+            }
+            if( this.datosUsuario.rol === ''){
+                this.procede = false;
+                this.error.rol = 'El rol es obligatorio';
+            }
+            if( this.datosUsuario.dpto === ''){
+                this.procede = false;
+                this.error.dpto = 'El departamento es obligatorio';
+            }
+        },
+        limpiaErrorRegistro() {
+            this.error.Nombre = '';
+            this.error.Apaterno = '';
+            this.error.email = '';
+            this.error.username = '';
+            this.error.pswd = '';
+            this.error.pswdConfirmar = '';
+            this.error.rol = '';
+            this.error.dpto = '';
         },
         async getRoles() {
             let url = '/administracion/usuario/getRoles';
@@ -567,7 +640,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scope>
 .card-body {
     background-color: #fff !important;
 }
