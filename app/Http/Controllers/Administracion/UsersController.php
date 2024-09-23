@@ -717,9 +717,10 @@ class UsersController extends Controller
         $cNombre = $request->cNombre;
         $cApaterno = $request->cApaterno;
         $cAmaterno = $request->cAmaterno;
+        $cEmail = $request->cEmail;
         $cUser = $request->cUser;
         $pswd = $request->pswd;
-        $cEmail = $request->cEmail;
+        $pswdConfirmar = $request->pswdConfirmar;
         $nIdDPTO = $request->nIdDPTO;
         $nIdRol = $request->nIdRol;
         $fRegistro = $request->fRegistro;
@@ -733,7 +734,7 @@ class UsersController extends Controller
                 $cUser
             ]);
             if(sizeof($userCheck) > 0){
-                throw new \ErrorException("Error: Usuario ya registrado; Escriba un nuevo usuario y vuelva a intentarlo.". 400);
+                throw new \ErrorException("Usuario ya registrado; Escriba un nuevo usuario y vuelva a intentarlo.". 400);
             }
 
             $newHash = password_hash($pswd, PASSWORD_DEFAULT, ['cost' => 10]);

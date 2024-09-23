@@ -23,7 +23,7 @@
                 <div class="card-info pb-4">
                     <div class="card-header d-flex align-items-center">
                         <h3 class="card-title font-weight-bold">Usuarios</h3>
-                        <div class="col card-tools d-flex justify-content-end">
+                        <div class="col card-tools d-flex justify-content-end" >
                             <vs-button @click.prevent="showModalRegistrar = !showModalRegistrar"
                                 style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
                                 <b>
@@ -243,7 +243,7 @@
                     <div class="col-12 col-lg-4 px-3 pb-3">
                         <label class="col-form-label">Confirmar Contraseña</label>
                         <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswdConfirmar"
-                            placeholder="Escriba la nueva contraseña" autocomplete="off" :key="'psc'+error.pswd.length"
+                            placeholder="Confirme la nueva contraseña" autocomplete="off" :key="'psc'+error.pswd.length"
                             :visiblePassword="visiblePSWD.confirmar" 
                             :state="error.pswdConfirmar ? 'danger' : ''"
                             @click-icon="visiblePSWD.confirmar = !visiblePSWD.confirmar">
@@ -295,11 +295,17 @@
             </div>
             <template #footer>
                 <div class="footer-dialog">
-                    <div class="center">
-                        <vs-button style="background-color: var(--iee-black) !important; font-weight: 700;" id="pwdb"
-                            @click.prevent="accionRegistrar()">
-                            Registrar usuario
-                        </vs-button>
+                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarFormRegistro()">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                            </div>
+                        </vs-button>      
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionRegistrar()">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Registrar usuario
+                            </div>
+                        </vs-button>                                
                     </div>
                 </div>
             </template>
@@ -312,6 +318,7 @@ import methods from '../../../methods';
 export default {
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
             searchTable: '',
             page: 1,
@@ -369,6 +376,9 @@ export default {
             cat_DPTO:[],
             passLabel: `Caracteres especiales permitidos: @#$!%*?&-_.,'="`
         }
+    },
+    created(){
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
     },
     async mounted() {
         const load = methods.loading( this.$vs );
@@ -517,6 +527,62 @@ export default {
         accionRegistrar() {
             this.limpiaErrorRegistro();
             this.validarRegistroUser();
+            if(this.procede){
+                Swal.fire({
+                icon: 'warning',
+                title: '¿Desea registrar al nuevo usuario?',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                // cancelButtonColor: 'transparent',
+                cancelButtonText: "Cancelar",
+                confirmButtonText: 'Registrar',
+                reverseButtons: true,
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await this.setRegistrarUser();
+                    }
+                })                
+            }
+        },
+        async setRegistrarUser() {
+            const url = '/administracion/usuario/setRegistrarUser';
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.post(url,{
+                    'cNombre': this.datosUsuario.Nombre,
+                    'cApaterno': this.datosUsuario.Apaterno,
+                    'cAmaterno': this.datosUsuario.Amaterno,
+                    'cEmail': this.datosUsuario.email,
+                    'cUser': this.datosUsuario.username,
+                    'pswd': this.datosUsuario.pswd,
+                    'pswdConfirmar': this.datosUsuario.pswdConfirmar,
+                    'nIdDPTO': this.datosUsuario.dpto,
+                    'nIdRol': this.datosUsuario.rol,
+                    'fRegistro': methods.getTimestamp(),                  
+                }); 
+                if(response.status === 200){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Usuario registrado con exito',
+                        confirmButtonColor: '#3085d6',
+                        // cancelButtonColor: 'transparent',
+                        confirmButtonText: 'De acuerdo',
+                        reverseButtons: true,
+                    }).then(async (result) => {
+                        const load = methods.loading( this.$vs );
+                        this.listaUsuario = [];
+                        await this.getListarAllUsers();
+                        this.showModalRegistrar = false;
+                        this.limpiarFormRegistro();
+                        load.close();
+                    })                     
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error,method[3]);
+            } finally {
+                load.close();
+            }
         },
         inputNombr( cadena ){
             let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
@@ -551,9 +617,12 @@ export default {
             this.datosUsuario.Amaterno = '';
             this.datosUsuario.username = '';
             this.datosUsuario.pswd = '';
+            this.datosUsuario.pswdConfirmar = '';
             this.datosUsuario.email = '';
             this.datosUsuario.rol = '';
             this.datosUsuario.dpto = '';
+            
+            this.limpiaErrorRegistro();
         },
         validarRegistroUser() {
             this.procede = true;
