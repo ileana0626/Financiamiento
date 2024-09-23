@@ -85,6 +85,15 @@ Consulta de Errores
                     Cumpleaños
                 </vs-sidebar-item>
 
+                <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')"  id="admin.usuarios" to="/usuarios">
+                    <template #icon>
+                        <span class="material-symbols-rounded">
+                            list
+                        </span>
+                    </template>
+                    Usuarios
+                </vs-sidebar-item>
+
                 <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')" id="admin.preferencias"
                     to="/preferenciasInterfaz">
                     <template #icon>

@@ -22,6 +22,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/administracion/usuario/getListarRolPermisosByUsuario', 'Administracion\UsersController@getListarRolPermisosByUsuario');
+    Route::get('/administracion/usuario/getListarAllUsers', 'Administracion\UsersController@getListarAllUsers');
     Route::get('/administracion/usuario/getUsuario', 'Administracion\UsersController@getUsuario');
     Route::get('/administracion/usuario/consultarRolUsuario', 'Administracion\UsersController@consultarRolUsuario');
 
@@ -59,6 +60,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/usuario/getDatosPersonalesById','Administracion\UsersController@getDatosPersonalesById');
     Route::post('/administracion/usuario/setDatosPersonalesFormById', 'Administracion\UsersController@setDatosPersonalesFormById');
     Route::post('/archivos/setSubirFP','FileController@setSubirFP');
+    Route::post('/administracion/usuario/setUpdatePass','Administracion\UsersController@setUpdatePass');
+
+    /**Usuarios */
+    Route::get('/administracion/usuario/getRoles','Administracion\UsersController@getRoles');
+    Route::get('/administracion/usuario/getDepartamentos','Administracion\UsersController@getDepartamentos');
+    Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');
 
 });
 

@@ -148,6 +148,22 @@ class UsersController extends Controller
             DB::rollBack();
         }
     }
+    public function getListarAllUsers(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $nidusuario =  Auth::id();
+
+        try {
+            $rpta =  DB::select('call sp_Usuario_getListarAllUsers');
+
+            return $rpta;
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 
     public function getUsuario(Request $request)
     {
@@ -619,6 +635,126 @@ class UsersController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             $errorCode = $e->errorInfo[1];
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function setUpdatePass(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $pass = $request->pass;
+        $newPass = $request->newPass;
+        $confirmPass = $request->confirmPass;
+        
+        $newPass = ($newPass == NULL) ? '-1' : $newPass;
+        $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+
+        DB::beginTransaction();
+        try {
+            $raw = DB::table('users')
+                ->select('password')
+                ->where([['users.id','=',$nId]])
+                ->get();
+            $hash = $raw[0]->password;
+            
+            $newHash = '';
+            $rpta = '';
+
+            if(password_verify($pass,$hash)){
+                if($newPass === $confirmPass){
+                    //crear hash
+                    $newHash = password_hash($newPass, PASSWORD_DEFAULT, ['cost' => 10]);
+                    //actualizar la pass
+                    $rpta = DB::select('call sp_setUpdatePassById(?,?)',[
+                        $nId,
+                        $newHash
+                    ]);
+
+                } else {
+                    //lanza error si la nueva pass y su confirmacion no coinciden
+                    throw new \ErrorException("Error en nueva contraseña, verifique la nueva contraseña y vuelva a intentarlo.". 400);
+                }
+            } else {
+                throw new \ErrorException("Error en contraseña actual, verifique la contraseña y vuelva a intentarlo.". 400);
+            }
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }
+    public function getRoles(Request $request){
+        if (!$request->ajax()) return redirect('/');
+        
+        $nIdRol = $request->nIdRol;
+        $nIdRol = ($nIdRol == NULL) ? 0 : $nIdRol;
+
+        try {
+            $rpta = DB::select('call sp_getRoles(?)',[
+                $nIdRol
+            ]);
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function getDepartamentos(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_getDepartamentos');
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function setRegistrarUser(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $cNombre = $request->cNombre;
+        $cApaterno = $request->cApaterno;
+        $cAmaterno = $request->cAmaterno;
+        $cEmail = $request->cEmail;
+        $cUser = $request->cUser;
+        $pswd = $request->pswd;
+        $pswdConfirmar = $request->pswdConfirmar;
+        $nIdDPTO = $request->nIdDPTO;
+        $nIdRol = $request->nIdRol;
+        $fRegistro = $request->fRegistro;
+
+        $cAmaterno = ($cAmaterno == NULL) ? '' : $cAmaterno;
+        $fRegistro = ($fRegistro == NULL) ? date('Y-m-d h:m:s') : $fRegistro;
+
+        DB::beginTransaction();
+        try {
+            $userCheck = DB::select('call sp_Usuario_checkUsername(?)',[
+                $cUser
+            ]);
+            if(sizeof($userCheck) > 0){
+                throw new \ErrorException("Usuario ya registrado; Escriba un nuevo usuario y vuelva a intentarlo.". 400);
+            }
+
+            $newHash = password_hash($pswd, PASSWORD_DEFAULT, ['cost' => 10]);
+
+            $rpta = DB::select('call sp_Usuario_setRegistrarUser(?,?,?,?,?,?,?,?,?)',[
+                $cNombre,
+                $cApaterno,
+                $cAmaterno,
+                $cUser,
+                $newHash,
+                $cEmail,
+                $nIdDPTO,
+                $nIdRol,
+                $fRegistro,
+            ]);
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
         }
     }
 }

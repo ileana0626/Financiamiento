@@ -1,127 +1,72 @@
 <template>
-    <div class="content-header">
-        <div class="container-fluid mb-5">
-            <!-- Breadcrumb (navegacion) -->
-            <div class="float-sm-right mr-5">
-                <ul class="breadcrumb">
-                    <!-- <li>
-                        <a href="/">Inicio</a>
-                    </li> -->
-                    <li>
-                        <a href="/usuario">Administración</a>
-                    </li>
-                    <li class="breadActive">
-                        <span>Usuario</span>
-                    </li>
-                </ul>
+    <div class="">
+        <div class="content-header">
+            <div class="container-fluid mb-md-3 pl-4 pl-md-3 pt-0">
+                <div class="float-sm-right mr-5">
+                    <!-- Breadcrumb (navegacion) -->
+                    <ul class="breadcrumb">
+                        <li>
+                            <router-link to="/"><span
+                                class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
+                        </li>
+                        <li class="breadActive">
+                            <span>Usuarios</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="content container-fluid">
-            <div class="card-body">
-                <div class="container-fluid">
-                    <div class="card card-info">
-                        <div class="card-header">
-                            <h3 class="card-title"> Búsqueda de usuarios </h3>
-                            <div class="card-tools">
-                                <template v-if="listRolPermisosByUsuario.includes('usuario.crear')">
-                                    <router-link class="btn btn-flat btn-sm btn-nuevos" :to="{ name: 'usuario.crear' }"
-                                        style=" color : white !important ;">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-plus pr-2"></i> <span> Nuevo Usuario </span>
-                                        </div>
-                                    </router-link>
-                                </template>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <form role="form" class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-6 pr-lg-5">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Nombre</label>
-                                            <div class="row">
-                                                <vs-input type="text" placeholder="Nombre"
-                                                    v-model="fillBsqUsuario.cNombre" @keyup.enter="getListarUsuairos">
-                                                </vs-input>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Usuario</label>
-                                            <div class="row">
-                                                <vs-input type="text" placeholder="Usuario"
-                                                    v-model="fillBsqUsuario.cUsuario" @keyup.enter="getListarUsuairos">
-                                                </vs-input>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 pr-lg-5">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Correo Electronico</label>
-                                            <div class="row">
-                                                <vs-input type="text" placeholder="Correo Electrónico"
-                                                    v-model="fillBsqUsuario.cCorreo" @keyup.enter="getListarUsuairos">
-                                                </vs-input>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Estado</label>
-                                            <div class="row">
-                                                <vs-select v-model="fillBsqUsuario.cEstado"
-                                                    placeholder="Seleccione un estado">
-                                                    <vs-option v-for="item in listaEstados" :key="item.value"
-                                                        :label="item.label" :value="item.value"> {{ item.label }}
-                                                    </vs-option>
-                                                </vs-select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="d-flex flex-wrap flex-sm-nowrap flex-row mb-4 btnResSize mx-auto">
-                            <vs-button color="rgb(175, 137, 9)" class=" mr-1" warn block
-                                @click.prevent="getListarUsuairos">
+
+        <div class="px-3 px-md-5 container-fluid">
+            <div class="mx-3 mt-5 mt-md-4">
+                <!--Todo el contenido principal de la vista irá dentro de este div-->
+                <div class="card-info pb-4">
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="card-title font-weight-bold">Usuarios</h3>
+                        <div class="col card-tools d-flex justify-content-end" >
+                            <vs-button @click.prevent="showModalRegistrar = !showModalRegistrar"
+                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
                                 <b>
-                                    Buscar
-                                </b>
-                            </vs-button>
-                            <vs-button transparent dark block black @click.prevent="limpiarCriteriosBsq">
-                                <b>
-                                    Limpiar
+                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                    Agregar
                                 </b>
                             </vs-button>
                         </div>
+                    </div>
+                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                         <div class="tableStyles">
                             <template v-if="listarUsuariosPaginated.length">
                                 <vs-table>
+                                    <template #header>
+                                        <vs-input v-model="searchTable" border placeholder="Escribe la información a buscar"
+                                            class="inputSearchPreguntas" />
+                                    </template>
                                     <template #thead>
                                         <vs-tr>
                                             <vs-th>#</vs-th>
                                             <vs-th>Nombre</vs-th>
                                             <vs-th>Correo</vs-th>
                                             <vs-th>Usuario</vs-th>
+                                            <vs-th>Rol</vs-th>
                                             <vs-th>Estado</vs-th>
                                             <vs-th>Acciones</vs-th>
                                         </vs-tr>
                                     </template>
                                     <template #tbody>
-                                        <vs-tr v-for="(item, index) in $vs.getPage(listaUsuario, page, max)"
+                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)"
                                             :key="index">
-                                            <vs-td style="width: 2%; text-align:center;" v-text="index + 1" />
-                                            <vs-td style="" v-text="item.fullname" />
-                                            <vs-td style="" v-text="item.email" />
-                                            <vs-td style="" v-text="item.username" />
+                                            <vs-td style="width: 2%; text-align:center;" ><div v-text="index + 1"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.fullname"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.email"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.username"></div></vs-td>
+                                            <vs-td style=""><div v-text="item.nombreRol"></div></vs-td>
                                             <vs-td style="width: 7%">
                                                 <template v-if="item.state == 'A'">
                                                     <span style="font-size: 12px !important;"
-                                                        class="badge badge-success" v-text="item.state_alias"></span>
+                                                        class="badge bg-success" v-text="item.state_alias"></span>
                                                 </template>
                                                 <template v-else>
-                                                    <span style="font-size: 12px !important;" class="badge badge-danger"
+                                                    <span style="font-size: 12px !important;" class="badge bg-danger"
                                                         v-text="item.state_alias"></span>
                                                 </template>
                                             </vs-td>
@@ -152,22 +97,38 @@
                                                     </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.desactivar')">
-                                                        <button class="btn btn-flat btn-danger btn-sm"
+                                                        <!-- <button class="btn btn-flat btn-danger btn-sm"
                                                             @click.prevent="setCambiarEstadoUsuario(1, item.id)"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-solid fa-thumbs-down pr-1" />
-                                                            Desactivar
-                                                        </button>
+                                                            style=" color : white !important ;"> -->
+                                                        <el-tooltip placement="top">
+                                                            <button class="btn btn-flat btn-danger btn-sm p-2"
+                                                                @click.prevent="WIP()"
+                                                                style=" color : white !important ;">
+                                                                <i class="fas fa-solid fa-thumbs-down" />
+                                                            </button>
+                                                            <div slot="content">
+                                                                Desactivar usuario
+                                                            </div>
+                                                        </el-tooltip>
                                                     </template>
                                                 </template>
                                                 <template v-else>
                                                     <template
-                                                        v-if="listRolPermisosByUsuario.includes('usuario.activar')"><button
+                                                        v-if="listRolPermisosByUsuario.includes('usuario.activar')">
+                                                        <!-- <button
                                                             class="btn btn-flat btn-success btn-sm"
                                                             @click.prevent="setCambiarEstadoUsuario(2, item.id)"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-check pr-1" />Activar
-                                                        </button>
+                                                            style=" color : white !important ;"> -->
+                                                        <el-tooltip placement="top">
+                                                            <button class="btn btn-flat btn-success btn-sm p-2"
+                                                                @click.prevent="WIP()"
+                                                                style=" color : white !important ;">
+                                                                <i class="fas fa-check" />
+                                                            </button>
+                                                            <div slot="content">
+                                                                Activar usuario
+                                                            </div>
+                                                        </el-tooltip>
                                                     </template>
                                                 </template>
                                             </vs-td>
@@ -193,14 +154,173 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>   
+        <vs-dialog blur v-model="showModalRegistrar" id="registrarUser" auto-width prevent-close>
+            <template #header>
+                <div class="col text-center">
+                    <div>
+                        <br>
+                        <h4 class="not-margin">
+                            <b>Registrar nuevo usuario</b>
+                        </h4>
+                    </div>
+                </div>
+            </template>
+            <div class="con-form">
+                <div class="row overflow-hidden">
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Nombre(s)</label>
+                        <vs-input id="Nombres" type="text" color="#C2B280" icon-after v-model="datosUsuario.Nombre" @input="inputNombr('nombre')"
+                            placeholder="Nombre(s)" autocomplete="off" :state="error.Nombre ? 'danger': ''">
+                            <template #message-danger v-if="error.Nombre.length > 0">
+                                {{ error.Nombre }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Primer Apellido</label>
+                        <vs-input id="Apaterno" type="text" color="#C2B280" icon-after v-model="datosUsuario.Apaterno" @input="inputNombr('app')"
+                            placeholder="Primer Apellido" autocomplete="off" :state="error.Apaterno ? 'danger': ''">
+                            <template #message-danger v-if="error.Apaterno.length > 0">
+                                {{ error.Apaterno }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Segundo Apellido</label>
+                        <vs-input id="Amaterno" type="text" color="#C2B280" icon-after v-model="datosUsuario.Amaterno" @input="inputNombr('apm')"
+                            placeholder="Segundo Apellido" autocomplete="off" :state="error.Amaterno ? 'danger' : ''">
+                            <template #message-danger v-if="error.Amaterno.length > 0">
+                                {{ error.Amaterno }}
+                            </template>
+                        </vs-input>
+                    </div>  
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Correo electrónico</label>
+                        <vs-input id="email" type="email" color="#C2B280" icon-after v-model="datosUsuario.email" :key="'em'+error.email.length"
+                            placeholder="Correo electrónico" autocomplete="off" :state="error.email ? 'danger' : ''">
+                            <template #message-danger v-if="error.email.length > 0">
+                                {{ error.email }}
+                            </template>
+                        </vs-input>
+                    </div> 
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Usuario</label>
+                        <vs-input id="username" type="text" color="#C2B280" icon-after v-model="datosUsuario.username" @input="inputUsername()"
+                            placeholder="Nombre de usuario" autocomplete="off" :state="error.username ? 'danger' : ''" :key="'user' +error.username.length">
+                            <template #message-danger v-if="error.username.length > 0">
+                                {{ error.username }}
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3 d-none d-lg-flex">
+                    </div> 
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label" :title="passLabel">
+                            Contraseña
+                        </label>
+                        <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswd"
+                            placeholder="Escriba la nueva contraseña" autocomplete="off" :key="'ps'+error.pswd.length"
+                            :visiblePassword="visiblePSWD.nueva" 
+                            :state="error.pswd ? 'danger' : ''"
+                            @click-icon="visiblePSWD.nueva = !visiblePSWD.nueva">
+                            <template #message-danger v-if="error.pswd.length > 0">
+                                {{ error.pswd }}
+                            </template>
+                            <template #icon>
+                                <span
+                                v-if="!visiblePSWD.nueva"
+                                class="material-symbols-rounded"
+                                >
+                                visibility
+                                </span>
+                                <span v-else class="material-symbols-rounded">
+                                visibility_off
+                                </span>
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-4 px-3 pb-3">
+                        <label class="col-form-label">Confirmar Contraseña</label>
+                        <vs-input id="contrasenaConfirma" type="password" color="#C2B280" icon-after v-model="datosUsuario.pswdConfirmar"
+                            placeholder="Confirme la nueva contraseña" autocomplete="off" :key="'psc'+error.pswd.length"
+                            :visiblePassword="visiblePSWD.confirmar" 
+                            :state="error.pswdConfirmar ? 'danger' : ''"
+                            @click-icon="visiblePSWD.confirmar = !visiblePSWD.confirmar">
+                            <template #message-danger v-if="error.pswd.length > 0">
+                                {{ error.pswd }}
+                            </template>
+                            <template #icon>
+                                <span
+                                v-if="!visiblePSWD.confirmar"
+                                class="material-symbols-rounded"
+                                >
+                                visibility
+                                </span>
+                                <span v-else class="material-symbols-rounded">
+                                visibility_off
+                                </span>
+                            </template>
+                        </vs-input>
+                    </div>
+                    <div class="col-12 col-lg-6 px-3 pb-3">
+                        <label class="col-form-label">Rol</label>
+                        <vs-select filter :state="error.rol.length > 0 ? 'danger': ''"
+                            :placeholder="'Seleccione un rol para el usuario'"
+                            v-model="datosUsuario.rol" v-if="cat_rol.length > 0" autocomplete="off">
+                            <template #message-danger v-if="error.rol.length > 0">
+                                {{ error.rol }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_rol" :key="index" :label="item.nombre"
+                                :value="item.idRol">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>                        
+                    </div>
+                    <div class="col-12 col-lg-6 px-3 pb-3">
+                        <label class="col-form-label">Departamento</label>
+                        <vs-select filter :key="cat_DPTO.length" :state="error.dpto.length ? 'danger': ''"
+                            :placeholder="'Seleccione un departamento para el usuario'"
+                            v-model="datosUsuario.dpto" v-if="cat_DPTO.length > 0" autocomplete="off">
+                            <template #message-danger v-if="error.dpto.length > 0">
+                                {{ error.dpto }}
+                            </template>
+                            <vs-option v-for="(item, index) in cat_DPTO" :key="index" :label="item.nombre"
+                                :value="item.id">
+                                {{ item.nombre }}
+                            </vs-option>
+                        </vs-select>                        
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <div class="footer-dialog">
+                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarFormRegistro()">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                            </div>
+                        </vs-button>      
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionRegistrar()">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Registrar usuario
+                            </div>
+                        </vs-button>                                
+                    </div>
+                </div>
+            </template>
+        </vs-dialog>     
     </div>
 </template>
 
 <script>
+import methods from '../../../methods';
 export default {
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
+            searchTable: '',
             page: 1,
             max: 10,
             fillBsqUsuario: {
@@ -220,13 +340,52 @@ export default {
             contrasena: [
                 '12345'
             ],
-            listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'))
+            listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario')),
 
+            showModalRegistrar: false,
 
+            datosUsuario: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: '',
+                username: '',
+                pswd: '',
+                pswdConfirmar: '',
+                rol: '',
+                dpto: '',
+            },
+            procede: false,
+            error: {
+                Nombre: '',
+                Apaterno: '',
+                Amaterno: '',
+                email: '',
+                username: '',
+                pswd: '',
+                pswdConfirmar: '',
+                rol: '',
+                dpto: '',
+            }, 
+            visiblePSWD:{
+                nueva: false,
+                confirmar: false,
+            },
+        
+            cat_rol:[],
+            cat_DPTO:[],
+            passLabel: `Caracteres especiales permitidos: @#$!%*?&-_.,'="`
         }
     },
-    mounted() {
-        this.getListarUsuairos();
+    created(){
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
+    },
+    async mounted() {
+        const load = methods.loading( this.$vs );
+        await this.getListarAllUsers();
+        await this.getRoles();
+        await this.getDepartamentos();
+        load.close();
     },
     computed: {
         pageCount() {
@@ -250,7 +409,13 @@ export default {
                 count++;
             }
             return pageArray;
-        }
+        },
+        validEmail() {
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.datosUsuario.email);
+        },
+        validPSWD() {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&\-_.,'="])[A-Za-z\d@#$!%*?&\-_.,'="]{8,}$/.test(this.datosUsuario.pswd);
+        },
     },
     methods: {
         generarContrasenas() {
@@ -280,37 +445,18 @@ export default {
         limpiarBandejaUsuarios() {
             this.listaUsuario = [];
         },
-        getListarUsuairos() {
-            const loading = this.$vs.loading({
-                type: 'square',
-                color: '#00a19a',
-                background: '#FFFFFF',
-                text: 'Cargando...'
-            });
-            let url = '/administracion/usuario/getListarUsuarios';
-            axios.get(url, {
-                params: {
-                    'cNombre': this.fillBsqUsuario.cNombre,
-                    'cUsuario': this.fillBsqUsuario.cUsuario,
-                    'cCorreo': this.fillBsqUsuario.cCorreo,
-                    'cEstado': this.fillBsqUsuario.cEstado
+        async getListarAllUsers() {
+            let url = '/administracion/usuario/getListarAllUsers';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.inicializarPaginacion();
+                    this.listaUsuario = response.data;
                 }
-            }).then(response => {
-                this.inicializarPaginacion();
-                this.listaUsuario = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0)
-            }).catch(error => {
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0)
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
         },
         nextPage() {
             this.pageNumber++;
@@ -331,7 +477,8 @@ export default {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: ((op == 1) ? 'Si, desactivar' : 'Si, activar')
+                confirmButtonText: ((op == 1) ? 'Si, desactivar' : 'Si, activar'),
+                reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
                     const loading = this.$vs.loading({
@@ -354,7 +501,7 @@ export default {
                                 timer: 1500
                             });
                         }, 0);
-                        this.getListarUsuairos();
+                        this.getListarAllUsers();
                     }).catch(error => {
                         if (error.response.status == 401) {
                             setTimeout(() => {
@@ -367,11 +514,202 @@ export default {
                     });
                 }
             });
-        }
+        },
+        WIP() {
+          const wip = this.$vs.notification({
+            square: true,
+            color: 'dark',
+            position: 'bottom-center',
+            title: '<span class="text-white">Función en progreso</span>'
+          });
+        },
+        // Funciones registrar usuario
+        accionRegistrar() {
+            this.limpiaErrorRegistro();
+            this.validarRegistroUser();
+            if(this.procede){
+                Swal.fire({
+                icon: 'warning',
+                title: '¿Desea registrar al nuevo usuario?',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                // cancelButtonColor: 'transparent',
+                cancelButtonText: "Cancelar",
+                confirmButtonText: 'Registrar',
+                reverseButtons: true,
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        await this.setRegistrarUser();
+                    }
+                })                
+            }
+        },
+        async setRegistrarUser() {
+            const url = '/administracion/usuario/setRegistrarUser';
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.post(url,{
+                    'cNombre': this.datosUsuario.Nombre,
+                    'cApaterno': this.datosUsuario.Apaterno,
+                    'cAmaterno': this.datosUsuario.Amaterno,
+                    'cEmail': this.datosUsuario.email,
+                    'cUser': this.datosUsuario.username,
+                    'pswd': this.datosUsuario.pswd,
+                    'pswdConfirmar': this.datosUsuario.pswdConfirmar,
+                    'nIdDPTO': this.datosUsuario.dpto,
+                    'nIdRol': this.datosUsuario.rol,
+                    'fRegistro': methods.getTimestamp(),                  
+                }); 
+                if(response.status === 200){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Usuario registrado con exito',
+                        confirmButtonColor: '#3085d6',
+                        // cancelButtonColor: 'transparent',
+                        confirmButtonText: 'De acuerdo',
+                        reverseButtons: true,
+                    }).then(async (result) => {
+                        const load = methods.loading( this.$vs );
+                        this.listaUsuario = [];
+                        await this.getListarAllUsers();
+                        this.showModalRegistrar = false;
+                        this.limpiarFormRegistro();
+                        load.close();
+                    })                     
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error,method[3]);
+            } finally {
+                load.close();
+            }
+        },
+        inputNombr( cadena ){
+            let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
+            let temp = '';
+            switch (cadena){
+                case 'nombre':
+                    temp = this.datosUsuario.Nombre;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Nombre = temp.replace(regex,'');
+                    break;
+                case 'app':
+                    temp = this.datosUsuario.Apaterno;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Apaterno = temp.replace(regex,'');
+                    break;
+                case 'apm':
+                    temp = this.datosUsuario.Amaterno;
+                    if(temp.length > 50) temp = temp.substring(0,50);
+                    this.datosUsuario.Amaterno = temp.replace(regex,'');
+                    break;
+            }
+        }, 
+        inputUsername(){
+            let regex =  /[^a-zA-Z0-9\-_]/;
+            let temp = this.datosUsuario.username;
+            if(temp.length > 16) temp = temp.substring(0,16);
+            this.datosUsuario.username = temp.replace(regex,'');
+        }, 
+        limpiarFormRegistro() {
+            this.datosUsuario.Nombre = '';
+            this.datosUsuario.Apaterno = '';
+            this.datosUsuario.Amaterno = '';
+            this.datosUsuario.username = '';
+            this.datosUsuario.pswd = '';
+            this.datosUsuario.pswdConfirmar = '';
+            this.datosUsuario.email = '';
+            this.datosUsuario.rol = '';
+            this.datosUsuario.dpto = '';
+            
+            this.limpiaErrorRegistro();
+        },
+        validarRegistroUser() {
+            this.procede = true;
+            if(this.datosUsuario.Nombre === ''){
+                this.procede = false;
+                this.error.Nombre = 'El nombre es obligatorio';
+            }
+            if(this.datosUsuario.Apaterno === ''){
+                this.procede = false;
+                this.error.Apaterno = 'El primer apellido es obligatorio';
+            }
+            if(this.datosUsuario.email === ''){
+                this.procede = false;
+                this.error.email = 'El correo electrónico es obligatorio';
+            } else if( !this.validEmail ){
+                this.procede = false;
+                this.error.email = 'El correo electrónico no tiene un formato valido';
+            }
+            if(this.datosUsuario.username === ''){
+                this.procede = false;
+                this.error.username = 'El nombre de usuario es obligatorio';
+            } else if( this.datosUsuario.username.length < 8){
+                this.procede = false;
+                this.error.username = 'El usuario debe contener al menos 8 caracteres';
+            }
+            if(this.datosUsuario.pswd === ''){
+                this.procede = false;
+                this.error.pswd = 'La contraseña es obligatoria';
+            } else if(!this.validPSWD){
+                this.procede = false;
+                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayuscula, un número y un caracter especial';
+            } else if(this.datosUsuario.pswd !== this.datosUsuario.pswdConfirmar) {
+                this.procede = false;
+                this.error.pswd = 'Las contraseñas no coinciden';
+                this.error.pswdConfirmar = 'Las contraseñas no coinciden';
+            }
+            if( this.datosUsuario.rol === ''){
+                this.procede = false;
+                this.error.rol = 'El rol es obligatorio';
+            }
+            if( this.datosUsuario.dpto === ''){
+                this.procede = false;
+                this.error.dpto = 'El departamento es obligatorio';
+            }
+        },
+        limpiaErrorRegistro() {
+            this.error.Nombre = '';
+            this.error.Apaterno = '';
+            this.error.email = '';
+            this.error.username = '';
+            this.error.pswd = '';
+            this.error.pswdConfirmar = '';
+            this.error.rol = '';
+            this.error.dpto = '';
+        },
+        async getRoles() {
+            let url = '/administracion/usuario/getRoles';
+            try {
+                const response = await axios.get(url,{
+                    params: {
+                        'nIdRol': this.rolUsuario
+                    }
+                });
+                if(response.status === 200){
+                    this.cat_rol = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
+        },
+        async getDepartamentos() {
+            let url = '/administracion/usuario/getDepartamentos';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.cat_DPTO = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
+        },
     }
 }
 </script>
-<style>
+<style scope>
 .card-body {
     background-color: #fff !important;
 }
