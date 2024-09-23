@@ -1,21 +1,55 @@
 <template>
     <div class="content-header">
         <div id="contentRegistro" class="content container-fluid h-auto mb-5 mb-sm-0">
-            <div class="col-sm-11 mx-auto">
-                <div class="card cardintro d-flex flex-row">
-                    <div class="tituloCard flex-grow-1 p-3 align-self-center" style="color: var(--iee-white);">
-                        <h5 class="font-weight-bold tituloin">
-                            ¡Hola, {{ cfullname }}!
-                        </h5>
-                        <h6 class="subtituloin font-weight-bold subtituloin">
-                            {{ saludo }}
-                        </h6>
+            <div class="row">
+                <div class="col-sm-6 mx-auto">
+                    <div class="card cardintro d-flex flex-row" style="height: 19rem">
+                        <div class="tituloCard flex-grow-1 p-3 align-self-center" style="color: var(--iee-white);">
+                            <h5 class="font-weight-bold tituloin">
+                                ¡Hola, {{ cfullname }}!
+                            </h5>
+                            <h6 class="subtituloin font-weight-bold subtituloin">
+                                {{ saludo }}
+                            </h6>
+                        </div>
+                        <img src="/img/imglogro.webp" class="img-fluid imgCard">
                     </div>
-                    <img src="/img/imglogro.webp" class="img-fluid imgCard">
+                    <div class="col">
+                        <div class="row mt-4 rowvalidados">
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    <div class="row mt-4 rowvalidados">
-                    </div>
+                <div class="col-sm-5 mx-auto">
+                    <vs-table>
+                        <template #thead>
+                            <vs-tr>
+                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                    Name
+                                </vs-th>
+                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                    Email
+                                </vs-th>
+                            </vs-tr>
+                        </template>
+                        <template #tbody>
+                            <vs-tr :key="i" v-for="(tr, i) in $vs.getPage(users, page, max)" :data="tr"
+                                style="max-height: 100px !important">
+                                <vs-td class="tableRowHeight">
+                                    {{ tr.name }}
+                                </vs-td class="tableRowHeight">
+                                <vs-td>
+                                    {{ tr.email }}
+                                </vs-td>
+                            </vs-tr>
+                        </template>
+                        <template #notFound style="background-color: var(--iee-white) !important;">
+                            Sin resultados...
+                        </template>
+                        <template #footer style="background-color: var(--iee-white) !important;">
+                            <vs-pagination color="dark" v-model="page" :length="$vs.getLength(users, max)"
+                                style="background-color: var(--iee-white) !important;" />
+                        </template>
+                    </vs-table>
                 </div>
             </div>
             <!-- <div class="col-11 card fechasPeriodos mx-auto my-4"
@@ -64,6 +98,80 @@ export default {
             attrsRegistro: [],
 
             saludo: (sessionStorage.getItem('saludo')) ? sessionStorage.getItem('saludo') : 'N/A',
+            page: 1,
+            max: 5,
+            users: [
+                {
+                    "id": 1,
+                    "name": "Leanne Graham",
+                    "username": "Bret",
+                    "email": "Sincere@april.biz",
+                    "website": "hildegard.org",
+                },
+                {
+                    "id": 2,
+                    "name": "Ervin Howell",
+                    "username": "Antonette",
+                    "email": "Shanna@melissa.tv",
+                    "website": "anastasia.net",
+                },
+                {
+                    "id": 3,
+                    "name": "Clementine Bauch",
+                    "username": "Samantha",
+                    "email": "Nathan@yesenia.net",
+                    "website": "ramiro.info",
+                },
+                {
+                    "id": 4,
+                    "name": "Patricia Lebsack",
+                    "username": "Karianne",
+                    "email": "Julianne.OConner@kory.org",
+                    "website": "kale.biz",
+                },
+                {
+                    "id": 5,
+                    "name": "Chelsey Dietrich",
+                    "username": "Kamren",
+                    "email": "Lucio_Hettinger@annie.ca",
+                    "website": "demarco.info",
+                },
+                {
+                    "id": 6,
+                    "name": "Mrs. Dennis Schulist",
+                    "username": "Leopoldo_Corkery",
+                    "email": "Karley_Dach@jasper.info",
+                    "website": "ola.org",
+                },
+                {
+                    "id": 7,
+                    "name": "Kurtis Weissnat",
+                    "username": "Elwyn.Skiles",
+                    "email": "Telly.Hoeger@billy.biz",
+                    "website": "elvis.io",
+                },
+                {
+                    "id": 8,
+                    "name": "Nicholas Runolfsdottir V",
+                    "username": "Maxime_Nienow",
+                    "email": "Sherwood@rosamond.me",
+                    "website": "jacynthe.com",
+                },
+                {
+                    "id": 9,
+                    "name": "Glenna Reichert",
+                    "username": "Delphine",
+                    "email": "Chaim_McDermott@dana.io",
+                    "website": "conrad.com",
+                },
+                {
+                    "id": 10,
+                    "name": "Clementina DuBuque",
+                    "username": "Moriah.Stanton",
+                    "email": "Rey.Padberg@karina.biz",
+                    "website": "ambrose.net",
+                }
+            ]
         }
     },
     mounted() {

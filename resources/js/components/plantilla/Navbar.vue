@@ -22,9 +22,9 @@
                             <input type='checkbox' v-model="darkmode" @click="switchTheme">
                             <span class='slider py-1'>
                                 <span v-if="darkmode"
-                                    class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">dark_mode</span>
+                                    class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">light_mode</span>
                                 <span v-else
-                                    class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1">light_mode</span>
+                                    class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1">dark_mode</span>
                             </span>
                         </label>
                     </div>
@@ -35,21 +35,29 @@
             </vs-tooltip>
         </div>
         <div class="navul navbar-nav">
-            <span class="username-navbar navText pr-3">
+            &nbsp;
+            &nbsp;
+            <vs-avatar history v-if="loadedFoto.rutaFP" >
+                <img  :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil">
+            </vs-avatar>
+            <vs-avatar history else >
+                <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
+            </vs-avatar>
+            &nbsp;
+            &nbsp;
+            <!-- <span class="username-navbar navText pr-3">
                 <strong><small class="text-bold mx-2">{{ updateTime + ' hrs.' }}</small></strong>
-            </span>
+            </span> -->
         </div>
         <div :class="mostrarSalir == false ? 'd-none' : ''">
             <vs-tooltip bottom>
-                <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
-                    <span class="material-symbols-rounded"
-                        style="color: #FFFFFF !important; font-size: 20px !important; ">
-                        logout
+                <vs-button id="faqBtn" size="large" icon href="/faq" v-loading.fullscreen.lock="fullscreenLoading"
+                    style="cursor: pointer; background-color: var(--iee-white-dark);">
+                    <span class="material-symbols-rounded" style="color: var(--iee-bg-color) !important;">
+                        help
                     </span>
                 </vs-button>
-                <template #tooltip>
-                    Salir
-                </template>
+                <template #tooltip> Ayuda</template>
             </vs-tooltip>
         </div>
     </nav>
@@ -59,22 +67,28 @@ export default {
     props: ['showMenuBtn', 'listPermisos',],
     data() {
         return {
+            fullscreenLoading: false,
+            og: window.location.origin + '/',
+            stamp: this.getLocalStamp(),
             mostrarSalir: true,
             listaPermisos: [],
             userLogged: JSON.parse(sessionStorage.getItem('authUser')),
             darkmode: (localStorage.getItem('theme') == 'light') ? false : true,
             showSwitchTheme: true,
-            currentTimeDB: ''
+            currentTimeDB: '',
+            loadedFoto: {
+                rutaFP: null,
+            },
         }
     },
 
     computed: {
-        updateTime() {
-            setInterval(() => {
-                this.getCurrentTime()
-            }, 60000)
-            return this.currentTimeDB;
-        }
+        // updateTime() {
+        //     setInterval(() => {
+        //         this.getCurrentTime()
+        //     }, 60000)
+        //     return this.currentTimeDB;
+        // }
     },
 
     mounted() {
@@ -88,6 +102,7 @@ export default {
             document.documentElement.setAttribute('data-theme', 'dark');
             this.darkmode = true;
         }
+        this.getDatosPersonalesById()
     },
     methods: {
         checkPermisos() {
@@ -122,7 +137,7 @@ export default {
             this.darkmode = !this.darkmode;
             // console.log(localStorage.getItem('theme'));
             // console.log(this.darkmode);
-            EventBus.$emit('darkMode',this.darkmode);
+            EventBus.$emit('darkMode', this.darkmode);
         },
 
         getCurrentTime() {
@@ -167,6 +182,28 @@ export default {
                     });
                 }
             });
+        },
+        getDatosPersonalesById() {
+            const url = '/administracion/usuario/getDatosPersonalesById';
+
+            try {
+                const response = axios.get(url, {
+                    params: {
+                        'nId': this.id
+                    }
+                });
+
+                if (response.status === 200) {
+                    let datos = response.data[0];
+                    this.loadedFoto.rutaFP = datos.rutaFP;
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
+        getLocalStamp() {
+            return '?stamp=' + new Date().getTime();
         },
     }
 }

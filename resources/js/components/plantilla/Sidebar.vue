@@ -26,10 +26,10 @@
                     <template #icon>
                         <i class="fa fa-search"></i>
                     </template>
-                    Consulta de Errores
-                </vs-sidebar-item> -->
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" 
-                id="solicitudes.captura" to="/captura">
+Consulta de Errores
+</vs-sidebar-item> -->
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" id="solicitudes.captura"
+                    to="/captura">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             app_registration
@@ -38,7 +38,8 @@
                     Captura
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')"  id="recordatorios.captura" to="/recordatorios">
+                <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
+                    to="/recordatorios">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             notifications
@@ -47,7 +48,7 @@
                     Notificaciones
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')"  id="solicitudes.ver" to="/solicitudes">
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver" to="/solicitudes">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             list_alt
@@ -56,7 +57,7 @@
                     Solicitudes
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')"  id="admin.catalogos" to="/catalogos">
+                <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             menu_book
@@ -65,7 +66,8 @@
                     Catalogos
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('perfil.index')"  id="perfil.index" :to="'/perfil/' + usuario.id">
+                <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
+                    :to="'/perfil/' + usuario.id">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             account_circle
@@ -74,7 +76,7 @@
                     Mi Perfil
                 </vs-sidebar-item>
 
-                <vs-sidebar-item  id="birthday.index" to="/birthday">
+                <vs-sidebar-item id="birthday.index" to="/birthday">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             featured_seasonal_and_gifts
@@ -83,7 +85,8 @@
                     Cumpleaños
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')"  id="admin.preferencias" to="/preferenciasInterfaz">
+                <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')" id="admin.preferencias"
+                    to="/preferenciasInterfaz">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             draw
@@ -95,14 +98,15 @@
             <template #footer>
                 <vs-row justify="space-between" v-if="listPermisos.includes('faq.index')">
                     <vs-tooltip top>
-                        <vs-button id="faqBtn" size="large" icon href="/faq"
-                            v-loading.fullscreen.lock="fullscreenLoading"
-                            style="cursor: pointer; background-color: var(--iee-white-dark);">
-                            <span class="material-symbols-rounded" style="color: var(--iee-bg-color) !important;">
-                                help
+                        <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
+                            <span class="material-symbols-rounded"
+                                style="color: #FFFFFF !important; font-size: 20px !important; ">
+                                logout
                             </span>
                         </vs-button>
-                        <template #tooltip> Ayuda</template>
+                        <template #tooltip>
+                            Salir
+                        </template>
                     </vs-tooltip>
                 </vs-row>
             </template>
@@ -126,7 +130,7 @@ export default {
     },
     // watch para actualizar el link active del sidebar cuando este cambie
     watch: {
-        $route(to, from) {            
+        $route(to, from) {
             if (this.$route.name != null) {
                 this.setActive();
             }
@@ -174,12 +178,47 @@ export default {
             }
         },
         /** Agrega la validación necesaria para mantener el resaltado de una sección principal en el sidebar cuando se accede a una subsección*/
-        setActive(){
-            if(this.$route.name === 'perfil.editar'){
+        setActive() {
+            if (this.$route.name === 'perfil.editar') {
                 this.active = 'perfil.index';
-            } else{
+            } else {
                 this.active = this.$route.name;
             }
+        },
+        logout() {
+            Swal.fire({
+                // heightAuto: false,
+                customClass: 'swal-height',
+                html:
+                    '<div class="modalLogout" style="overflow-x:hidden"> <div class="txtLogout"><span >Si hace clic en continuar, su sesión se cerrará y deberá ingresar al sistema nuevamente. <br> ¿Desea continuar? </span></div>  <img class="imgLogout" src="/img/logout.webp"/> </div>',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                // cancelButtonColor: 'transparent',
+                cancelButtonText: "Cancelar",
+                confirmButtonText: 'Continuar',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.fullscreenLoading = true;
+                    let url = '/authenticate/logout'
+                    axios.post(url).then(response => {
+                        if (response.data.code == 204) {
+                            this.fullscreenLoading = false;
+                            sessionStorage.clear();
+                            this.$router.push({ name: 'login' });
+                            location.reload();
+
+                        }
+                    }).catch((error) => {
+                        if (error.response.status == 401) {
+                            this.fullscreenLoading = false;
+                            sessionStorage.clear();
+                            this.$router.push({ name: 'login' });
+                            location.reload();
+                        }
+                    });
+                }
+            });
         },
     }
 }

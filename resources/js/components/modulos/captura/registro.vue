@@ -232,16 +232,15 @@
                         <div class="row px-0 pr-sm-5 pb-3">
                             <div class="col-md-6">
                                 <h6 class="col">Seleccione el documento</h6>
-                                <el-upload class="upload-demo col-md-7"
+                                <el-upload class="upload-demo col-md-12"
                                     action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleF1"
                                     accept="application/pdf" :on-preview="handlePreview" :on-remove="handleRemoveF1"
                                     multiple :limit="1" :on-exceed="handleExceed" :auto-upload="false" ref="upload">
-                                    <el-button size="small" type="primary"
-                                        style="background-color: #af8909; border-color: #af8909;"><strong
-                                            style="color: white !important;">Clic
+                                    <vs-button  type="primary"
+                                        style="background-color: #af8909; border-color: #af8909;" ><strong style="color: white !important;">Clic
                                             para
                                             subir
-                                            archivo</strong></el-button>
+                                            archivo</strong></vs-button>
                                     <div slot="tip" class="el-upload__tip">Solo archivos de tipo PDF
                                     </div>
                                 </el-upload>
@@ -252,6 +251,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="col-sm-7 col-md-7 col-xl-7 px-0 pr-sm-7 pb-3">
 
@@ -260,11 +260,11 @@
                         <label class="col-form-label">Seguimiento</label>
                         <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
                             v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
-                            <template #message-danger v-if="errorSeguimiento.length > 0" >
+                            <template #message-danger v-if="errorSeguimiento.length > 0">
                                 {{ errorSeguimiento }}
                             </template>
                             <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                :value="item.idSeguimiento" >
+                                :value="item.idSeguimiento">
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>
@@ -323,6 +323,7 @@
 export default {
     data() {
         return {
+            active: false,
             colors: [
                 {
                     color: 'warn'
