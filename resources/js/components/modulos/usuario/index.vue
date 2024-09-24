@@ -81,11 +81,14 @@
                                                 <template v-if="item.state == 'A'">
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.editar')">
-                                                        <router-link class="btn btn-flat btn-info btn-sm"
-                                                            :to="{ name: 'usuario.editar', params: { id: item.id } }"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-pencil-alt pr-1" /> Editar
-                                                        </router-link>
+                                                        <el-tooltip placement="top">
+                                                            <router-link class="btn btn-flat btn-info btn-sm p-2"
+                                                                :to="{ name: 'usuario.editar', params: { id: item.id } }"
+                                                                style=" color : white !important ;">
+                                                                <i class="fas fa-pencil-alt pr-1" />
+                                                            </router-link>
+                                                            <div slot="content">Editar usuario</div>
+                                                        </el-tooltip>
                                                     </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.permiso')">
@@ -643,7 +646,7 @@ export default {
                 this.error.pswd = 'La contraseña es obligatoria';
             } else if(!this.validPSWD){
                 this.procede = false;
-                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayuscula, un número y un caracter especial';
+                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial';
             } else if(this.datosUsuario.pswd !== this.datosUsuario.pswdConfirmar) {
                 this.procede = false;
                 this.error.pswd = 'Las contraseñas no coinciden';

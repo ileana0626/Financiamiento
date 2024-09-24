@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/usuario/setUpdatePass','Administracion\UsersController@setUpdatePass');
 
     /**Usuarios */
+    Route::get('/administracion/admin/validUserToEdit','Administracion\AdminController@validUserToEdit');
     Route::get('/administracion/usuario/getRoles','Administracion\UsersController@getRoles');
     Route::get('/administracion/usuario/getDepartamentos','Administracion\UsersController@getDepartamentos');
     Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');

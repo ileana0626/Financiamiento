@@ -467,6 +467,7 @@ class UsersController extends Controller
         $cApaterno = ($cApaterno == NULL) ? '' : $cApaterno;
         $cAmaterno = ($cAmaterno == NULL) ? '' : $cAmaterno;
         $fNacimiento = ($fNacimiento == NULL) ? NULL : $fNacimiento;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
 
         DB::beginTransaction();
         try {

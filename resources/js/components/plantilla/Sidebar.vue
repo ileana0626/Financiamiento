@@ -190,6 +190,8 @@ export default {
         setActive() {
             if (this.$route.name === 'perfil.editar') {
                 this.active = 'perfil.index';
+            } else if(this.$route.name === 'usuario.editar'){
+                this.active = 'admin.usuarios';
             } else {
                 this.active = this.$route.name;
             }
