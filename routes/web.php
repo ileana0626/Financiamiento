@@ -66,9 +66,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/admin/validUserToEdit','Administracion\AdminController@validUserToEdit');
     Route::get('/administracion/usuario/getRoles','Administracion\UsersController@getRoles');
     Route::get('/administracion/usuario/getDepartamentos','Administracion\UsersController@getDepartamentos');
+    Route::get('/administracion/usuario/getDatosRolById','Administracion\UsersController@getDatosRolById');
     Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');
     Route::post('/administracion/usuario/setCambiarEstadoById','Administracion\UsersController@setCambiarEstadoById');
-    Route::get('/administracion/usuario/getDatosRolById','Administracion\UsersController@getDatosRolById');
+    Route::post('/administracion/usuario/setUpdateDatosRolById', 'Administracion\UsersController@setUpdateDatosRolById');
 
 });
 

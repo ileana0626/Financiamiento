@@ -790,10 +790,56 @@ class UsersController extends Controller
             $rpta = DB::select('call sp_Usuario_getDatosRolById(?)',[
                 $nId
             ]);
-            
+
             return $rpta;
         } catch (\Exception $e) {
             throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . 400);
         }
+    }
+    public function setUpdateDatosRolById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $rolNuevo = $request->rolNuevo;
+        $rolActual = $request->rolActual;
+        $dptoNuevo = $request->dptoNuevo;
+        $dptoActual = $request->dptoActual;
+        $fAccion = $request->fAccion;
+        $nIdAuth = Auth::id();
+
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
+        $updated = false;
+
+        DB::beginTransaction();
+        try {
+            if($rolNuevo !== $rolActual){
+                //actualizar rol de usuario
+                DB::select('call sp_Usuario_setUpdateRolById(?,?)',[
+                    $nId,
+                    $rolNuevo
+                ]);
+                $updated = true;
+            }
+            if($dptoNuevo !== $dptoActual){
+                //actualizar el departamento
+                DB::select('call sp_Usuario_setUpdateDPTOById(?,?,?)',[
+                    $nId,
+                    $dptoNuevo,
+                    $fAccion,
+                ]);
+                $updated = true;
+            }
+            if($updated){
+                //desloguear si se actualizo
+                broadcast(new Logout($nId));
+            }
+
+            DB::commit();
+            return $updated;
+        } catch (\Error $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+
     }
 }

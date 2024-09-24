@@ -205,9 +205,9 @@
                                 </vs-select>                        
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">    
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="WIP()">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionDUsuario()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos Usuario
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Rol y DPTO
                                     </div>
                                 </vs-button>                                
                             </div>
@@ -331,7 +331,6 @@ export default {
                     return time.getTime() > date;
                     },
                 },
-            
                 
             passActual: '',
             passNueva: '',
@@ -355,6 +354,8 @@ export default {
             datosUsuario: {
                 rol: '',
                 dpto: '',
+                rolActual: '',
+                dptoActual: '',
                 nombreRol: '',
                 nombreDPTO: '',
             },
@@ -362,6 +363,7 @@ export default {
                 rol: '',
                 dpto: '',
             },
+            dUsuarioProcede: false,
         }
     },
     created(){
@@ -688,6 +690,9 @@ export default {
                     this.datosUsuario.dpto = Number(datos.idDPTO);
                     this.datosUsuario.rol = datos.idRol;
                     this.datosUsuario.nombreRol = datos.nombreRol;
+
+                    this.datosUsuario.dptoActual = Number(datos.idDPTO);
+                    this.datosUsuario.rolActual = datos.idRol;
                 }
             } catch (error) {
                 let method = url.split('/');
@@ -721,6 +726,70 @@ export default {
                 const method = url.split('/');
                 methods.catchHandler(error, method[3]);
             }
+        },
+        validarDUsuario(){
+            this.dUsuarioProcede = true;
+            if(this.datosUsuario.dpto === ''){
+                this.dUsuarioProcede = false;
+                this.errorDUsuario.dpto = 'El departamento es obligatorio';
+            }
+            if(this.datosUsuario.rol === ''){
+                this.dUsuarioProcede = false;
+                this.errorDUsuario.rol = 'El rol es obligatorio';
+            }
+        },
+        limpiaErrorDUsuario() {
+            this.errorDUsuario.rol = '';
+            this.errorDUsuario.dpto = '';
+        },
+        accionDUsuario() {
+            this.limpiaErrorDUsuario();
+            this.validarDUsuario();
+            if(this.dUsuarioProcede){
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Desea actualizar el rol y departamento del usuario?',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Actualizar Usuario',
+                    cancelButtonText: 'Cancelar',
+                }).then( async (result) => {
+                    if(result.isConfirmed){
+                        await this.setUpdateDatosRolById();
+                    }
+                });                
+            }
+        },
+        async setUpdateDatosRolById() {
+          const url = '/administracion/usuario/setUpdateDatosRolById';
+          const load = methods.loading( this.$vs );
+          try {
+            const response = await axios.post(url,{
+                'nId': this.id,
+                'rolNuevo': this.datosUsuario.rol,
+                'rolActual': this.datosUsuario.rolActual,
+                'dptoNuevo': this.datosUsuario.dpto,
+                'dptoActual': this.datosUsuario.dptoActual,
+                'fAccion': methods.getTimestamp(),                
+            });
+            if(response.status === 200){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Rol y departamento actualizados correctamente',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo',
+                }).then( result =>{
+                    this.datosUsuario.rolActual = this.datosUsuario.rol;
+                    this.datosUsuario.dptoActual = this.datosUsuario.dpto;
+                });
+            }
+          } catch (error) {
+            let method = url.split('/');
+            methods.catchHandler(error,method[3]);
+          } finally {
+            load.close();
+          }
         },
 
         // metodos contraseña
