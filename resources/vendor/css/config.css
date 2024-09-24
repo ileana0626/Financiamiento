@@ -505,6 +505,10 @@ strong,
     background: var(--header-card-2) !important;
     border-color: var(--header-card-2) !important;
 }
+.btn-edit {
+    background: var(--acento) !important;
+    border-color: var(--acento) !important;
+}
 
 .callout.callout-info {
     border-left-color: var(--dorado) !important;

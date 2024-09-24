@@ -95,11 +95,6 @@
                                 </div>
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
-                                <!-- <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia1'+darkMode">
-                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                    </div>
-                                </vs-button>       -->
                                 <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion1'+darkMode" @click.prevent="accionFoto()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Fotografía
@@ -107,7 +102,8 @@
                                 </vs-button>                                
                             </div>
                         </div>
-                        <el-divider></el-divider>                   
+                        <el-divider></el-divider>      
+                        <h6 class="px-2 py-2 font-weight-bold">Datos personales</h6>             
                         <div class="row">
                             <div class="col-12 col-lg-4 px-3 pb-3">
                                 <label class="col-form-label">Nombre(s)</label>
@@ -170,44 +166,55 @@
                                 </vs-input>
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row pt-2">
-                                <!-- <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpia2'+darkMode">
-                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                    </div>
-                                </vs-button>       -->
                                 <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'accion2'+darkMode" @click.prevent="accionDatosPersonales()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos Personales
                                     </div>
                                 </vs-button>                                
                             </div>
                         </div>
                         <el-divider></el-divider>
-                        <h6 class="px-2 py-2 font-weight-bold">Actualizar contraseña</h6>
+                        <h6 class="px-2 py-2 font-weight-bold">Datos de usuario</h6>
                         <div class="row">
-                            <div class="col-12 col-xl-4 px-3 pb-3">
-                                <label class="col-form-label">Contraseña actual</label>
-                                <vs-input id="contrasenaActual" type="password" color="#C2B280" icon-after v-model="passActual"
-                                    placeholder="Escriba su contraseña actual" autocomplete="off"
-                                        :visiblePassword="visiblePSWD.actual" 
-                                        :state="errorPSWD.actual ? 'danger' : ''"
-                                        @click-icon="visiblePSWD.actual = !visiblePSWD.actual">
-                                        <template #message-danger v-if="errorPSWD.actual.length > 0">
-                                            {{ errorPSWD.actual }}
-                                        </template>
-                                        <template #icon>
-                                            <span
-                                            v-if="!visiblePSWD.actual"
-                                            class="material-symbols-rounded"
-                                            >
-                                            visibility
-                                            </span>
-                                            <span v-else class="material-symbols-rounded">
-                                            visibility_off
-                                            </span>
-                                        </template>
-                                    </vs-input>
+                            <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                <label class="col-form-label">Rol</label>
+                                <vs-select filter :state="errorDUsuario.rol.length > 0 ? 'danger': ''"
+                                    :placeholder="'Seleccione un rol para el usuario'"
+                                    v-model="datosUsuario.rol" v-if="cat_rol.length > 0" autocomplete="off">
+                                    <template #message-danger v-if="errorDUsuario.rol.length > 0">
+                                        {{ errorDUsuario.rol }}
+                                    </template>
+                                    <vs-option v-for="(item, index) in cat_rol" :key="index" :label="item.nombre"
+                                        :value="item.idRol">
+                                        {{ item.nombre }}
+                                    </vs-option>
+                                </vs-select>                        
                             </div>
+                            <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
+                                <label class="col-form-label">Departamento</label>
+                                <vs-select filter :key="cat_DPTO.length" :state="errorDUsuario.dpto.length ? 'danger': ''"
+                                    :placeholder="'Seleccione un departamento para el usuario'"
+                                    v-model="datosUsuario.dpto" v-if="cat_DPTO.length > 0" autocomplete="off">
+                                    <template #message-danger v-if="errorDUsuario.dpto.length > 0">
+                                        {{ errorDUsuario.dpto }}
+                                    </template>
+                                    <vs-option v-for="(item, index) in cat_DPTO" :key="index" :label="item.nombre"
+                                        :value="item.id">
+                                        {{ item.nombre }}
+                                    </vs-option>
+                                </vs-select>                        
+                            </div>
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">    
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="WIP()">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar Datos Usuario
+                                    </div>
+                                </vs-button>                                
+                            </div>
+                        </div>
+                        <el-divider></el-divider>
+                        <h6 class="px-2 py-2 font-weight-bold">Reestablecer contraseña</h6>
+                        <div class="row">
                             <div class="col-12 row">
                                 <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
                                     <label class="col-form-label">Nueva contraseña</label>
@@ -262,9 +269,9 @@
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
                                 </vs-button>      
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionPass()">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="WIP()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Actualizar contraseña
+                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Reestablecer contraseña
                                     </div>
                                 </vs-button>                                
                             </div>
@@ -340,7 +347,21 @@ export default {
                 actual: false,
                 nueva: false,
                 confirmar: false,
-            }
+            },
+            // para datos usuario
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
+            cat_rol:[],
+            cat_DPTO:[],
+            datosUsuario: {
+                rol: '',
+                dpto: '',
+                nombreRol: '',
+                nombreDPTO: '',
+            },
+            errorDUsuario: {
+                rol: '',
+                dpto: '',
+            },
         }
     },
     created(){
@@ -349,6 +370,9 @@ export default {
     async mounted(){
         const load = methods.loading( this.$vs );
         await this.getDatosPersonalesById();
+        await this.getRoles();
+        await this.getDepartamentos();
+        await this.getDatosRolById();
         load.close();
     },
     computed: {
@@ -359,7 +383,6 @@ export default {
     methods: {
         async getDatosPersonalesById() {
             const url = '/administracion/usuario/getDatosPersonalesById';
-
             try {
                 const response = await axios.get(url, {
                     params: {
@@ -386,40 +409,7 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3]);
             }
         },
-        async setDatosPersonalesFormById() {
-            const url = '/administracion/usuario/setDatosPersonalesFormById';
-            const load = methods.loading( this.$vs );
-            try {
-                let temp = this.datosPersonales.fechaNacimiento;
-                let fNac = temp.getFullYear() + '-' + String((Number(temp.getMonth() + 1))).padStart(2,'0')+ '-' + temp.getDate(); 
-
-                const response = await axios.post(url, {
-                    'nIdRegistro': this.datosPersonales.id_DP ? this.datosPersonales.id_DP : 0,
-                    'nIdUser': this.id,
-                    'cNombre': this.datosPersonales.Nombre,
-                    'cApaterno': this.datosPersonales.Apaterno,
-                    'cAmaterno': this.datosPersonales.Amaterno,
-                    'cEmail': this.datosPersonales.email,
-                    'fNacimiento': fNac,
-                    'cCelular': this.datosPersonales.numCelular,
-                    'fAccion': methods.getTimestamp(),
-                });
-                if(response.status === 200){
-                    this.datosPersonales.id_DP = response.data[0].id_DP;
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Datos actualizados correctamente',
-                        showConfirmButton: true,
-                        confirmButtonText: 'De acuerdo',
-                    });                    
-                }
-            } catch (error) {
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
-            } finally {
-                load.close();
-            }
-        },
+        // Metódos fotografía
         async setSubirFP() {
             const url = "/archivos/setSubirFP";
 
@@ -458,7 +448,43 @@ export default {
             } finally {
                 load.close();
             }
-        },        
+        }, 
+        accionFoto() {
+            this.limpiaErrorFoto();
+            this.validarFoto();
+            if(this.fotoProcede) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Desea actualizar su fotografía?',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Cancelar',
+                }).then(async (result) => {
+                    if(result.isConfirmed){
+                       await this.setSubirFP();
+                    }
+                });                 
+            }
+        },
+        validarFoto(){
+            this.fotoProcede = true;
+            if(this.fileFoto.length === 0){
+                this.errorFoto = 'No se ha cargado una fotografía';
+                this.fotoProcede = false;
+            }
+        },
+        limpiaErrorFoto(){
+            this.errorFoto = '';
+        },
+        getLocalStamp(){
+            return '?stamp=' + new Date().getTime();
+        },
+        errorIMG(e) {
+          e.target.src = '/img/LOGO_NUEVO.png';
+          this.loadedFoto.tag = 'No se pudo cargar la imagen';
+        },       
         handlePreview(file) {
         },
         handleRemove(file, fileList) {
@@ -526,6 +552,7 @@ export default {
                 }
             })
         },
+        // metodos datos personales
         inputNumCel() {
             let regex = /[^0-9]{1,10}/g;
             let temp = this.datosPersonales.numCelular;
@@ -551,6 +578,40 @@ export default {
                     if(temp.length > 50) temp = temp.substring(0,50);
                     this.datosPersonales.Amaterno = temp.replace(regex,'');
                     break;
+            }
+        },
+        async setDatosPersonalesFormById() {
+            const url = '/administracion/usuario/setDatosPersonalesFormById';
+            const load = methods.loading( this.$vs );
+            try {
+                let temp = this.datosPersonales.fechaNacimiento;
+                let fNac = temp.getFullYear() + '-' + String((Number(temp.getMonth() + 1))).padStart(2,'0')+ '-' + temp.getDate(); 
+
+                const response = await axios.post(url, {
+                    'nIdRegistro': this.datosPersonales.id_DP ? this.datosPersonales.id_DP : 0,
+                    'nIdUser': this.id,
+                    'cNombre': this.datosPersonales.Nombre,
+                    'cApaterno': this.datosPersonales.Apaterno,
+                    'cAmaterno': this.datosPersonales.Amaterno,
+                    'cEmail': this.datosPersonales.email,
+                    'fNacimiento': fNac,
+                    'cCelular': this.datosPersonales.numCelular,
+                    'fAccion': methods.getTimestamp(),
+                });
+                if(response.status === 200){
+                    this.datosPersonales.id_DP = response.data[0].id_DP;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Datos actualizados correctamente',
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo',
+                    });                    
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            } finally {
+                load.close();
             }
         },
         async accionDatosPersonales() {
@@ -613,43 +674,53 @@ export default {
             this.error.fechaNacimiento = '';
             this.error.numCelular = '';
         },
-
-        accionFoto() {
-            this.limpiaErrorFoto();
-            this.validarFoto();
-            if(this.fotoProcede) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¿Desea actualizar su fotografía?',
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonText: 'Actualizar',
-                    cancelButtonText: 'Cancelar',
-                }).then(async (result) => {
-                    if(result.isConfirmed){
-                       await this.setSubirFP();
+        // metodos datos usuario
+        async getDatosRolById() {
+            const url = '/administracion/usuario/getDatosRolById';
+            try {
+                const response = await axios.get(url, {
+                    params: {
+                        'nId': this.id
                     }
-                });                 
+                });
+                if(response.status === 200){
+                    const datos = response.data[0];
+                    this.datosUsuario.dpto = Number(datos.idDPTO);
+                    this.datosUsuario.rol = datos.idRol;
+                    this.datosUsuario.nombreRol = datos.nombreRol;
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error,method[3]);
             }
         },
-        validarFoto(){
-            this.fotoProcede = true;
-            if(this.fileFoto.length === 0){
-                this.errorFoto = 'No se ha cargado una fotografía';
-                this.fotoProcede = false;
+        async getRoles() {
+            let url = '/administracion/usuario/getRoles';
+            try {
+                const response = await axios.get(url,{
+                    params: {
+                        'nIdRol': this.rolUsuario
+                    }
+                });
+                if(response.status === 200){
+                    this.cat_rol = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
             }
         },
-        limpiaErrorFoto(){
-            this.errorFoto = '';
-        },
-        getLocalStamp(){
-            return '?stamp=' + new Date().getTime();
-        },
-        
-        errorIMG(e) {
-          e.target.src = '/img/LOGO_NUEVO.png';
-          this.loadedFoto.tag = 'No se pudo cargar la imagen';
+        async getDepartamentos() {
+            let url = '/administracion/usuario/getDepartamentos';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.cat_DPTO = response.data;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+            }
         },
 
         // metodos contraseña
@@ -733,6 +804,10 @@ export default {
             } finally {
                 load.close();
             }
+        },
+        // general
+        WIP() {
+            const noti = methods.WIP(this.$vs);
         },
     }
 }

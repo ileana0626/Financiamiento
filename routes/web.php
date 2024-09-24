@@ -68,6 +68,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/usuario/getDepartamentos','Administracion\UsersController@getDepartamentos');
     Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');
     Route::post('/administracion/usuario/setCambiarEstadoById','Administracion\UsersController@setCambiarEstadoById');
+    Route::get('/administracion/usuario/getDatosRolById','Administracion\UsersController@getDatosRolById');
 
 });
 

@@ -82,9 +82,9 @@
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.editar')">
                                                         <el-tooltip placement="top">
-                                                            <router-link class="btn btn-flat btn-info btn-sm p-2"
+                                                            <router-link class="btn btn-flat btn-edit btn-sm p-2"
                                                                 :to="{ name: 'usuario.editar', params: { id: item.id } }"
-                                                                style=" color : white !important ;">
+                                                                style="color : white !important ;">
                                                                 <i class="fas fa-pencil-alt pr-1" />
                                                             </router-link>
                                                             <div slot="content">Editar usuario</div>
@@ -103,7 +103,7 @@
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-danger btn-sm p-2"
                                                                 @click.prevent="accionCambiarEstado(1, item.id)"
-                                                                style=" color : white !important ;">
+                                                                style="color : white !important ;">
                                                                 <i class="fas fa-solid fa-thumbs-down" />
                                                             </button>
                                                             <div slot="content">
@@ -118,7 +118,7 @@
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-success btn-sm p-2"
                                                                 @click.prevent="accionCambiarEstado(2, item.id)"
-                                                                style=" color : white !important ;">
+                                                                style=" color: white !important ;">
                                                                 <i class="fas fa-check" />
                                                             </button>
                                                             <div slot="content">
@@ -495,7 +495,8 @@ export default {
                     Swal.fire({
                         icon: 'success',
                         title: 'Se ' + ((op == 1) ? 'desactivo' : 'activo') + ' el usuario',
-                        showConfirmButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo',
                     }).then(async result => {
                         this.listaUsuario = [];
                         await this.getListarAllUsers();

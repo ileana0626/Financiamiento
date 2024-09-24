@@ -780,4 +780,20 @@ class UsersController extends Controller
             throw new \Exception($e);
         }        
     }
+    public function getDatosRolById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $nId = ($nId == NULL) ? 0 : $nId;
+
+        try {
+            $rpta = DB::select('call sp_Usuario_getDatosRolById(?)',[
+                $nId
+            ]);
+            
+            return $rpta;
+        } catch (\Exception $e) {
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . 400);
+        }
+    }
 }
