@@ -773,4 +773,11 @@ export default {
 
 </script>
 
-<style></style>
+<style>
+.el-time-panel.el-popper{
+    z-index: 99997 !important;
+}
+.el-picker-panel.el-date-picker.el-popper{
+    z-index: 99997 !important;
+}
+</style>

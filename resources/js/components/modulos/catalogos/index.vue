@@ -596,7 +596,7 @@
                 <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
                     <div class="card-header d-flex justify-content-between align-items-center container-fluid"
                         style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo un Tipo</h3>
+                        <h3 class="card-title font-weight-bold">Catalogo de Tipo</h3>
                         <div class="col card-tools d-flex justify-content-end">
                             <vs-button @click.prevent="Abrirmodal(7, 1, 0, '')"
                                 style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
@@ -691,7 +691,7 @@
                 <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
                     <div class="card-header d-flex justify-content-between align-items-center container-fluid"
                         style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo un Saludos</h3>
+                        <h3 class="card-title font-weight-bold">Catalogo de Saludos</h3>
                         <div class="col card-tools d-flex justify-content-end">
                             <vs-button @click.prevent="Abrirmodal(9, 1, 0, '')"
                                 style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
