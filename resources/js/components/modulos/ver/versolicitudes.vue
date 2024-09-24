@@ -89,9 +89,8 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr :key="i"
-                                v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistSolicitudes, search), page, max)"
-                                :data="tr" style="max-height: 100px !important">
+                            <vs-tr v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistSolicitudes, search), page, max)"
+                                :key="i" :class="colorStatus(tr.fechaTermino, tr.diasTermino)">
                                 <vs-td class="tableRowHeight">
                                     {{ tr.numeroConsecutivo }}
                                 </vs-td>
@@ -119,7 +118,7 @@
                                             <i class="fas fa-file-pdf fa-3x"></i>
                                         </vs-button>
                                         <template v-else>
-                                            SIN ARCHIVO
+                                            N/A
                                         </template>
                                     </center>
                                 </vs-td>
@@ -139,7 +138,7 @@
                                         {{ tr.fechaTermino }}
                                     </template>
                                     <template v-else>
-                                        Sin fecha de termino
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight" v-if="listaPermisos.includes('solicitudes.terminos')">
@@ -147,7 +146,7 @@
                                         {{ tr.diasTermino }}
                                     </template>
                                     <template v-else>
-                                        Sin días de termino
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -163,7 +162,7 @@
                                         {{ tr.seguimiento }}
                                     </template>
                                     <template v-else>
-                                        Sin seguimiento
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -171,7 +170,7 @@
                                         {{ tr.areaAsignada }}
                                     </template>
                                     <template v-else>
-                                        Sin área asignada
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -179,18 +178,23 @@
                                         {{ tr.tipo }}
                                     </template>
                                     <template v-else>
-                                        SIN TIPO
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
                                     <center>
-                                        <vs-button v-if="tr.rutaContestacion != null" id="logoutBtn" icon
+                                        <!-- <vs-button v-if="tr.rutaContestacion != null" id="logoutBtn" icon
                                             color="rgb(58,197,55)" size="large"
                                             @click.prevent="abrirmodal(tr.rutaContestacion)">
                                             <i class="fas fa-file-pdf fa-3x"></i>
+                                        </vs-button> -->
+                                        <vs-button v-if="tr.rutaContestacion != null" id="logoutBtn" icon
+                                            color="rgb(58,197,55)" size="large"
+                                            @click.prevent="colorStatus(tr.fechaTermino)">
+                                            <i class="fas fa-file-pdf fa-3x"></i>
                                         </vs-button>
                                         <template v-else>
-                                            SIN ARCHIVO DE CONTESTACIÓN
+                                            N/A
                                         </template>
                                     </center>
                                 </vs-td>
@@ -220,7 +224,8 @@
                                     <template v-if="idDepartamento == 0">
                                         <template v-if="tr.idTipo == 3">
                                             <template v-for="( de, i ) in tr.departamentosNoEnterados">
-                                                <template v-if="tr.NoEnterados == 0 && de == 0 && tr.estatus != 'CONCLUIDO'">
+                                                <template
+                                                    v-if="tr.NoEnterados == 0 && de == 0 && tr.estatus != 'CONCLUIDO'">
                                                     <template v-if="de == idDepartamento">
                                                         <el-tooltip class="item h-100" effect="dark"
                                                             content="Todos Enterados" placement="top">
@@ -254,12 +259,24 @@
                                             <template v-if="listaPermisos.includes('editar.solicitud')">
                                                 <el-tooltip class="item h-100" effect="dark" content="Editar"
                                                     placement="top">
-                                                    <vs-button class="btn btn-flat btn-sm "
-                                                        @click.prevent=""
+                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
                                                         style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                         <span class="material-symbols-rounded"
                                                             style="color: var(--text-color);">
                                                             edit
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template>
+                                                <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm "
+                                                        @click.prevent="modalRecordatorio = !modalRecordatorio"
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            schedule
                                                         </span>
                                                     </vs-button>
                                                 </el-tooltip>
@@ -307,8 +324,7 @@
                                             <template v-if="listaPermisos.includes('editar.solicitud')">
                                                 <el-tooltip class="item h-100" effect="dark" content="Editar"
                                                     placement="top">
-                                                    <vs-button class="btn btn-flat btn-sm "
-                                                        @click.prevent=""
+                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
                                                         style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                         <span class="material-symbols-rounded"
                                                             style="color: var(--text-color);">
@@ -375,7 +391,6 @@
                             </div>
                         </div>
                     </div>
-
                     <template #footer>
                         <div class="footer-dialog">
                             <vs-button style="width: 19vw; " color="#a5904a" block
@@ -384,6 +399,25 @@
                             </vs-button>
                         </div>
                     </template>
+                </vs-dialog>
+                <vs-dialog  v-model="modalRecordatorio">
+                    <template #header>
+                        <h4 class="not-margin">
+                            Recordatorio
+                        </h4>
+                    </template>
+                    <div class="con-form">
+                        <label class="col-form-label">Hora</label>
+                        <el-time-picker v-model="hora" arrow-control :picker-options="{
+                            selectableRange: '18:30:00 - 20:30:00'
+                        }" placeholder="Seleccione una hora">
+                        </el-time-picker>
+                        <br>
+                        <label class="col-form-label">Fecha</label>
+                        <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
+                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fecha" >
+                        </el-date-picker>
+                    </div>
                 </vs-dialog>
             </div>
         </div>
@@ -410,7 +444,17 @@ export default {
                 F1: "",
             },
             errorF1: 0,
-            idDepartamento: ''
+            idDepartamento: '',
+            modalRecordatorio: false,
+            hora: new Date(2016, 9, 10, 18, 40),
+            fecha: '',
+            pickerOptions2: {
+                disabledDate(time) {
+                    var date = new Date();
+                    date.setDate(date.getDate() - 1);
+                    return time.getTime() < date;
+                },
+            },
         }
     },
     created() {
@@ -427,6 +471,50 @@ export default {
     },
     mounted() {
 
+    },
+    computed: {
+        colorStatus() {
+            return (fechaTermino, diasTermino) => {
+                let color = ''
+                if (fechaTermino != null) {
+                    const moment = require('moment');
+                    let currentDate = moment();
+                    let formattedDate = currentDate.format('DD/MM/YYYY');
+                    let validDate = moment(formattedDate, 'DD/MM/YYYY');
+                    let validDate2 = moment(fechaTermino, 'DD/MM/YYYY');
+                    let date1 = new Date(validDate)
+                    let date2 = new Date(validDate2)
+                    let differenceInMs = Math.abs(date1 - date2);
+                    let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+
+                    if (diasTermino != null) {
+                        if (differenceInDays <= diasTermino) {
+                            switch (differenceInDays) {
+                                case 0:
+                                    color = 'css-conundia'
+                                    break;
+                                case 1:
+                                    color = 'css-condosdias'
+                                    break;
+                                case 2:
+                                    color = 'css-contresdias'
+                                    break;
+                                case 3:
+                                    color = 'css-concuatrodias'
+                                    break;
+                                case 4:
+                                    color = 'css-concincodias'
+                                    break;
+                                default:
+
+                            }
+                        }
+                    }
+                    return color
+                }
+            }
+
+        },
     },
     methods: {
         checkCrear(loading) {
@@ -629,9 +717,39 @@ export default {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
             });
-        }
+        },
+
     }
 }
 </script>
 
-<style></style>
+<style scoped>
+.vs-table__tr,
+tr.vs-table__tr>>>td {
+    border-radius: 0% !important;
+}
+
+.css-conundia {
+    background-color: #ff0000 !important;
+}
+
+.css-conundia:hover td {
+    background-color: #d12323 !important;
+}
+
+.css-condosdias {
+    background-color: #ffa500 !important;
+}
+
+.css-contresdias {
+    background-color: #ffff00 !important;
+}
+
+.css-concuatrodias {
+    background-color: #73de5d !important;
+}
+
+.css-concincodias {
+    background-color: #008000 !important;
+}
+</style>
