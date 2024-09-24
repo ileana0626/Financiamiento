@@ -787,6 +787,12 @@ div:where(.swal2-container) div:where(.swal2-popup) {
     justify-content: center !important;
     color: var(--iee-white-dark) !important;
 }
+.dark-th .vs-table__th {
+    background-color: var(--header-card) !important;
+}
+.dark-th .vs-table__th .vs-table__th__content{
+    color: #fff !important;
+}
 
 .vs-table__tr:hover .vs-table__td {
     background-color: var(--iee-table-color) !important;
@@ -1322,6 +1328,9 @@ h4 {
     /* transform: translateY(-2px); */
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.2s ease;
+}
+.white-card-body{
+    background-color: var(--iee-white) !important;    
 }
 
 

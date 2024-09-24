@@ -29,7 +29,7 @@
                     <div class="card-header d-flex">
                         <h3 class="card-title font-weight-bold">Editar perfil</h3>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                    <div class="card-body container-fluid" style="background-color: var(--iee-white) !important;">
                         <h6 class="px-2 py-2 font-weight-bold">Fotografía</h6>
                         <div class="row">
                             <div class="col-12 col-xl-3 px-4 pb-3">

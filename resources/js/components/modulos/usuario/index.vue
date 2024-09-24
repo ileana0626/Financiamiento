@@ -33,7 +33,7 @@
                             </vs-button>
                         </div>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                    <div class="card-body container-fluid white-card-body">
                         <div class="tableStyles">
                             <template v-if="listarUsuariosPaginated.length">
                                 <vs-table>
@@ -42,7 +42,7 @@
                                             class="inputSearchPreguntas" />
                                     </template>
                                     <template #thead>
-                                        <vs-tr>
+                                        <vs-tr class="dark-th">
                                             <vs-th>#</vs-th>
                                             <vs-th>Nombre</vs-th>
                                             <vs-th>Correo</vs-th>
@@ -700,10 +700,6 @@ export default {
 }
 </script>
 <style scope>
-.card-body {
-    background-color: #fff !important;
-}
-
 @media screen and (max-width: 575px) {
     .card-body {
         padding: 0;
