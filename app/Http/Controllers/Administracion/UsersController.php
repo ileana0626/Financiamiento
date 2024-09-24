@@ -757,4 +757,26 @@ class UsersController extends Controller
             throw new \Exception($e);
         }
     }
+    public function setCambiarEstadoById(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $user_id = $request->user_id;
+        $estado = $request->estado;
+
+        DB::beginTransaction();
+        try{
+            $result = DB::select('call sp_Usuario_setCambiarEstadoById(?, ?)', [
+                $user_id, $estado,
+            ]);
+
+            if ($estado == 'INACTIVO') {
+                broadcast(new Logout($user_id));
+            }
+            DB::commit();
+            return $result;
+        } catch(\Exception $e){
+            DB::rollBack();
+            throw new \Exception($e);
+        }        
+    }
 }
