@@ -372,9 +372,9 @@ export default {
 }
 </script>
 <style>
-.card-body {
+/* .card-body {
     background-color: #fff !important;
-}
+} */
 
 @media screen and (max-width: 575px) {
     .card-body {
