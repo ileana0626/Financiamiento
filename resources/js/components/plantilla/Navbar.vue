@@ -31,17 +31,17 @@
                     <template #tooltip> Ayuda</template>
                 </vs-tooltip>
             </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    <vs-avatar style="cursor: pointer;" @click="perfil" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
-                        <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil">
+            <div class="row hover-click" @click.prevent="perfil">
+                <div class="col-4 mr-1">
+                    <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
+                        <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
                     </vs-avatar>
-                    <vs-avatar style="cursor: pointer;" @click="perfil" circle badge badge-color="#a5904a" v-else>
+                    <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else>
                         <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
                     </vs-avatar>
                 </div>
-                <div class="col-sm-6 p-2">
-                    <small style="cursor: default;" class="text-bold mx-2">{{ datosPersonales.Nombre }}</small>
+                <div class="col-6 p-2">
+                    <small class="text-bold mx-2">{{ datosPersonales.Nombre }}</small>
                 </div>
             </div>
 
@@ -198,6 +198,9 @@ export default {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
             }
+        },
+        errorIMG(e) {
+          e.target.src = this.og + 'img/LOGO_NUEVO.png' + this.getLocalStamp();
         },
         getLocalStamp() {
             return '?stamp=' + new Date().getTime();

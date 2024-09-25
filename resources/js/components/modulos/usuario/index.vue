@@ -579,7 +579,7 @@ export default {
             }
         },
         inputNombr( cadena ){
-            let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ ]{0,50}$/;
             let temp = '';
             switch (cadena){
                 case 'nombre':
