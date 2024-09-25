@@ -700,9 +700,9 @@ export default {
 }
 </script>
 <style scope>
-.card-body {
+/* .card-body {
     background-color: #fff !important;
-}
+} */
 
 @media screen and (max-width: 575px) {
     .card-body {

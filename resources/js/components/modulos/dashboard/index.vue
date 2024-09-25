@@ -12,7 +12,7 @@
                                 {{ saludo }}
                             </h6>
                         </div>
-                        <img src="/img/imglogro.webp" class="img-fluid imgCard">
+                        <img src="/img/imglogro.webp" class="img-fluid imgCard" style="height: 70% !important;">
                     </div>
                     <div class="col">
                         <div class="row mt-4 rowvalidados">

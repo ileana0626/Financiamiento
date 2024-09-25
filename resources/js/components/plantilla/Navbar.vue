@@ -1,6 +1,6 @@
 <template>
     <nav class="main-header navbar navbar-expand navbar-white navbar-light"
-        style="background-color: var(--iee-white); border-bottom: 1px solid var(--iee-white);">
+        style="background-color: var(--iee-bg-color); border-bottom: 1px solid var(--iee-bg-color);">
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
                 <p class="navText">
@@ -14,51 +14,37 @@
                 </p>
             </li>
         </ul>
-        <div class="navul navbar-nav my-auto d-flex align-items-center" v-if="showSwitchTheme">
-            <vs-tooltip left>
-                <div class="mode-toggle m-auto">
-                    <div class='toggle-switch m-auto'>
-                        <label>
-                            <input type='checkbox' v-model="darkmode" @click="switchTheme">
-                            <span class='slider py-1'>
-                                <span v-if="darkmode"
-                                    class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">light_mode</span>
-                                <span v-else
-                                    class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1">dark_mode</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-                <template #tooltip>
-                    {{ (darkmode) ? 'Claro' : 'Obscuro' }}
-                </template>
-            </vs-tooltip>
-        </div>
+
         <div class="navul navbar-nav">
-            &nbsp;
-            &nbsp;
-            <vs-avatar history v-if="loadedFoto.rutaFP" >
-                <img  :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil">
-            </vs-avatar>
-            <vs-avatar history else >
-                <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
-            </vs-avatar>
-            &nbsp;
-            &nbsp;
-            <!-- <span class="username-navbar navText pr-3">
-                <strong><small class="text-bold mx-2">{{ updateTime + ' hrs.' }}</small></strong>
-            </span> -->
-        </div>
-        <div :class="mostrarSalir == false ? 'd-none' : ''">
-            <vs-tooltip bottom>
-                <vs-button id="faqBtn" size="large" icon href="/faq" v-loading.fullscreen.lock="fullscreenLoading"
-                    style="cursor: pointer; background-color: var(--iee-white-dark);">
-                    <span class="material-symbols-rounded" style="color: var(--iee-bg-color) !important;">
+            <div class="row pr-sm-4 p-2">
+                <vs-tooltip bottom>
+                    <span style="cursor: pointer;" class="material-symbols-rounded">
+                        notifications
+                    </span>
+                    <template #tooltip> Notificaciones</template>
+                </vs-tooltip>
+                &nbsp;&nbsp;&nbsp;
+                <vs-tooltip bottom>
+                    <span style="cursor: pointer;" @click="ruta" class="material-symbols-rounded">
                         help
                     </span>
-                </vs-button>
-                <template #tooltip> Ayuda</template>
-            </vs-tooltip>
+                    <template #tooltip> Ayuda</template>
+                </vs-tooltip>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <vs-avatar style="cursor: pointer;" @click="perfil" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
+                        <img :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil">
+                    </vs-avatar>
+                    <vs-avatar style="cursor: pointer;" @click="perfil" circle badge badge-color="#a5904a" v-else>
+                        <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
+                    </vs-avatar>
+                </div>
+                <div class="col-sm-6 p-2">
+                    <small style="cursor: default;" class="text-bold mx-2">{{ datosPersonales.Nombre }}</small>
+                </div>
+            </div>
+
         </div>
     </nav>
 </template>
@@ -67,18 +53,22 @@ export default {
     props: ['showMenuBtn', 'listPermisos',],
     data() {
         return {
+            datosPersonales: {
+                Nombre: '',
+            },
             fullscreenLoading: false,
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
             mostrarSalir: true,
             listaPermisos: [],
             userLogged: JSON.parse(sessionStorage.getItem('authUser')),
-            darkmode: (localStorage.getItem('theme') == 'light') ? false : true,
+            darkmode: (localStorage.getItem('theme') == 'light') ? 'light' : 'dark',
             showSwitchTheme: true,
             currentTimeDB: '',
             loadedFoto: {
                 rutaFP: null,
             },
+            id: JSON.parse(sessionStorage.getItem('idUsuario'))
         }
     },
 
@@ -125,20 +115,20 @@ export default {
             }
         },
 
-        switchTheme() {
-            if (localStorage.getItem('theme') == 'light') {
-                localStorage.setItem('theme', 'dark');
-                document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-                document.documentElement.setAttribute('data-theme', 'light');
-                // this.darkmode = !this.darkmode;
-            }
-            this.darkmode = !this.darkmode;
-            // console.log(localStorage.getItem('theme'));
-            // console.log(this.darkmode);
-            EventBus.$emit('darkMode', this.darkmode);
-        },
+        // switchTheme() {
+        // if (localStorage.getItem('theme') == 'light') {
+        // localStorage.setItem('theme', 'dark');
+        // document.documentElement.setAttribute('data-theme', 'dark');
+        // } else {
+        // localStorage.setItem('theme', 'light');
+        // document.documentElement.setAttribute('data-theme', 'light');
+        // this.darkmode = !this.darkmode;
+        // }
+        // this.darkmode = !this.darkmode;
+        // console.log(localStorage.getItem('theme'));
+        // console.log(this.darkmode);
+        // EventBus.$emit('darkMode', this.darkmode);
+        // },
 
         getCurrentTime() {
             let url = '/administracion/usuario/getCurrentTime';
@@ -183,11 +173,10 @@ export default {
                 }
             });
         },
-        getDatosPersonalesById() {
+        async getDatosPersonalesById() {
             const url = '/administracion/usuario/getDatosPersonalesById';
-
             try {
-                const response = axios.get(url, {
+                const response = await axios.get(url, {
                     params: {
                         'nId': this.id
                     }
@@ -195,7 +184,9 @@ export default {
 
                 if (response.status === 200) {
                     let datos = response.data[0];
+                    this.datosPersonales.Nombre = datos.Nombre;
                     this.loadedFoto.rutaFP = datos.rutaFP;
+
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
@@ -205,6 +196,13 @@ export default {
         getLocalStamp() {
             return '?stamp=' + new Date().getTime();
         },
+        ruta() {
+            this.$router.push({ name: "faq.index" });
+        },
+        perfil(){
+            window.location.href = '/perfil/' + this.id
+        }
+        
     }
 }
 </script>

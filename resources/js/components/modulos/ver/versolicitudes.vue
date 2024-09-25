@@ -400,7 +400,7 @@
                         </div>
                     </template>
                 </vs-dialog>
-                <vs-dialog  v-model="modalRecordatorio">
+                <vs-dialog v-model="modalRecordatorio">
                     <template #header>
                         <h4 class="not-margin">
                             Recordatorio
@@ -408,14 +408,12 @@
                     </template>
                     <div class="con-form">
                         <label class="col-form-label">Hora</label>
-                        <el-time-picker v-model="hora" arrow-control :picker-options="{
-                            selectableRange: '18:30:00 - 20:30:00'
-                        }" placeholder="Seleccione una hora">
+                        <el-time-picker v-model="hora" arrow-control placeholder="Seleccione una hora">
                         </el-time-picker>
                         <br>
                         <label class="col-form-label">Fecha</label>
                         <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
-                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fecha" >
+                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fecha">
                         </el-date-picker>
                     </div>
                 </vs-dialog>
@@ -491,23 +489,22 @@ export default {
                         if (differenceInDays <= diasTermino) {
                             switch (differenceInDays) {
                                 case 0:
-                                    color = 'css-conundia'
+                                    color = 'css-conundia-'
                                     break;
                                 case 1:
-                                    color = 'css-condosdias'
+                                    color = 'css-conundia'
                                     break;
                                 case 2:
-                                    color = 'css-contresdias'
+                                    color = 'css-condosdias'
                                     break;
                                 case 3:
-                                    color = 'css-concuatrodias'
-                                    break;
-                                case 4:
-                                    color = 'css-concincodias'
+                                    color = 'css-condosdias'
                                     break;
                                 default:
 
                             }
+                        }else if(differenceInDays >= diasTermino){
+                            color = 'css-conundia-'
                         }
                     }
                     return color
@@ -727,6 +724,13 @@ export default {
 .vs-table__tr,
 tr.vs-table__tr>>>td {
     border-radius: 0% !important;
+}
+
+.css-conundia- {
+    background-color: #920000 !important;
+}
+.css-conundia-:hover td {
+    background-color: #d12323 !important;
 }
 
 .css-conundia {

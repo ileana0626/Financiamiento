@@ -8,11 +8,11 @@
             </div>
             <div class="d-none d-sm-block">
                 <small>Creado con &nbsp; <i class="fas fa-heart pulse-heart">
-                    </i> &nbsp; por Coordinación de
+                    </i> &nbsp; por la Coordinación de
                     Informática</small>
             </div>
             <div class="d-sm-block ml-2 text-right text-sm-center">
-                <small>Versión 1.9.12.23092024</small>
+                <small>Versión 1.10.13.24092024</small>
             </div>
         </div>
     </footer>

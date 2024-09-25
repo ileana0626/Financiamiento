@@ -48,7 +48,8 @@ Consulta de Errores
                     Notificaciones
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver" to="/solicitudes">
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
+                    to="/gestionSolicitudes">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             list_alt
@@ -66,7 +67,7 @@ Consulta de Errores
                     Catalogos
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
                     :to="'/perfil/' + usuario.id">
                     <template #icon>
                         <span class="material-symbols-rounded">
@@ -74,7 +75,7 @@ Consulta de Errores
                         </span>
                     </template>
                     Mi Perfil
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
                 <vs-sidebar-item id="birthday.index" to="/birthday">
                     <template #icon>
@@ -85,7 +86,7 @@ Consulta de Errores
                     Cumpleaños
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')"  id="admin.usuarios" to="/usuarios">
+                <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')" id="admin.usuarios" to="/usuarios">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             list
@@ -105,19 +106,42 @@ Consulta de Errores
                 </vs-sidebar-item>
             </template>
             <template #footer>
-                <vs-row justify="space-between" v-if="listPermisos.includes('faq.index')">
-                    <vs-tooltip top>
-                        <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
-                            <span class="material-symbols-rounded"
-                                style="color: #FFFFFF !important; font-size: 20px !important; ">
-                                logout
-                            </span>
-                        </vs-button>
-                        <template #tooltip>
-                            Salir
-                        </template>
-                    </vs-tooltip>
-                </vs-row>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <vs-tooltip top>
+                                <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
+                                    <span class="material-symbols-rounded"
+                                        style="color: #FFFFFF !important; font-size: 20px !important; ">
+                                        logout
+                                    </span>
+                                </vs-button>
+                                <template #tooltip>
+                                    Salir
+                                </template>
+                            </vs-tooltip>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <br>
+                            <div>
+                                <div class='toggle-switch m-auto'>
+                                    <label>
+                                        <input type='checkbox' v-model="darkmode" @click="switchTheme"
+                                            style="left:100px ;">
+                                        <span class='slider py-1'>
+                                            <span v-if="darkmode"
+                                                class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">light_mode</span>
+                                            <span v-else
+                                                class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1 "
+                                                style="color:black !important">dark_mode</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div class="row">
             </template>
         </vs-sidebar>
     </div>
@@ -134,7 +158,7 @@ export default {
             fullscreenLoading: false,
             active: 'dashboard.index',
             rolUsuario: sessionStorage.getItem('user_rol'),
-            darkmode: (localStorage.getItem('theme') == 'light') ? 'light' : 'dark',
+            darkmode: (localStorage.getItem('theme') == 'light') ? false : true,
         }
     },
     // watch para actualizar el link active del sidebar cuando este cambie
@@ -228,6 +252,19 @@ export default {
                     });
                 }
             });
+        }, switchTheme() {
+            if (localStorage.getItem('theme') == 'light') {
+                localStorage.setItem('theme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                document.documentElement.setAttribute('data-theme', 'light');
+                // this.darkmode = !this.darkmode;
+            }
+            this.darkmode = !this.darkmode;
+            // console.log(localStorage.getItem('theme'));
+            // console.log(this.darkmode);
+            EventBus.$emit('darkMode', this.darkmode);
         },
     }
 }

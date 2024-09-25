@@ -9,6 +9,7 @@ import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
 import Cumplea from "./components/modulos/cumpleaños/index.vue";
 import IndexUsers from "./components/modulos/usuario/index.vue";
+import GestioSolicitudes from "./components/modulos/ver/gestiosSolicitudes.vue";
 
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
 import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
@@ -96,7 +97,8 @@ export default new Router({
         { path: '/perfil/editar/:id', name: 'perfil.editar', props:true, component: EditPerfil, beforeEnter: async (to, from, next) => {await verificarUsuarioAutenticado( to, from, next); }},
         { path: '/birthday', name: 'birthday.index', component: Cumplea },
         { path: '/usuarios', name: 'admin.usuarios', component: IndexUsers , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
-        { path: '*', component: Error404 }
+        { path: '/gestionSolicitudes', name: 'tap.index', component: GestioSolicitudes },
+        { path: '*', name: 'faq.index', component: Error404 }
 
     ],
     mode: 'history',

@@ -190,11 +190,11 @@
                     </div>
 
                     <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3" v-if="respuesta == 1">
-                        <label class="col-form-label">Seguimiento</label>
-                        <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
+                        <label class="col-form-label">Quien supervisa</label>
+                        <vs-select placeholder="Seleccione una opción" v-model="supervisa"
                             v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
-                            <template #message-danger v-if="errorSeguimiento.length > 0" :disabled="bloqueo">
-                                {{ errorSeguimiento }}
+                            <template #message-danger v-if="errorSupervisa.length > 0" :disabled="bloqueo">
+                                {{ errorSupervisa }}
                             </template>
                             <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
                                 :value="item.idSeguimiento" :disabled="bloqueo">
@@ -214,19 +214,6 @@
                             </template>
                         </div>
                     </div>
-                    <!-- <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                        <label class="col-form-label">Estatus</label>
-                        <vs-select placeholder="Seleccione un estatus" v-model="estatus" v-if="cat_estutus.length > 0"
-                            :color="colors[0].color" filter autocomplete="off">
-                            <template #message-danger v-if="errorEstatus.length > 0">
-                                {{ errorEstatus }}
-                            </template>
-                            <vs-option v-for="(item, index) in cat_estutus" :key="index" :label="item.nombre"
-                                :value="item.id">
-                                {{ item.nombre }}
-                            </vs-option>
-                        </vs-select>
-                    </div> -->
                     <div class="col-sm-5 col-md-5 col-xl-5 px-0 pr-sm-5 pb-3">
                         <label class="col-form-label">Archivo</label>
                         <div class="row px-0 pr-sm-5 pb-3">
@@ -236,8 +223,9 @@
                                     action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleF1"
                                     accept="application/pdf" :on-preview="handlePreview" :on-remove="handleRemoveF1"
                                     multiple :limit="1" :on-exceed="handleExceed" :auto-upload="false" ref="upload">
-                                    <vs-button  type="primary"
-                                        style="background-color: #af8909; border-color: #af8909;" ><strong style="color: white !important;">Clic
+                                    <vs-button type="primary"
+                                        style="background-color: #af8909; border-color: #af8909;"><strong
+                                            style="color: white !important;">Clic
                                             para
                                             subir
                                             archivo</strong></vs-button>
@@ -256,7 +244,7 @@
                     <div class="col-sm-7 col-md-7 col-xl-7 px-0 pr-sm-7 pb-3">
 
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3">
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5">
                         <label class="col-form-label">Seguimiento</label>
                         <vs-select placeholder="Seleccione una opción" v-model="seguimiento"
                             v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
@@ -269,7 +257,7 @@
                             </vs-option>
                         </vs-select>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5" v-if="tipo == 3">
+                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-5">
                         <label class="col-form-label">Copias de Conocimiento</label>
                         <vs-select multiple filter
                             :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
@@ -345,6 +333,7 @@ export default {
             diaTermino: '',
             seguimiento: '',
             areaAsignada: '',
+            supervisa: '',
             tipo: 3,
             fechaAsignacion: '',
             estatus: 1,
@@ -364,6 +353,7 @@ export default {
             errorDiasTermino: '',
             errorSeguimiento: '',
             errorAreaAsignada: '',
+            errorSupervisa: '',
             errorTipo: '',
             errorFechaAsignacion: '',
             errorEstatus: '',
@@ -679,53 +669,51 @@ export default {
                 this.error = 1
                 this.errorAsunto = 'Escriba el asunto'
             }
-            if (this.tipo == 3) {
+            if (this.seguimiento.length == 0) {
+                this.error = 1
+                this.errorSeguimiento = 'Seleccione una opción'
+            }
+            if (this.copiasConocimiento.length == 0) {
+                this.error = 1
+                this.errorCopiasConocimiento = 'Seleccione aquien va la copia de conocimiento'
+            }
+            if (this.termino.length == 0) {
+                this.error = 1
+                this.errorTermino = 'Seleccione el termino'
+            }
+            if (this.termino == 1) {
+                if (this.fechaTermino.length == 0) {
+                    this.error = 1
+                    this.errorFechaTermino = 'Seleccione la fecha termino'
+                }
+                if (this.diaTermino.length == 0) {
+                    this.error = 1
+                    this.errorDiasTermino = 'Seleccione el/los días de termino'
+                }
+            }
+            if (this.areaAsignada.length == 0) {
+                this.error = 1
+                this.errorAreaAsignada = 'Seleccione quién contesta'
+            }
+            if (this.respuesta.length == 0) {
+                this.error = 1
+                this.errorRespuesta = 'Seleccione una opción'
+            }
+            if (this.respuesta == 1) {
                 if (this.seguimiento.length == 0) {
                     this.error = 1
                     this.errorSeguimiento = 'Seleccione una opción'
                 }
-                if (this.copiasConocimiento.length == 0) {
-                    this.error = 1
-                    this.errorCopiasConocimiento = 'Seleccione aquien va la copia de conocimiento'
-                }
-            } else {
-                if (this.termino.length == 0) {
-                    this.error = 1
-                    this.errorTermino = 'Seleccione el termino'
-                }
-                if (this.termino == 1) {
-                    if (this.fechaTermino.length == 0) {
-                        this.error = 1
-                        this.errorFechaTermino = 'Seleccione la fecha termino'
-                    }
-                    if (this.diaTermino.length == 0) {
-                        this.error = 1
-                        this.errorDiasTermino = 'Seleccione el/los días de termino'
-                    }
-                }
-                if (this.areaAsignada.length == 0) {
-                    this.error = 1
-                    this.errorAreaAsignada = 'Seleccione quién contesta'
-                }
-                if (this.respuesta.length == 0) {
-                    this.error = 1
-                    this.errorRespuesta = 'Seleccione una opción'
-                }
-                if (this.respuesta == 1) {
-                    if (this.seguimiento.length == 0) {
-                        this.error = 1
-                        this.errorSeguimiento = 'Seleccione una opción'
-                    }
-                }
-                if (this.fechaAsignacion.length == 0) {
-                    this.error = 1
-                    this.errorFechaAsignacion = 'Seleccione la fecha de asignación'
-                }
-                if (this.observaciones.length == 0) {
-                    this.error = 1
-                    this.errorObservaciones = 'Escriba la observación'
-                }
             }
+            if (this.fechaAsignacion.length == 0) {
+                this.error = 1
+                this.errorFechaAsignacion = 'Seleccione la fecha de asignación'
+            }
+            if (this.supervisa.length == 0) {
+                this.error = 1
+                this.errorSupervisa = 'Seleccione la quién supervisa'
+            }
+
         },
         guardarCopiasConocimiento(id, loading) {
             let url = '/administracion/usuario/guardarCopiasConocimiento'
@@ -764,7 +752,6 @@ export default {
             this.errorRespuesta = ''
             this.errorSeguimiento = ''
             this.errorFechaAsignacion = ''
-            this.errorObservaciones = ''
             this.errorCopiasConocimiento = ''
 
         }
@@ -774,10 +761,11 @@ export default {
 </script>
 
 <style>
-.el-time-panel.el-popper{
+.el-time-panel.el-popper {
     z-index: 99997 !important;
 }
-.el-picker-panel.el-date-picker.el-popper{
+
+.el-picker-panel.el-date-picker.el-popper {
     z-index: 99997 !important;
 }
 </style>
