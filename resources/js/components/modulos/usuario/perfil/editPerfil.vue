@@ -407,6 +407,10 @@ export default {
                 });
                 if(response.status === 200){
                     this.datosPersonales.id_DP = response.data[0].id_DP;
+                    let temp = this.datosPersonales.Nombre +' '+ this.datosPersonales.Apaterno +' '+ this.datosPersonales.Amaterno;
+                    let fName = temp.trim();
+                    sessionStorage.setItem('fullname', fName);
+                    EventBus.$emit('infoNav', this.id);
                     Swal.fire({
                         icon: 'success',
                         title: 'Datos actualizados correctamente',
@@ -441,7 +445,8 @@ export default {
                     this.stamp = this.getLocalStamp();
                     this.loadedFoto.id_FP = fDatos.id_FP;
                     this.loadedFoto.rutaFP = fDatos.rutaFP; 
-                    this.loadedFoto.tag = 'Imagen cargada'
+                    this.loadedFoto.tag = 'Imagen cargada';
+                    EventBus.$emit('infoNav', this.id);
                     Swal.fire({
                         icon: 'success',
                         title: 'Fotografía actualizada correctamente',

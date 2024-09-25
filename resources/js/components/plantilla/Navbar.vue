@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <vs-avatar style="cursor: pointer;" @click="perfil" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
-                        <img :src="og + loadedFoto.rutaFP + stamp" alt="Foto de perfil">
+                        <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil">
                     </vs-avatar>
                     <vs-avatar style="cursor: pointer;" @click="perfil" circle badge badge-color="#a5904a" v-else>
                         <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
@@ -49,12 +49,13 @@
     </nav>
 </template>
 <script>
+import methods from '../../methods.js'
 export default {
     props: ['showMenuBtn', 'listPermisos',],
     data() {
         return {
             datosPersonales: {
-                Nombre: '',
+                Nombre: sessionStorage.getItem('navName') ? sessionStorage.getItem('navName') : '',
             },
             fullscreenLoading: false,
             og: window.location.origin + '/',
@@ -66,9 +67,9 @@ export default {
             showSwitchTheme: true,
             currentTimeDB: '',
             loadedFoto: {
-                rutaFP: null,
+                rutaFP: sessionStorage.getItem('loadedFoto') ? sessionStorage.getItem('loadedFoto') : null,
             },
-            id: JSON.parse(sessionStorage.getItem('idUsuario'))
+            id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0
         }
     },
 
@@ -92,7 +93,10 @@ export default {
             document.documentElement.setAttribute('data-theme', 'dark');
             this.darkmode = true;
         }
-        this.getDatosPersonalesById()
+        EventBus.$on('infoNav', (data) => {
+            this.id = data;
+            this.getDatosPersonalesById();
+        })
     },
     methods: {
         checkPermisos() {
@@ -185,8 +189,10 @@ export default {
                 if (response.status === 200) {
                     let datos = response.data[0];
                     this.datosPersonales.Nombre = datos.Nombre;
-                    this.loadedFoto.rutaFP = datos.rutaFP;
-
+                    let fotoActual = datos.rutaFP + this.getLocalStamp();
+                    this.loadedFoto.rutaFP = fotoActual;
+                    sessionStorage.setItem('loadedFoto', fotoActual);
+                    sessionStorage.setItem('navName', datos.Nombre);
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
