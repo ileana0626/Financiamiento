@@ -31,20 +31,22 @@
                     <template #tooltip> Ayuda</template>
                 </vs-tooltip>
             </div>
-            <div class="row hover-click" @click.prevent="perfil">
-                <div class="col-4 mr-1">
-                    <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
-                        <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
-                    </vs-avatar>
-                    <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else>
-                        <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
-                    </vs-avatar>
+            <div class="row d-flex justify-content-center ml-0 ml-md-2">
+                <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end">
+                    <vs-tooltip bottom>
+                        <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a"  @click.prevent="perfil">
+                            <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
+                        </vs-avatar>
+                        <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else  @click.prevent="perfil">
+                            <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
+                        </vs-avatar>
+                        <template #tooltip>Perfil</template>
+                    </vs-tooltip>
                 </div>
-                <div class="col-6 p-2">
-                    <small class="text-bold mx-2">{{ datosPersonales.Nombre }}</small>
+                <div class="col-12 col-md-6 py-2 d-flex justify-content-center justify-content-md-start align-self-center">
+                    <small class="text-bold">{{ datosPersonales.Nombre }}</small>
                 </div>
             </div>
-
         </div>
     </nav>
 </template>
@@ -188,11 +190,12 @@ export default {
 
                 if (response.status === 200) {
                     let datos = response.data[0];
-                    this.datosPersonales.Nombre = datos.Nombre;
+                    let nameSplit = datos.Nombre.split(' ');
+                    this.datosPersonales.Nombre = nameSplit[0];
                     let fotoActual = datos.rutaFP + this.getLocalStamp();
                     this.loadedFoto.rutaFP = fotoActual;
                     sessionStorage.setItem('loadedFoto', fotoActual);
-                    sessionStorage.setItem('navName', datos.Nombre);
+                    sessionStorage.setItem('navName', this.datosPersonales.Nombre);
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');

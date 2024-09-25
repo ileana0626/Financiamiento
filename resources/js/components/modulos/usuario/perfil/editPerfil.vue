@@ -372,7 +372,7 @@ export default {
                     this.datosPersonales.Nombre = datos.Nombre;
                     this.datosPersonales.Apaterno = datos.Apaterno;
                     this.datosPersonales.Amaterno = datos.Amaterno;
-                    this.datosPersonales.email = datos.email;
+                    this.datosPersonales.email = datos.email ? datos.email : '';
                     this.datosPersonales.id_DP = datos.id_DP;
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento ? new Date(datos.fechaNacimiento + 'T00:00:00-05:00') : '';
                     this.datosPersonales.numCelular = datos.numCelular;

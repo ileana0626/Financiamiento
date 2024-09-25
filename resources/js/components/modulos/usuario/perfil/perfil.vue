@@ -111,12 +111,12 @@ export default {
                 Nombre: '',
                 Apaterno: '',
                 Amaterno: '',
-                email: 'No disponible',
+                email: 'Sin especificar',
                 id_DP: null,
-                fechaNacimiento: 'No disponible',
-                numCelular: 'No disponible',
-                edad: 'No disponible',
-                rol: 'No disponible'
+                fechaNacimiento: 'Sin especificar',
+                numCelular: 'Sin especificar',
+                edad: 'Sin especificar',
+                rol: 'Sin especificar'
             },
             loadedFoto: {
                 id_FP: null,
@@ -142,7 +142,7 @@ export default {
                     let temp = strFecha;
                     const dFecha = new Date(temp + " 00:00:00-05:00");
                     return dFecha.toLocaleString('es-Es',{day:'2-digit', month:'long', year: 'numeric'});
-                } else return 'No disponible';
+                } else return 'Sin especificar';
             }
         },
         calculaEdad() {
@@ -152,7 +152,7 @@ export default {
                     const dFecha = new Date(temp + " 00:00:00-05:00");
                     const hoy = new Date();
                     return `${hoy.getFullYear() - dFecha.getFullYear()} años`;
-                } else return 'No disponible';
+                } else return 'Sin especificar';
             }
         },
     },
@@ -175,10 +175,10 @@ export default {
                     this.datosPersonales.Nombre = datos.Nombre;
                     this.datosPersonales.Apaterno = datos.Apaterno;
                     this.datosPersonales.Amaterno = datos.Amaterno;
-                    this.datosPersonales.email = (datos.email) ? datos.email : 'No disponible';
+                    this.datosPersonales.email = (datos.email) ? datos.email : 'Sin especificar';
                     this.datosPersonales.id_DP = datos.id_DP;
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento;
-                    this.datosPersonales.numCelular = (datos.numCelular) ? datos.numCelular : 'No disponible';
+                    this.datosPersonales.numCelular = (datos.numCelular) ? datos.numCelular : 'Sin especificar';
                     this.datosPersonales.rol = datos.rol;
                     
                     this.loadedFoto.id_FP = datos.id_FP;
