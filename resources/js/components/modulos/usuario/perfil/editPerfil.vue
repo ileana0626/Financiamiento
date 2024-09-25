@@ -717,6 +717,7 @@ export default {
                     'pass': this.passActual,
                     'newPass': this.passNueva,
                     'confirmPass': this.passConfirmar,
+                    'fAccion': methods.getTimestamp(),
                 });
                 if(response.status === 200){
                     Swal.fire({

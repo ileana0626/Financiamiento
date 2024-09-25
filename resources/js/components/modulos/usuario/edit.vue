@@ -219,7 +219,7 @@
                                 <div class="col-12 col-lg-6 col-xl-4 px-3 pb-3">
                                     <label class="col-form-label">Nueva contraseña</label>
                                     <vs-input id="contrasenaNueva" type="password" color="#C2B280" icon-after v-model="passNueva"
-                                        placeholder="Escriba la nueva contraseña" autocomplete="off" 
+                                        placeholder="Escriba la nueva contraseña" autocomplete="off" :key="'np' + errorPSWD.nueva.length"
                                         :visiblePassword="visiblePSWD.nueva" 
                                         :state="errorPSWD.nueva ? 'danger' : ''"
                                         @click-icon="visiblePSWD.nueva = !visiblePSWD.nueva">
@@ -269,7 +269,7 @@
                                         <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                     </div>
                                 </vs-button>      
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="WIP()">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionPass()">
                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                         <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Reestablecer contraseña
                                     </div>
@@ -381,6 +381,9 @@ export default {
         validEmail() {
             return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.datosPersonales.email);
         },
+        validPSWD() {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&\-_.,'="])[A-Za-z\d@#$!%*?&\-_.,'="]{8,}$/.test(this.passNueva);
+        },
     },
     methods: {
         async getDatosPersonalesById() {
@@ -404,7 +407,7 @@ export default {
                     
                     this.loadedFoto.id_FP = datos.id_FP;
                     this.loadedFoto.rutaFP = datos.rutaFP; 
-                    this.loadedFoto.tag = datos.rutaFP ? 'Imagen cargada' : 'No se ha cargado una imagen';;
+                    this.loadedFoto.tag = datos.rutaFP ? 'Imagen cargada' : 'No se ha cargado una imagen';
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
@@ -795,25 +798,17 @@ export default {
         // metodos contraseña
         validarPass(){
             this.passProcede = true;
-            if(this.passActual === ''){
-                this.errorPSWD.actual = 'La contraseña actual no puede ir vacia';
-                this.passProcede = false;
-            }
             if(this.passNueva === ''){
                 this.errorPSWD.nueva = 'La nueva contraseña no puede ir vacia';
                 this.passProcede = false;
-            }  else if(this.passNueva.length < 8){
-                this.errorPSWD.nueva = 'La contraseña debe tener al menos 8 caracteres';
+            }  else if(!this.validPSWD){
                 this.passProcede = false;
-            } else if(this.passNueva !== this.passConfirmar){
+                this.errorPSWD.nueva = 'La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial';
+            } else if(this.passNueva !== this.passConfirmar) {
+                this.passProcede = false;
                 this.errorPSWD.nueva = 'Las contraseñas no coinciden';
                 this.errorPSWD.confirmar = 'Las contraseñas no coinciden';
-                this.passProcede = false;
             }
-            // if(this.passConfirmar === ''){
-            //     this.errorPSWD.confirmar = 'La confirmación de contraseña no puede ir vacia';
-            //     this.passProcede = false;
-            // }
         },
         limpiarErrorPass() {
             this.errorPSWD.nueva = '';
@@ -832,7 +827,7 @@ export default {
             if(this.passProcede){
                 Swal.fire({
                     icon: 'warning',
-                    title: '¿Desea actualizar su contraseña?',
+                    title: '¿Desea reestablecer la contraseña del usuario?',
                     showConfirmButton: true,
                     showCancelButton: true,
                     reverseButtons: true,
@@ -840,32 +835,32 @@ export default {
                     cancelButtonText: 'Cancelar',
                 }).then(async (result) => {
                     if(result.isConfirmed){
-                       await this.setUpdatePass();
+                       await this.setReestablecerPass();
                     }
                 });                  
             }
 
         },
-        async setUpdatePass() {
-            const url = '/administracion/usuario/setUpdatePass'
+        async setReestablecerPass() {
+            const url = '/administracion/usuario/setReestablecerPass'
             const load = methods.loading( this.$vs );    
             try {
                 const response = await axios.post(url,{
                     'nId': this.id,
-                    'pass': this.passActual,
                     'newPass': this.passNueva,
                     'confirmPass': this.passConfirmar,
+                    'fAccion': methods.getTimestamp(),
                 });
                 if(response.status === 200){
                     Swal.fire({
                         icon: 'success',
-                        title: 'Contraseña actualizada correctamente',
+                        title: 'Contraseña reestablecida correctamente',
                         showConfirmButton: true,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'De acuerdo',
                     }).then(async (result) => {                   
                         this.limpiarContrasena();
-                    })
+                    });
                 }
             } catch (error) {
                 const method = url.split('/');

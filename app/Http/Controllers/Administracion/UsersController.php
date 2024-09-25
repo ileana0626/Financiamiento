@@ -646,9 +646,11 @@ class UsersController extends Controller
         $pass = $request->pass;
         $newPass = $request->newPass;
         $confirmPass = $request->confirmPass;
+        $fAccion = $request->fAccion;
         
         $newPass = ($newPass == NULL) ? '-1' : $newPass;
         $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
 
         DB::beginTransaction();
         try {
@@ -666,9 +668,10 @@ class UsersController extends Controller
                     //crear hash
                     $newHash = password_hash($newPass, PASSWORD_DEFAULT, ['cost' => 10]);
                     //actualizar la pass
-                    $rpta = DB::select('call sp_setUpdatePassById(?,?)',[
+                    $rpta = DB::select('call sp_setUpdatePassById(?,?,?)',[
                         $nId,
-                        $newHash
+                        $newHash,
+                        $fAccion,
                     ]);
 
                 } else {
@@ -677,6 +680,45 @@ class UsersController extends Controller
                 }
             } else {
                 throw new \ErrorException("Error en contraseña actual, verifique la contraseña y vuelva a intentarlo.". 400);
+            }
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }
+    public function setReestablecerPass(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $newPass = $request->newPass;
+        $confirmPass = $request->confirmPass;
+        $fAccion = $request->fAccion;
+        
+        $newPass = ($newPass == NULL) ? '-1' : $newPass;
+        $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+        $nIdAuth = Auth::id();
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
+
+        DB::beginTransaction();
+        try {
+            $newHash = '';
+            $rpta = '';
+
+            if($newPass === $confirmPass){
+                //crear hash
+                $newHash = Hash::make($newPass);
+                //actualizar la pass
+                $rpta = DB::select('call sp_setUpdatePassById(?,?,?)',[
+                    $nId,
+                    $newHash,
+                    $fAccion,
+                ]);
+                broadcast(new Logout($nId));
+            } else {
+                //lanza error si la nueva pass y su confirmacion no coinciden
+                throw new \ErrorException("Error en nueva contraseña, verifique la nueva contraseña y vuelva a intentarlo.". 400);
             }
             DB::commit();
             return $rpta;

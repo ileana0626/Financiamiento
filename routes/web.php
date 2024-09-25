@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');
     Route::post('/administracion/usuario/setCambiarEstadoById','Administracion\UsersController@setCambiarEstadoById');
     Route::post('/administracion/usuario/setUpdateDatosRolById', 'Administracion\UsersController@setUpdateDatosRolById');
+    Route::post('/administracion/usuario/setReestablecerPass','Administracion\UsersController@setReestablecerPass');
 
 });
 
