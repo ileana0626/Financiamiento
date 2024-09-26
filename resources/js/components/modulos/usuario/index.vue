@@ -33,7 +33,7 @@
                             </vs-button>
                         </div>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                    <div class="card-body container-fluid white-card-body">
                         <div class="tableStyles">
                             <template v-if="listarUsuariosPaginated.length">
                                 <vs-table>
@@ -42,7 +42,7 @@
                                             class="inputSearchPreguntas" />
                                     </template>
                                     <template #thead>
-                                        <vs-tr>
+                                        <vs-tr class="dark-th">
                                             <vs-th>#</vs-th>
                                             <vs-th>Nombre</vs-th>
                                             <vs-th>Correo</vs-th>
@@ -81,11 +81,14 @@
                                                 <template v-if="item.state == 'A'">
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.editar')">
-                                                        <router-link class="btn btn-flat btn-info btn-sm"
-                                                            :to="{ name: 'usuario.editar', params: { id: item.id } }"
-                                                            style=" color : white !important ;">
-                                                            <i class="fas fa-pencil-alt pr-1" /> Editar
-                                                        </router-link>
+                                                        <el-tooltip placement="top">
+                                                            <router-link class="btn btn-flat btn-edit btn-sm p-2"
+                                                                :to="{ name: 'usuario.editar', params: { id: item.id } }"
+                                                                style="color : white !important ;">
+                                                                <i class="fas fa-pencil-alt pr-1" />
+                                                            </router-link>
+                                                            <div slot="content">Editar usuario</div>
+                                                        </el-tooltip>
                                                     </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.permiso')">
@@ -100,7 +103,7 @@
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-danger btn-sm p-2"
                                                                 @click.prevent="accionCambiarEstado(1, item.id)"
-                                                                style=" color : white !important ;">
+                                                                style="color : white !important ;">
                                                                 <i class="fas fa-solid fa-thumbs-down" />
                                                             </button>
                                                             <div slot="content">
@@ -115,7 +118,7 @@
                                                         <el-tooltip placement="top">
                                                             <button class="btn btn-flat btn-success btn-sm p-2"
                                                                 @click.prevent="accionCambiarEstado(2, item.id)"
-                                                                style=" color : white !important ;">
+                                                                style=" color: white !important ;">
                                                                 <i class="fas fa-check" />
                                                             </button>
                                                             <div slot="content">
@@ -492,7 +495,8 @@ export default {
                     Swal.fire({
                         icon: 'success',
                         title: 'Se ' + ((op == 1) ? 'desactivo' : 'activo') + ' el usuario',
-                        showConfirmButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo',
                     }).then(async result => {
                         this.listaUsuario = [];
                         await this.getListarAllUsers();
@@ -575,7 +579,7 @@ export default {
             }
         },
         inputNombr( cadena ){
-            let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ ]{0,50}$/;
             let temp = '';
             switch (cadena){
                 case 'nombre':
@@ -643,7 +647,7 @@ export default {
                 this.error.pswd = 'La contraseña es obligatoria';
             } else if(!this.validPSWD){
                 this.procede = false;
-                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayuscula, un número y un caracter especial';
+                this.error.pswd = 'La contraseña debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un caracter especial';
             } else if(this.datosUsuario.pswd !== this.datosUsuario.pswdConfirmar) {
                 this.procede = false;
                 this.error.pswd = 'Las contraseñas no coinciden';
@@ -700,10 +704,6 @@ export default {
 }
 </script>
 <style scope>
-/* .card-body {
-    background-color: #fff !important;
-} */
-
 @media screen and (max-width: 575px) {
     .card-body {
         padding: 0;

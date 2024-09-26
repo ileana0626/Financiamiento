@@ -522,6 +522,10 @@ strong,
     background: var(--header-card-2) !important;
     border-color: var(--header-card-2) !important;
 }
+.btn-edit {
+    background: var(--acento) !important;
+    border-color: var(--acento) !important;
+}
 
 .callout.callout-info {
     border-left-color: var(--dorado) !important;
@@ -856,6 +860,12 @@ div:where(.swal2-container) div:where(.swal2-popup) {
 .vs-table__th__content {
     justify-content: center !important;
     color: var(--iee-white-dark) !important;
+}
+.dark-th .vs-table__th {
+    background-color: var(--header-card) !important;
+}
+.dark-th .vs-table__th .vs-table__th__content{
+    color: #fff !important;
 }
 
 .vs-table__tr:hover .vs-table__td {
@@ -1393,6 +1403,9 @@ h4 {
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.2s ease;
 }
+.white-card-body{
+    background-color: var(--iee-white) !important;    
+}
 
 
 @media screen and (max-width: 500px) {
@@ -1416,6 +1429,9 @@ h4 {
     background-clip: border-box;
     border: none;
     border-radius: 0;
+}
+.hover-click *:hover {
+    cursor: pointer;
 }
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{

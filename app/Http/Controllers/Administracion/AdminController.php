@@ -21,4 +21,21 @@ class AdminController extends Controller
 
         return ($reqId === Auth::id());
     }
+
+    /** Verifica que el id de usuario proporcionado existe y no es fantasma */
+    public function validUserToEdit(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $reqId = $request->reqId;
+        $reqId = ($reqId == NULL) ? 0 : (int) $reqId;
+
+        try {
+            $rpta = DB::select('call sp_Admin_validUserToEdit(?)',[
+                $reqId
+            ]);
+            return sizeof($rpta);
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
 }

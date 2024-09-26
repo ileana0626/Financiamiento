@@ -29,7 +29,7 @@
                     <div class="card-header d-flex">
                         <h3 class="card-title font-weight-bold">Editar perfil</h3>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                    <div class="card-body container-fluid" style="background-color: var(--iee-white) !important;">
                         <h6 class="px-2 py-2 font-weight-bold">Fotografía</h6>
                         <div class="row">
                             <div class="col-12 col-xl-3 px-4 pb-3">
@@ -372,7 +372,7 @@ export default {
                     this.datosPersonales.Nombre = datos.Nombre;
                     this.datosPersonales.Apaterno = datos.Apaterno;
                     this.datosPersonales.Amaterno = datos.Amaterno;
-                    this.datosPersonales.email = datos.email;
+                    this.datosPersonales.email = datos.email ? datos.email : '';
                     this.datosPersonales.id_DP = datos.id_DP;
                     this.datosPersonales.fechaNacimiento = datos.fechaNacimiento ? new Date(datos.fechaNacimiento + 'T00:00:00-05:00') : '';
                     this.datosPersonales.numCelular = datos.numCelular;
@@ -407,6 +407,10 @@ export default {
                 });
                 if(response.status === 200){
                     this.datosPersonales.id_DP = response.data[0].id_DP;
+                    let temp = this.datosPersonales.Nombre +' '+ this.datosPersonales.Apaterno +' '+ this.datosPersonales.Amaterno;
+                    let fName = temp.trim();
+                    sessionStorage.setItem('fullname', fName);
+                    EventBus.$emit('infoNav', this.id);
                     Swal.fire({
                         icon: 'success',
                         title: 'Datos actualizados correctamente',
@@ -441,7 +445,8 @@ export default {
                     this.stamp = this.getLocalStamp();
                     this.loadedFoto.id_FP = fDatos.id_FP;
                     this.loadedFoto.rutaFP = fDatos.rutaFP; 
-                    this.loadedFoto.tag = 'Imagen cargada'
+                    this.loadedFoto.tag = 'Imagen cargada';
+                    EventBus.$emit('infoNav', this.id);
                     Swal.fire({
                         icon: 'success',
                         title: 'Fotografía actualizada correctamente',
@@ -535,7 +540,7 @@ export default {
             this.datosPersonales.numCelular = temp.replace(regex, '');
         },
         inputNombr( cadena ){
-            let regex = /[^a-zA-ZáíóéúÁÉÍÓÚñÑ ]{0,50}$/;
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ ]{0,50}$/;
             let temp = '';
             switch (cadena){
                 case 'nombre':
@@ -717,6 +722,7 @@ export default {
                     'pass': this.passActual,
                     'newPass': this.passNueva,
                     'confirmPass': this.passConfirmar,
+                    'fAccion': methods.getTimestamp(),
                 });
                 if(response.status === 200){
                     Swal.fire({

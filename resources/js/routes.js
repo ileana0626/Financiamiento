@@ -8,6 +8,7 @@ import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
 import Cumplea from "./components/modulos/cumpleaños/index.vue";
 import IndexUsers from "./components/modulos/usuario/index.vue";
+import EditUser from "./components/modulos/usuario/edit.vue";
 import GestioSolicitudes from "./components/modulos/ver/gestiosSolicitudes.vue";
 import Editar from './components/modulos/captura/editar.vue';
 
@@ -82,6 +83,34 @@ async function verificarUsuarioAutenticado(to,from,next){
         console.log(error);
     }
 }
+async function userValidToEdit(to,from,next){
+    const url = '/administracion/admin/validUserToEdit';
+    const nId = to.params.id;
+    try {
+        let authUser = JSON.parse(sessionStorage.getItem('authUser'));
+        if(authUser){
+            let listRolPermisosByUsuario = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'));
+            if (listRolPermisosByUsuario.includes(to.name)) {
+                const response = await axios.get(url,{
+                    params: {'reqId': nId}
+                });
+                const datos = response.data;
+                if(!!datos){
+                    next();
+                } else {
+                    next('*');
+                }
+            } else {
+                next('/');
+            }            
+        } else {
+            next('/');
+        }
+    } catch (error) {
+        next('*');
+        console.log(error);
+    }
+}
 
 export default new Router({
     routes: [
@@ -96,9 +125,11 @@ export default new Router({
         { path: '/perfil/editar/:id', name: 'perfil.editar', props:true, component: EditPerfil, beforeEnter: async (to, from, next) => {await verificarUsuarioAutenticado( to, from, next); }},
         { path: '/birthday', name: 'birthday.index', component: Cumplea },
         { path: '/usuarios', name: 'admin.usuarios', component: IndexUsers , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/usuarios/editar/:id', name: 'usuario.editar', component: EditUser, props: true, beforeEnter: async (to, from, next) => {await userValidToEdit(to, from, next); } },
         { path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         { path: '*', name: 'faq.index', component: Error404 }
+
 
     ],
     mode: 'history',

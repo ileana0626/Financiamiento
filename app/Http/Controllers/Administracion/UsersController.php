@@ -469,6 +469,7 @@ class UsersController extends Controller
         $cApaterno = ($cApaterno == NULL) ? '' : $cApaterno;
         $cAmaterno = ($cAmaterno == NULL) ? '' : $cAmaterno;
         $fNacimiento = ($fNacimiento == NULL) ? NULL : $fNacimiento;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
 
         DB::beginTransaction();
         try {
@@ -648,9 +649,11 @@ class UsersController extends Controller
         $pass = $request->pass;
         $newPass = $request->newPass;
         $confirmPass = $request->confirmPass;
+        $fAccion = $request->fAccion;
         
         $newPass = ($newPass == NULL) ? '-1' : $newPass;
         $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
 
         DB::beginTransaction();
         try {
@@ -668,9 +671,10 @@ class UsersController extends Controller
                     //crear hash
                     $newHash = password_hash($newPass, PASSWORD_DEFAULT, ['cost' => 10]);
                     //actualizar la pass
-                    $rpta = DB::select('call sp_setUpdatePassById(?,?)',[
+                    $rpta = DB::select('call sp_setUpdatePassById(?,?,?)',[
                         $nId,
-                        $newHash
+                        $newHash,
+                        $fAccion,
                     ]);
 
                 } else {
@@ -679,6 +683,45 @@ class UsersController extends Controller
                 }
             } else {
                 throw new \ErrorException("Error en contraseña actual, verifique la contraseña y vuelva a intentarlo.". 400);
+            }
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }
+    public function setReestablecerPass(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $newPass = $request->newPass;
+        $confirmPass = $request->confirmPass;
+        $fAccion = $request->fAccion;
+        
+        $newPass = ($newPass == NULL) ? '-1' : $newPass;
+        $confirmPass = ($confirmPass == NULL) ? '+2' : $confirmPass;
+        $nIdAuth = Auth::id();
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
+
+        DB::beginTransaction();
+        try {
+            $newHash = '';
+            $rpta = '';
+
+            if($newPass === $confirmPass){
+                //crear hash
+                $newHash = Hash::make($newPass);
+                //actualizar la pass
+                $rpta = DB::select('call sp_setUpdatePassById(?,?,?)',[
+                    $nId,
+                    $newHash,
+                    $fAccion,
+                ]);
+                broadcast(new Logout($nId));
+            } else {
+                //lanza error si la nueva pass y su confirmacion no coinciden
+                throw new \ErrorException("Error en nueva contraseña, verifique la nueva contraseña y vuelva a intentarlo.". 400);
             }
             DB::commit();
             return $rpta;
@@ -782,6 +825,68 @@ class UsersController extends Controller
             DB::rollBack();
             throw new \Exception($e);
         }        
+    }
+    public function getDatosRolById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $nId = ($nId == NULL) ? 0 : $nId;
+
+        try {
+            $rpta = DB::select('call sp_Usuario_getDatosRolById(?)',[
+                $nId
+            ]);
+
+            return $rpta;
+        } catch (\Exception $e) {
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . 400);
+        }
+    }
+    public function setUpdateDatosRolById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nId = $request->nId;
+        $rolNuevo = $request->rolNuevo;
+        $rolActual = $request->rolActual;
+        $dptoNuevo = $request->dptoNuevo;
+        $dptoActual = $request->dptoActual;
+        $fAccion = $request->fAccion;
+        $nIdAuth = Auth::id();
+
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
+        $updated = false;
+
+        DB::beginTransaction();
+        try {
+            if($rolNuevo !== $rolActual){
+                //actualizar rol de usuario
+                DB::select('call sp_Usuario_setUpdateRolById(?,?)',[
+                    $nId,
+                    $rolNuevo
+                ]);
+                $updated = true;
+            }
+            if($dptoNuevo !== $dptoActual){
+                //actualizar el departamento
+                DB::select('call sp_Usuario_setUpdateDPTOById(?,?,?)',[
+                    $nId,
+                    $dptoNuevo,
+                    $fAccion,
+                ]);
+                $updated = true;
+            }
+            if($updated){
+                //desloguear si se actualizo
+                broadcast(new Logout($nId));
+            }
+
+            DB::commit();
+            return $updated;
+        } catch (\Error $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+
     }
     
     public function obtenerSolicitud(Request $request)

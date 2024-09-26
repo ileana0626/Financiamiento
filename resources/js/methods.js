@@ -120,3 +120,18 @@ exports.getTimestamp = () => {
   const seconds = String(currentDate.getSeconds()).padStart(2, '0');    
   return (`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
 };
+
+
+/**
+ * Pequeño mensaje de notificacion de Vuesax como placeholder para una accion.
+ * @param {object} vsInstance - La instancia de Vuesax (this.$vs)
+ * @return {object} La instancia de la notificación. 
+ */
+exports.WIP = (vsInstance) => {
+   return vsInstance.notification({
+    square: true,
+    color: 'dark',
+    position: 'bottom-center',
+    title: '<span class="text-white">Función en progreso</span>'
+  });
+};

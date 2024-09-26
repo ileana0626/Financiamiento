@@ -423,17 +423,17 @@ export default {
             let sessFullName = sessionStorage.getItem('fullname');
             let sessUsername = sessionStorage.getItem('username');
             let sessCorreo = sessionStorage.getItem('correo');
-            let sessUsrRol = sessionStorage.getItem('user_rol');
+            let sessUsrRol = sessionStorage.getItem('rolUsuario');
 
 
-            if (sessFolio == null || sessFullName == null || sessUsername == null || sessUsrRol == null || sessCorreo == null) {
+            if ( sessFullName == null || sessUsername == null || sessUsrRol == null) {
                 let url = '/administracion/usuario/getUsuario';
                 axios.get(url).then(response => {
-                    this.cfullname = response.data[0].fullname;
+                    this.cfullname = response.data[0].fullname.trim();
                     sessionStorage.setItem('idUsuario', response.data[0].id);
-                    sessionStorage.setItem('fullname', response.data[0].fullname);
+                    sessionStorage.setItem('fullname', this.cfullname);
                     sessionStorage.setItem('username', response.data[0].username);
-
+                    EventBus.$emit('infoNav', response.data[0].id);
                 }).catch(error => {
                     console.log(error);
                     let nombreMetodo = url.split('/');
