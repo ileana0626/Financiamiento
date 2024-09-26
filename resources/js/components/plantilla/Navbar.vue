@@ -1,6 +1,6 @@
 <template>
     <nav class="main-header navbar navbar-expand navbar-white navbar-light"
-        style="background-color: var(--iee-bg-color); border-bottom: 1px solid var(--iee-bg-color);">
+        style="background-color: var(--iee-white); border-bottom: 1px solid var(--iee-white);">
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
                 <p class="navText">

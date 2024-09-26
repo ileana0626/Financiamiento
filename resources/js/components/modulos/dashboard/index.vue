@@ -6,18 +6,22 @@
                     <div class="card cardintro d-flex flex-row" style="height: 19rem">
                         <div class="tituloCard flex-grow-1 p-3 align-self-center" style="color: var(--iee-white);">
                             <h5 class="font-weight-bold tituloin">
-                                ¡Hola, {{ cfullname }}!
+                                ¡Buen día {{ cfullname }}!
                             </h5>
                             <h6 class="subtituloin font-weight-bold subtituloin">
-                                {{ saludo }}
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Modi odit facilis neque
+                                corporis laborum sit, ratione consectetur officiis quae, itaque deleniti ullam amet
+                                soluta labore repellat, expedita numquam assumenda impedit.
                             </h6>
                         </div>
-                        <img src="/img/imglogro.webp" class="img-fluid imgCard" style="height: 70% !important;">
-                    </div>
-                    <div class="col">
-                        <div class="row mt-4 rowvalidados">
+                        <div class="align-self-center">
+                            <img src="/img/imglogro.webp" style="height: 10vh !important;">
                         </div>
                     </div>
+                    <!-- <div class="col ">
+                        <div class="row mt-4 rowvalidados">
+                        </div>
+                    </div> -->
                 </div>
                 <div class="col-sm-5 mx-auto">
                     <vs-table>

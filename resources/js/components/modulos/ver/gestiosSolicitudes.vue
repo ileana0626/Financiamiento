@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="px-0 px-md-5 container-fluid">
+        <div class="px-0 px-md-5 container-fluid" >
             <div class="mx-3 mt-5 mt-md-2">
                 <div class="d-flex justify-content-start align-items-center tabContainer mx-3 mx-sm-0" >
                     <TabComponent title="Solicitudes" :active="activeTab == 3" @click.native="section(3)" />

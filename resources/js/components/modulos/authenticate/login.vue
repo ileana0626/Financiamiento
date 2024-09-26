@@ -63,7 +63,7 @@
                 </span>
               </template>
             </vs-input>
-            <recuperarpas/>
+            <!-- <recuperarpas/> -->
           </div>
         </div>
         <br />
@@ -117,7 +117,7 @@
 
 <script>
 import { VueRecaptcha } from "vue-recaptcha";
-import recuperarpas from "./recuperarpas.vue";
+// import recuperarpas from "./recuperarpas.vue";
 
 let methods = require('../../../methods')
 
@@ -144,7 +144,7 @@ export default {
       hasVisiblePassword: false,
     };
   },
-  components: { VueRecaptcha,recuperarpas },
+  components: { VueRecaptcha },
   created() {
     const inputs = document.querySelectorAll(".input");
     function addcl() {

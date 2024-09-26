@@ -74,7 +74,7 @@
                         </template>
                         <template #tbody>
                             <vs-tr v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistSolicitudes, search), page, max)"
-                                :key="i" :class="colorStatus(tr.fechaTermino, tr.diasTermino)">
+                                :key="i" :class="colorStatus(tr.fechaTermino, tr.diasTermino, tr.estatus)">
                                 <vs-td class="tableRowHeight">
                                     {{ tr.numeroConsecutivo }}
                                 </vs-td>
@@ -240,30 +240,31 @@
                                                     </vs-button>
                                                 </el-tooltip>
                                             </template>
-                                            <template v-if="listaPermisos.includes('editar.solicitud')">
-                                                <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                    placement="top">
-                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
-                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                                        <span class="material-symbols-rounded"
-                                                            style="color: var(--text-color);">
-                                                            edit
-                                                        </span>
-                                                    </vs-button>
-                                                </el-tooltip>
-                                            </template>
-                                            <template>
-                                                <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
-                                                    placement="top">
-                                                    <vs-button class="btn btn-flat btn-sm "
-                                                        @click.prevent="modalRecordatorio = !modalRecordatorio"
-                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                                        <span class="material-symbols-rounded"
-                                                            style="color: var(--text-color);">
-                                                            schedule
-                                                        </span>
-                                                    </vs-button>
-                                                </el-tooltip>
+                                            <template v-if="tr.estatus != 'CONCLUIDO'">
+                                                <template v-if="listaPermisos.includes('editar.solicitud')">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top" style="background-color: var(--iee-white);">
+                                                        <router-link class="btn btn-flat btn-sm "
+                                                            :to="{ name: 'editar.solicitud', params: { id: tr.id, } }">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </router-link>
+                                                    </el-tooltip>
+                                                </template>
+                                                <template>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm " @click.prevent="sendEmailPass"
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                notifications
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </template>
                                             </template>
                                         </template>
                                     </template>
@@ -308,13 +309,14 @@
                                             <template v-if="listaPermisos.includes('editar.solicitud')">
                                                 <el-tooltip class="item h-100" effect="dark" content="Editar"
                                                     placement="top">
-                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
-                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                    <router-link class="btn btn-flat btn-sm "
+                                                        style="background-color: white;"
+                                                        :to="{ name: 'editar.solicitud', params: { id: tr.id, } }">
                                                         <span class="material-symbols-rounded"
                                                             style="color: var(--text-color);">
                                                             edit
                                                         </span>
-                                                    </vs-button>
+                                                    </router-link>
                                                 </el-tooltip>
                                             </template>
                                         </template>
@@ -456,7 +458,7 @@ export default {
     },
     computed: {
         colorStatus() {
-            return (fechaTermino, diasTermino) => {
+            return (fechaTermino, diasTermino, estatus) => {
                 let color = ''
                 if (fechaTermino != null) {
                     const moment = require('moment');
@@ -468,30 +470,41 @@ export default {
                     let date2 = new Date(validDate2)
                     let differenceInMs = Math.abs(date1 - date2);
                     let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+                    let date3 = new Date(date1).getTime()
+                    let date4 = new Date(date2).getTime()
+                    let falta = date3 - date4
 
-                    if (diasTermino != null) {
-                        if (differenceInDays <= diasTermino) {
-                            switch (differenceInDays) {
-                                case 0:
-                                    color = 'css-conundia'
-                                    break;
-                                case 1:
-                                    color = 'css-conundia'
-                                    break;
-                                case 2:
-                                    color = 'css-condosdias'
-                                    break;
-                                case 3:
-                                    color = 'css-condosdias'
-                                    break;
-                                default:
 
+                    if (estatus != 'CONCLUIDO') {
+                        if (falta < 0) {
+                            color = ''
+                        } else {
+                            if (diasTermino != null) {
+                                if (differenceInDays <= diasTermino) {
+                                    switch (differenceInDays) {
+                                        case 0:
+                                            color = 'css-conundia'
+                                            break;
+                                        case 1:
+                                            color = 'css-conundia'
+                                            break;
+                                        case 2:
+                                            color = 'css-condosdias'
+                                            break;
+                                        case 3:
+                                            color = 'css-condosdias'
+                                            break;
+                                        default:
+
+                                    }
+                                } else if (differenceInDays >= diasTermino) {
+                                    color = 'css-conundial'
+                                }
                             }
-                        } else if (differenceInDays >= diasTermino) {
-                            color = 'css-conundial'
                         }
+                        return color
                     }
-                    return color
+
                 }
             }
 
@@ -694,6 +707,28 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             }).catch((error) => {
+                loading.close();
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        },
+        sendEmailPass() {
+            let url = '/send-mail'
+            axios.get(url, {
+                params: {
+                    'cUsername': 'Miguel',
+                    'cEmail': 'migueldjssn98@gmail.com',
+                }
+            }).then(response => {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Correo Mandado",
+                    text: 'El recordatprio se mandado con exito, verifíque su bandeja del correo electrónico asociado a su cuenta',
+                    showConfirmButton: true,
+                    confirmButtonText: "De acuerdo",
+                });
+            }).catch(error => {
                 loading.close();
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);

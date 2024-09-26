@@ -4,13 +4,13 @@ import Dashboard from './components/modulos/dashboard/index.vue';
 import Login from './components/modulos/authenticate/login.vue';
 import PreferenciasInterfaz from "./components/modulos/admin/Preferenciasinterfaz.vue";
 import Captura from "./components/modulos/captura/registro.vue";
-import listaSolicitudes from "./components/modulos/ver/versolicitudes.vue";
 import Recordatorio from "./components/modulos/captura/recordatorios.vue";
 import Catalogos from "./components/modulos/catalogos/index.vue";
 import Cumplea from "./components/modulos/cumpleaños/index.vue";
 import IndexUsers from "./components/modulos/usuario/index.vue";
 import EditUser from "./components/modulos/usuario/edit.vue";
 import GestioSolicitudes from "./components/modulos/ver/gestiosSolicitudes.vue";
+import Editar from './components/modulos/captura/editar.vue';
 
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
 import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
@@ -118,7 +118,6 @@ export default new Router({
         { path: '/', name: 'dashboard.index', component: Dashboard, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/consultaErrorcodes', name: 'errores.index', component: SADecoder , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/captura', name: 'solicitudes.captura', component: Captura,beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
-        { path: '/solicitudes', name: 'solicitudes.ver', component: listaSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/recordatorios', name: 'recordatorios.captura', component: Recordatorio, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/catalogos', name: 'admin.catalogos', component: Catalogos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
         { path: '/preferenciasInterfaz', name: 'admin.preferencias', component: PreferenciasInterfaz, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); }   },
@@ -127,7 +126,8 @@ export default new Router({
         { path: '/birthday', name: 'birthday.index', component: Cumplea },
         { path: '/usuarios', name: 'admin.usuarios', component: IndexUsers , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/usuarios/editar/:id', name: 'usuario.editar', component: EditUser, props: true, beforeEnter: async (to, from, next) => {await userValidToEdit(to, from, next); } },
-        { path: '/gestionSolicitudes', name: 'tap.index', component: GestioSolicitudes },
+        { path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         { path: '*', name: 'faq.index', component: Error404 }
 
 

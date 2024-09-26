@@ -261,7 +261,8 @@
                         <label class="col-form-label">Copias de Conocimiento</label>
                         <vs-select multiple filter
                             :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
-                            v-model="copiasConocimiento" v-if="cat_departamentos.length > 0" autocomplete="off">
+                            v-model="copiasConocimiento" v-if="cat_departamentos.length > 0" autocomplete="off"
+                            :color="colors[0].color">
                             <template #message-danger v-if="errorCopiasConocimiento.length > 0">
                                 {{ errorCopiasConocimiento }}
                             </template>
@@ -422,8 +423,15 @@ export default {
                 this.seguimiento = ''
                 this.fechaAsignacion = ''
                 this.observaciones = ''
+                this.respuesta = ''
+            } else if (this.tipo == 1) {
+                this.respuesta = 1
+                this.bloqueo = false
+                this.copiasConocimiento = ''
+                this.seguimiento = ''
             } else {
                 this.bloqueo = false
+                this.respuesta = ''
                 this.copiasConocimiento = ''
                 this.seguimiento = ''
             }
@@ -590,19 +598,10 @@ export default {
                     'fechaAsignacion': this.fechaAsignacion,
                     'estatus': this.estatus,
                     'observaciones': this.observaciones,
-                    'idArchivo': idF1
+                    'idArchivo': idF1,
+                    'supervisa': this.supervisa
                 }).then(response => {
-                    if (this.tipo == 3) {
-                        this.guardarCopiasConocimiento(response.data[0].id, loading)
-                    } else {
-                        loading.close();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Registrado correctamente',
-                            showConfirmButton: true,
-                            confirmButtonText: 'De acuerdo'
-                        });
-                    }
+                    this.guardarCopiasConocimiento(response.data[0].id, loading)
                 }).catch(error => {
                     loading.close();
                     let nombreMetodo = url.split('/');
@@ -753,6 +752,7 @@ export default {
             this.errorSeguimiento = ''
             this.errorFechaAsignacion = ''
             this.errorCopiasConocimiento = ''
+            this.errorSupervisa = ''
 
         }
     }
