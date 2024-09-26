@@ -591,6 +591,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav)
     box-shadow: 0px 0px 0.22rem rgb(197, 197, 197);
     border-radius: 0 1.25rem 1.25rem 1.25rem;
     min-width: 250px;
+    background-color: var(--iee-white);
 }
 
 .tabContent > div {

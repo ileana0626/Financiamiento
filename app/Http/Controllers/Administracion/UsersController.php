@@ -363,6 +363,7 @@ class UsersController extends Controller
         $estatus = $request->estatus;
         $observaciones = $request->observaciones;
         $idArchivo = $request->idArchivo;
+        $supervisa = $request->supervisa;
 
         $numeroConsecutivo = ( $numeroConsecutivo == NULL ) ? 0 : $numeroConsecutivo;
         $numeroSolicitud = ( $numeroSolicitud == NULL ) ? 0 : $numeroSolicitud;
@@ -383,9 +384,10 @@ class UsersController extends Controller
         $estatus = ( $estatus == NULL ) ? 0 : $estatus;
         $observaciones = ( $observaciones == NULL ) ? '' : $observaciones;
         $idArchivo = ( $idArchivo == NULL ) ? NULL : $idArchivo;
+        $supervisa = ( $supervisa == NULL ) ? NULL : $supervisa;
 
         try {
-            $rpta = DB::select('call sp_RegistrarSolicitud( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [  $numeroConsecutivo, $numeroSolicitud, $fechaRecibido, $remitente, $otroRemitente, $cargo, $otroCargo, $asunto, $termino, $fechaTermino, $diasTermino, $respuesta, $seguimiento, $areaAsignada, $tipo, $fechaAsignacion, $estatus, $observaciones,$idArchivo]);
+            $rpta = DB::select('call sp_RegistrarSolicitud( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [  $numeroConsecutivo, $numeroSolicitud, $fechaRecibido, $remitente, $otroRemitente, $cargo, $otroCargo, $asunto, $termino, $fechaTermino, $diasTermino, $respuesta, $seguimiento, $areaAsignada, $tipo, $fechaAsignacion, $estatus, $observaciones, $idArchivo ,$supervisa]);
             return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {
             $errorCode = $e->errorInfo[1];
@@ -510,6 +512,7 @@ class UsersController extends Controller
 
         try{
             DB::beginTransaction();
+            DB::Select('call sp_EliminarCopiasConocimiento(?)', [$idSolicitud]);
             $departamentosSize = sizeof($departamentos);
             if( $departamentosSize > 0 ){
                 foreach( $departamentos as $key => $value ){
@@ -757,7 +760,8 @@ class UsersController extends Controller
             throw new \Exception($e);
         }
     }
-    public function setCambiarEstadoById(Request $request){
+    public function setCambiarEstadoById(Request $request)
+    {
         if (!$request->ajax()) return redirect('/');
 
         $user_id = $request->user_id;
@@ -779,4 +783,97 @@ class UsersController extends Controller
             throw new \Exception($e);
         }        
     }
+    
+    public function obtenerSolicitud(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $idSolicitud = $request->idSolicitud;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+
+        try {
+            $rpta = DB::select('call sp_Solicitudes_ConsultarID( ? )', [ $idSolicitud ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function obtenerCopiasConocimiento(Request $request) 
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $idSolicitud = $request->idSolicitud;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+
+        try {
+            $rpta = DB::select('call sp_Consultar_CopiasCononcimientoID( ? )', [ $idSolicitud ]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+
+    }
+
+    public function editarSolicitud(Request $request) 
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $numeroConsecutivo = $request->numeroConsecutivo;
+        $numeroSolicitud = $request->numeroSolicitud;
+        $fechaRecibido = $request->fechaRecibido;
+        $remitente = $request->remitente;
+        $otroRemitente = $request->otroRemitente;
+        $cargo = $request->cargo;
+        $otroCargo = $request->otroCargo;
+        $asunto = $request->asunto;
+        $termino = $request->termino;
+        $fechaTermino = $request->fechaTermino;
+        $diasTermino = $request->diasTermino;
+        $respuesta = $request->respuesta;
+        $seguimiento = $request->seguimiento;
+        $areaAsignada = $request->areaAsignada;
+        $tipo = $request->tipo;
+        $fechaAsignacion = $request->fechaAsignacion;
+        $observaciones = $request->observaciones;
+        $idArchivo = $request->idArchivo;
+        $supervisa = $request->supervisa;
+        $id = $request->id;
+
+        $numeroConsecutivo = ( $numeroConsecutivo == NULL ) ? 0 : $numeroConsecutivo;
+        $numeroSolicitud = ( $numeroSolicitud == NULL ) ? 0 : $numeroSolicitud;
+        $fechaRecibido = ( $fechaRecibido == NULL ) ? NULL : $fechaRecibido;
+        $remitente = ( $remitente == NULL ) ? 0 : $remitente;
+        $otroRemitente = ( $otroRemitente == NULL ) ? NULL : $otroRemitente;
+        $cargo = ( $cargo == NULL ) ? 0 : $cargo;
+        $otroCargo = ( $otroCargo == NULL ) ? NULL : $otroCargo;
+        $asunto = ( $asunto == NULL ) ? 0 : $asunto;
+        $termino = ( $termino == NULL ) ? 0 : $termino;
+        $fechaTermino = ( $fechaTermino == NULL ) ? NULL : $fechaTermino;
+        $diasTermino = ( $diasTermino == NULL ) ? 0 : $diasTermino;
+        $respuesta = ( $respuesta == NULL ) ? 0 : $respuesta;
+        $seguimiento = ( $seguimiento == NULL ) ? 0 : $seguimiento;
+        $areaAsignada = ( $areaAsignada == NULL ) ? 0 : $areaAsignada;
+        $tipo = ( $tipo == NULL ) ? 0 : $tipo;
+        $fechaAsignacion = ( $fechaAsignacion == NULL ) ? NULL : $fechaAsignacion;
+        $observaciones = ( $observaciones == NULL ) ? '' : $observaciones;
+        $idArchivo = ( $idArchivo == NULL ) ? NULL : $idArchivo;
+        $supervisa = ( $supervisa == NULL ) ? NULL : $supervisa;
+        $id = ( $id == NULL ) ? 0 : $id;
+
+        try {
+            $rpta = DB::select('call sp_Actualizar_Solicitudes(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [   $numeroConsecutivo,  $numeroSolicitud,  $fechaRecibido,  $remitente,  $otroRemitente,  $cargo,  $otroCargo,  $asunto,  $termino,  $fechaTermino,  $diasTermino,  $respuesta,  $seguimiento,  $areaAsignada,  $tipo,  $fechaAsignacion,  $observaciones,  $supervisa, $idArchivo, $id]);
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
 }

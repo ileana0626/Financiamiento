@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('/authenticate/login', 'Auth\LoginController@login'); 
 Route::get('/administracion/usuario/getTotalIntentos', 'Administracion\UsersController@getTotalIntentos'); 
 Route::get('/administracion/usuario/consultarUsuario', 'Administracion\UsersController@consultarUsuario'); 
-Route::get('send-mail', 'Auth\ResetPasswordController@sendMailPass'); 
 Route::post('/administracion/usuario/setTotalIntentos', 'Administracion\UsersController@SetTotalIntentos'); 
 Route::post('/administracion/usuario/logout', 'Administracion\UsersController@logout'); 
 Route::post('/administracion/usuario/setInterfaceSettings', 'Administracion\UsersController@setInterfaceSettings'); 
@@ -68,6 +67,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/usuario/setRegistrarUser','Administracion\UsersController@setRegistrarUser');
     Route::post('/administracion/usuario/setCambiarEstadoById','Administracion\UsersController@setCambiarEstadoById');
 
+    /****Editar****/
+    Route::get('/administracion/usuario/obtenerSolicitud','Administracion\UsersController@obtenerSolicitud');
+    Route::get('/administracion/usuario/obtenerCopiasConocimiento','Administracion\UsersController@obtenerCopiasConocimiento');
+    Route::post('/administracion/usuario/editarSolicitud','Administracion\UsersController@editarSolicitud');
+
+    /***Correo***/
+    Route::get('send-mail', 'Auth\ResetPasswordController@sendMailPass'); 
 });
 
 Route::get('/{optional?}', function () {

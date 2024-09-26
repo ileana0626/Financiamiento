@@ -50,43 +50,22 @@ class ResetPasswordController extends Controller
         if (!$request->ajax()) return redirect('/');
         
         $cUsername = $request->cUsername;
-        $cFullname = $request->cFullname;
         $cEmail = $request->cEmail;
-        $nIdUsuario = $request->nIdUsuario;
-        $cPass = $request->cPass;
-        
-
-        // $n=12;
-        // $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-*_."+$#';
-        // $randomString = '';
+        $imagen = asset('img/email.png');
+        $logoIEE = asset('img/LOGO_NUEVO.png');
     
-        // for ($i = 0; $i < $n; $i++) {
-        //     $index = rand(0, strlen($characters) - 1);
-        //     $randomString .= $characters[$index];
-        // }
-    
-        $cNewPass = Hash::make($cPass);
 
         $details = [
             'username' => $cUsername,
-            'fullname' => $cFullname,
-            'newPass' => $cPass
+            'imagen' => $imagen,
+            'logo' => $logoIEE
         ];
 
         try{
-            $rpta = DB::transaction(function () use (
-                $nIdUsuario,
-                $cNewPass
-            ) {
-                return DB::select('call sp_Admin_ResetPass( ? , ? )',
-                    [$nIdUsuario, $cNewPass ]);
-            }, 3);
-            DB::commit();
             
             \Mail::to($cEmail)->send(new \App\Mail\ResetPassMail($details));
             \Mail::to('sistemasnotificacion@ieepuebla.org.mx')->send(new \App\Mail\ResetPassMail($details));
             
-            return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollback();
             $errorCode = $e->errorInfo[1];
