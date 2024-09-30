@@ -97,6 +97,12 @@
     --btn-txt-color: #595959;
     --scroll-color-back: white;
 }
+@font-face {
+    font-family: 'KGHappy';
+    src: url('/webfonts/kg-happy.solid.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
 
 body {
     font-family: "Poppins", "Source Sans Pro", -apple-system, BlinkMacSystemFont,

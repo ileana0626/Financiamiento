@@ -15,7 +15,7 @@
         <br><br>
         <div class="row col-md-11 col-10 mx-auto card-info">
             <div class="card-header d-flex justify-content-between align-items-center container-fluid">
-                <h3 class="card-title font-weight-bold">Cumpleaños</h3>
+                <h3 class="card-title font-weight-bold" style="font-family: 'KGHappy';">Cumpleaños</h3>
                 <div class="col card-tools d-flex justify-content-end">
                     <vs-button @click.prevent="active = !active"
                         style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
@@ -80,10 +80,11 @@
                                     {{ nextBD(tr.dia, tr.idMes) }}
                                 </vs-td>
                                 <vs-td class="d-flex align-items-center justify-content-center">
-                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones" v-if="felicitar(tr.dia, tr.idMes)"
+                                    <!-- <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones" v-if="felicitar(tr.dia, tr.idMes)" -->
+                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones"
                                         placement="top">
                                         <vs-button id="logoutBtn" icon color="rgb(58,197,55)" size="large"
-                                            @click.prevent="">
+                                            @click.prevent="generarImagen(tr.nombre)">
                                             <span class="material-symbols-rounded" style="color: white !important;">
                                                 celebration
                                             </span>
@@ -254,6 +255,7 @@ let methods = require('../../../methods')
 export default {
     data() {
         return {
+            og: window.location.origin + '/',
             colors: [
                 {
                     color: 'warn'
@@ -550,7 +552,69 @@ export default {
             this.editarMes = mes
             this.idEditar = id
             this.active2 = !this.active2
-        }
+        },
+        async generarImagen( rowName ) {
+            let imgURL = this.og + 'img/cumple/new_card_BD.svg';
+            let partesNombre = rowName.split(' ');
+
+            const canvas = document.createElement('canvas')
+            canvas.width = 1000;
+            canvas.height = 1800;
+            canvas.id = 'felicitar';
+            let ctx = canvas.getContext('2d');
+
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.get(imgURL);
+                if(response.status === 200) {
+                    const svgData = response.data;
+                    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(svgBlob);   
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        // Dibujar la imagen SVG en el canvas
+                        ctx.drawImage(img, 0, 0, 1000, 1800);
+
+                        // Escribir texto sobre el canvas
+                        ctx.fillStyle = '#ff815a'; // Color del texto
+                        ctx.font = '50px KGHappy'; // Estilo de fuente
+                        let alturaTexto = 0;
+                        switch(partesNombre.length){
+                            case 4:
+                                for(let i = 0;i < partesNombre.length; i += 2){
+                                    ctx.fillText(partesNombre[i] + ' ' + partesNombre[i + 1], 225, 1275 + alturaTexto);
+                                    alturaTexto += 55;
+                                }
+                                break;
+                            default:
+                                for(let i = 0;i < partesNombre.length; i++){
+                                    ctx.fillText(partesNombre[i], 375, 1275 + alturaTexto);
+                                    alturaTexto += 55;
+                                }   
+                                break;
+                        }
+
+
+                        // Liberar el objeto URL
+                        URL.revokeObjectURL(url);
+
+                        // Generar y descargar el Blob como PNG
+                        canvas.toBlob(function(blob) {
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = 'felicitacion.png';
+                            link.click();
+                        }, 'image/png');
+                    };
+                    img.src = url;                    
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                load.close();
+            }
+        },
     }
 }
 </script>
