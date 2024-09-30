@@ -53,6 +53,9 @@
                                     Mes
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                    Proxímo
+                                </vs-th>
+                                <vs-th style="width: 30px; background-color: var(--iee-white);">
                                     Acciones
                                 </vs-th>
                             </vs-tr>
@@ -73,8 +76,11 @@
                                 <vs-td class="tableRowHeight">
                                     {{ tr.mes }}
                                 </vs-td>
+                                <vs-td class="tableRowHeight">
+                                    {{ nextBD(tr.dia, tr.idMes) }}
+                                </vs-td>
                                 <vs-td class="d-flex align-items-center justify-content-center">
-                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones"
+                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones" v-if="felicitar(tr.dia, tr.idMes)"
                                         placement="top">
                                         <vs-button id="logoutBtn" icon color="rgb(58,197,55)" size="large"
                                             @click.prevent="">
@@ -300,6 +306,29 @@ export default {
         this.obtenerDatos(10)
         this.obtenerDatos(11)
         this.creardias()
+    },
+    computed:{
+        nextBD() {
+            return(dia, mes)=>{
+                if(!!dia && !!mes){
+                    let hoy = new Date();
+                    let anioActual = hoy.getFullYear();
+                    let dateBD = new Date(anioActual, mes - 1, dia, 0, 0, 0, 0);
+                    if ((dia === hoy.getDate()) && (hoy.getMonth() === (mes - 1))) return 'Hoy';
+
+                    if(dateBD < hoy) dateBD.setFullYear(anioActual + 1);
+                    return dateBD.toLocaleDateString('es-ES',{day: '2-digit', month: '2-digit', year: 'numeric'});
+                }
+            }
+        },
+        felicitar(){
+            return(dia, mes)=>{
+                if(!!dia && !!mes){
+                    let hoy = new Date();
+                    return ((dia === hoy.getDate()) && (hoy.getMonth() === (mes - 1))); 
+                }
+            }            
+        }
     },
     methods: {
         checkCrear(loading) {
