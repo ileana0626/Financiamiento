@@ -30,7 +30,7 @@ class ResetPassMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Recuperación de Contraseña')
+        return $this->subject('Recordatorio')
         ->view('mails.resetPass');
     }
 }
