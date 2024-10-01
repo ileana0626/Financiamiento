@@ -15,7 +15,7 @@
         <br><br>
         <div class="row col-md-11 col-10 mx-auto card-info">
             <div class="card-header d-flex justify-content-between align-items-center container-fluid">
-                <h3 class="card-title font-weight-bold" style="font-family: 'KGHappy';">Cumpleaños</h3>
+                <h3 class="card-title font-weight-bold">Cumpleaños</h3>
                 <div class="col card-tools d-flex justify-content-end">
                     <vs-button @click.prevent="active = !active"
                         style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
@@ -101,10 +101,12 @@
                                 </vs-td>
                             </vs-tr>
                         </template>
-                        <template #notFound style="background-color: var(--iee-white) !important;">
-                            Sin resultados...
+                        <template #notFound>
+                            <div style="background-color: var(--iee-white) !important;">
+                                Sin resultados...
+                            </div>
                         </template>
-                        <template #footer style="background-color: var(--iee-white) !important;">
+                        <template #footer>
                             <vs-pagination v-model="page" color="dark"
                                 :length="$vs.getLength($vs.getSearch(NewlistBirthday, search), max)"
                                 style="background-color: var(--iee-white) !important;" />
@@ -583,7 +585,7 @@ export default {
                         switch(partesNombre.length){
                             case 4:
                                 for(let i = 0;i < partesNombre.length; i += 2){
-                                    ctx.fillText(partesNombre[i] + ' ' + partesNombre[i + 1], 225, 1275 + alturaTexto);
+                                    ctx.fillText(partesNombre[i] + ' ' + partesNombre[i + 1], 200, 1275 + alturaTexto);
                                     alturaTexto += 55;
                                 }
                                 break;
@@ -594,7 +596,6 @@ export default {
                                 }   
                                 break;
                         }
-
 
                         // Liberar el objeto URL
                         URL.revokeObjectURL(url);
