@@ -175,15 +175,17 @@ export default {
                     "email": "Rey.Padberg@karina.biz",
                     "website": "ambrose.net",
                 }
-            ]
+            ],
+            listaHoy: [],
         }
     },
     mounted() {
         this.getUsuario();
         window.scrollTo(0, 0);
     },
-    created() {
+    async created() {
         this.getFechas();
+        await this.getTodayDates();
     },
     methods: {
         getFechas() {
@@ -443,7 +445,19 @@ export default {
             else {
                 this.cfullname = sessFullName;
             }
-        }
+        },
+        async getTodayDates() {
+            const url = '/administracion/birthday/getTodayDates';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.listaHoy = response.data;
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
     }
 
 }

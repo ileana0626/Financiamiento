@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/usuario/getbirthday', 'Administracion\UsersController@getbirthday');
     Route::post('/administracion/usuario/guardarBirthday', 'Administracion\UsersController@guardarBirthday');
     Route::post('/administracion/usuario/EditarBirthday', 'Administracion\UsersController@EditarBirthday');
+    Route::get('/administracion/birthday/getTodayDates','Administracion\BirthdayController@getTodayDates');
 
     /*****SUBIR ARCHIVO *****/
     Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');
