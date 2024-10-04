@@ -256,7 +256,8 @@
                                                 <template>
                                                     <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
                                                         placement="top">
-                                                        <vs-button class="btn btn-flat btn-sm " @click.prevent="sendEmailPass"
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            @click.prevent="sendEmailPass(tr.otroremitente, tr.remitente, tr.correo, tr.asunto, tr.fechaTermino)"
                                                             style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                             <span class="material-symbols-rounded"
                                                                 style="color: var(--text-color);">
@@ -553,6 +554,7 @@ export default {
                     'respuesta': x.respuesta,
                     'seguimiento': x.seguimiento,
                     'areaAsignada': x.areaAsignada,
+                    'correo': x.correo,
                     'tipo': x.tipo,
                     'idTipo': x.idtipo,
                     'fechaAsignacion': x.fechaAsignacion,
@@ -563,6 +565,7 @@ export default {
                     'departamentosEnterados': x.departamentosEnterados.split(','),
                     'Enterados': JSON.parse(x.Enterados),
                     'NoEnterados': JSON.parse(x.NoEnterados)
+
                 })
             })
 
@@ -712,27 +715,40 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3]);
             });
         },
-        sendEmailPass() {
-            let url = '/send-mail'
-            axios.get(url, {
-                params: {
-                    'cUsername': 'Miguel',
-                    'cEmail': 'migueldjssn98@gmail.com',
-                }
-            }).then(response => {
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Correo Mandado",
-                    text: 'El recordatprio se mandado con exito, verifíque su bandeja del correo electrónico asociado a su cuenta',
-                    showConfirmButton: true,
-                    confirmButtonText: "De acuerdo",
+        sendEmailPass(usuario, otroUsuairo, correo, asunto, termino) {
+            if (correo .length > 0) {
+                let nombre = (usuario != null) ? usuario : otroUsuairo
+                const loading = this.$vs.loading({
+                    type: 'square',
+                    color: '#00a19a',
+                    background: '#FFFFFF',
+                    text: 'Cargando...'
                 });
-            }).catch(error => {
-                loading.close();
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
-            });
+                let url = '/send-mail'
+                axios.get(url, {
+                    params: {
+                        'cUsername': nombre,
+                        'cEmail': correo,
+                        'asunto': asunto,
+                        'termino': termino
+                    }
+                }).then(response => {
+                    loading.close();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Correo Enviado",
+                        text: 'El recordatorio se envio con exito, verifíque su bandeja del correo electrónico asociado a su cuenta',
+                        showConfirmButton: true,
+                        confirmButtonText: "De acuerdo",
+                    });
+                }).catch(error => {
+                    loading.close();
+                    let nombreMetodo = url.split('/');
+                    methods.catchHandler(error, nombreMetodo[3]);
+                });
+            }else{
+
+            }
         },
 
     }
