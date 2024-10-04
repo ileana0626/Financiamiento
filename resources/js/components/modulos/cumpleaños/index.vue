@@ -2,7 +2,7 @@
     <div class="col">
         <div class="float-sm-right mr-5">
             <ul class="breadcrumb">
-                <li>
+                <li style="font-family: 'KGHappy'">
                     <router-link to="/"><span class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
                 </li>
                 <li class="breadActive">
