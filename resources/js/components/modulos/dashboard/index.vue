@@ -535,7 +535,7 @@ export default {
 
                 anime({
                     targets: globo,
-                    translateY: -1150, // Desplazamiento vertical
+                    translateY: -1195, // Desplazamiento vertical
                     easing: 'easeInOutExpo',
                     duration: 3000,
                     delay: delay,

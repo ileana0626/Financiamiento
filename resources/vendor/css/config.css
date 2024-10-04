@@ -1431,6 +1431,26 @@ h4 {
     bottom: -10.5rem;
     box-shadow: 0 .5rem 1rem rgba(1,1,1,.15);
 }
+.globo::before{
+    content: '';
+    width: 21px;
+    height: 7px;
+    background-color: white;
+    border-radius: 45%;
+    position: absolute;
+    top: 2rem;
+    left: 1.5rem;
+    transform: rotate(-45deg);
+}
+.globo::after{
+    content: '';
+    width: 2px;
+    height: 45px;
+    background-color: var(--iee-white-dark);
+    position: absolute;
+    bottom: -45px;
+    left: 4rem;
+}
 
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{
