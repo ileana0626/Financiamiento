@@ -27,7 +27,7 @@
                     <vs-table>
                         <template #thead>
                             <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="globosAnim()">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
                                     Name
                                 </vs-th>
                                 <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="">
@@ -81,20 +81,58 @@
                 </div>
             </div> -->
         </div>
+        <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
+            <template #header>
+                <div class="col text-center">
+                    <div>
+                        <br />
+                        <h4 class="not-margin font-weight-bold">
+                            Hoy es cumpleaños de
+                        </h4>
+                    </div>
+                </div>
+            </template>
+            <div class="con-content">
+                <table class="table" v-if="listaHoy.length > 0" style="color: var(--iee-white-dark) !important;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Adscripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(cumple, index) in listaHoy" :key="index">
+                            <td>{{ cumple.nombre }}</td>
+                            <td>{{ cumple.adscripcion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <template #footer>
+                <div class="footer-dialog">
+                    <div class="d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'listaBD'+darkMode" @click.prevent="showListaCumple = !showListaCumple">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                Aceptar
+                            </div>
+                        </vs-button>                     
+                    </div>                    
+                </div>
+            </template>
+        </vs-dialog>        
     </div>
 </template>
 <script>
 
 import DatePicker from 'v-calendar';
 let methods = require('../../../methods')
-
-
 export default {
     components: {
         DatePicker
     },
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             userLoggedPermissions: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario')),
             userLoggedRol: JSON.parse(sessionStorage.getItem('rolUsuario')),
             cfullname: '',
@@ -180,17 +218,24 @@ export default {
             ],
             listaHoy: [],
             globos: [],
+            showListaCumple: false,
         }
     },
-    beforeDestroy(){
-        const wrapper = document.getElementsByClassName('wrapper')[0];
-        wrapper.style.overflow = "auto";        
+    watch:{
+        showListaCumple(newVal,oldVal){
+            setTimeout(() => {
+                if(!!newVal){
+                    this.globosAnim();
+                }                
+            }, 100);
+        }
     },
     mounted() {
         this.getUsuario();
         window.scrollTo(0, 0);
     },
     async created() {
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         this.getFechas();
         await this.getTodayDates();
     },
@@ -459,6 +504,9 @@ export default {
                 const response = await axios.get(url);
                 if(response.status === 200){
                     this.listaHoy = response.data;
+                    if(this.listaHoy.length > 0){
+                        this.showListaCumple = true;
+                    }
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
@@ -467,7 +515,8 @@ export default {
         },
         globosAnim() {           
             const numero = 25;
-            const wrapper = document.getElementsByClassName('wrapper')[0];
+            // const wrapper = document.getElementsByClassName('wrapper')[0];
+            const wrapper = document.getElementById('listaCumple');
             const colors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
             wrapper.style.overflow = "hidden";
             
@@ -486,7 +535,7 @@ export default {
 
                 anime({
                     targets: globo,
-                    translateY: -1100, // Desplazamiento vertical
+                    translateY: -1150, // Desplazamiento vertical
                     easing: 'easeInOutExpo',
                     duration: 3000,
                     delay: delay,
