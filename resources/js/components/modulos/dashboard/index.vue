@@ -27,10 +27,10 @@
                     <vs-table>
                         <template #thead>
                             <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="globosAnim()">
                                     Name
                                 </vs-th>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="">
                                     Email
                                 </vs-th>
                             </vs-tr>
@@ -40,16 +40,18 @@
                                 style="max-height: 100px !important">
                                 <vs-td class="tableRowHeight">
                                     {{ tr.name }}
-                                </vs-td class="tableRowHeight">
-                                <vs-td>
+                                </vs-td>
+                                <vs-td class="tableRowHeight">
                                     {{ tr.email }}
                                 </vs-td>
                             </vs-tr>
                         </template>
-                        <template #notFound style="background-color: var(--iee-white) !important;">
-                            Sin resultados...
+                        <template #notFound>
+                            <div style="background-color: var(--iee-white) !important;">
+                                Sin resultados...
+                            </div>
                         </template>
-                        <template #footer style="background-color: var(--iee-white) !important;">
+                        <template #footer>
                             <vs-pagination color="dark" v-model="page" :length="$vs.getLength(users, max)"
                                 style="background-color: var(--iee-white) !important;" />
                         </template>
@@ -177,7 +179,12 @@ export default {
                 }
             ],
             listaHoy: [],
+            globos: [],
         }
+    },
+    beforeDestroy(){
+        const wrapper = document.getElementsByClassName('wrapper')[0];
+        wrapper.style.overflow = "auto";        
     },
     mounted() {
         this.getUsuario();
@@ -456,6 +463,37 @@ export default {
             } catch (error) {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
+        globosAnim() {           
+            const numero = 25;
+            const wrapper = document.getElementsByClassName('wrapper')[0];
+            const colors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
+            wrapper.style.overflow = "hidden";
+            
+            for(let i = 0; i< numero;i++){
+                const globo = document.createElement('div'); // Crea un nuevo elemento div
+                globo.classList.add('globo'); // Añade la clase 'globo'
+
+                // Posición horizontal aleatoria
+                const leftPosition = Math.random() * (wrapper.clientWidth - 100);
+                globo.style.left = `${leftPosition}px`;
+                globo.style.bottom = '-10.5rem'; // Empieza desde el fondo
+                globo.style.backgroundColor = colors[(i + 1) % 5];
+                wrapper.appendChild(globo); // Agrega el globo al wrapper
+
+                const delay = i * 125; // Delay incremental
+
+                anime({
+                    targets: globo,
+                    translateY: -1100, // Desplazamiento vertical
+                    easing: 'easeInOutExpo',
+                    duration: 3000,
+                    delay: delay,
+                    complete: () => {
+                        wrapper.removeChild(globo); // Elimina el globo del wrapper al completar
+                    }
+                });
             }
         },
     }

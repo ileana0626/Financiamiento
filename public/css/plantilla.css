@@ -1439,6 +1439,16 @@ h4 {
 .hover-click *:hover {
     cursor: pointer;
 }
+/*Para la animacion de cumpleaños*/
+.globo {
+    width: 8rem;
+    height: 10.5rem;
+    border-radius: 45%;
+    position: absolute;
+    bottom: -10.5rem;
+    box-shadow: 0 .5rem 1rem rgba(1,1,1,.15);
+}
+
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{
         right: 2rem;
