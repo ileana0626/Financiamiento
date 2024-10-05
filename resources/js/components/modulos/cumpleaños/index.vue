@@ -2,7 +2,7 @@
     <div class="col">
         <div class="float-sm-right mr-5">
             <ul class="breadcrumb">
-                <li>
+                <li style="font-family: 'KGHappy'">
                     <router-link to="/"><span class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
                 </li>
                 <li class="breadActive">
@@ -80,11 +80,10 @@
                                     {{ nextBD(tr.dia, tr.idMes) }}
                                 </vs-td>
                                 <vs-td class="d-flex align-items-center justify-content-center">
-                                    <!-- <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones" v-if="felicitar(tr.dia, tr.idMes)" -->
-                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones"
+                                    <el-tooltip class="item h-100" effect="dark" content="Imagen de felicitaciones" v-if="felicitar(tr.dia, tr.idMes)"
                                         placement="top">
                                         <vs-button id="logoutBtn" icon color="rgb(58,197,55)" size="large"
-                                            @click.prevent="generarImagen(tr.nombre)">
+                                            @click.prevent="generarImagen(tr.nombre, tr.dia, tr.idMes)">
                                             <span class="material-symbols-rounded" style="color: white !important;">
                                                 celebration
                                             </span>
@@ -555,47 +554,41 @@ export default {
             this.idEditar = id
             this.active2 = !this.active2
         },
-        async generarImagen( rowName ) {
-            let imgURL = this.og + 'img/cumple/new_card_BD.svg';
-            let partesNombre = rowName.split(' ');
+        async generarImagen( rowName, dia, mes ) {
+            let imgURL = this.og + 'img/cumple/plantilla_BD.png';
 
             const canvas = document.createElement('canvas')
-            canvas.width = 1000;
-            canvas.height = 1800;
+            canvas.width = 2560;
+            canvas.height = 1440;
             canvas.id = 'felicitar';
             let ctx = canvas.getContext('2d');
 
             const load = methods.loading( this.$vs );
             try {
-                const response = await axios.get(imgURL);
+                const response = await axios.get(imgURL, {responseType: 'blob'});
                 if(response.status === 200) {
-                    const svgData = response.data;
-                    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-                    const url = URL.createObjectURL(svgBlob);   
+                    const imgData = response.data;
+                    const imgBlob = new Blob([imgData], { type: 'image/png' });
+                    const url = URL.createObjectURL(imgBlob);   
                     
                     const img = new Image();
+                    let fecha = 'Hoy, ' + this.fechaTarjeta(dia, mes);
                     img.onload = function() {
-                        // Dibujar la imagen SVG en el canvas
-                        ctx.drawImage(img, 0, 0, 1000, 1800);
+                        // Dibujar la imagen en el canvas
+                        ctx.drawImage(img, 0, 0);
 
                         // Escribir texto sobre el canvas
-                        ctx.fillStyle = '#ff815a'; // Color del texto
-                        ctx.font = '50px KGHappy'; // Estilo de fuente
-                        let alturaTexto = 0;
-                        switch(partesNombre.length){
-                            case 4:
-                                for(let i = 0;i < partesNombre.length; i += 2){
-                                    ctx.fillText(partesNombre[i] + ' ' + partesNombre[i + 1], 200, 1275 + alturaTexto);
-                                    alturaTexto += 55;
-                                }
-                                break;
-                            default:
-                                for(let i = 0;i < partesNombre.length; i++){
-                                    ctx.fillText(partesNombre[i], 375, 1275 + alturaTexto);
-                                    alturaTexto += 55;
-                                }   
-                                break;
-                        }
+                        ctx.fillStyle = '#4715f5'; // Color del texto
+                        ctx.font = "50px 'KGHappy'"; // Estilo de fuente
+                        ctx.shadowColor = 'red';
+                        ctx.shadowBlur = 25;
+                        setTimeout(() => {                      
+                        }, 300);
+                        ctx.fillText(fecha, 690, 735);
+
+                        let nameProperties = ctx.measureText(rowName);
+                        let widthName = nameProperties.width;
+                        ctx.fillText(rowName, Math.floor(canvas.width / 2) - Math.floor(widthName / 2), 1050)
 
                         // Liberar el objeto URL
                         URL.revokeObjectURL(url);
@@ -615,6 +608,12 @@ export default {
             } finally {
                 load.close();
             }
+        },
+        fechaTarjeta(dia, mes) {
+            let hoy = new Date();
+            let anioActual = hoy.getFullYear();
+            let dateBD = new Date(anioActual, mes - 1, dia, 0, 0, 0, 0);
+            return dateBD.toLocaleDateString('es-ES',{day: '2-digit', month: 'long', year: 'numeric'});            
         },
     }
 }

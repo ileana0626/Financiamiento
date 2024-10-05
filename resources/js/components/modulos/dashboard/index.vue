@@ -27,10 +27,10 @@
                     <vs-table>
                         <template #thead>
                             <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
                                     Name
                                 </vs-th>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="">
                                     Email
                                 </vs-th>
                             </vs-tr>
@@ -40,16 +40,18 @@
                                 style="max-height: 100px !important">
                                 <vs-td class="tableRowHeight">
                                     {{ tr.name }}
-                                </vs-td class="tableRowHeight">
-                                <vs-td>
+                                </vs-td>
+                                <vs-td class="tableRowHeight">
                                     {{ tr.email }}
                                 </vs-td>
                             </vs-tr>
                         </template>
-                        <template #notFound style="background-color: var(--iee-white) !important;">
-                            Sin resultados...
+                        <template #notFound>
+                            <div style="background-color: var(--iee-white) !important;">
+                                Sin resultados...
+                            </div>
                         </template>
-                        <template #footer style="background-color: var(--iee-white) !important;">
+                        <template #footer>
                             <vs-pagination color="dark" v-model="page" :length="$vs.getLength(users, max)"
                                 style="background-color: var(--iee-white) !important;" />
                         </template>
@@ -79,20 +81,58 @@
                 </div>
             </div> -->
         </div>
+        <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
+            <template #header>
+                <div class="col text-center">
+                    <div>
+                        <br />
+                        <h4 class="not-margin font-weight-bold">
+                            Hoy es cumpleaños de
+                        </h4>
+                    </div>
+                </div>
+            </template>
+            <div class="con-content">
+                <table class="table" v-if="listaHoy.length > 0" style="color: var(--iee-white-dark) !important;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Adscripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(cumple, index) in listaHoy" :key="index">
+                            <td>{{ cumple.nombre }}</td>
+                            <td>{{ cumple.adscripcion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <template #footer>
+                <div class="footer-dialog">
+                    <div class="d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'listaBD'+darkMode" @click.prevent="showListaCumple = !showListaCumple">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                Aceptar
+                            </div>
+                        </vs-button>                     
+                    </div>                    
+                </div>
+            </template>
+        </vs-dialog>        
     </div>
 </template>
 <script>
 
 import DatePicker from 'v-calendar';
 let methods = require('../../../methods')
-
-
 export default {
     components: {
         DatePicker
     },
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             userLoggedPermissions: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario')),
             userLoggedRol: JSON.parse(sessionStorage.getItem('rolUsuario')),
             cfullname: '',
@@ -175,15 +215,29 @@ export default {
                     "email": "Rey.Padberg@karina.biz",
                     "website": "ambrose.net",
                 }
-            ]
+            ],
+            listaHoy: [],
+            globos: [],
+            showListaCumple: false,
+        }
+    },
+    watch:{
+        showListaCumple(newVal,oldVal){
+            setTimeout(() => {
+                if(!!newVal){
+                    this.globosAnim();
+                }                
+            }, 100);
         }
     },
     mounted() {
         this.getUsuario();
         window.scrollTo(0, 0);
     },
-    created() {
+    async created() {
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         this.getFechas();
+        await this.getTodayDates();
     },
     methods: {
         getFechas() {
@@ -443,7 +497,54 @@ export default {
             else {
                 this.cfullname = sessFullName;
             }
-        }
+        },
+        async getTodayDates() {
+            const url = '/administracion/birthday/getTodayDates';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.listaHoy = response.data;
+                    if(this.listaHoy.length > 0){
+                        this.showListaCumple = true;
+                    }
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            }
+        },
+        globosAnim() {           
+            const numero = 25;
+            // const wrapper = document.getElementsByClassName('wrapper')[0];
+            const wrapper = document.getElementById('listaCumple');
+            const colors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
+            wrapper.style.overflow = "hidden";
+            
+            for(let i = 0; i< numero;i++){
+                const globo = document.createElement('div'); // Crea un nuevo elemento div
+                globo.classList.add('globo'); // Añade la clase 'globo'
+
+                // Posición horizontal aleatoria
+                const leftPosition = Math.random() * (wrapper.clientWidth - 100);
+                globo.style.left = `${leftPosition}px`;
+                globo.style.bottom = '-10.5rem'; // Empieza desde el fondo
+                globo.style.backgroundColor = colors[(i + 1) % 5];
+                wrapper.appendChild(globo); // Agrega el globo al wrapper
+
+                const delay = i * 125; // Delay incremental
+
+                anime({
+                    targets: globo,
+                    translateY: -1195, // Desplazamiento vertical
+                    easing: 'easeInOutExpo',
+                    duration: 3000,
+                    delay: delay,
+                    complete: () => {
+                        wrapper.removeChild(globo); // Elimina el globo del wrapper al completar
+                    }
+                });
+            }
+        },
     }
 
 }
