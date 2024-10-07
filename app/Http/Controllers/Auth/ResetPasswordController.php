@@ -51,14 +51,14 @@ class ResetPasswordController extends Controller
         
         $cUsername = $request->cUsername;
         $cEmail = $request->cEmail;
-        $imagen = asset('img/email.png');
-        $logoIEE = asset('img/LOGO_NUEVO.png');
+        $asunto = $request->asunto;
+        $termino = $request->termino;
     
 
         $details = [
             'username' => $cUsername,
-            'imagen' => $imagen,
-            'logo' => $logoIEE
+            'asunto' => $asunto,
+            'termino' => $termino
         ];
 
         try{
