@@ -7,7 +7,7 @@
     --iee-light-gray3: #f5f5f5;
     --iee-white: white;
     --iee-dorado-cafe: hsl(39, 32%, 60%);
-    --iee-white-dark: black;
+    --iee-white-dark: #000000;
     --iee-table-color: rgb(240, 240, 240);
     /* --dorado: #af8909; */
     --dorado: #a5904a;
@@ -38,6 +38,7 @@
     --btn-txt-color: #f5f5f5;
     --scroll-color: black;
     --scroll-color-back: grey;
+    --vs-shadow: rgba(0,0,0, 0.25);
 }
 
 [data-theme="dark"] {
@@ -51,7 +52,7 @@
     --iee-light-gray3: #272727;
     --iee-white: rgb(28, 28, 30);
     --iee-dorado-cafe: hsl(39, 32%, 60%);
-    --iee-white-dark: white;
+    --iee-white-dark: #ffffff;
     --dorado: #d8ccac;
     --acento: #82d6d2;
     --azulOscuro: #1a2e35;
@@ -79,6 +80,7 @@
     --iee-teal: #81dddc;
     --btn-txt-color: #595959;
     --scroll-color-back: white;
+    --vs-shadow: rgba(255,255,255, 0.25);
 }
 @font-face {
     font-family: 'KGHappy';
@@ -1396,6 +1398,9 @@ h4 {
     background-color: var(--iee-white) !important;    
 }
 
+div.vs-dialog, div.swal2-popup{
+    box-shadow: 0 0 15px 5px var(--vs-shadow);
+}
 
 @media screen and (max-width: 500px) {
     .el-upload-dragger {

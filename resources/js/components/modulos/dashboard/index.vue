@@ -27,10 +27,10 @@
                     <vs-table>
                         <template #thead>
                             <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
+                                <vs-th style="width:100px; background-color: var(--iee-white);">
                                     Name
                                 </vs-th>
-                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="">
+                                <vs-th style="width:100px; background-color: var(--iee-white);">
                                     Email
                                 </vs-th>
                             </vs-tr>
@@ -515,7 +515,6 @@ export default {
         },
         globosAnim() {           
             const numero = 25;
-            // const wrapper = document.getElementsByClassName('wrapper')[0];
             const wrapper = document.getElementById('listaCumple');
             const colors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
             wrapper.style.overflow = "hidden";
