@@ -1473,7 +1473,6 @@ div.vs-dialog, div.swal2-popup{
     bottom: -45px;
     left: 4rem;
 }
-
 #confetti {
     position: relative;
     top: 0;
@@ -1482,19 +1481,86 @@ div.vs-dialog, div.swal2-popup{
     height: 100%;
     pointer-events: none;
     overflow: hidden;
-  }
-  
+}
 .confetti {
     position: absolute;
     border-radius: 25%;
     will-change: transform;
     perspective: 25px;
 }
+/* primer diseño de banner de bienvenida*/
+.izq-row{
+    height: 100%;
+}
+.mq-pos{
+    position:relative;
+    border-radius: 25px;
+    margin-top: -2.5rem;
+}
+.bg-left-img{
+    max-width: 250px;
+    opacity: 0.25;
+    transform: scale(1.5);
+    margin: 1rem;
+}
+
+.bg-right-img{
+    width: 160px;
+    height: 160px;
+    border-radius: 25%;
+    border: 1px solid #595959;
+    overflow: hidden;
+    box-shadow: 0 2px 2px 2px var(--dorado);
+    background-color: var(--iee-white);
+    position: absolute;
+    margin-top: -10.5rem;
+    margin-left: 1rem;
+    transition: ease-in-out 300ms;
+}
+.bg-right-img-adjust{
+   width: 100%;
+   height: 100%; 
+}
+@media screen and (min-width: 425px) {
+    .bg-right-img{
+        margin-left: 5rem;
+    }
+}
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{
         right: 2rem;
     }
+    .mq-pos{
+        position: absolute;
+    }
+    .bg-left-img{
+        transform-origin: center;
+        transform: rotate(-90deg) scale(1);
+    }  
+    .izq-row{
+        height: 320px;
+    }
+    .bg-right-img{
+        margin-top: 2.5rem;
+        margin-left: -6rem;
+    }  
+    .der-row{
+        height: 225px;        
+    }     
 }
+@media screen and (min-width: 1024px) {
+    .bg-right-img{
+        margin-top: 1rem;
+    }    
+}
+@media screen and (min-width: 1440px) {
+    .bg-right-img{
+        width: 180px;
+        height: 180px;
+        margin-top: 0;
+    }    
+}
+/*^^ Acomoda las media query tras escoger un diseño ^^*/
 
 @media screen and (max-width: 1300px) {
     .vs-card__img {
