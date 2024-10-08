@@ -27,7 +27,7 @@
                     <vs-table>
                         <template #thead>
                             <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
                                     Name
                                 </vs-th>
                                 <vs-th style="width:100px; background-color: var(--iee-white);">
@@ -218,14 +218,15 @@ export default {
             ],
             listaHoy: [],
             globos: [],
-            showListaCumple: false,
+            showListaCumple: false,            
         }
     },
     watch:{
         showListaCumple(newVal,oldVal){
             setTimeout(() => {
                 if(!!newVal){
-                    this.globosAnim();
+                    this.startConfetti();
+                    this.globosAnim();                    
                 }                
             }, 100);
         }
@@ -520,29 +521,70 @@ export default {
             wrapper.style.overflow = "hidden";
             
             for(let i = 0; i< numero;i++){
-                const globo = document.createElement('div'); // Crea un nuevo elemento div
-                globo.classList.add('globo'); // Añade la clase 'globo'
+                const globo = document.createElement('div');
+                globo.classList.add('globo');
 
                 // Posición horizontal aleatoria
                 const leftPosition = Math.random() * (wrapper.clientWidth - 100);
                 globo.style.left = `${leftPosition}px`;
-                globo.style.bottom = '-10.5rem'; // Empieza desde el fondo
+                globo.style.bottom = '-10.5rem';
                 globo.style.backgroundColor = colors[(i + 1) % 5];
-                wrapper.appendChild(globo); // Agrega el globo al wrapper
+                wrapper.appendChild(globo);
 
-                const delay = i * 125; // Delay incremental
+                const delay = i * 125; // Delay
 
                 anime({
                     targets: globo,
-                    translateY: -1195, // Desplazamiento vertical
+                    translateY: -1195,
                     easing: 'easeInOutExpo',
                     duration: 3000,
                     delay: delay,
+                    loop: false,
                     complete: () => {
-                        wrapper.removeChild(globo); // Elimina el globo del wrapper al completar
+                        wrapper.removeChild(globo);
                     }
                 });
             }
+        },
+        startConfetti() {
+            const confettiColors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
+
+            // Generate confetti particles
+            for (let i = 0; i < 50; i++) {
+                this.createConfettiParticle(i, confettiColors);
+            }
+        },
+
+        createConfettiParticle(index, colors) {
+            const wrapper = document.getElementById('listaCumple');
+            const confettiElement = document.createElement('div');
+            confettiElement.classList.add('confetti');
+            
+            // Randomize properties
+            const size = anime.random(8, 16);
+            const colorIndex = anime.random(0, colors.length - 1);
+            const startX = anime.random(0, window.innerWidth);
+            confettiElement.style.width = `${size}px`;
+            confettiElement.style.height = `${size}px`;
+            confettiElement.style.backgroundColor = colors[colorIndex];
+            confettiElement.style.left = `${startX}px`;
+            confettiElement.style.top = `0px`;
+
+            wrapper.appendChild(confettiElement);
+
+            anime({
+                targets: confettiElement,
+                translateX: [0, anime.random(-200, 200)],
+                translateY: [0, window.innerHeight],
+                rotateZ: anime.random(0, 360),
+                rotateX: anime.random(0,360),
+                duration: anime.random(3000, 5000),
+                easing: 'easeOutQuad',
+                loop: true,
+                complete: () => {
+                    confettiElement.remove();
+                },
+            });
         },
     }
 
