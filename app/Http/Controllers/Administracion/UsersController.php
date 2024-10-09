@@ -981,4 +981,19 @@ class UsersController extends Controller
         }
     }
 
+    public function getTipoDic(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_ConsultarTipoDoc');
+        
+            return $rpta;
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
 }
