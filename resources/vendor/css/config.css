@@ -39,6 +39,7 @@
     --scroll-color: black;
     --scroll-color-back: grey;
     --vs-shadow: rgba(0,0,0, 0.25);
+    --sky-card-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -81,6 +82,7 @@
     --btn-txt-color: #595959;
     --scroll-color-back: white;
     --vs-shadow: rgba(255,255,255, 0.25);
+    --sky-card-bg: #cccccc;
 }
 @font-face {
     font-family: 'KGHappy';
@@ -1504,10 +1506,45 @@ div.vs-dialog, div.swal2-popup{
    width: 100%;
    height: 100%; 
 }
+
+/* Segundo diseño*/
+.sky-card{
+    width: 100%;
+    background-color: var(--sky-card-bg);    
+    transition: ease-in-out 300ms;
+}
+.top-bg{
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    padding: 5rem;
+    position:absolute;
+    border-top-left-radius: 1.15rem;
+    border-top-right-radius: 1.15rem;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+.rocket-img{
+    width: 111px;
+    height: 205px;
+    position: absolute;
+    top: -5%;
+    left: 18%;
+    z-index: 2;
+    filter: drop-shadow(1px 1px 5px rgba(255, 255, 255, 0.75));
+    transform: translate(15%, -25%);
+}
 @media screen and (min-width: 425px) {
     .bg-right-img{
         margin-left: 5rem;
     }
+    .rocket-img{
+        left: 27%;
+        transform: translate(15%, -25%);
+    }      
 }
 @media screen and (min-width: 768px) {
     .edit-btn-perfil{
@@ -1529,18 +1566,30 @@ div.vs-dialog, div.swal2-popup{
     }  
     .der-row{
         height: 225px;        
-    }     
+    }    
 }
 @media screen and (min-width: 1024px) {
     .bg-right-img{
         margin-top: 1rem;
-    }    
+    }  
+
+    .rocket-img{
+        left: 30%;
+        transform: translate(15%, -25%);
+    }      
 }
 @media screen and (min-width: 1440px) {
     .bg-right-img{
         width: 180px;
         height: 180px;
         margin-top: 0;
+    }
+    .sky-card{
+        width: 400px;
+    }
+    .rocket-img{
+        left: 32%;
+        transform: translate(15%, -25%);
     }    
 }
 /*^^ Acomoda las media query tras escoger un diseño ^^*/

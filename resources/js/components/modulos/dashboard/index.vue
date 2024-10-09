@@ -3,7 +3,8 @@
         <div id="contentRegistro" class="content container-fluid h-auto mb-5 mb-sm-0">
             <div class="container-fluid px-3 px-xl-5 py-3 mt-3">
                 <div class="row overflow-hidden">
-                    <div class="col-12 col-md-6 col-xl-6 d-flex justify-content-start izq-row pl-4 pl-md-0" style="background-color: #CC3843; border-radius: 25px;" >
+                    <div class="col-12 col-md-6 col-xl-6 d-flex justify-content-start izq-row pl-4 pl-md-0" style="background-color: #CC3843; border-radius: 25px;" 
+                    :class="!!darkMode ? 'shadow-dark' : 'shadow'">
                         <img src="/img/LOGO_NUEVO.png" alt="" class="bg-left-img" style="height: auto;">
                     </div>
                     <div class="col-12 col-md-8 col-lg-6 offset-md-2 pt-5 pb-3 mq-pos mt-md-3" style="background-color: #0c1f2c; color: white;">
@@ -11,11 +12,13 @@
                             <div class="bg-right-img bg-white">
                                 <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil" class="bg-right-img-adjust">
                             </div>
-                            <h1 class="text-right font-weight-bold pt-3 pt-md-0">{{ `¡Buen día ${cfullname}!` }}</h1>
-                            <p class="text-justify mt-3 w-75 offset-3">
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit incidunt ab a, rem soluta dignissimos numquam 
-                                ex iste quos aut praesentium sapiente commodi veritatis iusto minus aperiam, quam accusantium distinctio.
-                            </p>
+                            <div class="offset-0 offset-md-3 p-3">
+                                <h1 class="font-weight-bold pt-3 pt-md-0">{{ `¡Buen día ${cfullname}!` }}</h1>
+                                <p class="text-justify mt-3 font-weight-bold">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur veritatis aliquid incidunt sapiente doloribus 
+                                    distinctio voluptatibus illum natus minima laborum quos in fugiat, pariatur architecto animi saepe esse id repellendus?
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -41,6 +44,22 @@
                         <div class="row mt-4 rowvalidados">
                         </div>
                     </div> -->
+
+                    <div class="container-fluid">
+                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'">
+                            <div class="top-bg" style="background-image: url('/img/sky-bg-card.png');"></div>
+                            <div class="py-5">
+                                <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
+                            </div>
+                            <div style="z-index: 2;" class="pt-5 mt-3">
+                                <h1 class="text-center font-weight-bold">{{ `¡Buen día ${cfullname} ${cfullname}!` }}</h1>
+                                <p class="text-justify font-weight-bold p-2">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, facere explicabo! Culpa in debitis qui, 
+                                    praesentium, ea facilis quidem earum non recusandae iste sequi blanditiis animi voluptatibus iure consequuntur deserunt.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-5 mx-auto">
                     <vs-table>
