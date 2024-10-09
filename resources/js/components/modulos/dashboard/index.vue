@@ -1,9 +1,28 @@
 <template>
     <div class="content-header">
         <div id="contentRegistro" class="content container-fluid h-auto mb-5 mb-sm-0">
+            <div class="container-fluid px-3 px-xl-5 py-3 mt-3">
+                <div class="row overflow-hidden">
+                    <div class="col-12 col-md-6 col-xl-6 d-flex justify-content-start izq-row pl-4 pl-md-0" style="background-color: #CC3843; border-radius: 25px;" >
+                        <img src="/img/LOGO_NUEVO.png" alt="" class="bg-left-img" style="height: auto;">
+                    </div>
+                    <div class="col-12 col-md-8 col-lg-6 offset-md-2 pt-5 pb-3 mq-pos mt-md-3" style="background-color: #0c1f2c; color: white;">
+                        <div class="container-fluid pt-5 pt-md-0 der-row">
+                            <div class="bg-right-img bg-white">
+                                <img draggable="false" src="/img/LOGO_NUEVO.png" alt="Foto de perfil" class="bg-right-img-adjust">
+                            </div>
+                            <h1 class="text-right font-weight-bold pt-3 pt-md-0">{{ `¡Buen día ${cfullname}!` }}</h1>
+                            <p class="text-justify mt-3 w-75 offset-3">
+                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit incidunt ab a, rem soluta dignissimos numquam 
+                                ex iste quos aut praesentium sapiente commodi veritatis iusto minus aperiam, quam accusantium distinctio.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>             
             <div class="row">
                 <div class="col-sm-6 mx-auto">
-                    <div class="card cardintro d-flex flex-row" style="height: 19rem">
+                    <!-- <div class="card cardintro d-flex flex-row" style="height: 19rem">
                         <div class="tituloCard flex-grow-1 p-3 align-self-center" style="color: var(--iee-white);">
                             <h5 class="font-weight-bold tituloin">
                                 ¡Buen día {{ cfullname }}!
@@ -17,7 +36,7 @@
                         <div class="align-self-center">
                             <img src="/img/imglogro.webp" style="height: 10vh !important;">
                         </div>
-                    </div>
+                    </div> -->
                     <!-- <div class="col ">
                         <div class="row mt-4 rowvalidados">
                         </div>
@@ -76,7 +95,6 @@
                                     :attributes="attrsRegistro" />
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div> -->
@@ -539,7 +557,7 @@ export default {
                     easing: 'easeInOutExpo',
                     duration: 3000,
                     delay: delay,
-                    loop: false,
+                    loop: true,
                     complete: () => {
                         wrapper.removeChild(globo);
                     }
@@ -591,6 +609,7 @@ export default {
 }
 </script>
 <style>
+
 .square-chart-container,
 .landscape-chart-container,
 .ultrawide-chart-container {
