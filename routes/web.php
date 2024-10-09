@@ -79,6 +79,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     /***Correo***/
     Route::get('send-mail', 'Auth\ResetPasswordController@sendMailPass'); 
+
+    /***Captura v2***/
+    Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');
 });
 
 Route::get('/{optional?}', function () {
