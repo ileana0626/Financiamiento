@@ -29,7 +29,7 @@
 Consulta de Errores
 </vs-sidebar-item> -->
                 <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" id="solicitudes.captura"
-                    to="/captura">
+                    to="/capturav2">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             app_registration
