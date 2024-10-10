@@ -52,7 +52,7 @@
                                 <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
                             </div>
                             <div style="z-index: 2;" class="pt-5 mt-3">
-                                <h1 class="text-center font-weight-bold">{{ `¡Buen día ${cfullname} ${cfullname}!` }}</h1>
+                                <h1 class="text-center font-weight-bold">{{ `¡Buen día ${cfullname}!` }}</h1>
                                 <p class="text-justify font-weight-bold p-2">
                                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, facere explicabo! Culpa in debitis qui, 
                                     praesentium, ea facilis quidem earum non recusandae iste sequi blanditiis animi voluptatibus iure consequuntur deserunt.
@@ -255,7 +255,7 @@ export default {
             ],
             listaHoy: [],
             globos: [],
-            showListaCumple: false,            
+            showListaCumple: false,     
         }
     },
     watch:{

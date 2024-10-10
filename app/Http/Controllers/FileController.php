@@ -37,6 +37,62 @@ class FileController extends Controller
         return  $rpta;
     }   
 
+    public function subirArchivoSolicitud(Request $request)
+    {
+        $file = $request->file('archivo');
+        $filename = $request->filename;
+        $extension = $request->extension;
+        $tipo = $request->tipo;
+        $apendice = $request->apendice;
+
+        $apendice = ($apendice == NULL) ? '' : $apendice;
+        if ($file != "") {
+            $fileExtension = $request->file('archivo')->extension();
+        } else {
+            $fileExtension = $extension;
+        }
+        $fileserver = $filename . '_' . $apendice.'.' .$fileExtension  ;
+
+        $publicPath = 'public/documentos/';
+        $storagePath = 'storage/documentos/';
+
+        DB::beginTransaction();
+        try {
+            // personalizar la ruta del storage segun el tipo de doc
+            switch($tipo){
+                case 1: 
+                    $publicPath .= 'requisicion';
+                    $storagePath .= 'requisicion/';
+                    break;
+                case 2:
+                    $publicPath .= 'memorandum';
+                    $storagePath .= 'memorandum/';
+                    break;
+                case 3:
+                    $publicPath .= 'oficio';
+                    $storagePath .= 'oficio/';
+                    break;
+                case 4:
+                    $publicPath .= 'circular';
+                    $storagePath .= 'circular/';
+                    break;
+            }
+            Storage::putFileAs($publicPath, $file , $fileserver);
+
+            $rpta =  DB::select('call sp_Archivo_subirArchivoSolicitud( ?, ?, ? )', [ 
+                $storagePath . $fileserver ,
+                $filename,
+                $tipo,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }      
+
     /**Cargar la foto en storage y guardar la ruta en BD */
     public function setSubirFP(Request $request){
         if(!$request->ajax()) return redirect('/');

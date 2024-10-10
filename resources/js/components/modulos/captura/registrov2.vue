@@ -656,6 +656,27 @@ export default {
 
             });
         },
+
+        async setSubirArchivoSolicitud(oDocumento, fileExt, tipo ,apendice) {
+            let idArchivo = 0;
+            this.form.set('archivo', oDocumento);
+            this.form.set('filename', oDocumento.name);
+            this.form.set('extension', fileExt);
+            this.form.set('tipo', tipo);
+            this.form.set('apendice', apendice);
+
+            const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+            let url = '/archivos/subirArchivoSolicitud';
+            await axios.post(url, this.form, config).then(response => {
+                idArchivo = response.data[0].idDOCUMENTO
+            }).catch((error) => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+
+            return idArchivo;
+        },        
         guardarSolicitud() {
             // const loading = methods.loading(this.$vs);
             if (this.tipoDoc == '') {
