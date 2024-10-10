@@ -82,6 +82,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     /***Captura v2***/
     Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');
+    Route::get('/administracion/usuario/getCapitulo','Administracion\UsersController@getCapitulo');
 });
 
 Route::get('/{optional?}', function () {
