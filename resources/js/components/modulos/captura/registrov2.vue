@@ -467,6 +467,7 @@ export default {
                     color: 'warn'
                 }
             ],
+            tipoDoc: '',
             areaSolicita: '',
             nOficio: '',
             asunto: '',
@@ -474,17 +475,23 @@ export default {
             remitente: '',
             nfolio: '',
             nMemorandum: '',
-            tipoDoc: '',
             Capitulo: '',
             termino: '',
-            catTermino: [],
-            catCapitulo: [],
-            catTipoDoc: [],
-            cat_departamentos: [],
             respuesta: '',
+            fechaRecibido: '',
+            fechaTermino: '',
+            hora: '',
             documentos: {
                 F1: '',
             },
+            seguimiento: '',
+            copiasConocimiento: [],
+
+            catTermino: [],
+            catCapitulo: [],
+            catTipoDoc: [],
+            cat_departamentos: [],    
+            cat_seguimiento: [],        
             selectSiNo: [
                 {
                     idSelect: 1,
@@ -509,12 +516,13 @@ export default {
             errorF1: '',
             errorNFolio: '',
             errorNMemorandum: '',
-            fechaRecibido: '',
-            fechaTermino: '',
+            errorSeguimiento: '',
+            errorCopiasConocimiento: '',
+
             errorFechaRecibido: '',
             errorFechaTermino: '',
-            hora: '',
             errorHora: '',
+
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -527,12 +535,6 @@ export default {
                     return time.getTime() < date;
                 },
             },
-            seguimiento: '',
-            cat_seguimiento: [],
-            errorSeguimiento: '',
-            copiasConocimiento: [],
-            errorCopiasConocimiento: '',
-            errorCopiasConocimiento: '',
         }
 
     },
@@ -540,6 +542,11 @@ export default {
         tipoDoc(newVal, oldVal){
             this.limpiarErrores();
             this.seguimiento = '';
+            if(newVal === 4){
+                this.seguimiento = [];
+            } else {
+                this.seguimiento = '';
+            }
         }
     },
     mounted() {
@@ -723,6 +730,36 @@ export default {
                 })
             }
         },
+        async setRegistrarRequi(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarRequi';
+            let idSOLICITUD = 0;
+            const temp = [
+                {'id': this.seguimiento}
+            ]
+            const jsonSEG = JSON.stringify(temp)
+            try {
+                const response = await axios.post(url,{
+                    'nTipo': this.tipoDoc,
+                    'nCapitulo': this.Capitulo,
+                    'nFolio': this.nfolio,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': this.hora + ':00',
+                    'nAreaSolicita': this.areaSolicita,
+                    'nAsignacion': this.areaAsignada,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,                    
+                });
+                if(response.status === 200){
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return idSOLICITUD;
+            }
+        },
         GuardarMemo() { 
             this.limpiarErrores();
             this.ValidarMemo();
@@ -821,7 +858,7 @@ export default {
                 this.errorF1 = 1;
                 this.error = true;
             }
-            if(this.seguimiento === ''){
+            if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
@@ -878,7 +915,7 @@ export default {
                 this.errorF1 = 1;
                 this.error = true;
             }
-            if(this.seguimiento === ''){
+            if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
@@ -931,7 +968,7 @@ export default {
                 this.errorF1 = 1;
                 this.error = true;
             }
-            if(this.seguimiento === ''){
+            if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
@@ -962,7 +999,7 @@ export default {
                 this.errorF1 = 1;
                 this.error = true;
             }
-            if(this.seguimiento === ''){
+            if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione al menos una opción de seguimiento';
                 this.error = true;
             }
