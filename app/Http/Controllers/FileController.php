@@ -81,7 +81,7 @@ class FileController extends Controller
 
             $rpta =  DB::select('call sp_Archivo_subirArchivoSolicitud( ?, ?, ? )', [ 
                 $storagePath . $fileserver ,
-                $filename,
+                $fileserver,
                 $tipo,
             ]);
 

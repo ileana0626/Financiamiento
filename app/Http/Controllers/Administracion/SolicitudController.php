@@ -33,8 +33,9 @@ class SolicitudController extends Controller
             $nIdUsuario = Auth::id();
         }
 
+        DB::beginTransaction();
         try {
-            $rpta =  DB::select('call sp_Solicitud_setRegistrarRequi( ?,?,?,?,?,?,?,?,?,? )', [
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarRequi( ?,?,?,?,?,?,?,?,?,?,? )', [
                 $nTipo,
                 $nCapitulo,
                 $nFolio,
@@ -48,9 +49,39 @@ class SolicitudController extends Controller
                 $nIdUsuario
             ]);
 
+            DB::commit();
             return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 
+    public function setRegistrarCopiaCon(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        
+        $DPTOS = $request->DPTOS;
+        $idSOLICITUD = $request->idSOLICITUD;
+        $fAccion = $request->fAccion;
+
+        $numDPTOS = sizeof($DPTOS);
+        DB::beginTransaction();
+        try {
+            if($numDPTOS > 0){
+                for($i = 0; $i < $numDPTOS; $i++){
+                    DB::select('call sp_Solicitud_setRegistrarCopiaCon(?,?,?)',[
+                        $idSOLICITUD,
+                        $DPTOS[$i],
+                        $fAccion,
+                    ]);
+                }
+            }
+            DB::commit();
+            return response()->json(['numCopias' => $numDPTOS]);
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             $errorCode = $e->errorInfo[1];
             throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }

@@ -36,8 +36,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/usuario/getSolicitudes', 'Administracion\UsersController@getSolicitudes');
     Route::post('/administracion/usuario/CopiaEnterado', 'Administracion\UsersController@CopiaEnterado');
     Route::post('/administracion/usuario/todosEnteradoConcluido', 'Administracion\UsersController@todosEnteradoConcluido');
-    /**Nueva lista de solicitudes */
+    /**Nuevo registro de solicitudes */
     Route::post('/administracion/solicitud/setRegistrarRequi','Administracion\SolicitudController@setRegistrarRequi');
+    Route::post('/administracion/solicitud/setRegistrarCopiaCon','Administracion\SolicitudController@setRegistrarCopiaCon');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');
