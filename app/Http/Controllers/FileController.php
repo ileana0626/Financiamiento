@@ -51,7 +51,10 @@ class FileController extends Controller
         } else {
             $fileExtension = $extension;
         }
-        $fileserver = $filename . '_' . $apendice.'.' .$fileExtension  ;
+        // id random para añadir al nombre del archivo
+        $randId = Str::random(10);
+
+        $fileserver = $randId . '_' .  $filename . '.' . $fileExtension;
 
         $publicPath = 'public/documentos/';
         $storagePath = 'storage/documentos/';
