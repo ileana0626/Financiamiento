@@ -160,6 +160,45 @@ class SolicitudController extends Controller
         }        
     }
 
+    public function setRegistrarCircular(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nTipo = $request->nTipo;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $nAreaSolicita = $request->nAreaSolicita;
+        $cAsunto = $request->cAsunto;
+        $nIdArchivo = $request->nIdArchivo;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $nIdAuth = $request->nIdAuth;
+        $fAccion = $request->fAccion;
+
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarCircular( ?,?,?,?,?,?,?,?,? )', [
+                $nTipo,
+                $fRecibido,
+                $hRecibido,
+                $nAreaSolicita,
+                $cAsunto,
+                $nIdArchivo,
+                $jsonSeguimiento,
+                $nIdAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }        
+    }
+
     public function setRegistrarCopiaCon(Request $request){
         if(!$request->ajax()) return redirect('/');
         

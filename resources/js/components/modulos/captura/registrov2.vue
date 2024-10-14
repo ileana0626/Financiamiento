@@ -782,7 +782,36 @@ export default {
                 methods.catchHandler(error, method[3]);
                 return idSOLICITUD;
             }             
-        },        
+        },    
+        async setRegistrarCircular(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarCircular';
+            let idSOLICITUD = 0;
+            let temp = [];
+            for(let i = 0;i< this.seguimiento.length; i++){
+                temp.push({'id': this.seguimiento[i]})
+            }
+            const jsonSEG = JSON.stringify(temp);
+            try {
+                const response = await axios.post(url,{
+                    'nTipo': this.tipoDoc,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': this.hora,
+                    'nAreaSolicita': this.areaSolicita,
+                    'cAsunto': this.asunto,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,
+                });
+                if(response.status === 200){
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return idSOLICITUD;
+            }  
+        },    
         async setRegistrarCopiaCon(idSOLICITUD, fechaAccion) {
             const url = '/administracion/solicitud/setRegistrarCopiaCon';
 
@@ -943,10 +972,10 @@ export default {
             }
         },
         GuardarCircular() { 
-            console.log('circular');
             this.limpiarErrores();
             this.ValidarCircular();
             if(!this.error){
+                let fechaAccion = methods.getTimestamp();
                 Swal.fire({
                     icon: 'warning',
                     title: '¿Registrar la solicitud de circular?',
@@ -955,12 +984,28 @@ export default {
                     confirmButtonText: 'Registrar solicitud',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
-                }).then( (result) => {
+                }).then(async (result) => {
                     if(result.isConfirmed){
-                        console.log('en progreso');
+                        const load = methods.loading( this.$vs );
                         // Registrar el archivo
+                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.asunto);
                         // Registrar la solicitud
+                        load.text = 'Registrando solicitud...';
+                        const idSOLICITUD = await this.setRegistrarCircular(idARCHIVO, fechaAccion);
                         // Registrar las copias de conocimiento
+                        load.text = 'Registrando copias...';
+                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
+                        if(exitoCopias > 0){
+                            Swal.fire({
+                                icon: 'success',
+                                title:'Solicitud registrada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( result => {
+                                this.limpiarCampos();
+                            })
+                        }
+                        load.close();
                     }
                 })
             }            
