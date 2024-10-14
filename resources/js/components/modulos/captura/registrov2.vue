@@ -750,6 +750,39 @@ export default {
                 return idSOLICITUD;
             }            
         },
+        async setRegistrarOficio(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarOficio';
+            let idSOLICITUD = 0;
+            const temp = [
+                {'id': this.seguimiento}
+            ]
+            const jsonSEG = JSON.stringify(temp);
+            try {
+                const response = await axios.post(url,{
+                    'nTipo': this.tipoDoc,
+                    'nOficio': this.nOficio,
+                    'cRemitente': this.remitente,
+                    'cCargo': this.cargo,
+                    'cAsunto': this.asunto,
+                    'nTermino': this.termino,
+                    'fTermino': this.fechaTermino,
+                    'nAsignacion': this.areaAsignada,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': this.hora,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,
+                });
+                if(response.status === 200){
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return idSOLICITUD;
+            }             
+        },        
         async setRegistrarCopiaCon(idSOLICITUD, fechaAccion) {
             const url = '/administracion/solicitud/setRegistrarCopiaCon';
 
@@ -848,7 +881,7 @@ export default {
                     if(result.isConfirmed){
                         const load = methods.loading( this.$vs );
                         // Registrar el archivo
-                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nfolio);
+                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nMemorandum);
                         // Registrar la solicitud
                         load.text = 'Registrando solicitud...';
                         const idSOLICITUD = await this.setRegistrarMemo(idARCHIVO, fechaAccion);
@@ -874,6 +907,7 @@ export default {
             this.limpiarErrores();
             this.ValidarOficio();
             if(!this.error){
+                let fechaAccion = methods.getTimestamp();
                 Swal.fire({
                     icon: 'warning',
                     title: '¿Registrar la solicitud de oficio?',
@@ -882,15 +916,30 @@ export default {
                     confirmButtonText: 'Registrar solicitud',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
-                }).then( (result) => {
+                }).then(async (result) => {
                     if(result.isConfirmed){
-                        console.log('en progreso');
-                        
+                        const load = methods.loading( this.$vs );
                         // Registrar el archivo
+                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nOficio);
                         // Registrar la solicitud
+                        load.text = 'Registrando solicitud...';
+                        const idSOLICITUD = await this.setRegistrarOficio(idARCHIVO, fechaAccion);
                         // Registrar las copias de conocimiento
+                        load.text = 'Registrando copias...';
+                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
+                        if(exitoCopias > 0){
+                            Swal.fire({
+                                icon: 'success',
+                                title:'Solicitud registrada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( result => {
+                                this.limpiarCampos();
+                            });
+                        }                     
+                        load.close();
                     }
-                })
+                });
             }
         },
         GuardarCircular() { 
@@ -1135,9 +1184,11 @@ export default {
             this.fechaTermino = '';
             this.hora = '';
             this.documentos.F1 = '';
+            this.$refs.upload.clearFiles();
             this.seguimiento = '';
             this.copiasConocimiento = [];
             this.tipoDoc = '';
+
         },
     },
 }

@@ -110,6 +110,55 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function setRegistrarOficio(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nTipo = $request->nTipo;
+        $nOficio = $request->nOficio;
+        $cRemitente = $request->cRemitente;
+        $cCargo = $request->cCargo;
+        $cAsunto = $request->cAsunto;
+        $nTermino = $request->nTermino;
+        $fTermino = $request->fTermino;
+        $nAsignacion = $request->nAsignacion;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $nIdArchivo = $request->nIdArchivo;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $nIdAuth = $request->nIdAuth;
+        $fAccion = $request->fAccion;
+
+        $fTermino = ($fTermino == NULL) ? NULL : $fTermino;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarOficio( ?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+                $nTipo,
+                $nOficio,
+                $cRemitente,
+                $cCargo,
+                $cAsunto,
+                $nTermino,
+                $fTermino,
+                $nAsignacion,
+                $fRecibido,
+                $hRecibido,
+                $nIdArchivo,
+                $jsonSeguimiento,
+                $nIdAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }        
+    }
 
     public function setRegistrarCopiaCon(Request $request){
         if(!$request->ajax()) return redirect('/');
