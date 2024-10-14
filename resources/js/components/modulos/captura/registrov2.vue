@@ -685,7 +685,89 @@ export default {
             });
 
             return idArchivo;
-        },        
+        }, 
+        async setRegistrarRequi(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarRequi';
+            let idSOLICITUD = 0;
+            const temp = [
+                {'id': this.seguimiento}
+            ]
+            const jsonSEG = JSON.stringify(temp)
+            try {
+                const response = await axios.post(url,{
+                    'nTipo': this.tipoDoc,
+                    'nCapitulo': this.Capitulo,
+                    'nFolio': this.nfolio,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': this.hora + ':00',
+                    'nAreaSolicita': this.areaSolicita,
+                    'nAsignacion': this.areaAsignada,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,                
+                });
+                if(response.status === 200){
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return idSOLICITUD;
+            }
+        },
+        async setRegistrarMemo(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarMemo';
+            let idSOLICITUD = 0;
+            const temp = [
+                {'id': this.seguimiento}
+            ]
+            const jsonSEG = JSON.stringify(temp)
+            try {
+                const response = await axios.post(url,{
+                    'nTipo': this.tipoDoc,
+                    'nAreaSolicita': this.areaSolicita,
+                    'nMemo': this.nMemorandum,
+                    'cAsunto': this.asunto,
+                    'nFolio': this.nfolio,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': this.hora,
+                    'nTermino': this.termino,
+                    'fTermino': this.fechaTermino,
+                    'nAsignacion': this.areaAsignada,
+                    'nRespuesta': this.respuesta,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,
+                });
+                if(response.status === 200){
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return idSOLICITUD;
+            }            
+        },
+        async setRegistrarCopiaCon(idSOLICITUD, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarCopiaCon';
+
+            try {
+                const response = await axios.post(url, {
+                    'DPTOS': this.copiasConocimiento,
+                    'idSOLICITUD': idSOLICITUD,
+                    'fAccion': fechaAccion,
+                });
+                if(response.status === 200){
+                    return 1;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3]);
+                return 0;
+            }
+        },       
         guardarSolicitud() {
             // const loading = methods.loading(this.$vs);
             if (this.tipoDoc == '') {
@@ -749,59 +831,11 @@ export default {
                 })
             }
         },
-        async setRegistrarRequi(idARCHIVO, fechaAccion) {
-            const url = '/administracion/solicitud/setRegistrarRequi';
-            let idSOLICITUD = 0;
-            const temp = [
-                {'id': this.seguimiento}
-            ]
-            const jsonSEG = JSON.stringify(temp)
-            try {
-                const response = await axios.post(url,{
-                    'nTipo': this.tipoDoc,
-                    'nCapitulo': this.Capitulo,
-                    'nFolio': this.nfolio,
-                    'fRecibido': this.fechaRecibido,
-                    'hRecibido': this.hora + ':00',
-                    'nAreaSolicita': this.areaSolicita,
-                    'nAsignacion': this.areaAsignada,
-                    'nIdArchivo': idARCHIVO,
-                    'jsonSeguimiento': jsonSEG,
-                    'fAccion': fechaAccion,                
-                });
-                if(response.status === 200){
-                    idSOLICITUD = response.data[0].idSOLICITUD;
-                    return idSOLICITUD;
-                }
-            } catch (error) {
-                const method = url.split('/');
-                methods.catchHandler(error, method[3]);
-                return idSOLICITUD;
-            }
-        },
-        async setRegistrarCopiaCon(idSOLICITUD, fechaAccion) {
-            const url = '/administracion/solicitud/setRegistrarCopiaCon';
-
-            try {
-                const response = await axios.post(url, {
-                    'DPTOS': this.copiasConocimiento,
-                    'idSOLICITUD': idSOLICITUD,
-                    'fAccion': fechaAccion,
-                });
-                if(response.status === 200){
-                    return 1;
-                }
-            } catch (error) {
-                const method = url.split('/');
-                methods.catchHandler(error, method[3]);
-                return 0;
-            }
-            
-        },
         GuardarMemo() { 
             this.limpiarErrores();
             this.ValidarMemo();
             if(!this.error){
+                let fechaAccion = methods.getTimestamp();
                 Swal.fire({
                     icon: 'warning',
                     title: '¿Registrar la solicitud de memorándum?',
@@ -810,12 +844,28 @@ export default {
                     confirmButtonText: 'Registrar solicitud',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
-                }).then( (result) => {
+                }).then(async (result) => {
                     if(result.isConfirmed){
-                        console.log('en progreso');
+                        const load = methods.loading( this.$vs );
                         // Registrar el archivo
+                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nfolio);
                         // Registrar la solicitud
+                        load.text = 'Registrando solicitud...';
+                        const idSOLICITUD = await this.setRegistrarMemo(idARCHIVO, fechaAccion);
                         // Registrar las copias de conocimiento
+                        load.text = 'Registrando copias...';
+                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
+                        if(exitoCopias > 0){
+                            Swal.fire({
+                                icon: 'success',
+                                title:'Solicitud registrada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( result => {
+                                this.limpiarCampos();
+                            })
+                        }
+                        load.close();
                     }
                 })
             }
