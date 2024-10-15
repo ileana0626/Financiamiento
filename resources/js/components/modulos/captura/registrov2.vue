@@ -56,7 +56,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Folio</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'folio' + tipoDoc"
-                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off">
+                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off" @input="inputFolio()">
                                         <template #message-danger v-if="errorNFolio.length > 0">
                                             {{ errorNFolio }}
                                         </template>
@@ -127,7 +127,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Memorándum</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'nMemo' + tipoDoc"
-                                        placeholder="Número de folio" v-model="nMemorandum" autocomplete="off">
+                                        placeholder="Número de memorándum" v-model="nMemorandum" autocomplete="off" @input="inputMemo()">
                                         <template #message-danger v-if="errorNMemorandum.length > 0">
                                             {{ errorNMemorandum }}
                                         </template>
@@ -136,7 +136,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -145,7 +145,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Folio</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'nFolio' + tipoDoc"
-                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off">
+                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off" @input="inputFolio()">
                                         <template #message-danger v-if="errorNFolio.length > 0">
                                             {{ errorNFolio }}
                                         </template>
@@ -230,7 +230,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Oficio </label>
                                     <vs-input id="Remitente" color="#C2B280" icon-after placeholder="Número de Oficio" :key="'nOficio' + tipoDoc"
-                                        v-model="nOficio" autocomplete="off">
+                                        v-model="nOficio" autocomplete="off" @input="inputOficio()">
                                         <template #message-danger v-if="errorNOficio.length > 0">
                                             {{ errorNOficio }}
                                         </template>
@@ -239,7 +239,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Remitente </label>
                                     <vs-input id="Remitente" color="#C2B280" icon-after placeholder="Remitente" :key="'remitente' + tipoDoc"
-                                        v-model="remitente" autocomplete="off">
+                                        v-model="remitente" autocomplete="off" @input="inputRemitente()">
                                         <template #message-danger v-if="errorRemitente.length > 0">
                                             {{ errorRemitente }}
                                         </template>
@@ -248,7 +248,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Cargo </label>
                                     <vs-input id="Cargo" color="#C2B280" icon-after placeholder="Cargo" v-model="cargo" :key="'cargo' + tipoDoc"
-                                        autocomplete="off">
+                                        autocomplete="off" @input="inputCargo()">
                                         <template #message-danger v-if="errorCargo.length > 0">
                                             {{ errorCargo }}
                                         </template>
@@ -257,7 +257,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -363,7 +363,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -574,6 +574,42 @@ export default {
                     return false;
                 }
             });
+        },
+        inputFolio() {
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.nfolio;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.nfolio = temp.replace(regex, '');
+        },
+        inputMemo(){
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.nMemorandum;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.nMemorandum = temp.replace(regex, '');            
+        },
+        inputOficio(){
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.nOficio;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.nOficio = temp.replace(regex, '');            
+        },
+        inputAsunto(){
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.asunto;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.asunto = temp.replace(regex, '');            
+        },
+        inputRemitente() {
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.remitente;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.remitente = temp.replace(regex, '');            
+        },
+        inputCargo() {
+            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let temp = this.cargo;
+            if(temp.length > 50) temp = temp.substring(0,50);
+            this.cargo = temp.replace(regex, '');            
         },
         handleF1(file, fileList) {
             this.documentos.F1 = this.handleChange(file, fileList);
