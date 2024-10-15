@@ -556,13 +556,14 @@ export default {
             }
         }
     },
-    mounted() {
-        // this.checkInputIntegrity()
-        this.getTipoDic()
-        this.getCapitulo()
-        this.obtenerDatos(3)
-        this.obtenerDatos(5)
-        this.obtenerDatos(6)
+    async mounted() {
+        const load = methods.loading( this.$vs );
+        await this.getTipoDic();
+        await this.getCapitulo();
+        await this.obtenerDatos(3);
+        await this.obtenerDatos(5);
+        await this.obtenerDatos(6);
+        load.close();
     },
     methods: {
         checkInputIntegrity() {
@@ -606,10 +607,10 @@ export default {
             return file.raw;
             // }
         },
-        getTipoDic() {
+        async getTipoDic() {
             this.catTipoDoc = []
             let url = '/administracion/usuario/getTipoDic'
-            axios.get(url).then(response => {
+            await axios.get(url).then(response => {
                 this.catTipoDoc = response.data
             }).catch((err) => {
                 console.log(err);
@@ -617,10 +618,10 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3]);
             });
         },
-        getCapitulo() {
+        async getCapitulo() {
             this.catCapitulo = []
             let url = '/administracion/usuario/getCapitulo'
-            axios.get(url).then(response => {
+            await axios.get(url).then(response => {
                 this.catCapitulo = response.data
             }).catch((err) => {
                 console.log(err);
@@ -628,9 +629,9 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3]);
             });
         },
-        obtenerDatos(tipo) {
+        async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
-            axios.get(url, {
+            await axios.get(url, {
                 params: {
                     'tipo': tipo,
                     'consulta': 1
