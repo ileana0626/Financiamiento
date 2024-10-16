@@ -996,10 +996,10 @@ export default {
                 let fechaAccion = methods.getTimestamp();
                 Swal.fire({
                     icon: 'warning',
-                    title: '¿Registrar la solicitud de memorándum?',
+                    title: '¿Quieres registrar el memorándum?',
                     showConfirmButton: true,
                     showCancelButton: true,
-                    confirmButtonText: 'Registrar solicitud',
+                    confirmButtonText: 'Registrar',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
                 }).then(async (result) => {
