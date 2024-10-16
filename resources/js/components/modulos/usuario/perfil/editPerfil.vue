@@ -46,7 +46,7 @@
                                 </div>                                
                             </div>
                             <div class="col-12 col-xl-6 px-3 pb-3">
-                                <div class="d-flex justify-content-center overflow-auto pb-4">
+                                <div class="d-flex justify-content-start justify-content-md-center overflow-auto pb-4">
                                     <template v-if="fileFoto.length === 0">
                                         <el-upload class="upload-demo my-4" :class="fileFoto.length > 0 ? 'd-none' : 'd-block'" drag
                                         action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove"

@@ -9,7 +9,7 @@
                             <router-link to="/"><span
                                 class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
                         </li>
-                        <li class="breadActive">
+                        <li class="breadActive" @click="limpiarCampos">
                             <span>Captura</span>
                         </li>
                     </ul>
@@ -371,10 +371,10 @@
                                 </div>
                             </template>
                         </div>
-                        <div class="row p-4">
-                            <div class="col-12 col-md-6 px-0 pr-sm-5 pb-3">
+                        <div class="row px-4 py-1">
+                            <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Cargar Archivo</label>
-                                <div class="row px-0 pr-sm-5 pb-3">
+                                <!-- <div class="row px-0 pr-sm-5 pb-3">
                                     <div class="col-md-6">
                                         <el-upload class="upload-demo col-md-12"
                                             action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleF1"
@@ -395,10 +395,58 @@
                                             </template>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
+                                <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
+                                    <template v-if="documentos.F1.length === 0">
+                                        <el-upload class="upload-demo my-4" :class="documentos.F1.length > 0 ? 'd-none' : 'd-block'" drag
+                                        action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemoveF1"
+                                        :on-change="handleF1" :on-exceed="handleExceed" :auto-upload="false" accept=".pdf"
+                                        :limit="1" ref="upload">
+                                        <i class="fa fa-cloud-upload-alt"
+                                            style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
+                                        <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para seleccionar</em></div>
+                                        <div slot="tip" class="el-upload__tip">
+                                            Solo archivos de tipo PDF
+                                            <transition name="error-slide">
+                                                <div class="danger-message" v-if="errorF1 == 1">
+                                                    <template>
+                                                        Seleccione un archivo para subir
+                                                    </template>
+                                                </div>
+                                            </transition>
+                                        </div>
+                                        </el-upload>
+                                    </template>
+                                    <template v-else>
+                                        <div class="py-3">
+                                            <div class="d-flex justify-content-between p-2 my-3 cardFile" :class="!!darkMode ? 'shadow-dark' : 'shadow'">
+                                                <!-- Tipo -->
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex">
+                                                    <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
+                                                    <div class="d-flex flex-column filenameContainer">
+                                                    <span class="errorDesc">Nombre</span>
+                                                    <el-tooltip class="item" effect="dark" :content="documentos.F1.name" placement="right">
+                                                        <div>
+                                                        <span class="fileNameClass errorDescDesc bold" style=""> {{ documentos.F1.name }} </span>
+                                                        </div>
+                                                    </el-tooltip>
+                                                    </div>
+                                                </div>
+                                                <el-tooltip class="item" effect="dark" content="Eliminar archivo" placement="right">
+                                                    <div class="cardFileRemoveIcon" @click="handleRemoveF1">
+                                                    <i class="far fa-trash-alt"></i>
+                                                    </div>
+                                                </el-tooltip>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>                                
                             </div>
+                            <div class="col-12"></div>
                             <template v-if="tipoDoc == 4">
-                                <div class="col-12 col-md-6 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <div class="col-12 col-md-6 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Seguimiento</label>
                                     <vs-select multiple filter :key="'seguimiento' + tipoDoc"
                                         :placeholder="(seguimiento.length > 0) ? '' : 'Seleccione una opción'"
@@ -415,7 +463,7 @@
                                 </div>
                             </template>
                             <template v-else>
-                                <div class="col-12 col-md-6 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <div class="col-12 col-md-6 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Seguimiento</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="seguimiento" :key="'seguimiento' + tipoDoc"
                                         v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
@@ -446,10 +494,10 @@
                             </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
-                                    <vs-button style="width: 19vw; " color="#a5904a" block
+                                    <vs-button color="#a5904a" block
                                         @click.prevent="guardarSolicitud">
                                         <b style="font-size: medium !important;">
-                                            Registrar
+                                            <span class="px-5 text-white">Registrar</span>
                                         </b>
                                     </vs-button>
                                 </div>                            
@@ -467,6 +515,7 @@ import methods from '../../../methods';
 export default {
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             error: false,
 
             colors: [
@@ -555,6 +604,9 @@ export default {
                 this.seguimiento = '';
             }
         }
+    },
+    created(){
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
     },
     async mounted() {
         const load = methods.loading( this.$vs );
@@ -1273,11 +1325,10 @@ export default {
             this.fechaTermino = '';
             this.hora = '';
             this.documentos.F1 = '';
-            this.$refs.upload.clearFiles();
             this.seguimiento = '';
             this.copiasConocimiento = [];
             this.tipoDoc = '';
-
+            this.$refs.upload.clearFiles();
         },
     },
 }
