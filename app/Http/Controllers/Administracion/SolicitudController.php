@@ -63,10 +63,9 @@ class SolicitudController extends Controller
         if(!$request->ajax()) return redirect('/');
 
         $nTipo = $request->nTipo;
-        $nAreaSolicita = $request->nAreaSolicita;
+        $nAreaEmite = $request->nAreaEmite;
         $nMemo = $request->nMemo;
         $cAsunto = $request->cAsunto;
-        $nFolio = $request->nFolio;
         $fRecibido = $request->fRecibido;
         $hRecibido = $request->hRecibido;
         $nTermino = $request->nTermino;
@@ -83,12 +82,11 @@ class SolicitudController extends Controller
 
         DB::beginTransaction();
         try {
-            $rpta =  DB::select('call sp_Solicitud_setRegistrarMemo( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarMemo( ?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
                 $nTipo,
-                $nAreaSolicita,
+                $nAreaEmite,
                 $nMemo,
                 $cAsunto,
-                $nFolio,
                 $fRecibido,
                 $hRecibido,
                 $nTermino,

@@ -9,7 +9,7 @@
                             <router-link to="/"><span
                                 class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
                         </li>
-                        <li class="breadActive" @click="limpiarCampos">
+                        <li class="breadActive">
                             <span>Captura</span>
                         </li>
                     </ul>
@@ -112,11 +112,11 @@
                             </template>
                             <template v-else-if="tipoDoc == 2">
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Area que Solicita</label>
-                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
-                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
-                                        <template #message-danger v-if="errorAreaSolicita.length > 0">
-                                            {{ errorAreaSolicita }}
+                                    <label class="col-form-label">Area que emite</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aEmite' + tipoDoc"
+                                        v-model="areaEmite" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaEmite.length > 0">
+                                            {{ errorAreaEmite }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
                                             :value="item.id">
@@ -139,15 +139,6 @@
                                         v-model="asunto" autocomplete="off" @input="inputAsunto()">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
-                                        </template>
-                                    </vs-input>
-                                </div>
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Número de Folio</label>
-                                    <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'nFolio' + tipoDoc"
-                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off" @input="inputFolio()">
-                                        <template #message-danger v-if="errorNFolio.length > 0">
-                                            {{ errorNFolio }}
                                         </template>
                                     </vs-input>
                                 </div>
@@ -525,6 +516,7 @@ export default {
             ],
             tipoDoc: '',
             areaSolicita: '',
+            areaEmite: '',
             nOficio: '',
             asunto: '',
             cargo: '',
@@ -561,6 +553,7 @@ export default {
             errorRespuesta: '',
             errorCapitulo: '',
             errorAreaSolicita: '',
+            errorAreaEmite: '',
             errorNOficio: '',
             errorCargo: '',
             errorRemitente: '',
@@ -822,10 +815,9 @@ export default {
             try {
                 const response = await axios.post(url,{
                     'nTipo': this.tipoDoc,
-                    'nAreaSolicita': this.areaSolicita,
+                    'nAreaEmite': this.areaEmite,
                     'nMemo': this.nMemorandum,
                     'cAsunto': this.asunto,
-                    'nFolio': this.nfolio,
                     'fRecibido': this.fechaRecibido,
                     'hRecibido': this.hora,
                     'nTermino': this.termino,
@@ -1147,8 +1139,8 @@ export default {
         },
         ValidarMemo(){
             this.error = false;
-            if(this.areaSolicita === ''){
-                this.errorAreaSolicita = 'La área que solicita es obligatoria';
+            if(this.areaEmite === ''){
+                this.errorAreaEmite = 'La área que emite es obligatoria';
                 this.error = true;
             }
             if(this.nMemorandum === ''){
@@ -1157,10 +1149,6 @@ export default {
             }
             if(this.asunto === ''){
                 this.errorAsunto = 'El asunto es obligatorio';
-                this.error = true;
-            }
-            if(this.nfolio === ''){
-                this.errorNFolio = 'El folio es obligatorio';
                 this.error = true;
             }
             if(this.fechaRecibido === ''){
@@ -1312,6 +1300,7 @@ export default {
         limpiarCampos() {
             this.tipoDoc = '';
             this.areaSolicita = '';
+            this.areaEmite = '';
             this.nOficio = '';
             this.asunto = '';
             this.cargo = '';
