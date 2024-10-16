@@ -41,7 +41,7 @@
                             </div>
                             <template v-if="tipoDoc == 1">
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Capitulos</label>
+                                    <label class="col-form-label">Capítulo</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="Capitulo" :key="'capitulo' + tipoDoc"
                                         v-if="catCapitulo.length > 0" filter :color="colors[0].color" autocomplete="off">
                                         <template #message-danger v-if="errorCapitulo.length > 0">
@@ -75,8 +75,9 @@
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
-                                    <el-time-select v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc">
-                                    </el-time-select>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
+                                    :picker-options="timePicker">
+                                    </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
                                             {{ errorHora }}
@@ -84,7 +85,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Area que Solicita</label>
+                                    <label class="col-form-label">Área que Solicita</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
                                         v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
                                         <template #message-danger v-if="errorAreaSolicita.length > 0">
@@ -112,7 +113,7 @@
                             </template>
                             <template v-else-if="tipoDoc == 2">
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Area que emite</label>
+                                    <label class="col-form-label">Área que emite</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aEmite' + tipoDoc"
                                         v-model="areaEmite" v-if="cat_departamentos.length > 0" autocomplete="off">
                                         <template #message-danger v-if="errorAreaEmite.length > 0">
@@ -155,8 +156,9 @@
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
-                                    <el-time-select v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc">
-                                    </el-time-select>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
+                                    :picker-options="timePicker">
+                                    </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
                                             {{ errorHora }}
@@ -307,8 +309,9 @@
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
-                                    <el-time-select v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc">
-                                    </el-time-select>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
+                                    :picker-options="timePicker">
+                                    </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
                                             {{ errorHora }}
@@ -330,8 +333,9 @@
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
-                                    <el-time-select v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc">
-                                    </el-time-select>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
+                                    :picker-options="timePicker">
+                                    </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
                                             {{ errorHora }}
@@ -339,7 +343,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Area que Solicita</label>
+                                    <label class="col-form-label">Área que Solicita</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
                                         v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
                                         <template #message-danger v-if="errorAreaSolicita.length > 0">
@@ -584,19 +588,22 @@ export default {
                     return time.getTime() < date;
                 },
             },
+            timePicker: {
+                selectableRange: '09:00:00 - 18:00:00'
+            }
         }
-
     },
     watch:{
         tipoDoc(newVal, oldVal){
             this.limpiarErrores();
             this.seguimiento = '';
+            this.hora = '';
             if(newVal === 4){
                 this.seguimiento = [];
             } else {
                 this.seguimiento = '';
             }
-        }
+        },
     },
     created(){
         EventBus.$on('darkMode', (data)=>{this.darkMode = data})
@@ -781,14 +788,15 @@ export default {
             const temp = [
                 {'id': this.seguimiento}
             ]
-            const jsonSEG = JSON.stringify(temp)
+            const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
             try {
                 const response = await axios.post(url,{
                     'nTipo': this.tipoDoc,
                     'nCapitulo': this.Capitulo,
                     'nFolio': this.nfolio,
                     'fRecibido': this.fechaRecibido,
-                    'hRecibido': this.hora + ':00',
+                    'hRecibido': strHora,
                     'nAreaSolicita': this.areaSolicita,
                     'nAsignacion': this.areaAsignada,
                     'nIdArchivo': idARCHIVO,
@@ -811,7 +819,8 @@ export default {
             const temp = [
                 {'id': this.seguimiento}
             ]
-            const jsonSEG = JSON.stringify(temp)
+            const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
             try {
                 const response = await axios.post(url,{
                     'nTipo': this.tipoDoc,
@@ -819,7 +828,7 @@ export default {
                     'nMemo': this.nMemorandum,
                     'cAsunto': this.asunto,
                     'fRecibido': this.fechaRecibido,
-                    'hRecibido': this.hora,
+                    'hRecibido': strHora,
                     'nTermino': this.termino,
                     'fTermino': this.fechaTermino,
                     'nAsignacion': this.areaAsignada,
@@ -845,6 +854,7 @@ export default {
                 {'id': this.seguimiento}
             ]
             const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
             try {
                 const response = await axios.post(url,{
                     'nTipo': this.tipoDoc,
@@ -856,7 +866,7 @@ export default {
                     'fTermino': this.fechaTermino,
                     'nAsignacion': this.areaAsignada,
                     'fRecibido': this.fechaRecibido,
-                    'hRecibido': this.hora,
+                    'hRecibido': strHora,
                     'nIdArchivo': idARCHIVO,
                     'jsonSeguimiento': jsonSEG,
                     'fAccion': fechaAccion,
@@ -879,11 +889,12 @@ export default {
                 temp.push({'id': this.seguimiento[i]})
             }
             const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
             try {
                 const response = await axios.post(url,{
                     'nTipo': this.tipoDoc,
                     'fRecibido': this.fechaRecibido,
-                    'hRecibido': this.hora,
+                    'hRecibido': strHora,
                     'nAreaSolicita': this.areaSolicita,
                     'cAsunto': this.asunto,
                     'nIdArchivo': idARCHIVO,
@@ -1112,12 +1123,12 @@ export default {
                 this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
                 this.error = false;
             }
-            if(this.hora === ''){
+            if(this.hora === '' || this.hora === null){
                 this.errorHora = 'La hora de recibido es obligatoria';
                 this.error = true;
             }
             if(this.areaSolicita === ''){
-                this.errorAreaSolicita = 'La área que solicita es obligatoria';
+                this.errorAreaSolicita = 'El área que solicita es obligatoria';
                 this.error = true;
             }
             if(this.areaAsignada === ''){
@@ -1140,7 +1151,7 @@ export default {
         ValidarMemo(){
             this.error = false;
             if(this.areaEmite === ''){
-                this.errorAreaEmite = 'La área que emite es obligatoria';
+                this.errorAreaEmite = 'El área que emite es obligatoria';
                 this.error = true;
             }
             if(this.nMemorandum === ''){
@@ -1155,7 +1166,7 @@ export default {
                 this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
                 this.error = false;
             }
-            if(this.hora === ''){
+            if(this.hora === '' || this.hora === null){
                 this.errorHora = 'La hora de recibido es obligatoria';
                 this.error = true;
             }
@@ -1225,7 +1236,7 @@ export default {
                 this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
                 this.error = false;
             }
-            if(this.hora === ''){
+            if(this.hora === '' || this.hora === null){
                 this.errorHora = 'La hora de recibido es obligatoria';
                 this.error = true;
             }   
@@ -1248,7 +1259,7 @@ export default {
                 this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
                 this.error = false;
             }
-            if(this.hora === ''){
+            if(this.hora === '' || this.hora === null){
                 this.errorHora = 'La hora de recibido es obligatoria';
                 this.error = true;
             }   
@@ -1280,6 +1291,7 @@ export default {
             this.errorRespuesta = '';
             this.errorCapitulo = '';
             this.errorAreaSolicita = '';
+            this.errorAreaEmite = '';
             this.errorNOficio = '';
             this.errorCargo = '';
             this.errorRemitente = '';
@@ -1318,6 +1330,12 @@ export default {
             this.copiasConocimiento = [];
             this.tipoDoc = '';
             this.$refs.upload.clearFiles();
+        },
+        /**Recibe un objeto fecha y devuelve un string con las horas */
+        hoursFormat( dateOBJ ) {
+            let time = new Date(dateOBJ);
+            let str = time.getHours().toString().padStart(2, '00') +':'+ time.getMinutes().toString().padStart(2, '00') +':'+ time.getSeconds().toString().padStart(2, '00');
+            return str;
         },
     },
 }

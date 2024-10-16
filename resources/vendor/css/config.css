@@ -1102,7 +1102,18 @@ footer {
     background-color: var(--iee-light-gray-2) !important;
     color: var(--text-color);
 }
-
+.el-time-panel.el-popper{
+    background-color: var(--iee-white) !important;
+}
+.el-time-spinner__item, .el-time-panel__btn.cancel{
+    color: var(--iee-white-dark) !important;
+}
+.el-time-panel__btn.confirm{
+    color: var(--dorado) !important;
+}
+.el-time-spinner__item.disabled{
+    color: var(--iee-light-gray) !important;
+}
 .danger-message {
     font-size: 13.5px;
     color: #ff4757;
