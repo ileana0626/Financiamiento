@@ -977,7 +977,7 @@ export default {
                         if(exitoCopias > 0){
                             Swal.fire({
                                 icon: 'success',
-                                title:'Solicitud registrada correctamente',
+                                title:'Registrado correctamente',
                                 showConfirmButton: true,
                                 confirmButtonText: 'De acuerdo',
                             }).then( result => {
@@ -1016,7 +1016,7 @@ export default {
                         if(exitoCopias > 0){
                             Swal.fire({
                                 icon: 'success',
-                                title:'Solicitud registrada correctamente',
+                                title:'Registrado correctamente',
                                 showConfirmButton: true,
                                 confirmButtonText: 'De acuerdo',
                             }).then( result => {
@@ -1055,7 +1055,7 @@ export default {
                         if(exitoCopias > 0){
                             Swal.fire({
                                 icon: 'success',
-                                title:'Solicitud registrada correctamente',
+                                title:'Registrado correctamente',
                                 showConfirmButton: true,
                                 confirmButtonText: 'De acuerdo',
                             }).then( result => {
@@ -1094,7 +1094,7 @@ export default {
                         if(exitoCopias > 0){
                             Swal.fire({
                                 icon: 'success',
-                                title:'Solicitud registrada correctamente',
+                                title:'Registrado correctamente',
                                 showConfirmButton: true,
                                 confirmButtonText: 'De acuerdo',
                             }).then( result => {
