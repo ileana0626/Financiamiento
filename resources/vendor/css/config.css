@@ -1473,6 +1473,14 @@ div.vs-dialog, div.swal2-popup{
     will-change: transform;
     perspective: 25px;
 }
+.vs-sidebar__footer{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.footer-sb{
+    transition: ease-in-out 300ms;
+    transform: scale(0.75);
+}
 /* primer diseño de banner de bienvenida*/
 .izq-row{
     height: 100%;
@@ -1621,7 +1629,15 @@ div.vs-dialog, div.swal2-popup{
     }  
     .dash-cloud-card .col .ribbon{
         display: flex;
-    }   
+    }  
+
+    .vs-sidebar__footer{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }    
+    .footer-sb{
+        transform: scale(1);
+    }     
 }
 @media screen and (min-width: 1440px) {
     .bg-right-img{

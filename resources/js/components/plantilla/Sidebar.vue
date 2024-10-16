@@ -106,42 +106,37 @@ Consulta de Errores
                 </vs-sidebar-item>
             </template>
             <template #footer>
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <vs-tooltip top>
-                                <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
-                                    <span class="material-symbols-rounded"
-                                        style="color: #FFFFFF !important; font-size: 20px !important; ">
-                                        logout
+                <div class="container-fluid d-flex justify-content-between mx-0 px-0 flex-column-reverse flex-lg-row footer-sb">
+                    <div class="">
+                        <vs-tooltip top>
+                            <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
+                                <span class="material-symbols-rounded"
+                                    style="color: #FFFFFF !important; font-size: 20px !important; ">
+                                    logout
+                                </span>
+                            </vs-button>
+                            <template #tooltip>
+                                Salir
+                            </template>
+                        </vs-tooltip>                        
+                    </div>
+                    <div class="d-flex align-items-center pb-5 pb-lg-0">
+                        <div class='toggle-switch'>
+                            <label>
+                                <input type='checkbox' v-model="darkmode" @click="switchTheme">
+                                <span class='slider py-1'>
+                                    <span v-if="darkmode"
+                                        class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">light_mode
                                     </span>
-                                </vs-button>
-                                <template #tooltip>
-                                    Salir
-                                </template>
-                            </vs-tooltip>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <br>
-                            <div>
-                                <div class='toggle-switch m-auto'>
-                                    <label>
-                                        <input type='checkbox' v-model="darkmode" @click="switchTheme"
-                                            style="left:100px ;">
-                                        <span class='slider py-1'>
-                                            <span v-if="darkmode"
-                                                class="material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white">light_mode</span>
-                                            <span v-else
-                                                class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1 "
-                                                style="color:black !important">dark_mode</span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
+                                    <span v-else
+                                        class="material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1 "
+                                        style="color:black !important">dark_mode
+                                    </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
-                </div class="row">
+                </div>
             </template>
         </vs-sidebar>
     </div>
