@@ -648,8 +648,8 @@ export default {
             let url = '/administracion/usuario/getTipoDic'
             await axios.get(url).then(response => {
                 this.catTipoDoc = response.data
-            }).catch((err) => {
-                console.log(err);
+            }).catch((error) => {
+                console.log(error);
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
             });
@@ -659,8 +659,8 @@ export default {
             let url = '/administracion/usuario/getCapitulo'
             await axios.get(url).then(response => {
                 this.catCapitulo = response.data
-            }).catch((err) => {
-                console.log(err);
+            }).catch((error) => {
+                console.log(error);
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3]);
             });
