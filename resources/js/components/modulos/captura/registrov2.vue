@@ -476,12 +476,12 @@
                                 <label class="col-form-label">Copias de Conocimiento</label>
                                 <vs-select multiple filter
                                     :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
-                                    v-model="copiasConocimiento" v-if="cat_departamentos.length > 0" autocomplete="off"
+                                    v-model="copiasConocimiento" v-if="cat_seguimiento.length > 0" autocomplete="off"
                                     :color="colors[0].color">
                                     <template #message-danger v-if="errorCopiasConocimiento.length > 0">
                                         {{ errorCopiasConocimiento }}
                                     </template>
-                                    <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
+                                    <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
                                         :value="item.id">
                                         {{ item.nombre }}
                                     </vs-option>
