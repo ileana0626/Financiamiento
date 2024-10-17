@@ -482,7 +482,7 @@
                                         {{ errorCopiasConocimiento }}
                                     </template>
                                     <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                        :value="item.id">
+                                        :value="item.idSeguimiento">
                                         {{ item.nombre }}
                                     </vs-option>
                                 </vs-select>
