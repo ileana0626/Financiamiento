@@ -28,7 +28,7 @@
                     </template>
 Consulta de Errores
 </vs-sidebar-item> -->
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.captura')" id="solicitudes.captura"
+                <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
                     to="/capturav2">
                     <template #icon>
                         <span class="material-symbols-rounded">
