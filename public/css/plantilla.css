@@ -1509,6 +1509,34 @@ div.vs-dialog, div.swal2-popup{
     transition: ease-in-out 300ms;
     transform: scale(0.75);
 }
+.nav-avatar:hover{
+    cursor: pointer;
+    user-select: none;
+}
+.dropdown-nav{
+    transition: ease-in-out 300ms;
+    top: 8.5rem; 
+    right: 5px; 
+    background-color: var(--iee-white) !important;
+    border-radius: 0.3125rem;
+    box-shadow: 0 2px 5px 2px var(--vs-shadow);
+    color: var(--iee-white-dark);
+    font-weight: bold;
+}
+.dropdown-nav .list-group .list-group-item{
+    background-color: transparent !important;
+    padding-top: 5px;
+    padding-bottom: 5px !important;
+}
+.dropdown-nav .list-group .list-group-item:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+}
+@media screen and (min-width: 375px) {
+    .dropdown-nav{
+        top: 6.5rem;
+    }
+}
 /* primer diseño de banner de bienvenida*/
 .izq-row{
     height: 100%;
@@ -1640,6 +1668,9 @@ div.vs-dialog, div.swal2-popup{
         height: 100%;
         width: 50%;
     } 
+    .dropdown-nav{
+        top: 4rem;
+    }
 }
 @media screen and (min-width: 1024px) {
     .bg-right-img{

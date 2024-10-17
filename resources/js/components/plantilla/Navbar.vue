@@ -16,7 +16,7 @@
         </ul>
 
         <div class="navul navbar-nav">
-            <div class="row pr-sm-4 p-2">
+            <div class="row pr-sm-4 p-2" @mouseenter="showDropDown = false">
                 <vs-tooltip bottom>
                     <span style="cursor: pointer;" class="material-symbols-rounded">
                         notifications
@@ -31,22 +31,48 @@
                     <template #tooltip> Ayuda</template>
                 </vs-tooltip>
             </div>
-            <div class="row d-flex justify-content-center ml-0 ml-md-2">
+            <div class="row d-flex justify-content-center ml-0 ml-md-2 nav-avatar" @mouseenter="showDropDown = true" @click.prevent="showDropDown = !showDropDown">
                 <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end">
-                    <vs-tooltip bottom>
-                        <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a"  @click.prevent="perfil">
+                    <div>
+                        <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
                             <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
                         </vs-avatar>
-                        <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else  @click.prevent="perfil">
+                        <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else>
                             <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
                         </vs-avatar>
-                        <template #tooltip>Perfil</template>
-                    </vs-tooltip>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6 py-2 d-flex justify-content-center justify-content-md-start align-self-center">
                     <small class="text-bold">{{ datosPersonales.Nombre }}</small>
                 </div>
             </div>
+        </div>
+        <div v-if="showDropDown" @mouseleave="showDropDown = false"
+            class="position-absolute dropdown-nav">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-start align-items-center py-0" @click.prevent="perfil">
+                        <vs-button active icon size="mm" class="mr-3" style="background-color: var(--dorado) !important;">
+                            <span class="material-symbols-rounded"
+                                style="color: #FFFFFF !important; ">
+                                person
+                            </span>
+                        </vs-button>                    
+                        <span>Mi Perfil</span>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-start align-items-center py-0" @click.prevent="logout">
+                        <vs-button active icon danger size="mm" class="mr-3">
+                            <span class="material-symbols-rounded"
+                                style="color: #FFFFFF !important; ">
+                                logout
+                            </span>
+                        </vs-button>
+                        <span>Salir</span>
+                    </div>                   
+                </li>
+            </ul>
         </div>
     </nav>
 </template>
@@ -71,7 +97,8 @@ export default {
             loadedFoto: {
                 rutaFP: sessionStorage.getItem('loadedFoto') ? sessionStorage.getItem('loadedFoto') : null,
             },
-            id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0
+            id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0,
+            showDropDown: false,
         }
     },
 
@@ -212,6 +239,7 @@ export default {
             this.$router.push({ name: "faq.index" });
         },
         perfil(){
+            this.showDropDown = false;
             window.location.href = '/perfil/' + this.id
         }
         
