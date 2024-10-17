@@ -100,9 +100,9 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar Requisición</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aAsignada' + tipoDoc"
-                                        v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
-                                        <template #message-danger v-if="errorAreaAsignada.length > 0">
-                                            {{ errorAreaAsignada }}
+                                        v-model="areaAsignada0" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaAsignada0.length > 0">
+                                            {{ errorAreaAsignada0 }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
                                             :value="item.id">
@@ -195,12 +195,12 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'asignar' + tipoDoc"
-                                        v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off">
                                         <template #message-danger v-if="errorAreaAsignada.length > 0">
                                             {{ errorAreaAsignada }}
                                         </template>
-                                        <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                            :value="item.id">
+                                        <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
+                                            :value="item.idSeguimiento">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -286,12 +286,12 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'asignar' + tipoDoc"
-                                        v-model="areaAsignada" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off">
                                         <template #message-danger v-if="errorAreaAsignada.length > 0">
                                             {{ errorAreaAsignada }}
                                         </template>
-                                        <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                            :value="item.id">
+                                        <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
+                                            :value="item.idSeguimiento">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -520,6 +520,8 @@ export default {
             ],
             tipoDoc: '',
             areaSolicita: '',
+            areaAsignada0: '',
+            areaAsignada: '',
             areaEmite: '',
             nOficio: '',
             asunto: '',
@@ -564,7 +566,7 @@ export default {
             errorTermino: '',
             errorAsunto: '',
             errorTipoDoc: '',
-            areaAsignada: '',
+            errorAreaAsignada0: '',
             errorAreaAsignada: '',
             errorF1: '',
             errorNFolio: '',
@@ -798,7 +800,7 @@ export default {
                     'fRecibido': this.fechaRecibido,
                     'hRecibido': strHora,
                     'nAreaSolicita': this.areaSolicita,
-                    'nAsignacion': this.areaAsignada,
+                    'nAsignacion': this.areaAsignada0,
                     'nIdArchivo': idARCHIVO,
                     'jsonSeguimiento': jsonSEG,
                     'fAccion': fechaAccion,                
@@ -1131,8 +1133,8 @@ export default {
                 this.errorAreaSolicita = 'El área que solicita es obligatoria';
                 this.error = true;
             }
-            if(this.areaAsignada === ''){
-                this.errorAreaAsignada = 'La asignación de requisición es obligatoria';
+            if(this.areaAsignada0 === ''){
+                this.errorAreaAsignada0 = 'La asignación de requisición es obligatoria';
                 this.error = true;
             }
             if(this.documentos.F1 === ''){
@@ -1180,7 +1182,7 @@ export default {
                 }
             }
             if(this.areaAsignada === ''){
-                this.errorAreaAsignada = 'La asignación de requisición es obligatoria';
+                this.errorAreaAsignada = 'La asignación es obligatoria';
                 this.error = true;
             }
             if(this.respuesta === ''){
@@ -1229,7 +1231,7 @@ export default {
                 }
             } 
             if(this.areaAsignada === ''){
-                this.errorAreaAsignada = 'La asignación de requisición es obligatoria';
+                this.errorAreaAsignada = 'La asignación es obligatoria';
                 this.error = true;
             }   
             if(this.fechaRecibido === ''){
@@ -1298,6 +1300,7 @@ export default {
             this.errorTermino = '';
             this.errorAsunto = '';
             this.errorTipoDoc = '';
+            this.errorAreaAsignada0 = '';
             this.errorAreaAsignada = '';
             this.errorF1 = '';
             this.errorNMemorandum = '';
@@ -1312,6 +1315,8 @@ export default {
         limpiarCampos() {
             this.tipoDoc = '';
             this.areaSolicita = '';
+            this.areaAsignada0 = '';
+            this.areaAsignada = '';
             this.areaEmite = '';
             this.nOficio = '';
             this.asunto = '';
