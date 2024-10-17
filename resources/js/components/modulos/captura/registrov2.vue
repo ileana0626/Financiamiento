@@ -257,6 +257,28 @@
                                     </vs-input>
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Fecha de Recibido</label>
+                                    <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
+                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                    </el-date-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorFechaRecibido.length > 0">
+                                            {{ errorFechaRecibido }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Hora de Recibido</label>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
+                                    :picker-options="timePicker">
+                                    </el-time-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorHora.length > 0">
+                                            {{ errorHora }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino" :key="'termino' + tipoDoc"
                                         v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off">
@@ -296,28 +318,6 @@
                                         </vs-option>
                                     </vs-select>
                                 </div>
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Fecha de Recibido</label>
-                                    <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
-                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
-                                    </el-date-picker>
-                                    <div class="danger-message">
-                                        <template v-if="errorFechaRecibido.length > 0">
-                                            {{ errorFechaRecibido }}
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Hora de Recibido</label>
-                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
-                                    :picker-options="timePicker">
-                                    </el-time-picker>
-                                    <div class="danger-message">
-                                        <template v-if="errorHora.length > 0">
-                                            {{ errorHora }}
-                                        </template>
-                                    </div>
-                                </div>
                             </template>
                             <template v-else-if="tipoDoc == 4">
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
@@ -343,11 +343,11 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Área que Solicita</label>
-                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
-                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
-                                        <template #message-danger v-if="errorAreaSolicita.length > 0">
-                                            {{ errorAreaSolicita }}
+                                    <label class="col-form-label">Área que emite</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aEmite' + tipoDoc"
+                                        v-model="areaEmite" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaEmite.length > 0">
+                                            {{ errorAreaEmite }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
                                             :value="item.id">
@@ -642,7 +642,7 @@ export default {
             this.nMemorandum = temp.replace(regex, '');            
         },
         inputOficio(){
-            let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
+            let regex = /[^\.\_\-\/0-9]/g;
             let temp = this.nOficio;
             if(temp.length > 50) temp = temp.substring(0,50);
             this.nOficio = temp.replace(regex, '');            
@@ -897,7 +897,7 @@ export default {
                     'nTipo': this.tipoDoc,
                     'fRecibido': this.fechaRecibido,
                     'hRecibido': strHora,
-                    'nAreaSolicita': this.areaSolicita,
+                    'nAreaEmite': this.areaEmite,
                     'cAsunto': this.asunto,
                     'nIdArchivo': idARCHIVO,
                     'jsonSeguimiento': jsonSEG,
@@ -1265,8 +1265,8 @@ export default {
                 this.errorHora = 'La hora de recibido es obligatoria';
                 this.error = true;
             }   
-            if(this.areaSolicita === ''){
-                this.errorAreaSolicita = 'El área que solicita es obligatoria';
+            if(this.areaEmite === ''){
+                this.errorAreaEmite = 'El área que emite es obligatoria';
                 this.error = true;
             }
             if(this.asunto === ''){

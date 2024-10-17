@@ -164,7 +164,7 @@ class SolicitudController extends Controller
         $nTipo = $request->nTipo;
         $fRecibido = $request->fRecibido;
         $hRecibido = $request->hRecibido;
-        $nAreaSolicita = $request->nAreaSolicita;
+        $nAreaEmite = $request->nAreaEmite;
         $cAsunto = $request->cAsunto;
         $nIdArchivo = $request->nIdArchivo;
         $jsonSeguimiento = $request->jsonSeguimiento;
@@ -179,7 +179,7 @@ class SolicitudController extends Controller
                 $nTipo,
                 $fRecibido,
                 $hRecibido,
-                $nAreaSolicita,
+                $nAreaEmite,
                 $cAsunto,
                 $nIdArchivo,
                 $jsonSeguimiento,
