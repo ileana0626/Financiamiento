@@ -12,7 +12,7 @@
                     Informática</small>
             </div>
             <div class="d-sm-block ml-2 text-right text-sm-center">
-                <small>Versión 1.13.22.16102024</small>
+                <small>Versión 1.13.22.17102024</small>
             </div>
         </div>
     </footer>
