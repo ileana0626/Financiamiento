@@ -1562,10 +1562,10 @@ div.vs-dialog, div.swal2-popup{
 }
 .top-bg{
     width: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    overflow: hidden;
+    background-position: left;
+    background-repeat: repeat-x;
+    background-size: 100% 100%;
+    overflow: hidden !important;
     padding: 5rem;
     position:absolute;
     border-top-left-radius: 1.15rem;
@@ -1582,7 +1582,7 @@ div.vs-dialog, div.swal2-popup{
     left: 18%;
     z-index: 2;
     filter: drop-shadow(1px 1px 5px rgba(255, 255, 255, 0.75));
-    transform: translate(15%, -25%);
+    transform: translate(12%, -23%);
 }
 /*Tercer diseño*/
 .dash-cloud-card{
@@ -1619,6 +1619,10 @@ div.vs-dialog, div.swal2-popup{
     .bg-right-img{
         margin-left: 5rem;
     }
+
+    .top-bg{
+        background-size: contain;
+    }    
     .rocket-img{
         left: 27%;
         transform: translate(15%, -25%);
@@ -1654,15 +1658,14 @@ div.vs-dialog, div.swal2-popup{
     .dropdown-nav{
         top: 4rem;
     }
+    .rocket-img{
+        left: 15%;
+        transform: translate(15%, -25%);
+    }
 }
 @media screen and (min-width: 1024px) {
     .bg-right-img{
         margin-top: 1rem;
-    }  
-
-    .rocket-img{
-        left: 30%;
-        transform: translate(15%, -25%);
     }  
     .dash-cloud-card .clouds{
         top: 0;
@@ -1688,16 +1691,21 @@ div.vs-dialog, div.swal2-popup{
         margin-top: 0;
     }
     .sky-card{
-        width: 400px;
+        width: 70%;
     }
     .rocket-img{
-        left: 32%;
-        transform: translate(15%, -25%);
+        left: 12%;
+        /* transform: translate(15%, -25%); */
     }  
     .dash-cloud-card .col .ribbon img{
         transform: scale(1.2);
         top: -25%;
     }   
+}
+@media screen and (min-width: 1800px) {
+    .rocket-img{
+        left: 8.35%;
+    }
 }
 /*^^ Acomoda las media query tras escoger un diseño ^^*/
 
