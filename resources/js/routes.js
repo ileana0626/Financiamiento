@@ -18,6 +18,7 @@ import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
 import Error404 from './components/plantilla/404.vue';
 import SADecoder from './components/modulos/superadmin/decoder.vue';
 
+import methods from './methods';
 
 Vue.use(Router)
 const { isNavigationFailure, NavigationFailureType } = Router;
@@ -76,10 +77,12 @@ async function verificarUsuarioAutenticado(to,from,next){
                 next('/');
             }            
         } else {
-            next('/');
+            next('/login');
         }
     } catch (error) {
-        next('*');
+        let method = url.split('/');
+        methods.catchHandler(error, method[3])
+        // next('*');
         console.log(error);
     }
 }
@@ -104,10 +107,12 @@ async function userValidToEdit(to,from,next){
                 next('/');
             }            
         } else {
-            next('/');
+            next('/login');
         }
     } catch (error) {
-        next('*');
+        let method = url.split('/');
+        methods.catchHandler(error, method[3])
+        // next('*');
         console.log(error);
     }
 }
