@@ -705,7 +705,7 @@ export default {
             }).catch((error) => {
                 console.log(error);
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
         async getCapitulo() {
@@ -716,7 +716,7 @@ export default {
             }).catch((error) => {
                 console.log(error);
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
         async obtenerDatos(tipo) {
@@ -757,7 +757,7 @@ export default {
                 }
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -779,7 +779,7 @@ export default {
                 idArchivo = response.data[0].idDOCUMENTO
             }).catch((error) => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[2]);
+                methods.catchHandler(error, nombreMetodo[2], this.$router);
             });
 
             return idArchivo;
@@ -811,7 +811,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
                 return idSOLICITUD;
             }
         },
@@ -845,7 +845,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
                 return idSOLICITUD;
             }            
         },
@@ -879,7 +879,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
                 return idSOLICITUD;
             }             
         },    
@@ -909,7 +909,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
                 return idSOLICITUD;
             }  
         },    
@@ -927,7 +927,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
                 return 0;
             }
         },       
