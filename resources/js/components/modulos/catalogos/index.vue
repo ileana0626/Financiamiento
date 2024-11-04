@@ -957,7 +957,7 @@ export default {
                 }
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -1044,7 +1044,7 @@ export default {
                         });
                     }).catch((error) => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
                     })
                 }
             }
@@ -1082,7 +1082,7 @@ export default {
                         });
                     }).catch((error) => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
                     })
                 }
             }
@@ -1121,7 +1121,7 @@ export default {
                 this.datosDuplicados = response.data[0].total
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -1152,7 +1152,7 @@ export default {
                         });
                     }).catch(error => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
 
                     });
                 }

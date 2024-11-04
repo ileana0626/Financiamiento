@@ -411,7 +411,7 @@ export default {
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             }
         },
         // Metódos fotografía
@@ -449,7 +449,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3])
+                methods.catchHandler(error, method[3], this.$router)
             } finally {
                 load.close();
             }
@@ -614,7 +614,7 @@ export default {
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             } finally {
                 load.close();
             }
@@ -699,7 +699,7 @@ export default {
                 }
             } catch (error) {
                 let method = url.split('/');
-                methods.catchHandler(error,method[3]);
+                methods.catchHandler(error,method[3], this.$router);
             }
         },
         async getRoles() {
@@ -715,7 +715,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
             }
         },
         async getDepartamentos() {
@@ -727,7 +727,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
             }
         },
         validarDUsuario(){
@@ -789,7 +789,7 @@ export default {
             }
           } catch (error) {
             let method = url.split('/');
-            methods.catchHandler(error,method[3]);
+            methods.catchHandler(error,method[3], this.$router);
           } finally {
             load.close();
           }
@@ -864,7 +864,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3])
+                methods.catchHandler(error, method[3], this.$router)
             } finally {
                 load.close();
             }

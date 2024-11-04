@@ -357,7 +357,7 @@ export default {
                 }
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -379,7 +379,7 @@ export default {
             }).catch((error) => {
                 loading.close();
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
         filterBirthday() {
@@ -436,7 +436,7 @@ export default {
                 }).catch((error) => {
                     loading.close();
                     let nombreMetodo = url.split('/');
-                    methods.catchHandler(error, nombreMetodo[3]);
+                    methods.catchHandler(error, nombreMetodo[3], this.$router);
                 });
             }
         },
@@ -478,7 +478,7 @@ export default {
                 }).catch((error) => {
                     loading.close();
                     let nombreMetodo = url.split('/');
-                    methods.catchHandler(error, nombreMetodo[3]);
+                    methods.catchHandler(error, nombreMetodo[3], this.$router);
                 });
             }
         },

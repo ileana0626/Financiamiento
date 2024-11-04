@@ -451,7 +451,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
             }
         },
         nextPage() {
@@ -504,7 +504,7 @@ export default {
                 }
             } catch (error) {
                 let method = url.split('/');
-                methods.catchHandler(error,method[3]);
+                methods.catchHandler(error,method[3], this.$router);
             } finally {
                 load.close();
             }
@@ -573,7 +573,7 @@ export default {
                 }
             } catch (error) {
                 let method = url.split('/');
-                methods.catchHandler(error,method[3]);
+                methods.catchHandler(error,method[3], this.$router);
             } finally {
                 load.close();
             }
@@ -685,7 +685,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
             }
         },
         async getDepartamentos() {
@@ -697,7 +697,7 @@ export default {
                 }
             } catch (error) {
                 const method = url.split('/');
-                methods.catchHandler(error, method[3]);
+                methods.catchHandler(error, method[3], this.$router);
             }
         },
     }
