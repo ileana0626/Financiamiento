@@ -1,4 +1,9 @@
-exports.catchHandler = (error, nombreMetodo) => {
+/**Manejo de excepciones para las peticiones axios en Vue
+ * @param error: El objeto de tipo error
+ * @param nombreMetodo: El nombre del metódo donde se originó el error
+ * @param routerVue: (Nuevo) La instancia de Vue Router
+ */
+exports.catchHandler = (error, nombreMetodo, routerVue = null) => {
   console.log(nombreMetodo)
   if (Object.hasOwn(error, 'response')) {
     if (error.response.message == "Unauthenticated" || error.response.status == 401) {
@@ -9,7 +14,9 @@ exports.catchHandler = (error, nombreMetodo) => {
         confirmButtonText: 'De acuerdo'
       }).then((result) => {
         sessionStorage.clear();
-        this.$router.push({ name: 'login' });
+        if(routerVue){
+          routerVue.push({ name: 'login' });
+        }
         location.reload();
       });
     }

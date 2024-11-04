@@ -245,7 +245,7 @@ export default {
                 this.getTimeDiff();
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
         getTimeDiff() {
@@ -489,7 +489,7 @@ export default {
                 }).catch(error => {
                     console.log(error);
                     let nombreMetodo = url.split('/');
-                    methods.catchHandler(error, nombreMetodo[3]);
+                    methods.catchHandler(error, nombreMetodo[3], this.$router);
                 });
             }
             else {
@@ -508,7 +508,7 @@ export default {
                 }
             } catch (error) {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             }
         },
         globosAnim() {           

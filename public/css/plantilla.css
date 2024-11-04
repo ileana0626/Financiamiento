@@ -1432,18 +1432,6 @@ div.vs-dialog, div.swal2-popup{
     box-shadow: 0 0 15px 5px var(--vs-shadow);
 }
 
-@media screen and (max-width: 500px) {
-    .el-upload-dragger {
-        width: 100%;
-    }
-
-    .cardFile {
-        min-width: 250px;
-        width: 250px;
-        max-width: 250px;
-    }
-}
-
 .cardless {
     position: relative;
     display: flex;
@@ -1531,11 +1519,6 @@ div.vs-dialog, div.swal2-popup{
 .dropdown-nav .list-group .list-group-item:hover{
     cursor: pointer;
     transform: scale(1.05);
-}
-@media screen and (min-width: 375px) {
-    .dropdown-nav{
-        top: 6.5rem;
-    }
 }
 /* primer diseño de banner de bienvenida*/
 .izq-row{
@@ -1632,6 +1615,11 @@ div.vs-dialog, div.swal2-popup{
     left: 10%;
     top: 0;
 }
+@media screen and (min-width: 375px) {
+    .dropdown-nav{
+        top: 6.5rem;
+    }
+}
 @media screen and (min-width: 425px) {
     .bg-right-img{
         margin-left: 5rem;
@@ -1724,7 +1712,6 @@ div.vs-dialog, div.swal2-popup{
         left: 8.35%;
     }
 }
-/*^^ Acomoda las media query tras escoger un diseño ^^*/
 
 @media screen and (max-width: 1300px) {
     .vs-card__img {
@@ -1932,7 +1919,17 @@ div.vs-dialog, div.swal2-popup{
         width: 18vw !important;
     }
 }
+@media screen and (max-width: 500px) {
+    .el-upload-dragger {
+        width: 100%;
+    }
 
+    .cardFile {
+        min-width: 250px;
+        width: 250px;
+        max-width: 250px;
+    }
+}
 @media screen and (max-width: 476px) {
     .dateANIO {
         width: 23vw !important;
