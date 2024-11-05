@@ -1538,6 +1538,15 @@ div.vs-dialog, div.swal2-popup{
 }
 
 /* Segundo diseño*/
+.card-font-1{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.card-font-2{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.card-font-3{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 .sky-card{
     width: 100%;
     background-color: var(--sky-card-bg);    
@@ -1679,21 +1688,16 @@ div.vs-dialog, div.swal2-popup{
         margin-top: 0;
     }
     .sky-card{
-        width: 70%;
+        width: 50%;
     }
     .rocket-img{
-        left: 12%;
+        left: 11.5%;
         /* transform: translate(15%, -25%); */
     }  
     .dash-cloud-card .col .ribbon img{
         transform: scale(1.2);
         top: -25%;
     }   
-}
-@media screen and (min-width: 1800px) {
-    .rocket-img{
-        left: 8.35%;
-    }
 }
 
 @media screen and (max-width: 1300px) {

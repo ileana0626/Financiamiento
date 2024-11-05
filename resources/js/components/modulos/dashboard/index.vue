@@ -4,14 +4,14 @@
             <div class="row">
                 <div class="col-12">
                     <div class="container-fluid px-3 px-md-5">
-                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'">
+                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'" :title="infoFuente" @click.prevent="fuente++">
                             <div class="top-bg" style="background-image: url('/img/sky-bg-card.png')"></div>
                             <div class="py-5">
                                 <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
                             </div>
-                            <div style="z-index: 2;" class="pt-5 mt-3">
+                            <div style="z-index: 2;" class="pt-5 mt-3" :class="testFuente" :key="`font${fuente}`">
                                 <h1 class="text-center text-md-left font-weight-bold px-1">{{ `¡Buen día ${cfullname}!` }}</h1>
-                                <p class="text-justify font-weight-bold p-2" style="color: #595959;">
+                                <p class="text-justify p-2" style="color: #595959;">
                                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, facere explicabo! Culpa in debitis qui, 
                                     praesentium, ea facilis quidem earum non recusandae iste sequi blanditiis animi voluptatibus iure consequuntur deserunt.
                                 </p>
@@ -215,7 +215,8 @@ export default {
             ],
             listaHoy: [],
             globos: [],
-            showListaCumple: false,     
+            showListaCumple: false,
+            fuente: 0,
         }
     },
     watch:{
@@ -226,6 +227,20 @@ export default {
                     this.globosAnim();                    
                 }                
             }, 100);
+        },
+        fuente(newVal,oldVal){
+            if(newVal > 3){
+                this.fuente = 0;
+            }
+        },
+    },
+    computed: {
+        // funciones de prueba, borrar tras seleccionar una fuente
+        testFuente(){
+            return `card-font-${this.fuente}`;
+        },
+        infoFuente(){
+            return (this.fuente === 0) ? 'Fuente original' : `Prueba de fuente ${this.fuente}`;
         }
     },
     mounted() {
