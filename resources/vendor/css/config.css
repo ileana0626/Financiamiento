@@ -30,7 +30,7 @@
     --iee-blue: #0000FF;
     --iee-green: #008000;
     --iee-gold: #ffd700;
-    --iee-orange: #ff4500;
+    --iee-orange: rgb(255, 69, 0);
     --iee-red: #ff0000;
     --iee-black: #000000;
     --iee-green2: #008000;
@@ -40,6 +40,7 @@
     --scroll-color-back: grey;
     --vs-shadow: rgba(0,0,0, 0.25);
     --sky-card-bg: #ffffff;
+    --iee-orange-t: rgba(255, 69, 0, 0.1);
 }
 
 [data-theme="dark"] {
@@ -1503,6 +1504,36 @@ div.vs-dialog, div.swal2-popup{
     cursor: pointer;
     transform: scale(1.05);
 }
+.w-pop{
+    width: 65vw;
+}
+.w-pop:hover{
+    cursor: pointer;
+}
+.infoName{
+    font-size: 18px;
+}
+.infoRole{
+    font-size: 16px;
+}
+.logoutBar{
+    transition: ease-in-out 300ms;
+    background-color: #eee;
+    padding: 0.5rem 1.1125rem;
+    border-radius: 25px;
+}
+.logoutBar:hover{
+    cursor: pointer;
+    transform: translateY(-3px);
+    box-shadow: 0 2px 2px 1px var(--dorado);
+}
+.redPill{
+    background-color: var(--iee-orange-t);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin-right: 0.75rem;
+    color: var(--iee-red) !important;
+}
 /* primer diseño de banner de bienvenida*/
 .izq-row{
     height: 100%;
@@ -1659,6 +1690,9 @@ div.vs-dialog, div.swal2-popup{
         left: 15%;
         transform: translate(15%, -25%);
     }
+    .w-pop{
+        width: 35vw;
+    }
 }
 @media screen and (min-width: 1024px) {
     .bg-right-img{
@@ -1679,7 +1713,10 @@ div.vs-dialog, div.swal2-popup{
     }    
     .footer-sb{
         transform: scale(1);
-    }     
+    }  
+    .w-pop{
+        width: 27.5vw;
+    }   
 }
 @media screen and (min-width: 1440px) {
     .bg-right-img{
@@ -1697,7 +1734,10 @@ div.vs-dialog, div.swal2-popup{
     .dash-cloud-card .col .ribbon img{
         transform: scale(1.2);
         top: -25%;
-    }   
+    } 
+    .w-pop{
+        width: 325px;
+    }  
 }
 
 @media screen and (max-width: 1300px) {

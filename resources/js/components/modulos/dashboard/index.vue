@@ -491,15 +491,17 @@ export default {
             let sessUsername = sessionStorage.getItem('username');
             let sessCorreo = sessionStorage.getItem('correo');
             let sessUsrRol = sessionStorage.getItem('rolUsuario');
+            let sessNmRol = sessionStorage.getItem('nombreRol');
 
 
-            if ( sessFullName == null || sessUsername == null || sessUsrRol == null) {
+            if ( sessFullName == null || sessUsername == null || sessUsrRol == null || sessNmRol == null) {
                 let url = '/administracion/usuario/getUsuario';
                 axios.get(url).then(response => {
                     this.cfullname = response.data[0].fullname.trim();
                     sessionStorage.setItem('idUsuario', response.data[0].id);
                     sessionStorage.setItem('fullname', this.cfullname);
                     sessionStorage.setItem('username', response.data[0].username);
+                    sessionStorage.setItem('nombreRol', response.data[0].nombreRol);
                     EventBus.$emit('infoNav', response.data[0].id);
                 }).catch(error => {
                     console.log(error);

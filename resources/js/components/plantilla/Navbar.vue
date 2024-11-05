@@ -16,7 +16,7 @@
         </ul>
 
         <div class="navul navbar-nav">
-            <div class="row pr-sm-4 p-2" @mouseenter="showDropDown = false">
+            <div class="row pr-sm-4 p-2">
                 <vs-tooltip bottom>
                     <span style="cursor: pointer;" class="material-symbols-rounded">
                         notifications
@@ -31,48 +31,48 @@
                     <template #tooltip> Ayuda</template>
                 </vs-tooltip>
             </div>
-            <div class="row d-flex justify-content-center ml-0 ml-md-2 nav-avatar" @mouseenter="showDropDown = true" @click.prevent="showDropDown = !showDropDown">
-                <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end">
-                    <div>
-                        <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
+        </div>
+        <div class="d-flex align-items-center" style="gap: 10px;">
+            <el-popover placement="bottom" trigger="hover">
+                <div class="row d-flex justify-content-center ml-0 ml-md-2 nav-avatar" slot="reference">
+                    <div class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end">
+                        <div>
+                            <vs-avatar style="cursor: pointer;" circle v-if="loadedFoto.rutaFP" badge badge-color="#a5904a">
+                                <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
+                            </vs-avatar>
+                            <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else>
+                                <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
+                            </vs-avatar>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 py-2 d-flex justify-content-center justify-content-md-start align-self-center">
+                        <small class="text-bold">{{ datosPersonales.Nombre }}</small>
+                    </div>
+                </div>  
+                <div class="d-flex container-fluid flex-column align-items-center w-pop" @click.prevent="perfil">
+                    <div class="d-flex pt-3 pb-1">
+                        <vs-avatar circle v-if="loadedFoto.rutaFP" size="60">
                             <img :src="og + loadedFoto.rutaFP" alt="Foto de perfil" @error="errorIMG">
                         </vs-avatar>
-                        <vs-avatar style="cursor: pointer;" circle badge badge-color="#a5904a" v-else>
+                        <vs-avatar circle v-else size="60">
                             <img src="/img/LOGO_NUEVO.png" alt="Foto de perfil">
-                        </vs-avatar>
+                        </vs-avatar>                     
+                    </div>
+                    <span class="font-weight-bold infoName">{{ nombreCompleto }}</span>
+                    <span class="infoRol pb-4">{{ rol }}</span>
+                </div> 
+                <div class="logoutBar">
+                    <div class="d-flex justify-content-start" @click.prevent="logout">
+                        <span class="material-symbols-rounded redPill"
+                            style="font-size: 20px !important; ">
+                            logout
+                        </span>
+                        <span class="d-flex align-items-center font-weight-bold">
+                            Cerrar Sesión
+                        </span>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 py-2 d-flex justify-content-center justify-content-md-start align-self-center">
-                    <small class="text-bold">{{ datosPersonales.Nombre }}</small>
-                </div>
-            </div>
-        </div>
-        <div v-if="showDropDown" @mouseleave="showDropDown = false"
-            class="position-absolute dropdown-nav">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-start align-items-center py-0" @click.prevent="perfil">
-                        <vs-button active icon size="mm" class="mr-3" style="background-color: var(--dorado) !important;">
-                            <span class="material-symbols-rounded"
-                                style="color: #FFFFFF !important; ">
-                                person
-                            </span>
-                        </vs-button>                    
-                        <span>Mi Perfil</span>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-start align-items-center py-0" @click.prevent="logout">
-                        <vs-button active icon danger size="mm" class="mr-3">
-                            <span class="material-symbols-rounded"
-                                style="color: #FFFFFF !important; ">
-                                logout
-                            </span>
-                        </vs-button>
-                        <span>Salir</span>
-                    </div>                   
-                </li>
-            </ul>
+            </el-popover>         
         </div>
     </nav>
 </template>
@@ -109,9 +109,18 @@ export default {
         //     }, 60000)
         //     return this.currentTimeDB;
         // }
+        nombreCompleto(){
+            let NC = `${this.userLogged.Nombre} ${this.userLogged.Apaterno} ${this.userLogged.Amaterno}`;
+            return NC.trim();
+        },
+        rol(){
+            return sessionStorage.getItem('nombreRol') ? sessionStorage.getItem('nombreRol') : 'Rol' 
+        }
     },
 
     mounted() {
+        console.log(sessionStorage);
+        
         this.checkPermisos();
         this.getCurrentTime();
         if (localStorage.getItem('theme') == 'light') {
