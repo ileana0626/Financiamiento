@@ -41,6 +41,7 @@
     --vs-shadow: rgba(0,0,0, 0.25);
     --sky-card-bg: #ffffff;
     --iee-orange-t: rgba(255, 69, 0, 0.1);
+    --iee-red-logout: #ff0000;
 }
 
 [data-theme="dark"] {
@@ -84,6 +85,8 @@
     --scroll-color-back: white;
     --vs-shadow: rgba(255,255,255, 0.25);
     --sky-card-bg: #cccccc;
+    --iee-orange-t: rgba(255, 69, 0, 0.6);
+    --iee-red-logout: rgb(255, 198, 198);
 }
 @font-face {
     font-family: 'KGHappy';
@@ -1518,7 +1521,7 @@ div.vs-dialog, div.swal2-popup{
 }
 .logoutBar{
     transition: ease-in-out 300ms;
-    background-color: #eee;
+    background-color: var(--iee-light-gray);
     padding: 0.5rem 1.1125rem;
     border-radius: 25px;
 }
@@ -1532,7 +1535,10 @@ div.vs-dialog, div.swal2-popup{
     border-radius: 50%;
     padding: 0.5rem;
     margin-right: 0.75rem;
-    color: var(--iee-red) !important;
+    color: var(--iee-red-logout) !important;
+}
+.el-popover.el-popper{
+    background-color: var(--iee-white);
 }
 /* primer diseño de banner de bienvenida*/
 .izq-row{

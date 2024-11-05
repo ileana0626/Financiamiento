@@ -119,8 +119,6 @@ export default {
     },
 
     mounted() {
-        console.log(sessionStorage);
-        
         this.checkPermisos();
         this.getCurrentTime();
         if (localStorage.getItem('theme') == 'light') {
