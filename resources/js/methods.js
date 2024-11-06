@@ -142,3 +142,10 @@ exports.WIP = (vsInstance) => {
     title: '<span class="text-white">Función en progreso</span>'
   });
 };
+
+/**Recibe un objeto de tipo Date y devuelve un string con las horas */
+exports.hoursFormat = ( dateOBJ ) => {
+  let time = new Date(dateOBJ);
+  let str = time.getHours().toString().padStart(2, '00') +':'+ time.getMinutes().toString().padStart(2, '00') +':'+ time.getSeconds().toString().padStart(2, '00');
+  return str;
+};

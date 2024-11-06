@@ -48,6 +48,15 @@ Consulta de Errores
                     Notificaciones
                 </vs-sidebar-item>
 
+                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.index')" id="solicitudes.index"
+                    to="/indexSolicitudes">
+                    <template #icon>
+                        <span class="material-symbols-rounded">
+                            list_alt
+                        </span>
+                    </template>
+                    ✨Solicitudes
+                </vs-sidebar-item>
                 <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
                     to="/gestionSolicitudes">
                     <template #icon>
