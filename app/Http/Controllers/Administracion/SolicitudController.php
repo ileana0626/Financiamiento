@@ -63,7 +63,7 @@ class SolicitudController extends Controller
         if(!$request->ajax()) return redirect('/');
 
         $nTipo = $request->nTipo;
-        $nAreaEmite = $request->nAreaEmite;
+        $nAreaSolicita = $request->nAreaSolicita;
         $nMemo = $request->nMemo;
         $cAsunto = $request->cAsunto;
         $fRecibido = $request->fRecibido;
@@ -84,7 +84,7 @@ class SolicitudController extends Controller
         try {
             $rpta =  DB::select('call sp_Solicitud_setRegistrarMemo( ?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
                 $nTipo,
-                $nAreaEmite,
+                $nAreaSolicita,
                 $nMemo,
                 $cAsunto,
                 $fRecibido,
