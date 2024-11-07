@@ -55,9 +55,9 @@ Consulta de Errores
                             list_alt
                         </span>
                     </template>
-                    ✨Solicitudes
+                    Solicitudes
                 </vs-sidebar-item>
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
                     to="/gestionSolicitudes">
                     <template #icon>
                         <span class="material-symbols-rounded">
@@ -65,7 +65,7 @@ Consulta de Errores
                         </span>
                     </template>
                     Solicitudes
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
                 <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
                     <template #icon>
