@@ -31,7 +31,7 @@
                     <div>
                         <Requisiciones v-if="activeTab == 1"/>
                         <Memos v-else-if="activeTab == 2" />
-                        <div v-else-if="activeTab == 3">Oficios</div>
+                        <Oficios v-else-if="activeTab == 3"/>
                         <div v-else-if="activeTab == 4">Circulares</div>
                         <div v-else-if="activeTab == 5">Historial</div>
                     </div>
@@ -46,12 +46,14 @@ import methods from '../../../methods';
 import Tab from './TabComponent/Tab.vue';
 import Requisiciones from './TabComponent/Requisiciones.vue';
 import Memos from './TabComponent/Memos.vue';
+import Oficios from './TabComponent/Oficios.vue';
 
 export default {
     components: {
         'Tab': Tab,
         'Requisiciones': Requisiciones,
         'Memos': Memos,
+        'Oficios': Oficios,
     },
     data() {
         return {
