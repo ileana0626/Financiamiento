@@ -33,9 +33,25 @@
                                 <vs-td>{{ tr.areaSolicita }}</vs-td>
                                 <vs-td>{{ tr.areaAsignar }}</vs-td>
                                 <vs-td>
-                                    boton
+                                    <div class="d-flex justify-content-center">
+                                        <el-tooltip class="item" effect="dark" :content="'Ver archivo'" placement="top">
+                                            <vs-button danger class="btn btn-flat btn-sm py-1"
+                                                @click.prevent="verArchivo(tr)">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </vs-button>
+                                        </el-tooltip>
+                                    </div>
                                 </vs-td>
-                                <vs-td>Acciones</vs-td>
+                                <vs-td>
+                                    <div class="d-flex justify-content-center">
+                                        <el-tooltip class="item" effect="dark" :content="'Editar solicitud'" placement="top">
+                                            <vs-button class="btn btn-flat btn-sm py-1"
+                                                @click.prevent="toEdit(tr.idSolicitud)">
+                                                <span class="material-symbols-rounded" style="color: var(--text-color);">edit</span>
+                                            </vs-button>
+                                        </el-tooltip>
+                                    </div>
+                                </vs-td>
                             </vs-tr>
                         </template>
                         <template #notFound>
@@ -51,7 +67,41 @@
                     </vs-table>
                 </div>
             </div>
-        </div>
+        </div>   
+        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo" @close="closeModalArchivo()">
+            <template #header>
+            <h3 class="pt-3">Archivo de solicitud</h3>
+            </template>
+            <div class="con-content">
+                <template v-if="Object.keys(datosArchivo).length > 0">
+                    <div v-if="datosArchivo.rutaDoc">
+                        <div v-if="datosArchivo.rutaDoc.includes('pdf')" class="center">
+                            <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700" width="600">
+                                <div class="px-3">
+                                    <p>No es posible mostrar el archivo de la solicitud.</p>
+                                    <a class="" :href="og + datosArchivo.rutaDoc + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                </div>
+                            </object> 
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="px-3">
+                        <p>No es posible mostrar el comprobante de la incidencia.</p>
+                    </div>
+                </template>
+            </div>
+            <template #footer>
+                <div v-if="Object.keys(datosArchivo).length > 0" class="row">
+                    <div class="col-12 text-center pb-3">
+                        &nbsp;
+                        <!-- <div class="badge bg-light text-wrap">
+                            
+                        </div> -->
+                    </div>
+                </div>
+            </template>        
+        </vs-dialog>
     </div>
 </template>
 
@@ -60,11 +110,16 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            og: window.location.origin + '/',
+            stamp: this.getLocalStamp(),
             listaPermisos: [],
             page: 1,
             max: 10,
             search: '',
             listSolicitudes: [],
+
+            showModalArchivo: false,
+            datosArchivo: {},
         }
     },
     async created() {
@@ -94,6 +149,20 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
             }
         },
+        toEdit( id ){
+            methods.WIP( this.$vs );
+        },
+        verArchivo(datos){
+            this.datosArchivo = datos;
+            this.showModalArchivo = true;
+        },
+        closeModalArchivo(){
+            this.datosArchivo = {};
+            this.showModalArchivo = false;
+        },    
+        getLocalStamp(){
+            return '?stamp=' + new Date().getTime();
+        },    
     }
 }
 </script>

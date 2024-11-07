@@ -1,3 +1,5 @@
+const { duration } = require("moment");
+
 /**Manejo de excepciones para las peticiones axios en Vue
  * @param error: El objeto de tipo error
  * @param nombreMetodo: El nombre del metódo donde se originó el error
