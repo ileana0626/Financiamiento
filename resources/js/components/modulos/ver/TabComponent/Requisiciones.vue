@@ -87,7 +87,7 @@
                 </template>
                 <template v-else>
                     <div class="px-3">
-                        <p>No es posible mostrar el comprobante de la incidencia.</p>
+                        <p>No es posible mostrar el archivo de la solicitud.</p>
                     </div>
                 </template>
             </div>
