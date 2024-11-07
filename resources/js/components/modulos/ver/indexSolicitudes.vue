@@ -29,7 +29,7 @@
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
-                        <div v-if="activeTab == 1">Requisiciones</div>
+                        <Requisiciones v-if="activeTab == 1"/>
                         <div v-else-if="activeTab == 2">Memorándums</div>
                         <div v-else-if="activeTab == 3">Oficios</div>
                         <div v-else-if="activeTab == 4">Circulares</div>
@@ -44,10 +44,12 @@
 <script>
 import methods from '../../../methods';
 import Tab from './TabComponent/Tab.vue';
+import Requisiciones from './TabComponent/Requisiciones.vue';
 
 export default {
     components: {
-        'Tab': Tab
+        'Tab': Tab,
+        'Requisiciones': Requisiciones,
     },
     data() {
         return {

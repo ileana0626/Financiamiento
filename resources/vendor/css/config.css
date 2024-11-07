@@ -1540,6 +1540,10 @@ div.vs-dialog, div.swal2-popup{
 .el-popover.el-popper{
     background-color: var(--iee-white);
 }
+.vsax-th{
+    background-color: var(--iee-white) !important;
+    width: 30px !important;
+}
 /* primer diseño de banner de bienvenida*/
 .izq-row{
     height: 100%;

@@ -224,4 +224,22 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function getAllByType(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $nTipo = $request->nTipo;
+        
+        $nTipo = ($nTipo == NULL) ? 0 : $nTipo;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getAllByType(?)',[$nTipo]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }
