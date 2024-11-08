@@ -161,7 +161,7 @@ export default {
             }
         },
         toEdit( id ){
-            methods.WIP( this.$vs );
+            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
         },
         verArchivo(datos){
             this.datosArchivo = datos;

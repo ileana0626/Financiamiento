@@ -1481,7 +1481,6 @@ export default {
             this.showModalArchivo = true;
         },
         closeModalArchivo(){
-            this.datosArchivo = {};
             this.showModalArchivo = false;
         },    
         getLocalStamp(){
