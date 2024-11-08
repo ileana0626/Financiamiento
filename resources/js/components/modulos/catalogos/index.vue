@@ -221,7 +221,7 @@
                             </vs-button>
                         </div>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
+                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 82%">
                         <div class="center">
                             <vs-table>
                                 <template #header>
@@ -317,7 +317,7 @@
                             </vs-button>
                         </div>
                     </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
+                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 82%">
                         <div class="center">
                             <vs-table>
                                 <template #header>

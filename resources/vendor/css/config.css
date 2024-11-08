@@ -1527,8 +1527,7 @@ div.vs-dialog, div.swal2-popup{
 }
 .logoutBar:hover{
     cursor: pointer;
-    transform: translateY(-3px);
-    box-shadow: 0 2px 2px 1px var(--dorado);
+    box-shadow: 0 0 2px 1px var(--gray);
 }
 .redPill{
     background-color: var(--iee-orange-t);

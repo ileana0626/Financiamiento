@@ -61,6 +61,19 @@
                                                 <span class="material-symbols-rounded" style="color: var(--text-color);">edit</span>
                                             </vs-button>
                                         </el-tooltip>
+                                        <template>
+                                            <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
+                                                placement="top">
+                                                <vs-button class="btn btn-flat btn-sm "
+                                                    @click.prevent="sendRecordatorio(tr.otroremitente, tr.remitente, tr.correo, tr.asunto, tr.fechaTermino)"
+                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                    <span class="material-symbols-rounded"
+                                                        style="color: var(--text-color);">
+                                                        notifications
+                                                    </span>
+                                                </vs-button>
+                                            </el-tooltip>
+                                        </template> 
                                     </div>
                                 </vs-td>
                             </vs-tr>
@@ -173,7 +186,42 @@ export default {
         },    
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
-        },    
+        }, 
+        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino) {
+            usuario = 'Prueba';
+            otroUsuario = 'Prueba-2';
+            correo = 'ricardo.cordero@ieepuebla.org.mx';
+            asunto = 'Prueba de email';
+            termino = '08/11/2024';
+            if (correo.length > 0) {
+                let nombre = (usuario != null) ? usuario : otroUsuario
+                const loading = methods.loading( this.$vs );
+                let url = '/send-mail'
+                axios.get(url, {
+                    params: {
+                        'cUsername': nombre,
+                        'cEmail': correo,
+                        'asunto': asunto,
+                        'termino': termino
+                    }
+                }).then(response => {
+                    loading.close();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Correo Enviado",
+                        text: 'El recordatorio se envió con éxito, verifíque su bandeja del correo electrónico asociado a su cuenta',
+                        showConfirmButton: true,
+                        confirmButtonText: "De acuerdo",
+                    });
+                }).catch(error => {
+                    loading.close();
+                    let nombreMetodo = url.split('/');
+                    methods.catchHandler(error, nombreMetodo[3]);
+                });
+            }else{
+
+            }
+        },           
     }
 }
 </script>
