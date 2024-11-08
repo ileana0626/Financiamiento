@@ -32,12 +32,12 @@
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Tipo</label>
                                 <vs-select placeholder="Seleccione una opción" v-model="tipoDoc" v-if="catTipoDoc.length > 0"
-                                    filter :color="colors[0].color" autocomplete="off">
+                                    filter :color="colors[0].color" autocomplete="off" disabled>
                                     <template #message-danger v-if="errorTipoDoc.length > 0">
                                         {{ errorTipoDoc }}
                                     </template>
                                     <vs-option v-for="(item, index) in catTipoDoc" :key="index" :label="item.nombre"
-                                        :value="item.id">
+                                        :value="item.id" disabled>
                                         {{ item.nombre }}
                                     </vs-option>
                                 </vs-select>
@@ -371,7 +371,7 @@
                         </div>
                         <div class="row px-4 py-1">
                             <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
-                                <label class="col-form-label">Cargar Archivo</label>
+                                <label class="col-form-label" @click.prevent="verArchivo()">Cargar Archivo</label>
                                 <!-- <div class="row px-0 pr-sm-5 pb-3">
                                     <div class="col-md-6">
                                         <el-upload class="upload-demo col-md-12"
@@ -493,9 +493,9 @@
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
                                     <vs-button color="#a5904a" block
-                                        @click.prevent="guardarSolicitud">
+                                        @click.prevent="guardarSolicitud" disabled>
                                         <b style="font-size: medium !important;">
-                                            <span class="px-5 text-white">Registrar</span>
+                                            <span class="px-5 text-white">Actualizar</span>
                                         </b>
                                     </vs-button>
                                 </div>                            
@@ -505,6 +505,40 @@
                 </div>
             </div>
         </div>
+        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo" @close="closeModalArchivo()">
+            <template #header>
+            <h3 class="pt-3">Archivo de solicitud</h3>
+            </template>
+            <div class="con-content">
+                <template v-if="Object.keys(datosArchivo).length > 0">
+                    <div v-if="datosArchivo.RUTA">
+                        <div v-if="datosArchivo.RUTA.includes('pdf')" class="center">
+                            <object :data="og + datosArchivo.RUTA + stamp" :type="`application/pdf`" height="700" width="600">
+                                <div class="px-3">
+                                    <p>No es posible mostrar el archivo de la solicitud.</p>
+                                    <a class="" :href="og + datosArchivo.RUTA + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                </div>
+                            </object> 
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="px-3">
+                        <p>No es posible mostrar el archivo de la solicitud.</p>
+                    </div>
+                </template>
+            </div>
+            <template #footer>
+                <div v-if="Object.keys(datosArchivo).length > 0" class="row">
+                    <div class="col-12 text-center pb-3">
+                        &nbsp;
+                        <!-- <div class="badge bg-light text-wrap">
+                            
+                        </div> -->
+                    </div>
+                </div>
+            </template>        
+        </vs-dialog>
     </div>
 </template>
 
@@ -516,7 +550,8 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             idArchivo: 0,
-
+            og: window.location.origin + '/',
+            stamp: this.getLocalStamp(),
             error: false,
 
             colors: [
@@ -540,7 +575,8 @@ export default {
             respuesta: '',
             fechaRecibido: '',
             fechaTermino: '',
-            hora: '',
+            hora: new Date(),
+            mamadas: '',
             documentos: {
                 F1: '',
             },
@@ -598,7 +634,11 @@ export default {
             },
             timePicker: {
                 selectableRange: '09:00:00 - 18:00:00'
-            }
+            }, 
+
+
+            showModalArchivo: false,
+            datosArchivo: {},            
         }
     },
     watch:{
@@ -1352,6 +1392,24 @@ export default {
                 if(response.status === 200){
                     const datos = response.data[0];
 
+                    this.tipoDoc = datos.tipo;
+                    this.areaSolicita = datos.areaSolicita ? datos.areaSolicita : '';
+                    this.areaAsignada0 = datos.areaAsignar ? datos.areaAsignar : '';
+                    this.areaAsignada = datos.areaAsignar ? datos.areaAsignar : '';
+                    this.areaEmite = datos.areaEmite ? datos.areaEmite : '';
+                    this.nOficio = datos.numOficio ? datos.numOficio : '';
+                    this.asunto = datos.asunto ? datos.asunto : '';
+                    this.cargo = datos.cargo ? datos.cargo : '';
+                    this.remitente = datos.remitente ? datos.remitente : '';
+                    this.nfolio = datos.numFolio ? datos.numFolio : '';
+                    this.nMemorandum = datos.numMemo ? datos.numMemo : '';
+                    this.Capitulo = datos.capitulo ? datos.capitulo : '';
+                    this.termino = datos.termino ? datos.termino : '';
+                    this.respuesta = datos.respuesta ? datos.respuesta : '';
+                    this.fechaRecibido = datos.fechaRecibido;
+                    this.fechaTermino = datos.fechaTermino ? datos.fechaTermino : '';
+                    this.setHoraSolicitud(datos.horaRecibido);       
+                    this.setSeguimientoSolicitud(datos.tipo, datos.seguimiento);
                     console.log(datos);
                     
                     this.idArchivo = datos.idArchivo;
@@ -1361,6 +1419,7 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
             }
         },
+        // recuperar los datos guardados de la solicitud
         async getArchivoById() {
             const url = '/administracion/solicitud/getArchivoById';
             try {
@@ -1369,6 +1428,7 @@ export default {
                 }});
                 if(response.status === 200){
                     const datos = response.data[0];
+                    this.datosArchivo = datos;
 
                     console.log(datos);
                 }
@@ -1386,12 +1446,52 @@ export default {
                 if(response.status === 200){
                     const datos = response.data;
 
+                    datos.forEach(copia => {
+                        this.copiasConocimiento.push(copia.id_departamento);
+                    });
                     console.log(datos);
                 }
             } catch (error) {
                 const method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
             }
+        },
+        setHoraSolicitud(strHora) {
+            let date = new Date();
+            let tiempo = strHora.split(':');
+            date.setHours(tiempo[0],tiempo[1],tiempo[2]);
+            setTimeout(() => {
+                this.hora = date;
+            }, 300);
+        },
+        setSeguimientoSolicitud(tipo, strSeguimiento){
+            let temp = JSON.parse(strSeguimiento);
+            setTimeout(() => {
+                if(tipo != 4){
+                    this.seguimiento = temp[0].id;
+                } else {
+                    temp.forEach(element => {
+                        this.seguimiento.push(element.id);
+                    });
+                }
+            }, 300);
+        },
+        // Para ver el archivo cargado
+        verArchivo(){
+            this.showModalArchivo = true;
+        },
+        closeModalArchivo(){
+            this.datosArchivo = {};
+            this.showModalArchivo = false;
+        },    
+        getLocalStamp(){
+            return '?stamp=' + new Date().getTime();
+        },          
+        /**Recibe un objeto fecha y devuelve un string con las horas */
+        hoursFormat( dateOBJ ) {
+            let time = new Date(dateOBJ);
+            let str = time.getHours().toString().padStart(2, '00') +':'+ time.getMinutes().toString().padStart(2, '00') +':'+ time.getSeconds().toString().padStart(2, '00');
+            return str;
         },
     },
 }
