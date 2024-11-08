@@ -220,6 +220,8 @@ export default {
                 this.active = 'perfil.index';
             } else if(this.$route.name === 'usuario.editar'){
                 this.active = 'admin.usuarios';
+            } else if(this.$route.name === 'editar.solicitud') {
+                this.active = 'solicitudes.index';
             } else {
                 this.active = this.$route.name;
             }

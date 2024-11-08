@@ -13,6 +13,8 @@ import EditUser from "./components/modulos/usuario/edit.vue";
 import GestioSolicitudes from "./components/modulos/ver/gestiosSolicitudes.vue";
 // en progreso 
 import IndexSolicitudes from './components/modulos/ver/indexSolicitudes.vue';
+import EditSolicitud from './components/modulos/captura/editSolicitud.vue';
+
 import Editar from './components/modulos/captura/editar.vue';
 import Capturav2 from './components/modulos/captura/registrov2.vue';
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
@@ -136,7 +138,8 @@ export default new Router({
         { path: '/usuarios/editar/:id', name: 'usuario.editar', component: EditUser, props: true, beforeEnter: async (to, from, next) => {await userValidToEdit(to, from, next); } },
         { path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/indexSolicitudes', name: 'solicitudes.index', component: IndexSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
-        { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
+        { path: '/solicitudes/editar/:idSolicitud', name: 'editar.solicitud', component: EditSolicitud, props: true, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        // { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         { path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 

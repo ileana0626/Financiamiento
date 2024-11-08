@@ -239,7 +239,62 @@ class SolicitudController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             $errorCode = $e->errorInfo[1];
-            throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function getDatosById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idSolicitud = $request->idSolicitud;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getDatosById(?)',[$idSolicitud]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function getArchivoById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idArchivo = $request->idArchivo;
+
+        $idArchivo = ($idArchivo == NULL) ? 0 : $idArchivo;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getArchivoById(?)',[$idArchivo]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function getCopiasById(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idSolicitud = $request->idSolicitud;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getCopiasById(?)',[$idSolicitud]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
         }
     }
 }
