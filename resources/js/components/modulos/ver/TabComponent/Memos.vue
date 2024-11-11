@@ -11,7 +11,7 @@
                         <template #thead>
                             <vs-tr>
                                 <vs-th class="vsax-th">id</vs-th>
-                                <vs-th class="vsax-th">Tipo</vs-th>
+                                <!-- <vs-th class="vsax-th">Tipo</vs-th> -->
                                 <vs-th class="vsax-th">Área solicita</vs-th>
                                 <vs-th class="vsax-th">Núm. Memo</vs-th>
                                 <vs-th class="vsax-th">Asunto</vs-th>
@@ -28,7 +28,7 @@
                         <template #tbody>
                             <vs-tr v-for="(tr, index) in listSolicitudes" :key="index">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
-                                <vs-td>{{ tr.solicitud }}</vs-td>
+                                <!-- <vs-td>{{ tr.solicitud }}</vs-td> -->
                                 <vs-td>{{ tr.areaSolicita }}</vs-td>
                                 <vs-td>{{ tr.numMemo }}</vs-td>
                                 <vs-td>{{ tr.asunto }}</vs-td>
