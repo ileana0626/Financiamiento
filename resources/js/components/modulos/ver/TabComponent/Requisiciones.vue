@@ -44,6 +44,16 @@
                                 </vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
+                                        <el-tooltip class="item h-100" effect="dark"
+                                            content="Cargar contestación" placement="top" v-if="tr.rutaContestacion == null">
+                                            <vs-button id="logoutBtn" icon danger size="large"
+                                                @click.prevent="modalSubirContestacion(tr)">
+                                                <span class="material-symbols-rounded"
+                                                    style="color: white !important;">
+                                                    upload_file
+                                                </span>
+                                            </vs-button>
+                                        </el-tooltip>                                        
                                         <el-tooltip class="item" effect="dark" :content="'Editar solicitud'" placement="top">
                                             <vs-button class="btn btn-flat btn-sm py-1"
                                                 @click.prevent="toEdit(tr.idSolicitud)">
@@ -100,6 +110,85 @@
                         </div> -->
                     </div>
                 </div>
+            </template>
+        </vs-dialog>
+        <vs-dialog scroll overflow-hidden prevent-close not-padding v-model="showModalSubirContestacion" auto-width id="modalArchivo" @close="closeModalArchivoContestacion()">
+            <template #header>
+                <div class="col text-center">
+                    <br /><h4 class="not-margin">
+                        <b>Subir Contestación Requsición</b>
+                    </h4>
+                </div>
+            </template>
+            <div class="con-content overflow-hidden">
+                <template v-if="Object.keys(datosContestacion).length > 0">
+                    <div class="row overflow-hidden px-3">
+                        <div class="col-12 px-3 pb-3 text-center">
+                            <label class="col-form-label">Folio {{ datosContestacion.numFolio }}</label>
+                        </div>
+                        <div class="col-12 px-3 pb-3">
+                            <label class="col-form-label">Cargar archivo</label>
+                            <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
+                                <template v-if="archivoContestacion.length === 0">
+                                    <el-upload class="upload-demo my-4" :class="archivoContestacion.length > 0 ? 'd-none' : 'd-block'" drag
+                                    action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemoveF1"
+                                    :on-change="handleF1" :on-exceed="handleExceed" :auto-upload="false" accept=".pdf"
+                                    :limit="1" ref="upload">
+                                    <i class="fa fa-cloud-upload-alt"
+                                        style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
+                                    <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para seleccionar</em></div>
+                                    <div slot="tip" class="el-upload__tip">
+                                        Solo archivos de tipo PDF
+                                        <transition name="error-slide">
+                                            <div class="danger-message" v-if="errorFConte == 1">
+                                                <template>
+                                                    Seleccione un archivo para subir
+                                                </template>
+                                            </div>
+                                        </transition>
+                                    </div>
+                                    </el-upload>
+                                </template>
+                                <template v-else>
+                                    <div class="py-3">
+                                        <div class="d-flex justify-content-between p-2 my-3 cardFile" :class="!!darkMode ? 'shadow-dark' : 'shadow'">
+                                            <!-- Tipo -->
+                                            <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex">
+                                                <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
+                                                <div class="d-flex flex-column filenameContainer">
+                                                <span class="errorDesc">Nombre</span>
+                                                <el-tooltip class="item" effect="dark" :content="archivoContestacion.name" placement="right">
+                                                    <div>
+                                                    <span class="fileNameClass errorDescDesc bold" style=""> {{ archivoContestacion.name }} </span>
+                                                    </div>
+                                                </el-tooltip>
+                                                </div>
+                                            </div>
+                                            <el-tooltip class="item" effect="dark" content="Eliminar archivo" placement="right">
+                                                <div class="cardFileRemoveIcon" @click="handleRemoveF1">
+                                                <i class="far fa-trash-alt"></i>
+                                                </div>
+                                            </el-tooltip>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>                              
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <template #footer>
+                <div v-if="Object.keys(datosContestacion).length > 0" class="footer-dialog pb-3">
+                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">     
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="setGuardacontestacion">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Cargar contestación
+                            </div>
+                        </vs-button>                                
+                    </div>
+                </div>
             </template>        
         </vs-dialog>
     </div>
@@ -112,6 +201,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark', 
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
             listaPermisos: [],
@@ -122,9 +212,15 @@ export default {
 
             showModalArchivo: false,
             datosArchivo: {},
+
+            showModalSubirContestacion: false,
+            datosContestacion: {},
+            archivoContestacion: '',
+            errorFConte: 0,
         }
     },
     async created() {
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
         const load = methods.loading( this.$vs );
         await this.getAllByType(1);
         load.close();
@@ -161,7 +257,54 @@ export default {
         closeModalArchivo(){
             this.datosArchivo = {};
             this.showModalArchivo = false;
-        },    
+        }, 
+        // contestación
+        modalSubirContestacion(datos) {
+            this.datosContestacion = datos;
+            this.showModalSubirContestacion = true;
+        },  
+        closeModalArchivoContestacion() {
+            this.showModalSubirContestacion = false;
+            this.datosContestacion = {};
+            this.archivoContestacion = '';
+        }, 
+
+        handleF1(file, fileList) {
+            this.archivoContestacion = this.handleChange(file, fileList);
+        },
+        handlePreview(file) {
+        },
+        handleRemoveF1(file, fileList) {
+            this.archivoContestacion = ''
+        },
+        handleExceed(files, fileList) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Solo puede subir un documento para acreditar.',
+                showConfirmButton: true,
+                confirmButtonText: 'De acuerdo',
+            });
+        },
+        handleChange(file, fileList) {
+            // if (file.size > 5242880) {
+            //     this.$refs.upload.clearFiles();
+            //     Swal.fire({
+            //         icon: 'error',
+            //         html: '<div class="col"><div class="swal2-title p-0 mb-2">¡El archivo excede el límite de carga permitido!</div><div class="swal2-title font-weight-normal p-0" style="font-size: 20px">Seleccione uno con menor peso</div></div>',
+            //         showConfirmButton: true,
+            //         confirmButtonText: 'De acuerdo',
+            //     });
+
+            //     return '';
+
+            // } else {
+            return file.raw;
+            // }
+        },
+        async setGuardacontestacion() {
+            methods.WIP( this.$vs ); 
+        },
+        // utilidades
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
         },    
