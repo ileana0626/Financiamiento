@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/solicitud/getDatosById','Administracion\SolicitudController@getDatosById');
     Route::get('/administracion/solicitud/getArchivoById','Administracion\SolicitudController@getArchivoById');
     Route::get('/administracion/solicitud/getCopiasById','Administracion\SolicitudController@getCopiasById');
+    Route::post('/administracion/solicitud/setGuardaContestacion','Administracion\SolicitudController@setGuardaContestacion');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');
@@ -63,6 +64,7 @@ Route::group(['middleware' => ['auth']], function () {
     /*****SUBIR ARCHIVO *****/
     Route::post('/archivos/subirArchivo', 'FileController@subirArchivo');
     Route::post('/archivos/subirArchivoSolicitud', 'FileController@subirArchivoSolicitud');
+    Route::post('/archivos/subirArchivoContestacion', 'FileController@subirArchivoContestacion');
 
     /**Validación de acceso para una ruta con id de usuario */
     Route::get('/administracion/admin/isUserValid','Administracion\AdminController@isUserValid');

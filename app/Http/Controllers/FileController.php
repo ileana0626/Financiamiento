@@ -96,6 +96,43 @@ class FileController extends Controller
         }
     }      
 
+    public function subirArchivoContestacion(Request $request)
+    {
+        $idSolicitud = $request->idSolicitud;
+        $file = $request->file('archivo');
+        $filename = $request->filename;
+        $extension = $request->extension;
+        $tipo = $request->tipo;
+
+        if ($file != "") {
+            $fileExtension = $request->file('archivo')->extension();
+        } else {
+            $fileExtension = $extension;
+        }
+
+        $fileserver =  $filename . '.' . $fileExtension;
+
+        $publicPath = 'public/documentos/contestacion/solicitud/' . $idSolicitud . '/';
+        $storagePath = 'storage/documentos/contestacion/solicitud/' . $idSolicitud . '/';
+
+        DB::beginTransaction();
+        try {
+            Storage::putFileAs($publicPath, $file , $fileserver);
+
+            // no hay SP nuevo porque no hay diferencia para la BD
+            $rpta =  DB::select('call sp_Archivo_subirArchivoSolicitud( ?, ?, ? )', [ 
+                $storagePath . $fileserver ,
+                $fileserver,
+                $tipo,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }  
     /**Cargar la foto en storage y guardar la ruta en BD */
     public function setSubirFP(Request $request){
         if(!$request->ajax()) return redirect('/');
