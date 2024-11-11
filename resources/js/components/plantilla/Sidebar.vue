@@ -73,7 +73,7 @@ Consulta de Errores
                             menu_book
                         </span>
                     </template>
-                    Catalogos
+                    Catálogos
                 </vs-sidebar-item>
 
                 <!-- <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
