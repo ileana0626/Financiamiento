@@ -324,4 +324,33 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function setUpdateEstatus(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idSolicitud = $request->idSolicitud;
+        $idEstatus = $request->idEstatus;
+        $idAuth = $request->idAuth;
+        $fAccion = $request->fAccion;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+        $idEstatus = ($idEstatus == NULL) ? 0 : $idEstatus;
+        $idAuth = ($idAuth == NULL) ? Auth::id() : $idAuth;
+        $fAccion = ($fAccion == NULL) ? Date('Y-m-d H:m:s') : $fAccion;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_setUpdateEstatus(?,?,?,?)',[
+                $idSolicitud,
+                $idEstatus,
+                $idAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }
