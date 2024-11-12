@@ -19,6 +19,7 @@
                                 <vs-th class="vsax-th">Área solicita</vs-th>
                                 <vs-th class="vsax-th">Área asignada</vs-th>
                                 <vs-th class="vsax-th">Archivo</vs-th>
+                                <vs-th class="vsax-th">Contestación</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>
@@ -36,11 +37,27 @@
                                     <div class="d-flex justify-content-center">
                                         <el-tooltip class="item" effect="dark" :content="'Ver archivo'" placement="top">
                                             <vs-button danger class="btn btn-flat btn-sm py-1"
-                                                @click.prevent="verArchivo(tr)">
+                                                @click.prevent="verArchivo(tr, 1)">
                                                 <i class="fas fa-file-pdf"></i>
                                             </vs-button>
                                         </el-tooltip>
                                     </div>
+                                </vs-td>
+                                <vs-td>
+                                    <div class="d-flex justify-content-center">
+                                        <template v-if="tr.rutaContestacion != null">
+                                            <el-tooltip class="item h-100" effect="dark" placement="top">
+                                                <div slot="content">Ver contestación</div>
+                                                <vs-button icon color="rgb(58,197,55)" size="large"
+                                                    @click.prevent="verArchivo(tr, 2)">
+                                                    <i class="fas fa-file-pdf p-1"></i>
+                                                </vs-button>   
+                                            </el-tooltip>
+                                        </template>
+                                        <template v-else>
+                                            <span>N/A</span>
+                                        </template>
+                                    </div>                                 
                                 </vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
@@ -80,12 +97,12 @@
         </div>   
         <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo" @close="closeModalArchivo()">
             <template #header>
-            <h3 class="pt-3">Archivo de solicitud</h3>
+            <h3 class="pt-3">Archivo de {{ tipoModal == 1 ? 'solicitud' : 'contestación' }}</h3>
             </template>
             <div class="con-content">
                 <template v-if="Object.keys(datosArchivo).length > 0">
-                    <div v-if="datosArchivo.rutaDoc">
-                        <div v-if="datosArchivo.rutaDoc.includes('pdf')" class="center">
+                    <div v-if="tipoModal == 1 && datosArchivo.rutaDoc">
+                        <div v-if="datosArchivo.rutaDoc.includes('pdf')" class="center" :key="tipoModal">
                             <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700" width="600">
                                 <div class="px-3">
                                     <p>No es posible mostrar el archivo de la solicitud.</p>
@@ -94,10 +111,20 @@
                             </object> 
                         </div>
                     </div>
+                    <div v-else-if="tipoModal == 2 && datosArchivo.rutaContestacion">
+                        <div v-if="datosArchivo.rutaContestacion.includes('pdf')" class="center" :key="tipoModal">
+                            <object :data="og + datosArchivo.rutaContestacion + stamp" :type="`application/pdf`" height="700" width="600">
+                                <div class="px-3">
+                                    <p>No es posible mostrar el archivo de la solicitud.</p>
+                                    <a class="" :href="og + datosArchivo.rutaContestacion + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                </div>
+                            </object> 
+                        </div>
+                    </div>
                 </template>
                 <template v-else>
                     <div class="px-3">
-                        <p>No es posible mostrar el archivo de la solicitud.</p>
+                        <p>No es posible mostrar el archivo.</p>
                     </div>
                 </template>
             </div>
@@ -216,6 +243,8 @@ export default {
             datosContestacion: {},
             archivoContestacion: '',
             errorFConte: 0,
+
+            tipoModal: 0,
         }
     },
     async created() {
@@ -249,13 +278,15 @@ export default {
         toEdit( id ){
             this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
         },
-        verArchivo(datos){
+        verArchivo(datos, tipo){
+            this.tipoModal = tipo;
             this.datosArchivo = datos;
             this.showModalArchivo = true;
         },
         closeModalArchivo(){
             this.datosArchivo = {};
             this.showModalArchivo = false;
+            this.tipoModal = 0;
         }, 
         // contestación
         modalSubirContestacion(datos) {
@@ -365,6 +396,7 @@ export default {
                     }).then( async (result) => {
                         this.archivoContestacion = '';
                         this.datosContestacion = '';
+                        this.stamp = this.getLocalStamp();
                         await this.getAllByType(1);
                         this.showModalSubirContestacion = false;
                     });
