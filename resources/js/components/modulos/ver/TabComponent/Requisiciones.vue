@@ -310,7 +310,7 @@ export default {
         handleExceed(files, fileList) {
             Swal.fire({
                 icon: 'error',
-                title: 'Solo puede subir un documento para acreditar.',
+                title: 'Solo puede subir un documento.',
                 showConfirmButton: true,
                 confirmButtonText: 'De acuerdo',
             });
