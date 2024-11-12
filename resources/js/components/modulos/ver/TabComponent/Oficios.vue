@@ -11,7 +11,6 @@
                         <template #thead>
                             <vs-tr>
                                 <vs-th class="vsax-th">id</vs-th>
-                                <!-- <vs-th class="vsax-th">Tipo</vs-th> -->
                                 <vs-th class="vsax-th">Núm. Oficio</vs-th>
                                 <vs-th class="vsax-th">Remitente</vs-th>
                                 <vs-th class="vsax-th">Cargo</vs-th>
@@ -22,13 +21,13 @@
                                 <vs-th class="vsax-th">Fecha termino</vs-th>
                                 <vs-th class="vsax-th">Área asignada</vs-th>
                                 <vs-th class="vsax-th">Archivo</vs-th>
+                                <vs-th class="vsax-th">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>
                         <template #tbody>
                             <vs-tr v-for="(tr, index) in listSolicitudes" :key="index">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
-                                <!-- <vs-td>{{ tr.solicitud }}</vs-td> -->
                                 <vs-td>{{ tr.numOficio }}</vs-td>
                                 <vs-td>{{ tr.remitente }}</vs-td>
                                 <vs-td>{{ tr.cargo }}</vs-td>
@@ -49,6 +48,28 @@
                                             </vs-button>
                                         </el-tooltip>
                                     </div>
+                                </vs-td>
+                                <vs-td class="">
+                                    <template v-if="tr.estatus == 'TRÁMITE'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-blue) !important; color: var(--iee-white)!important">TRÁMITE</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'PENDIENTE'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-orange) !important; color: var(--iee-white)!important">PENDIENTE</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'AVANZADO'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-red) !important; color: var(--iee-white)!important">AVANZADO</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'CONCLUIDO'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">CONCLUIDO</span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">{{ tr.estatus }}</span>
+                                    </template>
                                 </vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
