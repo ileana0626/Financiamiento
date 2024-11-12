@@ -116,7 +116,7 @@
             <template #header>
                 <div class="col text-center">
                     <br /><h4 class="not-margin">
-                        <b>Subir Contestación Requsición</b>
+                        <b>Cargar Contestación Requsición</b>
                     </h4>
                 </div>
             </template>
@@ -182,9 +182,10 @@
             <template #footer>
                 <div v-if="Object.keys(datosContestacion).length > 0" class="footer-dialog pb-3">
                     <div class="px-3 d-flex justify-content-center flex-column flex-md-row">     
-                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="setGuardacontestacion">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionContestacion"
+                            :disabled="archivoContestacion == ''">
                             <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Cargar contestación
+                                <i class="fas fa-file-upload pr-2" style="font-size: 0.8125rem !important;"></i>Cargar contestación
                             </div>
                         </vs-button>                                
                     </div>
@@ -195,8 +196,6 @@
 </template>
 
 <script>
-import { data } from 'jquery';
-
 let methods = require('../../../../methods')
 export default {
     data() {
@@ -301,8 +300,79 @@ export default {
             return file.raw;
             // }
         },
-        async setGuardacontestacion() {
-            methods.WIP( this.$vs ); 
+        async accionContestacion(){
+            if(this.archivoContestacion !== ''){
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¿Cargar archivo de contestación?',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Cargar contestación',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
+                }).then( async (result) => {
+                    if( result.isConfirmed ){
+                        const load = methods.loading( this.$vs );
+                        let archivo = await this.subirArchivoContestacion(
+                            this.datosContestacion.idSolicitud,
+                            this.archivoContestacion,
+                            '',
+                            5
+                        );
+                        await this.setGuardaContestacion( archivo );
+                        load.close();
+                    }
+                });                
+            }
+        },
+        async subirArchivoContestacion(solicitud, oDocumento, fileExt, tipo) {
+            let idArchivo = 0;
+            let filename = oDocumento.name.split('.');
+            let form = new FormData();
+            form.set('idSolicitud', solicitud);
+            form.set('archivo', oDocumento);
+            form.set('filename', filename[0]);
+            form.set('extension', fileExt);
+            form.set('tipo', tipo);
+
+            const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+            let url = '/archivos/subirArchivoContestacion';
+            await axios.post(url, form, config).then(response => {
+                idArchivo = response.data[0].idDOCUMENTO
+            }).catch((error) => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[2], this.$router);
+            });
+
+            return idArchivo;
+        }, 
+        async setGuardaContestacion( idARCHIVO ) {
+            const url = '/administracion/solicitud/setGuardaContestacion';
+
+            try {
+                const response = await axios.post(url, {
+                    'idSolicitud': this.datosContestacion.idSolicitud,
+                    'idArchivo': idARCHIVO,
+                    'fAccion': methods.getTimestamp(),
+                });
+                if(response.status === 200){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Contestación guardada correctamente',
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo',
+                    }).then( async (result) => {
+                        this.archivoContestacion = '';
+                        this.datosContestacion = '';
+                        await this.getAllByType(1);
+                        this.showModalSubirContestacion = false;
+                    });
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            }
         },
         // utilidades
         getLocalStamp(){
