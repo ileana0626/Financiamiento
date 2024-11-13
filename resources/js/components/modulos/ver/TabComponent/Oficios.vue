@@ -89,7 +89,7 @@
                                     </template>
                                 </vs-td>
                                 <vs-td>
-                                    <div class="d-flex justify-content-center">
+                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO'">
                                         <el-tooltip class="item h-100" effect="dark"
                                             content="Cargar contestación" placement="top" v-if="tr.rutaContestacion == null">
                                             <vs-button id="logoutBtn" icon danger size="large"
@@ -376,13 +376,29 @@ export default {
                 }).then( async (result) => {
                     if( result.isConfirmed ){
                         const load = methods.loading( this.$vs );
+                        let tStamp = methods.getTimestamp();
                         let archivo = await this.subirArchivoContestacion(
                             this.datosContestacion.idSolicitud,
                             this.archivoContestacion,
                             '',
                             5
                         );
-                        await this.setGuardaContestacion( archivo );
+                        await this.setGuardaContestacion( archivo, tStamp );
+                        let estatus = await this.setUpdateEstatus( this.datosContestacion.idSolicitud, 4, tStamp);
+                        if( estatus == 1){
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Contestación guardada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( async (result) => {
+                                this.archivoContestacion = '';
+                                this.datosContestacion = '';
+                                this.stamp = this.getLocalStamp();
+                                await this.getAllByType(3);
+                                this.showModalSubirContestacion = false;
+                            });                            
+                        } 
                         load.close();
                     }
                 });                
@@ -410,34 +426,42 @@ export default {
 
             return idArchivo;
         }, 
-        async setGuardaContestacion( idARCHIVO ) {
+        async setGuardaContestacion( idARCHIVO, tStamp ) {
             const url = '/administracion/solicitud/setGuardaContestacion';
-
+            let value = 0;
             try {
                 const response = await axios.post(url, {
                     'idSolicitud': this.datosContestacion.idSolicitud,
                     'idArchivo': idARCHIVO,
-                    'fAccion': methods.getTimestamp(),
+                    'fAccion': tStamp
                 });
                 if(response.status === 200){
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Contestación guardada correctamente',
-                        showConfirmButton: true,
-                        confirmButtonText: 'De acuerdo',
-                    }).then( async (result) => {
-                        this.archivoContestacion = '';
-                        this.datosContestacion = '';
-                        this.stamp = this.getLocalStamp();
-                        await this.getAllByType(3);
-                        this.showModalSubirContestacion = false;
-                    });
+                    value = 1;
+                }
+                return value;
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                return value;
+            }
+        },     
+        async setUpdateEstatus( solicitud, idEstatus = 1, tStamp) {
+            const url = '/administracion/solicitud/setUpdateEstatus';
+            try {
+                const response = await axios.post(url,{
+                    'idSolicitud': solicitud,
+                    'idEstatus': idEstatus,
+                    'fAccion': tStamp
+                });
+                if( response.status === 200){
+                    return 1;
                 }
             } catch (error) {
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
+                return 0;
             }
-        },     
+        },  
     }
 }
 </script>

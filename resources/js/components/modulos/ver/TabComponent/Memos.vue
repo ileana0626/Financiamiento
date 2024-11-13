@@ -92,7 +92,7 @@
                                     </template>
                                 </vs-td>                               
                                 <vs-td>
-                                    <div class="d-flex justify-content-center">
+                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO'">
                                         <el-tooltip class="item h-100" effect="dark"
                                             content="Cargar contestación" placement="top" v-if="tr.rutaContestacion == null">
                                             <vs-button id="logoutBtn" icon danger size="large"
@@ -436,22 +436,20 @@ export default {
                         );
                         await this.setGuardaContestacion( archivo, tStamp );
                         let estatus = await this.setUpdateEstatus( this.datosContestacion.idSolicitud, 4, tStamp);
-                        setTimeout(() => {
-                            if( estatus == 1){
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Contestación guardada correctamente',
-                                    showConfirmButton: true,
-                                    confirmButtonText: 'De acuerdo',
-                                }).then( async (result) => {
-                                    this.archivoContestacion = '';
-                                    this.datosContestacion = '';
-                                    this.stamp = this.getLocalStamp();
-                                    await this.getAllByType(2);
-                                    this.showModalSubirContestacion = false;
-                                });                            
-                            }                            
-                        }, 300);
+                        if( estatus == 1){
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Contestación guardada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( async (result) => {
+                                this.archivoContestacion = '';
+                                this.datosContestacion = '';
+                                this.stamp = this.getLocalStamp();
+                                await this.getAllByType(2);
+                                this.showModalSubirContestacion = false;
+                            });                            
+                        } 
                         load.close();
                     }
                 });                
