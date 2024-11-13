@@ -33,7 +33,7 @@
                         <Memos v-else-if="activeTab == 2" />
                         <Oficios v-else-if="activeTab == 3"/>
                         <Circulares v-else-if="activeTab == 4"/>
-                        <div v-else-if="activeTab == 5">Historial</div>
+                        <Historial v-else-if="activeTab == 5"/>
                     </div>
                 </div>
             </div>
@@ -48,6 +48,7 @@ import Requisiciones from './TabComponent/Requisiciones.vue';
 import Memos from './TabComponent/Memos.vue';
 import Oficios from './TabComponent/Oficios.vue';
 import Circulares from './TabComponent/Circulares.vue';
+import HistorialSol from './TabComponent/HistorialSol.vue';
 
 export default {
     components: {
@@ -56,6 +57,7 @@ export default {
         'Memos': Memos,
         'Oficios': Oficios,
         'Circulares': Circulares,
+        'Historial': HistorialSol,
     },
     data() {
         return {
