@@ -56,11 +56,21 @@
                                     </template>
                                     <template v-else>
                                         <span class="badge rounded-pill"
-                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">{{ tr.estatus }}</span>
+                                            style="background-color: var(--iee-black) !important; color: white !important">{{ tr.estatus }}</span>
                                     </template>
                                 </vs-td>
                                 <vs-td>
-                                    <div class="d-flex justify-content-center">
+                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'ENTERADO'">
+                                        <el-tooltip class="item h-100" effect="dark" content="Enterado"
+                                            placement="top">
+                                            <vs-button icon danger size="large" 
+                                                @click.prevent="accionEnteradoo(tr.idSolicitud)">
+                                                <span class="material-symbols-rounded"
+                                                    style="color: white !important;">
+                                                    thumb_up
+                                                </span>
+                                            </vs-button>
+                                        </el-tooltip>
                                         <el-tooltip class="item" effect="dark" :content="'Editar solicitud'" placement="top">
                                             <vs-button class="btn btn-flat btn-sm py-1"
                                                 @click.prevent="toEdit(tr.idSolicitud)">
@@ -179,7 +189,53 @@ export default {
         },    
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
-        },    
+        },  
+        //enterado 
+        accionEnteradoo( solicitud ) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¿Cambiar estatus a ENTERADO?',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Si, cambiar estatus',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+            }).then(async result => {
+                if(result.isConfirmed){
+                    const load = methods.loading( this.$vs );
+                    let estatus = await this.setUpdateEstatus(solicitud, 10, methods.getTimestamp());
+                    if(estatus == 1){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Estatus actualizado correctamente',
+                            showConfirmButton: true,
+                            confirmButtonText: 'De acuerdo',
+                        }).then( async (result) => {
+                            this.stamp = this.getLocalStamp();
+                            await this.getAllByType(4);
+                        });                         
+                    }
+                    load.close();
+                }
+            })
+        },  
+        async setUpdateEstatus( solicitud, idEstatus = 1, tStamp) {
+            const url = '/administracion/solicitud/setUpdateEstatus';
+            try {
+                const response = await axios.post(url,{
+                    'idSolicitud': solicitud,
+                    'idEstatus': idEstatus,
+                    'fAccion': tStamp
+                });
+                if( response.status === 200){
+                    return 1;
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                return 0;
+            }
+        },   
     }
 }
 </script>
