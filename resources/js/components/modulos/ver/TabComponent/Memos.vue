@@ -27,7 +27,8 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in listSolicitudes" :key="index">
+                            <vs-tr v-for="(tr, index) in listSolicitudes" :key="index"
+                                :class="colorStatus(tr.fechaTermino, tr.estatus)">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.areaSolicita }}</vs-td>
                                 <vs-td>{{ tr.numMemo }}</vs-td>
@@ -61,14 +62,14 @@
                                                 <vs-button icon color="rgb(58,197,55)" size="large"
                                                     @click.prevent="verArchivo(tr, 2)">
                                                     <i class="fas fa-file-pdf p-1"></i>
-                                                </vs-button>   
+                                                </vs-button>
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
                                             <span>N/A</span>
                                         </template>
-                                    </div>                                 
-                                </vs-td> 
+                                    </div>
+                                </vs-td>
                                 <vs-td class="">
                                     <template v-if="tr.estatus == 'TRÁMITE'">
                                         <span class="badge rounded-pill"
@@ -88,25 +89,27 @@
                                     </template>
                                     <template v-else>
                                         <span class="badge rounded-pill"
-                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">{{ tr.estatus }}</span>
+                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">{{
+                                                tr.estatus }}</span>
                                     </template>
-                                </vs-td>                               
+                                </vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO'">
-                                        <el-tooltip class="item h-100" effect="dark"
-                                            content="Cargar contestación" placement="top" v-if="tr.rutaContestacion == null">
+                                        <el-tooltip class="item h-100" effect="dark" content="Cargar contestación"
+                                            placement="top" v-if="tr.rutaContestacion == null">
                                             <vs-button id="logoutBtn" icon danger size="large"
                                                 @click.prevent="modalSubirContestacion(tr)">
-                                                <span class="material-symbols-rounded"
-                                                    style="color: white !important;">
+                                                <span class="material-symbols-rounded" style="color: white !important;">
                                                     upload_file
                                                 </span>
                                             </vs-button>
-                                        </el-tooltip> 
-                                        <el-tooltip class="item" effect="dark" :content="'Editar solicitud'" placement="top">
+                                        </el-tooltip>
+                                        <el-tooltip class="item" effect="dark" :content="'Editar solicitud'"
+                                            placement="top">
                                             <vs-button class="btn btn-flat btn-sm py-1"
                                                 @click.prevent="toEdit(tr.idSolicitud)">
-                                                <span class="material-symbols-rounded" style="color: var(--text-color);">edit</span>
+                                                <span class="material-symbols-rounded"
+                                                    style="color: var(--text-color);">edit</span>
                                             </vs-button>
                                         </el-tooltip>
                                         <template>
@@ -121,7 +124,7 @@
                                                     </span>
                                                 </vs-button>
                                             </el-tooltip>
-                                        </template> 
+                                        </template>
                                     </div>
                                 </vs-td>
                             </vs-tr>
@@ -139,31 +142,36 @@
                     </vs-table>
                 </div>
             </div>
-        </div>   
-        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo" @close="closeModalArchivo()">
+        </div>
+        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo"
+            @close="closeModalArchivo()">
             <template #header>
-            <h3 class="pt-3">Archivo de {{ tipoModal == 1 ? 'solicitud' : 'contestación' }}</h3>
+                <h3 class="pt-3">Archivo de {{ tipoModal == 1 ? 'solicitud' : 'contestación' }}</h3>
             </template>
             <div class="con-content">
                 <template v-if="Object.keys(datosArchivo).length > 0">
                     <div v-if="tipoModal == 1 && datosArchivo.rutaDoc">
                         <div v-if="datosArchivo.rutaDoc.includes('pdf')" class="center" :key="tipoModal">
-                            <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700" width="600">
+                            <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700"
+                                width="600">
                                 <div class="px-3">
                                     <p>No es posible mostrar el archivo de la solicitud.</p>
-                                    <a class="" :href="og + datosArchivo.rutaDoc + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                    <a class="" :href="og + datosArchivo.rutaDoc + stamp" target="_blank">Abrir en una
+                                        nueva pestaña</a>
                                 </div>
-                            </object> 
+                            </object>
                         </div>
                     </div>
                     <div v-else-if="tipoModal == 2 && datosArchivo.rutaContestacion">
                         <div v-if="datosArchivo.rutaContestacion.includes('pdf')" class="center" :key="tipoModal">
-                            <object :data="og + datosArchivo.rutaContestacion + stamp" :type="`application/pdf`" height="700" width="600">
+                            <object :data="og + datosArchivo.rutaContestacion + stamp" :type="`application/pdf`"
+                                height="700" width="600">
                                 <div class="px-3">
                                     <p>No es posible mostrar el archivo de la solicitud.</p>
-                                    <a class="" :href="og + datosArchivo.rutaContestacion + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                    <a class="" :href="og + datosArchivo.rutaContestacion + stamp" target="_blank">Abrir
+                                        en una nueva pestaña</a>
                                 </div>
-                            </object> 
+                            </object>
                         </div>
                     </div>
                 </template>
@@ -184,10 +192,12 @@
                 </div>
             </template>
         </vs-dialog>
-        <vs-dialog scroll overflow-hidden prevent-close not-padding v-model="showModalSubirContestacion" auto-width id="modalArchivo" @close="closeModalArchivoContestacion()">
+        <vs-dialog scroll overflow-hidden prevent-close not-padding v-model="showModalSubirContestacion" auto-width
+            id="modalArchivo" @close="closeModalArchivoContestacion()">
             <template #header>
                 <div class="col text-center">
-                    <br /><h4 class="not-margin">
+                    <br />
+                    <h4 class="not-margin">
                         <b>Cargar Contestación Memorándum</b>
                     </h4>
                 </div>
@@ -202,67 +212,75 @@
                             <label class="col-form-label">Cargar archivo</label>
                             <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
                                 <template v-if="archivoContestacion.length === 0">
-                                    <el-upload class="upload-demo my-4" :class="archivoContestacion.length > 0 ? 'd-none' : 'd-block'" drag
-                                    action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemoveF1"
-                                    :on-change="handleF1" :on-exceed="handleExceed" :auto-upload="false" accept=".pdf"
-                                    :limit="1" ref="upload">
-                                    <i class="fa fa-cloud-upload-alt"
-                                        style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
-                                    <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para seleccionar</em></div>
-                                    <div slot="tip" class="el-upload__tip">
-                                        Solo archivos de tipo PDF
-                                        <transition name="error-slide">
-                                            <div class="danger-message" v-if="errorFConte == 1">
-                                                <template>
-                                                    Seleccione un archivo para subir
-                                                </template>
-                                            </div>
-                                        </transition>
-                                    </div>
+                                    <el-upload class="upload-demo my-4"
+                                        :class="archivoContestacion.length > 0 ? 'd-none' : 'd-block'" drag
+                                        action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview"
+                                        :on-remove="handleRemoveF1" :on-change="handleF1" :on-exceed="handleExceed"
+                                        :auto-upload="false" accept=".pdf" :limit="1" ref="upload">
+                                        <i class="fa fa-cloud-upload-alt"
+                                            style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
+                                        <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para
+                                                seleccionar</em></div>
+                                        <div slot="tip" class="el-upload__tip">
+                                            Solo archivos de tipo PDF
+                                            <transition name="error-slide">
+                                                <div class="danger-message" v-if="errorFConte == 1">
+                                                    <template>
+                                                        Seleccione un archivo para subir
+                                                    </template>
+                                                </div>
+                                            </transition>
+                                        </div>
                                     </el-upload>
                                 </template>
                                 <template v-else>
                                     <div class="py-3">
-                                        <div class="d-flex justify-content-between p-2 my-3 cardFile" :class="!!darkMode ? 'shadow-dark' : 'shadow'">
+                                        <div class="d-flex justify-content-between p-2 my-3 cardFile"
+                                            :class="!!darkMode ? 'shadow-dark' : 'shadow'">
                                             <!-- Tipo -->
                                             <div class="d-flex justify-content-between align-items-center">
-                                            <div class="d-flex">
-                                                <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
-                                                <div class="d-flex flex-column filenameContainer">
-                                                <span class="errorDesc">Nombre</span>
-                                                <el-tooltip class="item" effect="dark" :content="archivoContestacion.name" placement="right">
-                                                    <div>
-                                                    <span class="fileNameClass errorDescDesc bold" style=""> {{ archivoContestacion.name }} </span>
+                                                <div class="d-flex">
+                                                    <i class="fa fa-file-image m-2 mr-3"
+                                                        style="font-size: 32px; color: var(--iee-white-dark);"></i>
+                                                    <div class="d-flex flex-column filenameContainer">
+                                                        <span class="errorDesc">Nombre</span>
+                                                        <el-tooltip class="item" effect="dark"
+                                                            :content="archivoContestacion.name" placement="right">
+                                                            <div>
+                                                                <span class="fileNameClass errorDescDesc bold" style="">
+                                                                    {{ archivoContestacion.name }} </span>
+                                                            </div>
+                                                        </el-tooltip>
+                                                    </div>
+                                                </div>
+                                                <el-tooltip class="item" effect="dark" content="Eliminar archivo"
+                                                    placement="right">
+                                                    <div class="cardFileRemoveIcon" @click="handleRemoveF1">
+                                                        <i class="far fa-trash-alt"></i>
                                                     </div>
                                                 </el-tooltip>
-                                                </div>
-                                            </div>
-                                            <el-tooltip class="item" effect="dark" content="Eliminar archivo" placement="right">
-                                                <div class="cardFileRemoveIcon" @click="handleRemoveF1">
-                                                <i class="far fa-trash-alt"></i>
-                                                </div>
-                                            </el-tooltip>
                                             </div>
                                         </div>
                                     </div>
                                 </template>
-                            </div>                              
+                            </div>
                         </div>
                     </div>
                 </template>
             </div>
             <template #footer>
                 <div v-if="Object.keys(datosContestacion).length > 0" class="footer-dialog pb-3">
-                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">     
-                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionContestacion"
-                            :disabled="archivoContestacion == ''">
+                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass' + darkMode"
+                            @click.prevent="accionContestacion" :disabled="archivoContestacion == ''">
                             <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                <i class="fas fa-file-upload pr-2" style="font-size: 0.8125rem !important;"></i>Cargar contestación
+                                <i class="fas fa-file-upload pr-2" style="font-size: 0.8125rem !important;"></i>Cargar
+                                contestación
                             </div>
-                        </vs-button>                                
+                        </vs-button>
                     </div>
                 </div>
-            </template>        
+            </template>
         </vs-dialog>
     </div>
 </template>
@@ -272,7 +290,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
-            darkMode: localStorage.getItem('theme') == 'dark', 
+            darkMode: localStorage.getItem('theme') == 'dark',
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
             listaPermisos: [],
@@ -293,8 +311,8 @@ export default {
         }
     },
     async created() {
-        EventBus.$on('darkMode', (data)=>{this.darkMode = data});
-        const load = methods.loading( this.$vs );
+        EventBus.$on('darkMode', (data) => { this.darkMode = data });
+        const load = methods.loading(this.$vs);
         await this.getAllByType(2);
         load.close();
     },
@@ -302,17 +320,58 @@ export default {
 
     },
     computed: {
+        colorStatus() {
+            return (fechaTermino, estatus) => {
+                let color = ''
+                if (fechaTermino != null) {
+                    const moment = require('moment');
+                    let currentDate = moment();
+                    let formattedDate = currentDate.format('DD/MM/YYYY');
+                    let validDate = moment(formattedDate, 'DD/MM/YYYY');
+                    let validDate2 = moment(fechaTermino, 'DD/MM/YYYY');
+                    let date1 = new Date(validDate)
+                    let date2 = new Date(validDate2)
+                    let differenceInMs = Math.abs(date1 - date2);
+                    let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+                    
+                    if(date1 >= date2){
+                        color = 'css-conundial'
+                    }else if (estatus == 'TRÁMITE') {
+                        switch (differenceInDays) {
+                            case 0:
+                                color = 'css-conundia'
+                                break;
+                            case 1:
+                                color = 'css-conundia'
+                                break;
+                            case 2:
+                                color = 'css-condosdias'
+                                break;
+                            case 3:
+                                color = 'css-condosdias'
+                                break;
+                            default:
 
+                        }
+                    }
+                    return color
+
+                }
+            }
+
+        },
     },
     methods: {
-        async getAllByType( tipo = 1) {
+        async getAllByType(tipo = 1) {
             const url = '/administracion/solicitud/getAllByType';
 
             try {
-                const response = await axios.get(url,{ params: {
-                    'nTipo': tipo,
-                }})
-                if(response.status === 200){
+                const response = await axios.get(url, {
+                    params: {
+                        'nTipo': tipo,
+                    }
+                })
+                if (response.status === 200) {
                     this.listSolicitudes = response.data;
                 }
             } catch (error) {
@@ -320,22 +379,22 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
             }
         },
-        toEdit( id ){
-            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
+        toEdit(id) {
+            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
         },
-        verArchivo(datos, tipo){
+        verArchivo(datos, tipo) {
             this.tipoModal = tipo;
             this.datosArchivo = datos;
             this.showModalArchivo = true;
         },
-        closeModalArchivo(){
+        closeModalArchivo() {
             this.datosArchivo = {};
             this.showModalArchivo = false;
             this.tipoModal = 0;
-        },   
-        getLocalStamp(){
+        },
+        getLocalStamp() {
             return '?stamp=' + new Date().getTime();
-        }, 
+        },
         sendRecordatorio(usuario, otroUsuario, correo, asunto, termino) {
             usuario = 'Prueba';
             otroUsuario = 'Prueba-2';
@@ -344,7 +403,7 @@ export default {
             termino = '08/11/2024';
             if (correo.length > 0) {
                 let nombre = (usuario != null) ? usuario : otroUsuario
-                const loading = methods.loading( this.$vs );
+                const loading = methods.loading(this.$vs);
                 let url = '/send-mail'
                 axios.get(url, {
                     params: {
@@ -367,20 +426,20 @@ export default {
                     let nombreMetodo = url.split('/');
                     methods.catchHandler(error, nombreMetodo[3]);
                 });
-            }else{
+            } else {
 
             }
-        },  
+        },
         // contestación
         modalSubirContestacion(datos) {
             this.datosContestacion = datos;
             this.showModalSubirContestacion = true;
-        },  
+        },
         closeModalArchivoContestacion() {
             this.showModalSubirContestacion = false;
             this.datosContestacion = {};
             this.archivoContestacion = '';
-        }, 
+        },
 
         handleF1(file, fileList) {
             this.archivoContestacion = this.handleChange(file, fileList);
@@ -414,8 +473,8 @@ export default {
             return file.raw;
             // }
         },
-        async accionContestacion(){
-            if(this.archivoContestacion !== ''){
+        async accionContestacion() {
+            if (this.archivoContestacion !== '') {
                 Swal.fire({
                     icon: 'warning',
                     title: '¿Cargar archivo de contestación?',
@@ -424,9 +483,9 @@ export default {
                     confirmButtonText: 'Cargar contestación',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true,
-                }).then( async (result) => {
-                    if( result.isConfirmed ){
-                        const load = methods.loading( this.$vs );
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const load = methods.loading(this.$vs);
                         let tStamp = methods.getTimestamp();
                         let archivo = await this.subirArchivoContestacion(
                             this.datosContestacion.idSolicitud,
@@ -434,25 +493,25 @@ export default {
                             '',
                             5
                         );
-                        await this.setGuardaContestacion( archivo, tStamp );
-                        let estatus = await this.setUpdateEstatus( this.datosContestacion.idSolicitud, 4, tStamp);
-                        if( estatus == 1){
+                        await this.setGuardaContestacion(archivo, tStamp);
+                        let estatus = await this.setUpdateEstatus(this.datosContestacion.idSolicitud, 4, tStamp);
+                        if (estatus == 1) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Contestación guardada correctamente',
                                 showConfirmButton: true,
                                 confirmButtonText: 'De acuerdo',
-                            }).then( async (result) => {
+                            }).then(async (result) => {
                                 this.archivoContestacion = '';
                                 this.datosContestacion = '';
                                 this.stamp = this.getLocalStamp();
                                 await this.getAllByType(2);
                                 this.showModalSubirContestacion = false;
-                            });                            
-                        } 
+                            });
+                        }
                         load.close();
                     }
-                });                
+                });
             }
         },
         async subirArchivoContestacion(solicitud, oDocumento, fileExt, tipo) {
@@ -476,8 +535,8 @@ export default {
             });
 
             return idArchivo;
-        }, 
-        async setGuardaContestacion( idARCHIVO, tStamp ) {
+        },
+        async setGuardaContestacion(idARCHIVO, tStamp) {
             const url = '/administracion/solicitud/setGuardaContestacion';
             let value = 0;
             try {
@@ -486,7 +545,7 @@ export default {
                     'idArchivo': idARCHIVO,
                     'fAccion': tStamp
                 });
-                if(response.status === 200){
+                if (response.status === 200) {
                     value = 1;
                 }
                 return value;
@@ -495,16 +554,16 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
                 return value;
             }
-        },  
-        async setUpdateEstatus( solicitud, idEstatus = 1, tStamp) {
+        },
+        async setUpdateEstatus(solicitud, idEstatus = 1, tStamp) {
             const url = '/administracion/solicitud/setUpdateEstatus';
             try {
-                const response = await axios.post(url,{
+                const response = await axios.post(url, {
                     'idSolicitud': solicitud,
                     'idEstatus': idEstatus,
                     'fAccion': tStamp
                 });
-                if( response.status === 200){
+                if (response.status === 200) {
                     return 1;
                 }
             } catch (error) {
