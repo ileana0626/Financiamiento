@@ -5,7 +5,7 @@
                 <div class="center">
                     <vs-table>
                         <template #header>
-                            <vs-input v-model="search" border placeholder="Escribe un numero"
+                            <vs-input v-model="search" border placeholder="Escribe un dato"
                                 class="inputSearchPreguntas" />
                         </template>
                         <template #thead>
@@ -27,8 +27,7 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in listSolicitudes" :key="index"
-                                :class="colorStatus(tr.fechaTermino, tr.estatus)">
+                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr" :class="colorStatus(tr.fechaTermino, tr.estatus)">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.numOficio }}</vs-td>
                                 <vs-td>{{ tr.remitente }}</vs-td>

@@ -5,7 +5,7 @@
                 <div class="center">
                     <vs-table>
                         <template #header>
-                            <vs-input v-model="search" border placeholder="Escribe un numero"
+                            <vs-input v-model="search" border placeholder="Escribe un dato"
                                 class="inputSearchPreguntas" />
                         </template>
                         <template #thead>
@@ -32,7 +32,7 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in listSolicitudes" :key="index">
+                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
                                 <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
