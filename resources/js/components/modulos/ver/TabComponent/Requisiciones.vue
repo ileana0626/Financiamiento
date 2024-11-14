@@ -10,16 +10,16 @@
                         </template>
                         <template #thead>
                             <vs-tr>
-                                <vs-th class="vsax-th">id</vs-th>
-                                <vs-th class="vsax-th">Capítulo</vs-th>
-                                <vs-th class="vsax-th">Folio</vs-th>
-                                <vs-th class="vsax-th">Fecha recibido</vs-th>
-                                <vs-th class="vsax-th">Hora recibido</vs-th>
-                                <vs-th class="vsax-th">Área solicita</vs-th>
-                                <vs-th class="vsax-th">Área asignada</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'capitulo')">Capítulo</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Folio</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaAsignar')">Área asignada</vs-th>
                                 <vs-th class="vsax-th">Archivo</vs-th>
                                 <vs-th class="vsax-th">Contestación</vs-th>
-                                <vs-th class="vsax-th">Estatus</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'estatus')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>

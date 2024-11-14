@@ -10,13 +10,13 @@
                         </template>
                         <template #thead>
                             <vs-tr>
-                                <vs-th class="vsax-th">id</vs-th>
-                                <vs-th class="vsax-th">Fecha recibido</vs-th>
-                                <vs-th class="vsax-th">Hora recibido</vs-th>
-                                <vs-th class="vsax-th">Área emite</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaEmite')">Área emite</vs-th>
                                 <vs-th class="vsax-th">Asunto</vs-th>
                                 <vs-th class="vsax-th">Archivo</vs-th>
-                                <vs-th class="vsax-th">Estatus</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'estatus')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>
