@@ -86,7 +86,7 @@ Consulta de Errores
                     Mi Perfil
                 </vs-sidebar-item> -->
 
-                <vs-sidebar-item id="birthday.index" to="/birthday">
+                <vs-sidebar-item id="birthday.index" to="/birthday" v-if="listPermisos.includes('birthday.index')">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             featured_seasonal_and_gifts
