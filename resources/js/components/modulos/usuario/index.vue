@@ -282,7 +282,7 @@
                                 {{ error.dpto }}
                             </template>
                             <vs-option v-for="(item, index) in cat_DPTO" :key="index" :label="item.nombre"
-                                :value="item.id">
+                                :value="item.idSeguimiento">
                                 {{ item.nombre }}
                             </vs-option>
                         </vs-select>                        
@@ -380,7 +380,7 @@ export default {
         const load = methods.loading( this.$vs );
         await this.getListarAllUsers();
         await this.getRoles();
-        await this.getDepartamentos();
+        await this.obtenerDatos();
         load.close();
     },
     computed: {
@@ -699,6 +699,20 @@ export default {
                 const method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
             }
+        },
+        async obtenerDatos(tipo = 5) {
+            let url = '/administracion/usuario/obtenerDatos'
+            await axios.get(url, {
+                params: {
+                    'tipo': tipo,
+                    'consulta': 1
+                }
+            }).then(response => {
+                this.cat_DPTO = response.data;
+            }).catch(error => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            });
         },
     }
 }
