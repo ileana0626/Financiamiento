@@ -227,12 +227,13 @@ class SolicitudController extends Controller
     public function getAllByType(Request $request){
         if(!$request->ajax()) return redirect('/');
         $nTipo = $request->nTipo;
-        
-        $nTipo = ($nTipo == NULL) ? 0 : $nTipo;
+        $nDPTO = $request->nDPTO;
 
+        $nTipo = ($nTipo == NULL) ? 0 : $nTipo;
+        
         DB::beginTransaction();
         try {
-            $rpta = DB::select('call sp_Solicitud_getAllByType(?)',[$nTipo]);
+            $rpta = DB::select('call sp_Solicitud_getAllByType(?,?)',[$nTipo,$nDPTO]);
 
             DB::commit();
             return $rpta;

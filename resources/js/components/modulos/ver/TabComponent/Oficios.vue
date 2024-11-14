@@ -273,6 +273,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             darkMode: localStorage.getItem('theme') == 'dark',
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
@@ -352,6 +353,7 @@ export default {
                 const response = await axios.get(url, {
                     params: {
                         'nTipo': tipo,
+                        'nDPTO': this.dptoUsuario,
                     }
                 })
                 if (response.status === 200) {

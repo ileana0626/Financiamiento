@@ -137,6 +137,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
             listaPermisos: [],
@@ -167,6 +168,7 @@ export default {
             try {
                 const response = await axios.get(url,{ params: {
                     'nTipo': tipo,
+                    'nDPTO': this.dptoUsuario,
                 }})
                 if(response.status === 200){
                     this.listSolicitudes = response.data;
