@@ -36,7 +36,7 @@
                                 <vs-td>{{ tr.idCopia }}</vs-td>
                                 <vs-td v-if="rolUsuario == 1 || rolUsuario == 5">{{ tr.dptoCopia }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.enterado == 'Y' ? 'Si' : 'No' }}</vs-td>
+                                <vs-td>{{ tr.enterado == 'S' ? 'Si' : 'No' }}</vs-td>
                                 <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
                                 <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
                                 <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
@@ -67,7 +67,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Enterado"
                                             placement="top">
                                             <vs-button icon danger size="large" 
-                                                @click.prevent="accionEnterado()" v-if="tr.enterado == 'N'">
+                                                @click.prevent="accionEnterado(tr.idCopia, tr.idSolicitud)" v-if="tr.enterado == 'N'">
                                                 <span class="material-symbols-rounded"
                                                     style="color: white !important;">
                                                     thumb_up
@@ -190,41 +190,40 @@ export default {
             return '?stamp=' + new Date().getTime();
         },  
         //enterado 
-        accionEnteradoo( solicitud ) {
+        accionEnterado( copia, solicitud ) {
             Swal.fire({
                 icon: 'warning',
-                title: '¿Cambiar estatus a ENTERADO?',
+                title: 'Indicar valor de enterado como "Si"?',
                 showConfirmButton: true,
                 showCancelButton: true,
-                confirmButtonText: 'Si, cambiar estatus',
+                confirmButtonText: 'Si, indicar',
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
             }).then(async result => {
                 if(result.isConfirmed){
                     const load = methods.loading( this.$vs );
-                    let estatus = await this.setUpdateEstatus(solicitud, 10, methods.getTimestamp());
+                    let estatus = await this.setEnteradoCopia(copia, solicitud);
                     if(estatus == 1){
                         Swal.fire({
                             icon: 'success',
-                            title: 'Estatus actualizado correctamente',
+                            title: 'Se actualizó el valor correctamente',
                             showConfirmButton: true,
                             confirmButtonText: 'De acuerdo',
                         }).then( async (result) => {
                             this.stamp = this.getLocalStamp();
-                            await this.getAllByType(4);
+                            await this.getCopiasCon();
                         });                         
                     }
                     load.close();
                 }
             })
         },  
-        async setUpdateEstatus( solicitud, idEstatus = 1, tStamp) {
-            const url = '/administracion/solicitud/setUpdateEstatus';
+        async setEnteradoCopia( copia, solicitud) {
+            const url = '/administracion/solicitud/setEnteradoCopia';
             try {
                 const response = await axios.post(url,{
+                    'idCopia': copia,
                     'idSolicitud': solicitud,
-                    'idEstatus': idEstatus,
-                    'fAccion': tStamp
                 });
                 if( response.status === 200){
                     return 1;
@@ -235,10 +234,6 @@ export default {
                 return 0;
             }
         },   
-
-        accionEnterado() {
-            methods.WIP( this.$vs );
-        },
     }
 }
 </script>

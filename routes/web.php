@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/solicitud/getCopiasCon','Administracion\SolicitudController@getCopiasCon');
     Route::post('/administracion/solicitud/setGuardaContestacion','Administracion\SolicitudController@setGuardaContestacion');
     Route::post('/administracion/solicitud/setUpdateEstatus','Administracion\SolicitudController@setUpdateEstatus');
+    Route::post('/administracion/solicitud/setEnteradoCopia','Administracion\SolicitudController@setEnteradoCopia');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');

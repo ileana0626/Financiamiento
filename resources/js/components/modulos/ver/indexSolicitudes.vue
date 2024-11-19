@@ -73,7 +73,6 @@ export default {
     },
     created(){
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
-        console.log(sessionStorage);
         
     },
     async mounted() {

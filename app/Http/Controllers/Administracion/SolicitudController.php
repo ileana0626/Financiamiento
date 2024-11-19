@@ -372,4 +372,27 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function setEnteradoCopia(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idCopia = $request->idCopia;
+        $idSolicitud = $request->idSolicitud;
+
+        $idCopia = ($idCopia == NULL) ? 0 : $idCopia;
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_setEnteradoCopia(?,?)',[
+                $idCopia,
+                $idSolicitud,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido modificar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }
