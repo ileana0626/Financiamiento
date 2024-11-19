@@ -102,7 +102,7 @@
                             </vs-tr>
                         </template>
                         <template #notFound>
-                            <div style="background-color: var(--iee-white) !important;">
+                            <div style="background-color: var(--iee-white) !important; color: var(--iee-white-dark);">
                                 Sin resultados...
                             </div>
                         </template>
