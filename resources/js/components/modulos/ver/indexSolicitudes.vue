@@ -26,6 +26,7 @@
                     <Tab title="Oficio" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
                     <Tab title="Circular" :active="activeTab == 4" @click.native="setActiveTab(4)"/>
                     <Tab title="Historial" :active="activeTab == 5" @click.native="setActiveTab(5)"/>
+                    <Tab title="Copias C." :active="activeTab == 6" @click.native="setActiveTab(6)"/>
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
@@ -34,6 +35,7 @@
                         <Oficios v-else-if="activeTab == 3"/>
                         <Circulares v-else-if="activeTab == 4"/>
                         <Historial v-else-if="activeTab == 5"/>
+                        <Copias v-else-if="activeTab == 6"/>
                     </div>
                 </div>
             </div>
@@ -49,6 +51,7 @@ import Memos from './TabComponent/Memos.vue';
 import Oficios from './TabComponent/Oficios.vue';
 import Circulares from './TabComponent/Circulares.vue';
 import HistorialSol from './TabComponent/HistorialSol.vue';
+import CopiasCon from './TabComponent/CopiasCon.vue';
 
 export default {
     components: {
@@ -58,6 +61,7 @@ export default {
         'Oficios': Oficios,
         'Circulares': Circulares,
         'Historial': HistorialSol,
+        'Copias': CopiasCon,
     },
     data() {
         return {
@@ -68,7 +72,9 @@ export default {
     watch:{
     },
     created(){
-        EventBus.$on('darkMode', (data)=>{this.darkMode = data})
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data});
+        console.log(sessionStorage);
+        
     },
     async mounted() {
     },

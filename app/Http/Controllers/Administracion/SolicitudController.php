@@ -354,4 +354,22 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function getCopiasCon(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $nDPTO = $request->nDPTO;
+
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getCopiasCon(?)',[$nDPTO]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }
