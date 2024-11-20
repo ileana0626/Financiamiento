@@ -105,7 +105,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
-                                                @click.prevent="" 
+                                                @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino)" 
                                                 style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
@@ -174,86 +174,6 @@
                     </div>
                 </div>
             </template>
-        </vs-dialog>
-        <vs-dialog scroll overflow-hidden prevent-close not-padding v-model="showModalSubirContestacion" auto-width id="modalArchivo" @close="closeModalArchivoContestacion()">
-            <template #header>
-                <div class="col text-center">
-                    <br /><h4 class="not-margin">
-                        <b>Cargar Contestación Oficio</b>
-                    </h4>
-                </div>
-            </template>
-            <div class="con-content overflow-hidden">
-                <template v-if="Object.keys(datosContestacion).length > 0">
-                    <div class="row overflow-hidden px-3">
-                        <div class="col-12 px-3 pb-3 text-center">
-                            <label class="col-form-label">Núm. {{ datosContestacion.numOficio }}</label>
-                        </div>
-                        <div class="col-12 px-3 pb-3">
-                            <label class="col-form-label">Cargar archivo</label>
-                            <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
-                                <template v-if="archivoContestacion.length === 0">
-                                    <el-upload class="upload-demo my-4" :class="archivoContestacion.length > 0 ? 'd-none' : 'd-block'" drag
-                                    action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemoveF1"
-                                    :on-change="handleF1" :on-exceed="handleExceed" :auto-upload="false" accept=".pdf"
-                                    :limit="1" ref="upload">
-                                    <i class="fa fa-cloud-upload-alt"
-                                        style="font-size: 70px; margin-top: 30px; margin-bottom: 10px; color: var(--grey);"></i>
-                                    <div class="el-upload__text">Suelta tu archivo aquí o <em>haz clic para seleccionar</em></div>
-                                    <div slot="tip" class="el-upload__tip">
-                                        Solo archivos de tipo PDF
-                                        <transition name="error-slide">
-                                            <div class="danger-message" v-if="errorFConte == 1">
-                                                <template>
-                                                    Seleccione un archivo para subir
-                                                </template>
-                                            </div>
-                                        </transition>
-                                    </div>
-                                    </el-upload>
-                                </template>
-                                <template v-else>
-                                    <div class="py-3">
-                                        <div class="d-flex justify-content-between p-2 my-3 cardFile" :class="!!darkMode ? 'shadow-dark' : 'shadow'">
-                                            <!-- Tipo -->
-                                            <div class="d-flex justify-content-between align-items-center">
-                                            <div class="d-flex">
-                                                <i class="fa fa-file-image m-2 mr-3" style="font-size: 32px; color: var(--iee-white-dark);"></i>
-                                                <div class="d-flex flex-column filenameContainer">
-                                                <span class="errorDesc">Nombre</span>
-                                                <el-tooltip class="item" effect="dark" :content="archivoContestacion.name" placement="right">
-                                                    <div>
-                                                    <span class="fileNameClass errorDescDesc bold" style=""> {{ archivoContestacion.name }} </span>
-                                                    </div>
-                                                </el-tooltip>
-                                                </div>
-                                            </div>
-                                            <el-tooltip class="item" effect="dark" content="Eliminar archivo" placement="right">
-                                                <div class="cardFileRemoveIcon" @click="handleRemoveF1">
-                                                <i class="far fa-trash-alt"></i>
-                                                </div>
-                                            </el-tooltip>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>                              
-                        </div>
-                    </div>
-                </template>
-            </div>
-            <template #footer>
-                <div v-if="Object.keys(datosContestacion).length > 0" class="footer-dialog pb-3">
-                    <div class="px-3 d-flex justify-content-center flex-column flex-md-row">     
-                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionContestacion"
-                            :disabled="archivoContestacion == ''">
-                            <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                <i class="fas fa-file-upload pr-2" style="font-size: 0.8125rem !important;"></i>Cargar contestación
-                            </div>
-                        </vs-button>                                
-                    </div>
-                </div>
-            </template>        
         </vs-dialog>
     </div>
 </template>
@@ -334,7 +254,52 @@ export default {
         },    
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
-        },  
+        }, 
+        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino) {
+            // si termino es null, poner la fecha de mañana
+            let tempHoy = new Date();
+            tempHoy.setDate( tempHoy.getDate() + 1);
+            let strHoy = tempHoy.toLocaleDateString('es-ES',{'day':'2-digit', 'month': '2-digit', 'year': 'numeric'});
+            let terminoValido = termino ? termino : strHoy;
+
+            usuario = 'Prueba';
+            otroUsuario = 'Prueba-2';
+            asunto = '(Prueba) Revisión de solicitud';
+            if (correo.length > 0) {
+                let nombre = (usuario != null) ? usuario : otroUsuario
+                const loading = methods.loading(this.$vs);
+                let url = '/send-mail'
+                axios.get(url, {
+                    params: {
+                        'cUsername': nombre,
+                        'cEmail': correo,
+                        'asunto': asunto,
+                        'termino': terminoValido
+                    }
+                }).then(response => {
+                    loading.close();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Correo Enviado",
+                        text: 'El recordatorio se envió con éxito',
+                        showConfirmButton: true,
+                        confirmButtonText: "De acuerdo",
+                    });
+                    /**Por hacer
+                     * crear el evento que actualice la fecha del ultimo recordatorio enviado 
+                     * actualizar los datos de seguimiento para que se aplique la deshabilitacion del boton
+                     * mejorar la plantilla del correo enviado
+                     * - Estaria bien refactorizar el metodo en controlador para el correo 
+                     */
+                }).catch(error => {
+                    loading.close();
+                    let nombreMetodo = url.split('/');
+                    methods.catchHandler(error, nombreMetodo[3]);
+                });
+            } else {
+
+            }
+        }, 
     }
 }
 </script>

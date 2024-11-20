@@ -111,19 +111,6 @@
                                                     style="color: var(--text-color);">edit</span>
                                             </vs-button>
                                         </el-tooltip>
-                                        <template>
-                                            <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    @click.prevent="sendRecordatorio(tr.otroremitente, tr.remitente, tr.correo, tr.asunto, tr.fechaTermino)"
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        notifications
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </template>
                                     </div>
                                 </vs-td>
                             </vs-tr>
