@@ -395,4 +395,27 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido modificar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function getSeguimiento(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $nDPTO = $request->nDPTO;
+        $ahora = $request->ahora;
+
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+        $ahora = ($ahora == NULL) ? date('Y-m-d H:m:s') : $ahora;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_getSeguimiento(?,?)',[
+                $nDPTO,
+                $ahora,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }

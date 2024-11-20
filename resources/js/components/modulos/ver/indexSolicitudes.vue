@@ -25,8 +25,9 @@
                     <Tab title="Memorándum" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
                     <Tab title="Oficio" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
                     <Tab title="Circular" :active="activeTab == 4" @click.native="setActiveTab(4)"/>
-                    <Tab title="Historial" :active="activeTab == 5" @click.native="setActiveTab(5)"/>
-                    <Tab title="Copias C." :active="activeTab == 6" @click.native="setActiveTab(6)"/>
+                    <Tab title="Copias C." :active="activeTab == 5" @click.native="setActiveTab(5)"/>
+                    <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)"/>
+                    <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
@@ -34,8 +35,9 @@
                         <Memos v-else-if="activeTab == 2" />
                         <Oficios v-else-if="activeTab == 3"/>
                         <Circulares v-else-if="activeTab == 4"/>
-                        <Historial v-else-if="activeTab == 5"/>
-                        <Copias v-else-if="activeTab == 6"/>
+                        <Copias v-else-if="activeTab == 5"/>
+                        <Seguimiento v-else-if="activeTab == 6"/>
+                        <Historial v-else-if="activeTab == 7"/>
                     </div>
                 </div>
             </div>
@@ -50,8 +52,9 @@ import Requisiciones from './TabComponent/Requisiciones.vue';
 import Memos from './TabComponent/Memos.vue';
 import Oficios from './TabComponent/Oficios.vue';
 import Circulares from './TabComponent/Circulares.vue';
-import HistorialSol from './TabComponent/HistorialSol.vue';
 import CopiasCon from './TabComponent/CopiasCon.vue';
+import Seguimiento from './TabComponent/Seguimiento.vue';
+import HistorialSol from './TabComponent/HistorialSol.vue';
 
 export default {
     components: {
@@ -60,8 +63,9 @@ export default {
         'Memos': Memos,
         'Oficios': Oficios,
         'Circulares': Circulares,
-        'Historial': HistorialSol,
         'Copias': CopiasCon,
+        'Seguimiento': Seguimiento,
+        'Historial': HistorialSol,
     },
     data() {
         return {
