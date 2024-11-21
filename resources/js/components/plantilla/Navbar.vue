@@ -3,11 +3,11 @@
         style="background-color: var(--iee-white); border-bottom: 1px solid var(--iee-white);">
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
-                <p class="navText">
+                <p class="navText" @click.prevent="notify_count++">
                     <b>Sistema de la Dirección Administrativa</b>
                 </p>
 
-                <p class="navText">
+                <p class="navText" @click.prevent="notify_count = 0">
                     <small>
                         <b>Instituto Electoral del Estado</b>
                     </small>
@@ -17,19 +17,21 @@
 
         <div class="navul navbar-nav">
             <div class="row pr-sm-4 p-2">
-                <vs-tooltip bottom>
-                    <span style="cursor: pointer;" class="material-symbols-rounded help-anim2">
-                        notifications
-                    </span>
-                    <template #tooltip> Notificaciones</template>
-                </vs-tooltip>
+                <el-tooltip placement="bottom">
+                    <div class="nav-notify" :data-count="notify_count" :class="notify_count > 0 ? 'show-count' : ''">
+                        <span style="cursor: pointer;" class="material-symbols-rounded" ref="box_notify">
+                            notifications
+                        </span>
+                    </div>
+                    <div slot="content"> Notificaciones</div>
+                </el-tooltip>
                 &nbsp;&nbsp;&nbsp;
-                <vs-tooltip bottom>
+                <el-tooltip placement="bottom">
                     <span style="cursor: pointer;" @click="ruta" class="material-symbols-rounded">
                         help
                     </span>
-                    <template #tooltip> Ayuda</template>
-                </vs-tooltip>
+                    <div slot="content"> Ayuda</div>
+                </el-tooltip>
             </div>
         </div>
         <div class="d-flex align-items-center" style="gap: 10px;">
@@ -99,6 +101,8 @@ export default {
             },
             id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0,
             showDropDown: false,
+
+            notify_count: 0,
         }
     },
 
@@ -117,7 +121,19 @@ export default {
             return sessionStorage.getItem('nombreRol') ? sessionStorage.getItem('nombreRol') : 'Rol' 
         }
     },
-
+    watch:{
+        notify_count(newVal, oldVal){
+            if(newVal > 0 && newVal != oldVal){
+                this.$refs.box_notify.classList.remove('help-anim2');
+                this.$refs.box_notify.classList.add('help-anim2');
+                setTimeout(() => {
+                    this.$refs.box_notify.classList.remove('help-anim2');                    
+                }, 1500);
+            } else{
+                this.$refs.box_notify.classList.remove('help-anim2');
+            }
+        }
+    },
     mounted() {
         this.checkPermisos();
         this.getCurrentTime();

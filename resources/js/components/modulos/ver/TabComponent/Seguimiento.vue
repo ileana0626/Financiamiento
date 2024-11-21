@@ -102,7 +102,7 @@
                                 </vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO' || tr.status != 'ENTERADO'">
-                                        <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
+                                        <el-tooltip class="item h-100" effect="dark" content="Recordatorio Email"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
                                                 @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino, tr.idSolicitud)" 
@@ -110,6 +110,17 @@
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
                                                     notifications
+                                                </span>
+                                            </vs-button>
+                                        </el-tooltip>
+                                        <el-tooltip class="item h-100" effect="dark" content="Recordatorio Sistema"
+                                            placement="top">
+                                            <vs-button class="btn btn-flat btn-sm "
+                                                @click.prevent="sendRecordatorioInterno()" 
+                                                style="background-color: var(--iee-gold);border-color: var(--iee-white);">
+                                                <span class="material-symbols-rounded"
+                                                    style="color: #111 !important">
+                                                    notifications_active
                                                 </span>
                                             </vs-button>
                                         </el-tooltip>
@@ -314,6 +325,9 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
                 return 0;
             }
+        },
+        sendRecordatorioInterno() {
+            methods.WIP( this.$vs );
         },
     }
 }

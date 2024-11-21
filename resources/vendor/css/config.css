@@ -1672,7 +1672,7 @@ div.vs-dialog, div.swal2-popup{
     }
 }
 
-.help-anim2:hover {
+.help-anim2 {
     animation-name: zumbido2;
     transform: rotate(0deg);
     animation-duration: 1.5s;
@@ -1705,6 +1705,39 @@ div.vs-dialog, div.swal2-popup{
     100% {
         transform: rotate(0deg);
     }
+}
+.nav-notify{
+    display: inline-block;
+    position: relative;
+}
+.nav-notify::after{
+    color: var(--iee-white);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.nav-notify::after {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-family: Arial;
+    font-size: 0.6125em;
+    font-weight: 700;
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    padding: 5px 8px;
+    line-height: 100%;
+    border: 2px var(--iee-white) solid;
+    border-radius: 60px;
+    background: var(--dorado);
+    opacity: 0;
+    content: attr(data-count);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: transform, opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+}
+.nav-notify.show-count::after {
+    transform: scale(1);
+    opacity: 1;
 }
 /*Media queries*/
 @media screen and (min-width: 375px) {
