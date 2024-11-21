@@ -418,4 +418,28 @@ class SolicitudController extends Controller
             throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    
+    public function setUpdateRecordatorio(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $idSolicitud = $request->idSolicitud;
+        $ahora = $request->ahora;
+
+        $idSolicitud = ($idSolicitud == NULL) ? 0 : $idSolicitud;
+        $ahora = ($ahora == NULL) ? date('Y-m-d H:m:s') : $ahora;
+
+        DB::beginTransaction();
+        try {
+            $rpta = DB::select('call sp_Solicitud_setUpdateRecordatorio(?,?)',[
+                $idSolicitud,
+                $ahora,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido actualizar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }

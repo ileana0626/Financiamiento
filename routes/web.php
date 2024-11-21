@@ -97,6 +97,9 @@ Route::group(['middleware' => ['auth']], function () {
     /***Correo***/
     Route::get('send-mail', 'Auth\ResetPasswordController@sendMailPass'); 
 
+    /**Recordatorio */
+    Route::post('/administracion/solicitud/setUpdateRecordatorio','Administracion\SolicitudController@setUpdateRecordatorio');
+    
     /***Captura v2***/
     Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');
     Route::get('/administracion/usuario/getCapitulo','Administracion\UsersController@getCapitulo');

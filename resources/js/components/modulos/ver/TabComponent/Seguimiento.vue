@@ -105,7 +105,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
-                                                @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino)" 
+                                                @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino, tr.idSolicitud)" 
                                                 style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
@@ -255,7 +255,7 @@ export default {
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
         }, 
-        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino) {
+        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino, solicitud) {
             // si termino es null, poner la fecha de mañana
             let tempHoy = new Date();
             tempHoy.setDate( tempHoy.getDate() + 1);
@@ -276,7 +276,10 @@ export default {
                         'asunto': asunto,
                         'termino': terminoValido
                     }
-                }).then(response => {
+                }).then(async (response) => {
+                    await this.setUpdateRecordatorio(solicitud);
+                    this.listSolicitudes = [];
+                    await this.getSeguimiento();
                     loading.close();
                     Swal.fire({
                         icon: "success",
@@ -285,12 +288,6 @@ export default {
                         showConfirmButton: true,
                         confirmButtonText: "De acuerdo",
                     });
-                    /**Por hacer
-                     * crear el evento que actualice la fecha del ultimo recordatorio enviado 
-                     * actualizar los datos de seguimiento para que se aplique la deshabilitacion del boton
-                     * mejorar la plantilla del correo enviado
-                     * - Estaria bien refactorizar el metodo en controlador para el correo 
-                     */
                 }).catch(error => {
                     loading.close();
                     let nombreMetodo = url.split('/');
@@ -300,6 +297,24 @@ export default {
 
             }
         }, 
+        async setUpdateRecordatorio(idSolicitud) {
+            const url = '/administracion/solicitud/setUpdateRecordatorio';
+
+            try {
+                const response = await axios.post(url, {
+                    'idSolicitud': idSolicitud,
+                    'ahora': methods.getTimestamp(),
+                });
+                if(response.status === 200){
+                    return 1;
+                }
+                return 0;
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                return 0;
+            }
+        },
     }
 }
 </script>
