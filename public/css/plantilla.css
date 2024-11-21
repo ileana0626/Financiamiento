@@ -1664,6 +1664,66 @@ div.vs-dialog, div.swal2-popup{
     left: 10%;
     top: 0;
 }
+/*Animaciones*/
+
+.help-anim1:hover {
+    animation-name: zumbido1;
+    transform: rotate(0deg);
+    animation-duration: 90ms;
+    animation-iteration-count: 5;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+@keyframes zumbido1 {
+    0% {
+        /* rotate: 0 0 1 -5deg; */
+        transform: rotate(-5deg);
+    }
+    50% {
+        /* rotate: 0 0 1 0deg; */
+        transform: rotate(0deg);
+    }
+    100% {
+        /* rotate: 0 0 1 5deg; */
+        transform: rotate(5deg);
+    }
+}
+
+.help-anim2:hover {
+    animation-name: zumbido2;
+    transform: rotate(0deg);
+    animation-duration: 1.5s;
+    transform-origin: top center;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+@keyframes zumbido2 {
+    0% {
+        transform: rotate(35deg);
+    }
+    12.5% {
+        transform: rotate(-30deg);
+    }
+    25% {
+        transform: rotate(25deg);
+    }
+    37.5% {
+        transform: rotate(-20deg);
+    }
+    50% {
+        transform: rotate(15deg);
+    }
+    62.5% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+/*Media queries*/
 @media screen and (min-width: 375px) {
     .dropdown-nav{
         top: 6.5rem;

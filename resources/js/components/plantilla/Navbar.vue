@@ -18,7 +18,7 @@
         <div class="navul navbar-nav">
             <div class="row pr-sm-4 p-2">
                 <vs-tooltip bottom>
-                    <span style="cursor: pointer;" class="material-symbols-rounded">
+                    <span style="cursor: pointer;" class="material-symbols-rounded help-anim2">
                         notifications
                     </span>
                     <template #tooltip> Notificaciones</template>
