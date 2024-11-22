@@ -116,7 +116,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Sistema"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm "
-                                                @click.prevent="sendRecordatorioInterno()" 
+                                                @click.prevent="sendNavNotify()" 
                                                 style="background-color: var(--iee-gold);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: #111 !important">
@@ -326,8 +326,23 @@ export default {
                 return 0;
             }
         },
-        sendRecordatorioInterno() {
-            methods.WIP( this.$vs );
+        async sendNavNotify() {
+            // methods.WIP( this.$vs );
+            const url = '/administracion/solicitud/sendNavNotify'
+
+            try {
+                const response = await axios.post(url,{
+                    'textNotify': 'mamaguevo',
+                    'nRol': 1,
+                    'nDPTO': 0
+                });
+                if(response.status === 200){
+                    console.log('se envio');
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            }
         },
     }
 }

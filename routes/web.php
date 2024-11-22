@@ -99,6 +99,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     /**Recordatorio */
     Route::post('/administracion/solicitud/setUpdateRecordatorio','Administracion\SolicitudController@setUpdateRecordatorio');
+    Route::post('/administracion/solicitud/sendNavNotify','Administracion\SolicitudController@sendNavNotify');
     
     /***Captura v2***/
     Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');

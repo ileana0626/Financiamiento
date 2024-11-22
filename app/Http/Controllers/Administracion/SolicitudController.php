@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administracion;
 
 use App\Events\Logout;
+use App\Events\NavNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -440,6 +441,28 @@ class SolicitudController extends Controller
             DB::rollBack();
             $errorCode = $e->errorInfo[1];
             throw new \ErrorException("No se ha podido actualizar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function sendNavNotify(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $textNotify = $request->textNotify;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+
+        $textNotify = ($textNotify == NULL) ? 'A chambear' : $textNotify;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+        // DB::transaction();
+        try {
+            //code...
+            event( new NavNotify($textNotify, $nRol, $nDPTO));
+            // DB::commit();
+        } catch (\Illuminate\Database\QueryException $e) {
+            // DB::rollBack();
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
         }
     }
 }

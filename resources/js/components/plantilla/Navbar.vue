@@ -86,6 +86,8 @@ export default {
         return {
             datosPersonales: {
                 Nombre: sessionStorage.getItem('navName') ? sessionStorage.getItem('navName') : '',
+                idRol: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : '',
+                idDPTO: sessionStorage.getItem('idDepartamento') ? Number(sessionStorage.getItem('idDepartamento')) : '',
             },
             fullscreenLoading: false,
             og: window.location.origin + '/',
@@ -123,16 +125,17 @@ export default {
     },
     watch:{
         notify_count(newVal, oldVal){
-            if(newVal > 0 && newVal != oldVal){
+            if(newVal > oldVal){
                 this.$refs.box_notify.classList.remove('help-anim2');
-                this.$refs.box_notify.classList.add('help-anim2');
                 setTimeout(() => {
-                    this.$refs.box_notify.classList.remove('help-anim2');                    
-                }, 1500);
+                    this.$refs.box_notify.classList.add('help-anim2');
+                }, 50);
             } else{
                 this.$refs.box_notify.classList.remove('help-anim2');
             }
         }
+    },
+    created(){
     },
     mounted() {
         this.checkPermisos();
@@ -149,6 +152,7 @@ export default {
             this.id = data;
             this.getDatosPersonalesById();
         })
+        this.listenNotify();
     },
     methods: {
         checkPermisos() {
@@ -264,8 +268,17 @@ export default {
         perfil(){
             this.showDropDown = false;
             window.location.href = '/perfil/' + this.id
-        }
-        
+        },
+        // evento notificacion
+        listenNotify() {
+            console.log('escuchando...');
+            
+            Echo.private(`navNotifyy.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
+            .listen('NavNotify', (data) => {
+                console.log("Evento recibido:", data.message);
+                this.notify_count++;
+            });            
+        },
     }
 }
 </script>
