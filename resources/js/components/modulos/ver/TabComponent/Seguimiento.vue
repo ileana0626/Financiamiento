@@ -116,7 +116,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Sistema"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm "
-                                                @click.prevent="sendNavNotify()" 
+                                                @click.prevent="sendNavNotify(tr.dptoAsignar)" 
                                                 style="background-color: var(--iee-gold);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: #111 !important">
@@ -326,15 +326,15 @@ export default {
                 return 0;
             }
         },
-        async sendNavNotify() {
+        async sendNavNotify( dptoAsignar ) {
             // methods.WIP( this.$vs );
             const url = '/administracion/solicitud/sendNavNotify'
 
             try {
                 const response = await axios.post(url,{
-                    'textNotify': 'mamaguevo',
-                    'nRol': 1,
-                    'nDPTO': 0
+                    'textNotify': 'texto prueba',
+                    'nRol': 2,
+                    'nDPTO': dptoAsignar,
                 });
                 if(response.status === 200){
                     console.log('se envio');

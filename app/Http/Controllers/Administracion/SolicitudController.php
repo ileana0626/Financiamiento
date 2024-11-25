@@ -459,7 +459,7 @@ class SolicitudController extends Controller
         $nRol = $request->nRol;
         $nDPTO = $request->nDPTO;
 
-        $textNotify = ($textNotify == NULL) ? 'A chambear' : $textNotify;
+        $textNotify = ($textNotify == NULL) ? 'prueba' : $textNotify;
         $nRol = ($nRol == NULL) ? 0 : $nRol;
         $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
         // DB::transaction();

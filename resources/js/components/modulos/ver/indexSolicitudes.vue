@@ -27,7 +27,7 @@
                     <Tab title="Circular" :active="activeTab == 4" @click.native="setActiveTab(4)"/>
                     <Tab title="Copias C." :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="showAdminTabs"/>
                     <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
-                    <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)" v-if="showAdminTabs"/>
+                    <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
@@ -37,7 +37,7 @@
                         <Circulares v-else-if="activeTab == 4" :rol="rolUsuario" :user="idUsuario"/>
                         <Copias v-else-if="activeTab == 5"/>
                         <Seguimiento v-else-if="activeTab == 6"/>
-                        <Historial v-else-if="activeTab == 7"/>
+                        <Historial v-else-if="activeTab == 7" :rol="rolUsuario" :user="idUsuario"/>
                     </div>
                 </div>
             </div>
