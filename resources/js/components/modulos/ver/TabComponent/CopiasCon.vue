@@ -95,7 +95,7 @@
                                     </template>
                                 </vs-td>
                                 <vs-td>
-                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'ENTERADO'">
+                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'ENTERADO' || tr.estatus != 'CONCLUIDO'">
                                         <el-tooltip class="item h-100" effect="dark" content="Enterado"
                                             placement="top">
                                             <vs-button icon size="large" style="background-color: var(--iee-blue) !important;" 

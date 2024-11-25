@@ -20,8 +20,8 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'termino')">Termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaTermino')">Fecha termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaAsignada')">Área asignada</vs-th>
-                                <vs-th class="vsax-th">Archivo</vs-th>
-                                <vs-th class="vsax-th">Contestación</vs-th>
+                                <vs-th class="vsax-th">Archivo recibido</vs-th>
+                                <vs-th class="vsax-th">Archivo respuesta</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'estatus')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
@@ -62,7 +62,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>N/A</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Sin respuesta' : 'N/A' }}</span>
                                         </template>
                                     </div>
                                 </vs-td>

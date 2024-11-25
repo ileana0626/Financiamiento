@@ -15,7 +15,7 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaEmite')">Área emite</vs-th>
                                 <vs-th class="vsax-th">Asunto</vs-th>
-                                <vs-th class="vsax-th">Archivo</vs-th>
+                                <vs-th class="vsax-th">Archivo Recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'estatus')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
@@ -63,7 +63,7 @@
                                     <div class="d-flex justify-content-center" v-if="tr.estatus != 'ENTERADO'">
                                         <el-tooltip class="item h-100" effect="dark" content="Enterado"
                                             placement="top">
-                                            <vs-button icon danger size="large" 
+                                            <vs-button icon size="large" style="background-color: var(--iee-blue) !important;"
                                                 @click.prevent="accionEnteradoo(tr.idSolicitud)">
                                                 <span class="material-symbols-rounded"
                                                     style="color: white !important;">
