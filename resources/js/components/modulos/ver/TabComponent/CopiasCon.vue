@@ -14,9 +14,7 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'dptoCopia')" v-if="rolUsuario == 1 || rolUsuario == 5">Copia Para</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
+                                <vs-th class="vsax-th">Número</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
@@ -30,15 +28,18 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index"
+                                :data="tr">
                                 <vs-td>{{ tr.idCopia }}</vs-td>
                                 <vs-td v-if="rolUsuario == 1 || rolUsuario == 5">{{ tr.dptoCopia }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
                                 <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
-                                <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
-                                <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
-                                <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
+                                <vs-td><span v-if="tr.numFolio != null">{{ tr.numFolio ? tr.numFolio : '-' }}</span>
+                                    <span v-else-if="tr.numMemo != null" >{{ tr.numMemo ? tr.numMemo : '-' }}</span>
+                                    <span v-else-if="tr.numOficio != null" >{{ tr.numOficio ? tr.numOficio : '-' }}</span>
+                                </vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
+
                                 <vs-td>{{ tr.fechaRecibido }}</vs-td>
                                 <vs-td>{{ tr.horaRecibido }}</vs-td>
                                 <vs-td>{{ tr.termino ? tr.termino : '-' }}</vs-td>
@@ -123,21 +124,24 @@
                     </vs-table>
                 </div>
             </div>
-        </div>   
-        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo" @close="closeModalArchivo()">
+        </div>
+        <vs-dialog scroll overflow-hidden not-padding v-model="showModalArchivo" auto-width id="modalArchivo"
+            @close="closeModalArchivo()">
             <template #header>
-            <h3 class="pt-3">Archivo de solicitud</h3>
+                <h3 class="pt-3">Archivo de solicitud</h3>
             </template>
             <div class="con-content">
                 <template v-if="Object.keys(datosArchivo).length > 0">
                     <div v-if="datosArchivo.rutaDoc">
                         <div v-if="datosArchivo.rutaDoc.includes('pdf')" class="center">
-                            <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700" width="600">
+                            <object :data="og + datosArchivo.rutaDoc + stamp" :type="`application/pdf`" height="700"
+                                width="600">
                                 <div class="px-3">
                                     <p>No es posible mostrar el archivo de la solicitud.</p>
-                                    <a class="" :href="og + datosArchivo.rutaDoc + stamp" target="_blank">Abrir en una nueva pestaña</a>
+                                    <a class="" :href="og + datosArchivo.rutaDoc + stamp" target="_blank">Abrir en una
+                                        nueva pestaña</a>
                                 </div>
-                            </object> 
+                            </object>
                         </div>
                     </div>
                 </template>
@@ -156,7 +160,7 @@
                         </div> -->
                     </div>
                 </div>
-            </template>        
+            </template>
         </vs-dialog>
     </div>
 </template>
@@ -181,7 +185,7 @@ export default {
         }
     },
     async created() {
-        const load = methods.loading( this.$vs );
+        const load = methods.loading(this.$vs);
         await this.getCopiasCon();
         load.close();
     },
@@ -196,10 +200,12 @@ export default {
             const url = '/administracion/solicitud/getCopiasCon';
 
             try {
-                const response = await axios.get(url,{ params: {
-                    'nDPTO': this.dptoUsuario,
-                }})
-                if(response.status === 200){
+                const response = await axios.get(url, {
+                    params: {
+                        'nDPTO': this.dptoUsuario,
+                    }
+                })
+                if (response.status === 200) {
                     this.listSolicitudes = response.data;
                 }
             } catch (error) {
@@ -207,22 +213,22 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
             }
         },
-        toEdit( id ){
-            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
+        toEdit(id) {
+            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
         },
-        verArchivo(datos){
+        verArchivo(datos) {
             this.datosArchivo = datos;
             this.showModalArchivo = true;
         },
-        closeModalArchivo(){
+        closeModalArchivo() {
             this.datosArchivo = {};
             this.showModalArchivo = false;
-        },    
-        getLocalStamp(){
+        },
+        getLocalStamp() {
             return '?stamp=' + new Date().getTime();
-        },  
+        },
         //enterado 
-        accionEnterado( copia, solicitud ) {
+        accionEnterado(copia, solicitud) {
             Swal.fire({
                 icon: 'warning',
                 title: '¿Marcar de enterado?',
@@ -232,32 +238,32 @@ export default {
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
             }).then(async result => {
-                if(result.isConfirmed){
-                    const load = methods.loading( this.$vs );
+                if (result.isConfirmed) {
+                    const load = methods.loading(this.$vs);
                     let estatus = await this.setEnteradoCopia(copia, solicitud);
-                    if(estatus == 1){
+                    if (estatus == 1) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Se actualizó el valor correctamente',
                             showConfirmButton: true,
                             confirmButtonText: 'De acuerdo',
-                        }).then( async (result) => {
+                        }).then(async (result) => {
                             this.stamp = this.getLocalStamp();
                             await this.getCopiasCon();
-                        });                         
+                        });
                     }
                     load.close();
                 }
             })
-        },  
-        async setEnteradoCopia( copia, solicitud) {
+        },
+        async setEnteradoCopia(copia, solicitud) {
             const url = '/administracion/solicitud/setEnteradoCopia';
             try {
-                const response = await axios.post(url,{
+                const response = await axios.post(url, {
                     'idCopia': copia,
                     'idSolicitud': solicitud,
                 });
-                if( response.status === 200){
+                if (response.status === 200) {
                     return 1;
                 }
             } catch (error) {
@@ -265,7 +271,7 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
                 return 0;
             }
-        },   
+        },
     }
 }
 </script>

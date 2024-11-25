@@ -24,7 +24,7 @@
                     <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)"/>
                     <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
                     <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
-                    <Tab title="C. Conocimiento" :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs"/>
+                    <Tab title="Copias C." :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs"/>
                     <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)"/>
                     <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
