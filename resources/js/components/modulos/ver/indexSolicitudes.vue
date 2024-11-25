@@ -21,21 +21,21 @@
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
                 <div class="d-flex justify-content-start align-items-center tabContainer">
-                    <Tab title="Requisición" :active="activeTab == 1" @click.native="setActiveTab(1)"/>
-                    <Tab title="Memorándum" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
-                    <Tab title="Oficio" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
-                    <Tab title="Circular" :active="activeTab == 4" @click.native="setActiveTab(4)"/>
-                    <Tab title="Copias C." :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="showAdminTabs"/>
+                    <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)"/>
+                    <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
+                    <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
+                    <Tab title="C. Conocimiento" :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs"/>
+                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)"/>
                     <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
-                        <Requisiciones v-if="activeTab == 1" :rol="rolUsuario" :user="idUsuario"/>
-                        <Memos v-else-if="activeTab == 2" :rol="rolUsuario" :user="idUsuario"/>
-                        <Oficios v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
-                        <Circulares v-else-if="activeTab == 4" :rol="rolUsuario" :user="idUsuario"/>
-                        <Copias v-else-if="activeTab == 5"/>
+                        <Memos v-if="activeTab == 1" :rol="rolUsuario" :user="idUsuario"/>
+                        <Oficios v-else-if="activeTab == 2" :rol="rolUsuario" :user="idUsuario"/>
+                        <Circulares v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
+                        <Copias v-else-if="activeTab == 4"/>
+                        <Requisiciones v-else-if="activeTab == 5" :rol="rolUsuario" :user="idUsuario"/>
                         <Seguimiento v-else-if="activeTab == 6"/>
                         <Historial v-else-if="activeTab == 7" :rol="rolUsuario" :user="idUsuario"/>
                     </div>
