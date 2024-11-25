@@ -1,690 +1,809 @@
 <template>
-    <div class="col">
-        <div class="float-sm-right mr-5">
-            <ul class="breadcrumb">
-                <li>
-                    <router-link to="/"><span class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
-                </li>
-                <li class="breadActive">
-                    <span>
-                        Catalogos
-                    </span>
-                </li>
-            </ul>
+    <div class="">
+        <div class="content-header">
+            <div class="container-fluid mb-md-3 pl-4 pl-md-3 pt-0">
+                <div class="float-sm-right mr-5">
+                    <!-- Breadcrumb (navegacion) -->
+                    <ul class="breadcrumb">
+                        <li>
+                            <router-link to="/"><span
+                                class="material-symbols-rounded v-align-icon-bc">home</span></router-link>
+                        </li>
+                        <li class="breadActive">
+                            <span>Catálogos</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <br><br>
-        <div class="col-md-11 mx-auto">
-            <div class="row">
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Cargos</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(1, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort @click="catCargos = $vs.sortData($event, catCargos, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Puesto
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(catCargos, search), pageCargos, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(1, 2, tr.idCargo, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(7, tr.idCargo, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+        <div class="px-3 px-md-5 container-fluid">
+            <div class="mx-3 mx-md-0 mt-5 mt-md-4">
+                <!--Contenido principal aquí-->
+                <div class="row d-flex align-items-stretch">
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de cargos</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(1, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search" border placeholder="Escribe un cargo"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="catCargos = $vs.sortData($event, catCargos, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Puesto
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(catCargos, search), pageCargos, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(1, 2, tr.idCargo, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(7, tr.idCargo, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(7, tr.idCargo, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageCargos" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(catCargos, search), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(7, tr.idCargo, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageCargos" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(catCargos, search), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Personal</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(2, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search2" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort @click="catRemitente = $vs.sortData($event, catRemitente, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Personal
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(catRemitente, search2), pageRemitente, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(2, 2, tr.idRemitente, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(2, tr.idRemitente, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Personal IEE</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(2, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search2" border placeholder="Escribe un personal"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="catRemitente = $vs.sortData($event, catRemitente, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Personal
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(catRemitente, search2), pageRemitente, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(2, 2, tr.idRemitente, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(2, tr.idRemitente, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(2, tr.idRemitente, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageRemitente" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(catRemitente, search2), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(2, tr.idRemitente, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageRemitente" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(catRemitente, search2), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Terminos</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(3, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search3" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort @click="catTermino = $vs.sortData($event, catTermino, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Tipos
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(catTermino, search3), pageTermino, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(3, 2, tr.idTermino, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(3, tr.idTermino, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Terminos</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(3, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search3" border placeholder="Escribe un termino"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="catTermino = $vs.sortData($event, catTermino, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Tipos
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(catTermino, search3), pageTermino, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(3, 2, tr.idTermino, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(3, tr.idTermino, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(3, tr.idTermino, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageTermino" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(catTermino, search3), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(3, tr.idTermino, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageTermino" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(catTermino, search3), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Seguimiento</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(5, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search4" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort
-                                            @click="cat_seguimiento = $vs.sortData($event, cat_seguimiento, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Tipo
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_seguimiento, search4), pageSeguimiento, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(5, 2, tr.idSeguimiento, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(5, tr.idSeguimiento, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Seguimiento</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(5, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search4" border placeholder="Escribe un seguimiento"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort
+                                                    @click="cat_seguimiento = $vs.sortData($event, cat_seguimiento, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Tipo
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_seguimiento, search4), pageSeguimiento, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(5, 2, tr.idSeguimiento, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(5, tr.idSeguimiento, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(5, tr.idSeguimiento, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageSeguimiento" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(cat_seguimiento, search4), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(5, tr.idSeguimiento, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageSeguimiento" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(cat_seguimiento, search4), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Áreas</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(6, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 90%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search5" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort
-                                            @click="cat_departamentos = $vs.sortData($event, cat_departamentos, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Área
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_departamentos, search5), pageDepartamento, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(6, 2, tr.id, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(6, tr.id, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Áreas</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(6, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search5" border placeholder="Escribe un área"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort
+                                                    @click="cat_departamentos = $vs.sortData($event, cat_departamentos, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Área
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_departamentos, search5), pageDepartamento, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(6, 2, tr.id, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(6, tr.id, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(6, tr.id, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageDepartamento" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(cat_departamentos, search5), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(6, tr.id, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageDepartamento" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(cat_departamentos, search5), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Estatus</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(8, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 90%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search6" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort @click="cat_estutus = $vs.sortData($event, cat_estutus, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Estatus
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_estutus, search6), pageEstatus, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(8, 2, tr.id, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(8, tr.id, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Estatus</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(8, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search6" border placeholder="Escribe un estatus"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="cat_estutus = $vs.sortData($event, cat_estutus, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Estatus
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_estutus, search6), pageEstatus, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(8, 2, tr.id, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(8, tr.id, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(8, tr.id, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageEstatus" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(cat_estutus, search6), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(8, tr.id, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageEstatus" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(cat_estutus, search6), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row col-md-6 col-6 mx-auto card-info px-0 pr-sm-5 pb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center container-fluid"
-                        style="height: 8vh;">
-                        <h3 class="card-title font-weight-bold">Catalogo de Tipo</h3>
-                        <div class="col card-tools d-flex justify-content-end">
-                            <vs-button @click.prevent="Abrirmodal(7, 1, 0, '')"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
-                        </div>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white); height: 79%">
-                        <div class="center">
-                            <vs-table>
-                                <template #header>
-                                    <vs-input v-model="search7" border placeholder="Escribe un Nombre"
-                                        class="inputSearchPreguntas" />
-                                </template>
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="width:100px; background-color: var(--iee-white);">
-                                            #
-                                        </vs-th>
-                                        <vs-th sort @click="cat_tipo = $vs.sortData($event, cat_tipo, 'nombre')"
-                                            style=" background-color: var(--iee-white);">
-                                            Tipo
-                                        </vs-th>
-                                        <vs-th style=" background-color: var(--iee-white);">
-                                            Accion
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <vs-tr :key="i"
-                                        v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_tipo, search7), pageTipo, max)"
-                                        :data="tr" style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ i + 1 }}
-                                        </vs-td>
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.nombre }}
-                                        </vs-td>
-                                        <vs-td class="d-flex align-items-center justify-content-center">
-                                            <el-tooltip class="item h-100" effect="dark" content="Editar"
-                                                placement="top">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="Abrirmodal(7, 2, tr.id, tr.nombre)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        edit
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                            <el-tooltip class="item h-100" effect="dark" content="Desactivar"
-                                                placement="top" v-if="tr.status == 'A'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(7, tr.id, 1)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Tipo</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(7, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search7" border placeholder="Escribe el tipo"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="cat_tipo = $vs.sortData($event, cat_tipo, 'nombre')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Tipo
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_tipo, search7), pageTipo, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.nombre }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(7, 2, tr.id, tr.nombre)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.status == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(7, tr.id, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
 
-                                            <el-tooltip class="item h-100" effect="dark" content="Activar"
-                                                placement="top" v-else-if="tr.status == 'I'">
-                                                <vs-button class="btn btn-flat btn-sm "
-                                                    style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                                    @click.prevent="desactivar(7, tr.id, 2)">
-                                                    <span class="material-symbols-rounded"
-                                                        style="color: var(--text-color);">
-                                                        visibility_off
-                                                    </span>
-                                                </vs-button>
-                                            </el-tooltip>
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                                <template #notFound style="background-color: var(--iee-white) !important;">
-                                    Sin resultados...
-                                </template>
-                                <template #footer style="background-color: var(--iee-white) !important;">
-                                    <vs-pagination v-model="pageTipo" color="dark"
-                                        :length="$vs.getLength($vs.getSearch(cat_tipo, search7), max)"
-                                        style="background-color: var(--iee-white) !important;" />
-                                </template>
-                            </vs-table>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.status == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(7, tr.id, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageTipo" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(cat_tipo, search7), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 px-0 px-md-4 mb-4">
+                        <div class="d-flex flex-column card-info" style="height: 100%;">
+                            <div class="card-header d-flex align-items-center">
+                                <h3 class="card-title font-weight-bold">Catálogo de Saludos</h3>
+                                <div class="col card-tools d-flex justify-content-end">
+                                    <vs-button @click.prevent="Abrirmodal(9, 1, 0, '')"
+                                        style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
+                                        <b>
+                                            <span class="material-symbols-rounded v-align-icon-bc"> add </span>
+                                            Agregar
+                                        </b>
+                                    </vs-button>
+                                </div>                                
+                            </div>
+                            <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+                                <div class="d-flex justify-content-center" style="background-color: var(--iee-white);">
+                                    <vs-table>
+                                        <template #header>
+                                            <vs-input v-model="search8" border placeholder="Escribe el saludo"
+                                                class="inputSearchPreguntas" />
+                                        </template>
+                                        <template #thead>
+                                            <vs-tr>
+                                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                                    #
+                                                </vs-th>
+                                                <vs-th sort @click="cat_tipo = $vs.sortData($event, cat_saludos, 'mensaje')"
+                                                    style=" background-color: var(--iee-white);">
+                                                    Mensaje
+                                                </vs-th>
+                                                <vs-th style=" background-color: var(--iee-white);">
+                                                    Accion
+                                                </vs-th>
+                                            </vs-tr>
+                                        </template>
+                                        <template #tbody>
+                                            <vs-tr :key="i"
+                                                v-for="(tr, i) in $vs.getPage($vs.getSearch(cat_saludos, search8), pageTipo, max)"
+                                                :data="tr" style="max-height: 100px !important">
+                                                <vs-td class="tableRowHeight">
+                                                    {{ i + 1 }}
+                                                </vs-td>
+                                                <vs-td class="tableRowHeight">
+                                                    {{ tr.mensaje }}
+                                                </vs-td>
+                                                <vs-td class="d-flex align-items-center justify-content-center">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                        placement="top">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="Abrirmodal(9, 2, tr.id, tr.mensaje)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                edit
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                    <el-tooltip class="item h-100" effect="dark" content="Desactivar"
+                                                        placement="top" v-if="tr.estatus == 'A'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(9, tr.id, 1)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+
+                                                    <el-tooltip class="item h-100" effect="dark" content="Activar"
+                                                        placement="top" v-else-if="tr.estatus == 'I'">
+                                                        <vs-button class="btn btn-flat btn-sm "
+                                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
+                                                            @click.prevent="desactivar(9, tr.id, 2)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: var(--text-color);">
+                                                                visibility_off
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </vs-td>
+                                            </vs-tr>
+                                        </template>
+                                        <template #notFound>
+                                            <div style="background-color: var(--iee-white) !important;">
+                                                Sin resultados...
+                                            </div>
+                                        </template>
+                                        <template #footer>
+                                            <vs-pagination v-model="pageTipo" color="dark"
+                                                :length="$vs.getLength($vs.getSearch(cat_saludos, search8), max)"
+                                                style="background-color: var(--iee-white) !important;" />
+                                        </template>
+                                    </vs-table>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -702,8 +821,8 @@
                 </div>
             </template>
             <div class="con-form">
-                <label class="col-form-label">Nombre</label>
-                <vs-input type="text" placeholder="Nombre" v-model="registro" autocomplete="off" id="asunto5">
+                <label class="col-form-label">{{nombreTabla}}</label>
+                <vs-input type="text" :placeholder="nombreTabla" v-model="registro" autocomplete="off" id="asunto5">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             edit_note
@@ -742,8 +861,8 @@
                 </div>
             </template>
             <div class="con-form">
-                <label class="col-form-label">Nombre</label>
-                <vs-input type="text" placeholder="Nombre" v-model="nombreEditado" autocomplete="off" id="asunto6">
+                <label class="col-form-label">{{ nombreTabla }}</label>
+                <vs-input type="text" :placeholder="nombreTabla" v-model="nombreEditado" autocomplete="off" id="asunto6">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             edit_note
@@ -770,8 +889,6 @@
 </template>
 
 <script>
-import { result } from 'lodash';
-
 let methods = require('../../../methods')
 export default {
     data() {
@@ -792,6 +909,7 @@ export default {
             search5: '',
             search6: '',
             search7: '',
+            search8: '',
             catRemitente: [],
             catCargos: [],
             catTermino: [],
@@ -799,6 +917,7 @@ export default {
             cat_departamentos: [],
             cat_tipo: [],
             cat_estutus: [],
+            cat_saludos: [],
             active: false,
             active2: false,
             table: 0,
@@ -821,6 +940,7 @@ export default {
         this.obtenerDatos(6)
         this.obtenerDatos(7)
         this.obtenerDatos(8)
+        this.obtenerDatos(9)
     },
     methods: {
         obtenerDatos(tipo) {
@@ -853,12 +973,15 @@ export default {
                     case 8:
                         this.cat_estutus = response.data
                         break;
+                    case 9:
+                        this.cat_saludos = response.data
+                        break;
                     default:
                         break;
                 }
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -905,13 +1028,16 @@ export default {
                     this.table = 8
                     this.nombreTabla = 'Estatus'
                     break;
+                case 9:
+                    this.table = 9
+                    this.nombreTabla = 'Saludos'
+                    break;
                 default:
                     break;
             }
         },
         async registrar() {
             await this.consultarRegistros(this.table, this.registro)
-            console.log(this.datosDuplicados >= 1);
             if (this.datosDuplicados >= 1) {
                 Swal.fire({
                     icon: 'info',
@@ -920,8 +1046,9 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             } else {
-                this.validar()
-                if (this.error = 1) {
+                this.validar(1)
+
+                if (this.error == 1) {
                     return
                 } else {
                     let url = '/administracion/usuario/registrar'
@@ -929,6 +1056,7 @@ export default {
                         'tipo': this.table,
                         'nombre': this.registro
                     }).then(response => {
+
                         this.obtenerDatos(this.table)
                         this.active = !this.active
                         this.registro = ''
@@ -940,7 +1068,7 @@ export default {
                         });
                     }).catch((error) => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
                     })
                 }
             }
@@ -955,8 +1083,9 @@ export default {
                     confirmButtonText: 'De acuerdo'
                 });
             } else {
-                this.validar()
-                if (this.error = 1) {
+
+                this.validar(2)
+                if (this.error == 1) {
                     return
                 } else {
                     let url = '/administracion/usuario/editar'
@@ -977,27 +1106,30 @@ export default {
                         });
                     }).catch((error) => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
                     })
                 }
             }
         },
-        validar() {
+        validar(tipo) {
             this.error = 0;
             this.errorGuardar = ''
             this.errorEditar = ''
-            if (this.registro.length == 0) {
-                this.registro.trim()
-                if (/^[0-9]{0,10}$/.test(this.registro)) {
-                    this.error = 1;
-                    this.errorGuardar = 'Caracteres no validos'
+            if (tipo == 1) {
+                if (this.registro.length == 0) {
+                    this.registro.trim()
+                    if (/^[0-9]{0,10}$/.test(this.registro)) {
+                        this.error = 1;
+                        this.errorGuardar = 'Caracteres no validos'
+                    }
                 }
-            }
-            if (this.nombreEditado.length == 0) {
-                this.nombreEditado.trim()
-                if (/^[0-9]{0,10}$/.test(this.nombreEditado)) {
-                    this.error = 1;
-                    this.errorEditar = 'Caracteres no validos'
+            } else {
+                if (this.nombreEditado.length == 0) {
+                    this.nombreEditado.trim()
+                    if (/^[0-9]{0,10}$/.test(this.nombreEditado)) {
+                        this.error = 1;
+                        this.errorEditar = 'Caracteres no validos'
+                    }
                 }
             }
         },
@@ -1013,7 +1145,7 @@ export default {
                 this.datosDuplicados = response.data[0].total
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
 
             });
         },
@@ -1033,7 +1165,7 @@ export default {
                     axios.post(url, {
                         'tipo': tipo,
                         'id': id,
-                        'estatus': 'I'
+                        'estatus': (op == 1) ? 'I' : 'A'
                     }).then(response => {
                         this.obtenerDatos(tipo)
                         Swal.fire({
@@ -1044,7 +1176,7 @@ export default {
                         });
                     }).catch(error => {
                         let nombreMetodo = url.split('/');
-                        methods.catchHandler(error, nombreMetodo[3]);
+                        methods.catchHandler(error, nombreMetodo[3], this.$router);
 
                     });
                 }

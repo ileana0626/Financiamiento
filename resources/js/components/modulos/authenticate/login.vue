@@ -63,7 +63,7 @@
                 </span>
               </template>
             </vs-input>
-            <recuperarpas/>
+            <!-- <recuperarpas/> -->
           </div>
         </div>
         <br />
@@ -117,7 +117,7 @@
 
 <script>
 import { VueRecaptcha } from "vue-recaptcha";
-import recuperarpas from "./recuperarpas.vue";
+// import recuperarpas from "./recuperarpas.vue";
 
 let methods = require('../../../methods')
 
@@ -144,7 +144,7 @@ export default {
       hasVisiblePassword: false,
     };
   },
-  components: { VueRecaptcha,recuperarpas },
+  components: { VueRecaptcha },
   created() {
     const inputs = document.querySelectorAll(".input");
     function addcl() {
@@ -346,13 +346,29 @@ export default {
       }
       return this.error;
     },
-    loginSuccess(loading) {
+    async loginSuccess(loading) {
       this.setTotalIntentos(0);
+      await this.getSaludoInicio();
       // loading.close();
       setTimeout(() => {
         this.$router.push({ name: "dashboard.index" });
         location.reload();
       }, 1000);
+    },
+    async getSaludoInicio(){
+      const url = "/administracion/usuario/getSaludoInicio";
+
+      try {
+        const response = await axios.get(url);
+        if(response.status === 200){
+          sessionStorage.setItem('saludo', response.data[0].mensaje);
+        } else {
+          sessionStorage.setItem('saludo', '¡Ten un buen día para trabajar!');
+        }
+      } catch (error) {
+        sessionStorage.setItem('saludo', '¡Ten un buen día para trabajar!');
+      }
+      
     },
     async getListarRolPermisosByUsuario(authUser, loading) {
       let ruta = "/administracion/usuario/getListarRolPermisosByUsuario";
@@ -396,6 +412,7 @@ export default {
         .then((response) => {
           idRol = response.data[0].idRol;
           sessionStorage.setItem("rolUsuario", JSON.stringify(idRol));
+          sessionStorage.setItem("idDepartamento", JSON.stringify(response.data[0].idDepartamento));
         })
         .catch((error) => {
           let nombreMetodo = url.split('/');

@@ -48,15 +48,21 @@
                                     Remitente
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                    Archivo
+                                </vs-th>
+                                <vs-th style="width: 30px; background-color: var(--iee-white);">
                                     Asunto
                                 </vs-th>
-                                <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                <vs-th style="width: 30px; background-color: var(--iee-white);"
+                                    v-if="listaPermisos.includes('solicitudes.terminos')">
                                     Termino
                                 </vs-th>
-                                <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                <vs-th style="width: 30px; background-color: var(--iee-white);"
+                                    v-if="listaPermisos.includes('solicitudes.terminos')">
                                     Fecha de Termino
                                 </vs-th>
-                                <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                <vs-th style="width: 30px; background-color: var(--iee-white);"
+                                    v-if="listaPermisos.includes('solicitudes.terminos')">
                                     Dias de Termino
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
@@ -66,10 +72,13 @@
                                     Seguimiento
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
-                                    Área de Seguimiento
+                                    Quien Contesta
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
                                     Tipo
+                                </vs-th>
+                                <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                    Contestación
                                 </vs-th>
                                 <vs-th style="width: 30px; background-color: var(--iee-white);">
                                     Estatus
@@ -80,9 +89,8 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr :key="i"
-                                v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistSolicitudes, search), page, max)"
-                                :data="tr" style="max-height: 100px !important">
+                            <vs-tr v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistSolicitudes, search), page, max)"
+                                :key="i" :class="colorStatus(tr.fechaTermino, tr.diasTermino)">
                                 <vs-td class="tableRowHeight">
                                     {{ tr.numeroConsecutivo }}
                                 </vs-td>
@@ -104,9 +112,20 @@
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
-                                    {{ tr.asunto }}
+                                    <center>
+                                        <vs-button id="logoutBtn" icon danger size="large" v-if="tr.archivo != null"
+                                            @click.prevent="abrirmodal(tr.archivo)">
+                                            <i class="fas fa-file-pdf fa-3x"></i>
+                                        </vs-button>
+                                        <template v-else>
+                                            N/A
+                                        </template>
+                                    </center>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
+                                    {{ tr.asunto }}
+                                </vs-td>
+                                <vs-td class="tableRowHeight" v-if="listaPermisos.includes('solicitudes.terminos')">
                                     <template v-if="tr.termino == 1">
                                         SI
                                     </template>
@@ -114,20 +133,20 @@
                                         No
                                     </template>
                                 </vs-td>
-                                <vs-td class="tableRowHeight">
+                                <vs-td class="tableRowHeight" v-if="listaPermisos.includes('solicitudes.terminos')">
                                     <template v-if="tr.fechaTermino != null">
                                         {{ tr.fechaTermino }}
                                     </template>
                                     <template v-else>
-                                        Sin fecha de termino
+                                        N/A
                                     </template>
                                 </vs-td>
-                                <vs-td class="tableRowHeight">
+                                <vs-td class="tableRowHeight" v-if="listaPermisos.includes('solicitudes.terminos')">
                                     <template v-if="tr.diasTermino != null">
                                         {{ tr.diasTermino }}
                                     </template>
                                     <template v-else>
-                                        Sin días de termino
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -143,7 +162,7 @@
                                         {{ tr.seguimiento }}
                                     </template>
                                     <template v-else>
-                                        Sin seguimiento
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -151,7 +170,7 @@
                                         {{ tr.areaAsignada }}
                                     </template>
                                     <template v-else>
-                                        Sin área asignada
+                                        N/A
                                     </template>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
@@ -159,8 +178,25 @@
                                         {{ tr.tipo }}
                                     </template>
                                     <template v-else>
-                                        SIN TIPO
+                                        N/A
                                     </template>
+                                </vs-td>
+                                <vs-td class="tableRowHeight">
+                                    <center>
+                                        <!-- <vs-button v-if="tr.rutaContestacion != null" id="logoutBtn" icon
+                                            color="rgb(58,197,55)" size="large"
+                                            @click.prevent="abrirmodal(tr.rutaContestacion)">
+                                            <i class="fas fa-file-pdf fa-3x"></i>
+                                        </vs-button> -->
+                                        <vs-button v-if="tr.rutaContestacion != null" id="logoutBtn" icon
+                                            color="rgb(58,197,55)" size="large"
+                                            @click.prevent="colorStatus(tr.fechaTermino)">
+                                            <i class="fas fa-file-pdf fa-3x"></i>
+                                        </vs-button>
+                                        <template v-else>
+                                            N/A
+                                        </template>
+                                    </center>
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
                                     <template v-if="tr.estatus == 'TRÁMITE'">
@@ -169,55 +205,136 @@
                                     </template>
                                     <template v-else-if="tr.estatus == 'PENDIENTE'">
                                         <span class="badge rounded-pill"
-                                            style="background-color: var(--iee-gold) !important; color: var(--iee-white)!important">TRÁMITE</span>
+                                            style="background-color: var(--iee-orange) !important; color: var(--iee-white)!important">PENDIENTE</span>
                                     </template>
                                     <template v-else-if="tr.estatus == 'AVANZADO'">
                                         <span class="badge rounded-pill"
-                                            style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">TRÁMITE</span>
+                                            style="background-color: var(--iee-red) !important; color: var(--iee-white)!important">AVANZADO</span>
                                     </template>
                                     <template v-else-if="tr.estatus == 'CONCLUIDO'">
                                         <span class="badge rounded-pill"
-                                            style="background-color: var(--iee-green) !important; color: var(--iee-white)!important">TRÁMITE</span>
+                                            style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">CONCLUIDO</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'OTRO'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">OTRO</span>
                                     </template>
                                 </vs-td>
                                 <vs-td class="d-flex align-items-center justify-content-center">
-                                    <el-tooltip class="item h-100" effect="dark" content="Ver documento" placement="top"
-                                        v-if="tr.archivo != null">
-                                        <vs-button class="btn btn-flat btn-sm " @click="abrirmodal(tr.archivo)"
-                                            style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                            <span class="material-symbols-rounded" style="color: var(--text-color);">
-                                                visibility
-                                            </span>
-                                        </vs-button>
-                                    </el-tooltip>
-                                    <el-tooltip class="item h-100" effect="dark" content="Cargar contestación"
-                                        placement="top" v-if="tr.rutaContestacion == null">
-                                        <vs-button class="btn btn-flat btn-sm "
-                                            style="background-color: var(--iee-white);border-color: var(--iee-white);"
-                                            @click.prevent="modalSubirArchivo(tr.id)">
-                                            <span class="material-symbols-rounded" style="color: var(--text-color);">
-                                                upload_file
-                                            </span>
-                                        </vs-button>
-                                    </el-tooltip>
-                                    <el-tooltip class="item h-100" effect="dark" content="Ver documento" placement="top"
-                                        v-else>
-                                        <vs-button class="btn btn-flat btn-sm " @click="abrirmodal(tr.rutaContestacion)"
-                                            style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                            <span class="material-symbols-rounded" style="color: var(--text-color);">
-                                                visibility
-                                            </span>
-                                        </vs-button>
-                                    </el-tooltip>
-                                    <el-tooltip class="item h-100" effect="dark" content="Activa" placement="top">
-                                        <vs-button class="btn btn-flat btn-sm "
-                                            @click.prevent="setCambiarEstadoPublicacion(1, tr.id)"
-                                            style="background-color: var(--iee-white);border-color: var(--iee-white);">
-                                            <span class="material-symbols-rounded" style="color: var(--text-color);">
-                                                thumb_up
-                                            </span>
-                                        </vs-button>
-                                    </el-tooltip>
+                                    <template v-if="idDepartamento == 0">
+                                        <template v-if="tr.idTipo == 3">
+                                            <template v-for="( de, i ) in tr.departamentosNoEnterados">
+                                                <template
+                                                    v-if="tr.NoEnterados == 0 && de == 0 && tr.estatus != 'CONCLUIDO'">
+                                                    <template v-if="de == idDepartamento">
+                                                        <el-tooltip class="item h-100" effect="dark"
+                                                            content="Todos Enterados" placement="top">
+                                                            <vs-button id="logoutBtn" icon color="rgb(58,197,55)"
+                                                                size="large"
+                                                                @click.prevent="todosEnteradoConcluido(tr.id)">
+                                                                <span class="material-symbols-rounded"
+                                                                    style="color: white !important;">
+                                                                    thumb_up
+                                                                </span>
+                                                            </vs-button>
+                                                        </el-tooltip>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <template v-if="listaPermisos.includes('solicitudes.archivo')">
+                                                <el-tooltip class="item h-100" effect="dark"
+                                                    content="Cargar contestación" placement="top"
+                                                    v-if="tr.rutaContestacion == null">
+                                                    <vs-button id="logoutBtn" icon danger size="large"
+                                                        @click.prevent="modalSubirArchivo(tr.id)">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: white !important;">
+                                                            upload_file
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template v-if="listaPermisos.includes('editar.solicitud')">
+                                                <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            edit
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template>
+                                                <el-tooltip class="item h-100" effect="dark" content="Recordatorio"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm "
+                                                        @click.prevent="modalRecordatorio = !modalRecordatorio"
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            schedule
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                        </template>
+                                    </template>
+                                    <template v-else>
+                                        <template v-if="tr.idTipo == 3">
+                                            <template v-for="( de, i ) in tr.departamentosNoEnterados">
+                                                <template v-if="de == idDepartamento">
+                                                    <el-tooltip class="item h-100" effect="dark" content="Enterado"
+                                                        placement="top">
+                                                        <vs-button id="logoutBtn" icon danger size="large"
+                                                            @click.prevent="CopiaEnterado(tr.id)">
+                                                            <span class="material-symbols-rounded"
+                                                                style="color: white !important;">
+                                                                thumb_up
+                                                            </span>
+                                                        </vs-button>
+                                                    </el-tooltip>
+                                                </template>
+                                            </template>
+                                            <template v-for="( dee, i ) in tr.departamentosEnterados">
+                                                <template v-if="dee == idDepartamento">
+                                                    <br><br>
+                                                    <span class="badge rounded-pill"
+                                                        style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">ENTERADO</span>
+                                                </template>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <template v-if="listaPermisos.includes('solicitudes.archivo')">
+                                                <el-tooltip class="item h-100" effect="dark"
+                                                    content="Cargar contestación" placement="top"
+                                                    v-if="tr.rutaContestacion == null">
+                                                    <vs-button id="logoutBtn" icon danger size="large"
+                                                        @click.prevent="modalSubirArchivo(tr.id)">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: white !important;">
+                                                            upload_file
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                            <template v-if="listaPermisos.includes('editar.solicitud')">
+                                                <el-tooltip class="item h-100" effect="dark" content="Editar"
+                                                    placement="top">
+                                                    <vs-button class="btn btn-flat btn-sm " @click.prevent=""
+                                                        style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                        <span class="material-symbols-rounded"
+                                                            style="color: var(--text-color);">
+                                                            edit
+                                                        </span>
+                                                    </vs-button>
+                                                </el-tooltip>
+                                            </template>
+                                        </template>
+                                    </template>
                                 </vs-td>
                             </vs-tr>
                         </template>
@@ -231,12 +348,14 @@
                         </template>
                     </vs-table>
                 </div>
-                <vs-dialog overflow-hidden full-screen v-model="active">
-                    <object :data="archivoRuta" type="application/pdf" width="100%" height="900rem">
-                        <iframe :src="archivoRuta" width="100%" height="100rem" style="border: none;">
-                            <a :href="archivoRuta">Descarga aqui...</a>
-                        </iframe>
-                    </object>
+                <vs-dialog not-padding v-model="active">
+                    <center>
+                        <object :data="archivoRuta" type="application/pdf" width="900rem" height="900rem">
+                            <iframe :src="archivoRuta" width="900rem" height="900rem" style="border: none;">
+                                <a :href="archivoRuta">Descarga aqui...</a>
+                            </iframe>
+                        </object>
+                    </center>
                 </vs-dialog>
                 <vs-dialog blur v-model="active2">
                     <template #header>
@@ -272,7 +391,6 @@
                             </div>
                         </div>
                     </div>
-
                     <template #footer>
                         <div class="footer-dialog">
                             <vs-button style="width: 19vw; " color="#a5904a" block
@@ -281,6 +399,23 @@
                             </vs-button>
                         </div>
                     </template>
+                </vs-dialog>
+                <vs-dialog v-model="modalRecordatorio">
+                    <template #header>
+                        <h4 class="not-margin">
+                            Recordatorio
+                        </h4>
+                    </template>
+                    <div class="con-form">
+                        <label class="col-form-label">Hora</label>
+                        <el-time-picker v-model="hora" arrow-control placeholder="Seleccione una hora">
+                        </el-time-picker>
+                        <br>
+                        <label class="col-form-label">Fecha</label>
+                        <el-date-picker type="date" placeholder="Fecha de Termino" :picker-options="pickerOptions2"
+                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fecha">
+                        </el-date-picker>
+                    </div>
                 </vs-dialog>
             </div>
         </div>
@@ -292,6 +427,7 @@ let methods = require('../../../methods')
 export default {
     data() {
         return {
+            listaPermisos: [],
             page: 1,
             max: 10,
             search: '',
@@ -306,9 +442,22 @@ export default {
                 F1: "",
             },
             errorF1: 0,
+            idDepartamento: '',
+            modalRecordatorio: false,
+            hora: new Date(2016, 9, 10, 18, 40),
+            fecha: '',
+            pickerOptions2: {
+                disabledDate(time) {
+                    var date = new Date();
+                    date.setDate(date.getDate() - 1);
+                    return time.getTime() < date;
+                },
+            },
         }
     },
     created() {
+        this.idDepartamento = JSON.parse(sessionStorage.getItem('idDepartamento'))
+        this.listaPermisos = JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario'))
         const loading = this.$vs.loading({
             type: 'square',
             color: '#00a19a',
@@ -317,6 +466,52 @@ export default {
         });
 
         this.checkCrear(loading);
+    },
+    mounted() {
+
+    },
+    computed: {
+        colorStatus() {
+            return (fechaTermino, diasTermino) => {
+                let color = ''
+                if (fechaTermino != null) {
+                    const moment = require('moment');
+                    let currentDate = moment();
+                    let formattedDate = currentDate.format('DD/MM/YYYY');
+                    let validDate = moment(formattedDate, 'DD/MM/YYYY');
+                    let validDate2 = moment(fechaTermino, 'DD/MM/YYYY');
+                    let date1 = new Date(validDate)
+                    let date2 = new Date(validDate2)
+                    let differenceInMs = Math.abs(date1 - date2);
+                    let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+
+                    if (diasTermino != null) {
+                        if (differenceInDays <= diasTermino) {
+                            switch (differenceInDays) {
+                                case 0:
+                                    color = 'css-conundia-'
+                                    break;
+                                case 1:
+                                    color = 'css-conundia'
+                                    break;
+                                case 2:
+                                    color = 'css-condosdias'
+                                    break;
+                                case 3:
+                                    color = 'css-condosdias'
+                                    break;
+                                default:
+
+                            }
+                        }else if(differenceInDays >= diasTermino){
+                            color = 'css-conundia-'
+                        }
+                    }
+                    return color
+                }
+            }
+
+        },
     },
     methods: {
         checkCrear(loading) {
@@ -328,7 +523,7 @@ export default {
 
             axios.get(url, {
                 params: {
-                    'tipo': 1
+                    'tipo': this.idDepartamento
                 }
             }).then((response) => {
                 this.listSolicitudes = response.data;
@@ -362,12 +557,19 @@ export default {
                     'seguimiento': x.seguimiento,
                     'areaAsignada': x.areaAsignada,
                     'tipo': x.tipo,
+                    'idTipo': x.idtipo,
                     'fechaAsignacion': x.fechaAsignacion,
                     'estatus': x.estatus,
                     'archivo': x.RUTA,
-                    'rutaContestacion' : x.rutaContestacion
+                    'rutaContestacion': x.rutaContestacion,
+                    'departamentosNoEnterados': x.departamentosNoEnterados.split(','),
+                    'departamentosEnterados': x.departamentosEnterados.split(','),
+                    'Enterados': JSON.parse(x.Enterados),
+                    'NoEnterados': JSON.parse(x.NoEnterados)
                 })
             })
+
+
         },
         handleF1(file, fileList) {
             this.documentos.F1 = this.handleChange(file, fileList);
@@ -459,8 +661,99 @@ export default {
 
             return idArchivo;
         },
+        CopiaEnterado(id) {
+            let url = '/administracion/usuario/CopiaEnterado'
+            const loading = this.$vs.loading({
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
+
+            axios.post(url, {
+                'solicitud': id,
+                'departamento': this.idDepartamento
+            }).then((response) => {
+                loading.close();
+                this.getSolicitudes(loading);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Se a registrado el enterado correctamente',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch((error) => {
+                loading.close();
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        },
+        todosEnteradoConcluido(id) {
+            let url = '/administracion/usuario/todosEnteradoConcluido'
+            const loading = this.$vs.loading({
+                type: 'square',
+                color: '#00a19a',
+                background: '#FFFFFF',
+                text: 'Cargando...'
+            });
+
+            axios.post(url, {
+                'estatus': 4,
+                'solicitud': id
+            }).then((response) => {
+                loading.close();
+                this.getSolicitudes(loading);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Se a concluido correctamnete ',
+                    showConfirmButton: true,
+                    confirmButtonText: 'De acuerdo'
+                });
+            }).catch((error) => {
+                loading.close();
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3]);
+            });
+        },
+
     }
 }
 </script>
 
-<style></style>
+<style scoped>
+.vs-table__tr,
+tr.vs-table__tr>>>td {
+    border-radius: 0% !important;
+}
+
+.css-conundia- {
+    background-color: #920000 !important;
+}
+.css-conundia-:hover td {
+    background-color: #d12323 !important;
+}
+
+.css-conundia {
+    background-color: #ff0000 !important;
+}
+
+.css-conundia:hover td {
+    background-color: #d12323 !important;
+}
+
+.css-condosdias {
+    background-color: #ffa500 !important;
+}
+
+.css-contresdias {
+    background-color: #ffff00 !important;
+}
+
+.css-concuatrodias {
+    background-color: #73de5d !important;
+}
+
+.css-concincodias {
+    background-color: #008000 !important;
+}
+</style>

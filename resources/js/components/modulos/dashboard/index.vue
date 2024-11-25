@@ -1,21 +1,59 @@
 <template>
     <div class="content-header">
-        <div id="contentRegistro" class="content container-fluid h-auto mb-5 mb-sm-0">
-            <div class="col-sm-11 mx-auto">
-                <div class="card cardintro d-flex flex-row">
-                    <div class="tituloCard flex-grow-1 p-3 align-self-center" style="color: var(--iee-white);">
-                        <h5 class="font-weight-bold tituloin">
-                            ¡Hola, {{ cfullname }}!
-                        </h5>
-                        <h6 class="subtituloin font-weight-bold subtituloin">
-                            ¡Ten un buen día para trabajar!
-                        </h6>
+        <div id="contentRegistro" class="content container-fluid h-auto mb-5 mb-sm-0">            
+            <div class="row">
+                <div class="col-12">
+                    <div class="container-fluid px-3 px-md-5">
+                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'" :title="infoFuente" @click.prevent="fuente++">
+                            <div class="top-bg" style="background-image: url('/img/sky-bg-card.png')"></div>
+                            <div class="py-5">
+                                <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
+                            </div>
+                            <div style="z-index: 2;" class="pt-5 mt-3" :class="testFuente" :key="`font${fuente}`">
+                                <h1 class="text-center text-md-left font-weight-bold px-1">{{ `¡Buen día ${cfullname}!` }}</h1>
+                                <p class="text-justify p-2" style="color: #595959;">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, facere explicabo! Culpa in debitis qui, 
+                                    praesentium, ea facilis quidem earum non recusandae iste sequi blanditiis animi voluptatibus iure consequuntur deserunt.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <img src="/img/imglogro.webp" class="img-fluid imgCard">
                 </div>
-                <div class="col">
-                    <div class="row mt-4 rowvalidados">
-                    </div>
+            </div>            
+            <div class="row px-3 px-md-5 mt-4">
+                <div class="col-12 col-xl-6">
+                    <vs-table>
+                        <template #thead>
+                            <vs-tr>
+                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
+                                    Name
+                                </vs-th>
+                                <vs-th style="width:100px; background-color: var(--iee-white);">
+                                    Email
+                                </vs-th>
+                            </vs-tr>
+                        </template>
+                        <template #tbody>
+                            <vs-tr :key="i" v-for="(tr, i) in $vs.getPage(users, page, max)" :data="tr"
+                                style="max-height: 100px !important">
+                                <vs-td class="tableRowHeight">
+                                    {{ tr.name }}
+                                </vs-td>
+                                <vs-td class="tableRowHeight">
+                                    {{ tr.email }}
+                                </vs-td>
+                            </vs-tr>
+                        </template>
+                        <template #notFound>
+                            <div style="background-color: var(--iee-white) !important;">
+                                Sin resultados...
+                            </div>
+                        </template>
+                        <template #footer>
+                            <vs-pagination color="dark" v-model="page" :length="$vs.getLength(users, max)"
+                                style="background-color: var(--iee-white) !important;" />
+                        </template>
+                    </vs-table>
                 </div>
             </div>
             <!-- <div class="col-11 card fechasPeriodos mx-auto my-4"
@@ -36,25 +74,62 @@
                                     :attributes="attrsRegistro" />
                             </div>
                         </div>
-
                     </div>
                 </div>
-            </div> -->
+            </div> -->        
         </div>
+        <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
+            <template #header>
+                <div class="col text-center">
+                    <div>
+                        <br />
+                        <h4 class="not-margin font-weight-bold">
+                            Hoy es cumpleaños de
+                        </h4>
+                    </div>
+                </div>
+            </template>
+            <div class="con-content">
+                <table class="table" v-if="listaHoy.length > 0" style="color: var(--iee-white-dark) !important;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Adscripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(cumple, index) in listaHoy" :key="index">
+                            <td>{{ cumple.nombre }}</td>
+                            <td>{{ cumple.adscripcion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <template #footer>
+                <div class="footer-dialog">
+                    <div class="d-flex justify-content-center flex-column flex-md-row">
+                        <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'listaBD'+darkMode" @click.prevent="showListaCumple = !showListaCumple">
+                            <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                Aceptar
+                            </div>
+                        </vs-button>                     
+                    </div>                    
+                </div>
+            </template>
+        </vs-dialog>        
     </div>
 </template>
 <script>
 
 import DatePicker from 'v-calendar';
 let methods = require('../../../methods')
-
-
 export default {
     components: {
         DatePicker
     },
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             userLoggedPermissions: JSON.parse(sessionStorage.getItem('lisRolPermisosByUsuario')),
             userLoggedRol: JSON.parse(sessionStorage.getItem('rolUsuario')),
             cfullname: '',
@@ -62,14 +137,120 @@ export default {
             renderComponent: true,
             periodos: [],
             attrsRegistro: [],
+
+            saludo: (sessionStorage.getItem('saludo')) ? sessionStorage.getItem('saludo') : 'N/A',
+            page: 1,
+            max: 5,
+            users: [
+                {
+                    "id": 1,
+                    "name": "Leanne Graham",
+                    "username": "Bret",
+                    "email": "Sincere@april.biz",
+                    "website": "hildegard.org",
+                },
+                {
+                    "id": 2,
+                    "name": "Ervin Howell",
+                    "username": "Antonette",
+                    "email": "Shanna@melissa.tv",
+                    "website": "anastasia.net",
+                },
+                {
+                    "id": 3,
+                    "name": "Clementine Bauch",
+                    "username": "Samantha",
+                    "email": "Nathan@yesenia.net",
+                    "website": "ramiro.info",
+                },
+                {
+                    "id": 4,
+                    "name": "Patricia Lebsack",
+                    "username": "Karianne",
+                    "email": "Julianne.OConner@kory.org",
+                    "website": "kale.biz",
+                },
+                {
+                    "id": 5,
+                    "name": "Chelsey Dietrich",
+                    "username": "Kamren",
+                    "email": "Lucio_Hettinger@annie.ca",
+                    "website": "demarco.info",
+                },
+                {
+                    "id": 6,
+                    "name": "Mrs. Dennis Schulist",
+                    "username": "Leopoldo_Corkery",
+                    "email": "Karley_Dach@jasper.info",
+                    "website": "ola.org",
+                },
+                {
+                    "id": 7,
+                    "name": "Kurtis Weissnat",
+                    "username": "Elwyn.Skiles",
+                    "email": "Telly.Hoeger@billy.biz",
+                    "website": "elvis.io",
+                },
+                {
+                    "id": 8,
+                    "name": "Nicholas Runolfsdottir V",
+                    "username": "Maxime_Nienow",
+                    "email": "Sherwood@rosamond.me",
+                    "website": "jacynthe.com",
+                },
+                {
+                    "id": 9,
+                    "name": "Glenna Reichert",
+                    "username": "Delphine",
+                    "email": "Chaim_McDermott@dana.io",
+                    "website": "conrad.com",
+                },
+                {
+                    "id": 10,
+                    "name": "Clementina DuBuque",
+                    "username": "Moriah.Stanton",
+                    "email": "Rey.Padberg@karina.biz",
+                    "website": "ambrose.net",
+                }
+            ],
+            listaHoy: [],
+            globos: [],
+            showListaCumple: false,
+            fuente: 0,
+        }
+    },
+    watch:{
+        showListaCumple(newVal,oldVal){
+            setTimeout(() => {
+                if(!!newVal){
+                    this.startConfetti();
+                    this.globosAnim();                    
+                }                
+            }, 100);
+        },
+        fuente(newVal,oldVal){
+            if(newVal > 3){
+                this.fuente = 0;
+            }
+        },
+    },
+    computed: {
+        // funciones de prueba, borrar tras seleccionar una fuente
+        testFuente(){
+            return `card-font-${this.fuente}`;
+        },
+        infoFuente(){
+            return (this.fuente === 0) ? 'Fuente original' : `Prueba de fuente ${this.fuente}`;
         }
     },
     mounted() {
         this.getUsuario();
         window.scrollTo(0, 0);
     },
-    created() {
+    async created() {
+        EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         this.getFechas();
+        await this.getTodayDates();
     },
     methods: {
         getFechas() {
@@ -79,7 +260,7 @@ export default {
                 this.getTimeDiff();
             }).catch(error => {
                 let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3]);
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
         getTimeDiff() {
@@ -309,32 +490,122 @@ export default {
             let sessFullName = sessionStorage.getItem('fullname');
             let sessUsername = sessionStorage.getItem('username');
             let sessCorreo = sessionStorage.getItem('correo');
-            let sessUsrRol = sessionStorage.getItem('user_rol');
+            let sessUsrRol = sessionStorage.getItem('rolUsuario');
+            let sessNmRol = sessionStorage.getItem('nombreRol');
 
 
-            if (sessFolio == null || sessFullName == null || sessUsername == null || sessUsrRol == null || sessCorreo == null) {
+            if ( sessFullName == null || sessUsername == null || sessUsrRol == null || sessNmRol == null) {
                 let url = '/administracion/usuario/getUsuario';
                 axios.get(url).then(response => {
-                    this.cfullname = response.data[0].fullname;
+                    this.cfullname = response.data[0].fullname.trim();
                     sessionStorage.setItem('idUsuario', response.data[0].id);
-                    sessionStorage.setItem('fullname', response.data[0].fullname);
+                    sessionStorage.setItem('fullname', this.cfullname);
                     sessionStorage.setItem('username', response.data[0].username);
-
+                    sessionStorage.setItem('nombreRol', response.data[0].nombreRol);
+                    EventBus.$emit('infoNav', response.data[0].id);
                 }).catch(error => {
                     console.log(error);
                     let nombreMetodo = url.split('/');
-                    methods.catchHandler(error, nombreMetodo[3]);
+                    methods.catchHandler(error, nombreMetodo[3], this.$router);
                 });
             }
             else {
                 this.cfullname = sessFullName;
             }
-        }
+        },
+        async getTodayDates() {
+            const url = '/administracion/birthday/getTodayDates';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.listaHoy = response.data;
+                    if(this.listaHoy.length > 0){
+                        this.showListaCumple = true;
+                    }
+                }
+            } catch (error) {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            }
+        },
+        globosAnim() {           
+            const numero = 25;
+            const wrapper = document.getElementById('listaCumple');
+            const colors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
+            wrapper.style.overflow = "hidden";
+            
+            for(let i = 0; i< numero;i++){
+                const globo = document.createElement('div');
+                globo.classList.add('globo');
+
+                // Posición horizontal aleatoria
+                const leftPosition = Math.random() * (wrapper.clientWidth - 100);
+                globo.style.left = `${leftPosition}px`;
+                globo.style.bottom = '-10.5rem';
+                globo.style.backgroundColor = colors[(i + 1) % 5];
+                wrapper.appendChild(globo);
+
+                const delay = i * 125; // Delay
+
+                anime({
+                    targets: globo,
+                    translateY: -1195,
+                    easing: 'easeInOutExpo',
+                    duration: 3000,
+                    delay: delay,
+                    loop: true,
+                    complete: () => {
+                        wrapper.removeChild(globo);
+                    }
+                });
+            }
+        },
+        startConfetti() {
+            const confettiColors = ['#ff0000','#fd11fd','#0000ff','#00ff00','#ffd700'];
+
+            // Generate confetti particles
+            for (let i = 0; i < 50; i++) {
+                this.createConfettiParticle(i, confettiColors);
+            }
+        },
+
+        createConfettiParticle(index, colors) {
+            const wrapper = document.getElementById('listaCumple');
+            const confettiElement = document.createElement('div');
+            confettiElement.classList.add('confetti');
+            
+            // Randomize properties
+            const size = anime.random(8, 16);
+            const colorIndex = anime.random(0, colors.length - 1);
+            const startX = anime.random(0, window.innerWidth);
+            confettiElement.style.width = `${size}px`;
+            confettiElement.style.height = `${size}px`;
+            confettiElement.style.backgroundColor = colors[colorIndex];
+            confettiElement.style.left = `${startX}px`;
+            confettiElement.style.top = `0px`;
+
+            wrapper.appendChild(confettiElement);
+
+            anime({
+                targets: confettiElement,
+                translateX: [0, anime.random(-200, 200)],
+                translateY: [0, window.innerHeight],
+                rotateZ: anime.random(0, 360),
+                rotateX: anime.random(0,360),
+                duration: anime.random(3000, 5000),
+                easing: 'easeOutQuad',
+                loop: true,
+                complete: () => {
+                    confettiElement.remove();
+                },
+            });
+        },
     }
 
 }
 </script>
 <style>
+
 .square-chart-container,
 .landscape-chart-container,
 .ultrawide-chart-container {

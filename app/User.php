@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','departamento'
     ];
 
     /**
@@ -43,8 +43,17 @@ class User extends Authenticatable
 
     public function getFullNameAttribute()
     {
-        return "{$this->firstname} {$this->secondname} {$this->lastname}";
+        return "{$this->Nombre} {$this->Apaterno} {$this->Amaterno}";
     }
+
+    public function roles(){
+        return $this->belongsToMany(Rol::class, 'usuario_rol', 'idUsuario', 'idRol');
+    }
+
+    public function getIdDPTO(){
+        return $this->departamento;
+    }
+
 
     public function file()
     {

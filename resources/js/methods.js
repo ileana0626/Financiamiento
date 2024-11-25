@@ -1,4 +1,11 @@
-exports.catchHandler = (error, nombreMetodo) => {
+const { duration } = require("moment");
+
+/**Manejo de excepciones para las peticiones axios en Vue
+ * @param error: El objeto de tipo error
+ * @param nombreMetodo: El nombre del metódo donde se originó el error
+ * @param routerVue: (Opcional) La instancia de Vue Router
+ */
+exports.catchHandler = (error, nombreMetodo, routerVue = null) => {
   console.log(nombreMetodo)
   if (Object.hasOwn(error, 'response')) {
     if (error.response.message == "Unauthenticated" || error.response.status == 401) {
@@ -9,7 +16,9 @@ exports.catchHandler = (error, nombreMetodo) => {
         confirmButtonText: 'De acuerdo'
       }).then((result) => {
         sessionStorage.clear();
-        this.$router.push({ name: 'login' });
+        if(routerVue){
+          routerVue.push({ name: 'login' });
+        }
         location.reload();
       });
     }
@@ -91,4 +100,54 @@ exports.decryptStringWithXORFromHex = (input) => {
   }
   console.log("HOLA: ", c.toString())
   return c;
+};
+
+/**
+ * Animación de loading de Vuesax.
+ * @param {object} vsInstance - La instancia de Vuesax (this.$vs)
+ * @return {object} La instancia de la animación de loading. 
+ */
+exports.loading = (vsInstance) => {
+  return vsInstance.loading({
+    type: 'square',
+    color: '#00a19a',
+    background: '#FFFFFF',
+    text: 'Cargando...'
+  });    
+};
+
+/**Devuelve la fecha actual en formato Timestamp de MySQL
+ * @returns {String} 
+ */
+exports.getTimestamp = () => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  const hours = String(currentDate.getHours()).padStart(2, '0');
+  const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+  const seconds = String(currentDate.getSeconds()).padStart(2, '0');    
+  return (`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
+};
+
+
+/**
+ * Pequeño mensaje de notificacion de Vuesax como placeholder para una accion.
+ * @param {object} vsInstance - La instancia de Vuesax (this.$vs)
+ * @return {object} La instancia de la notificación. 
+ */
+exports.WIP = (vsInstance) => {
+   return vsInstance.notification({
+    square: true,
+    color: 'dark',
+    position: 'bottom-center',
+    title: '<span class="text-white">Función en progreso</span>'
+  });
+};
+
+/**Recibe un objeto de tipo Date y devuelve un string con las horas */
+exports.hoursFormat = ( dateOBJ ) => {
+  let time = new Date(dateOBJ);
+  let str = time.getHours().toString().padStart(2, '00') +':'+ time.getMinutes().toString().padStart(2, '00') +':'+ time.getSeconds().toString().padStart(2, '00');
+  return str;
 };

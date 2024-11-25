@@ -24,6 +24,9 @@ window.EventBus = EventBus;
 import Howler from 'howler'
 window.Howler = Howler;
 
+import anime from 'animejs/lib/anime.es';
+window.anime = anime;
+
 import VueSimpleAccordion from 'vue-simple-accordion';
 import 'vue-simple-accordion/dist/vue-simple-accordion.css';
 Vue.use(VueSimpleAccordion, {});
