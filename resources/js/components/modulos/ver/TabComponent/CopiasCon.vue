@@ -13,21 +13,19 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idCopia')">id</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'dptoCopia')" v-if="rolUsuario == 1 || rolUsuario == 5">Copia Para</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'enterado')">Enterado</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'remitente')">Remitente</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'cargo')">Cargo</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
                                 <vs-th class="vsax-th">Termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaTermino')">Fecha termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaAsignada')">Área asignada</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaEmite')">Área emite</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
-                                <vs-th class="vsax-th">Archivo</vs-th>
+                                <vs-th class="vsax-th">Archivo recibido</vs-th>
+                                <vs-th class="vsax-th">Archivo respuesta</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>
@@ -36,12 +34,10 @@
                                 <vs-td>{{ tr.idCopia }}</vs-td>
                                 <vs-td v-if="rolUsuario == 1 || rolUsuario == 5">{{ tr.dptoCopia }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.enterado == 'S' ? 'Si' : 'No' }}</vs-td>
+                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
                                 <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
                                 <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
-                                <vs-td>{{ tr.remitente ? tr.remitente : '-'}}</vs-td>
-                                <vs-td>{{ tr.cargo ? tr.cargo : '-'}}</vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
                                 <vs-td>{{ tr.fechaRecibido }}</vs-td>
                                 <vs-td>{{ tr.horaRecibido }}</vs-td>
@@ -50,8 +46,6 @@
                                     {{ tr.fechaTermino ? tr.fechaTermino : '-' }}
                                 </vs-td>
                                 <vs-td>{{ tr.areaAsignar ? tr.areaAsignar : '-' }}</vs-td>
-                                <vs-td>{{ tr.areaEmite ? tr.areaEmite : '-' }}</vs-td>
-                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
                                         <el-tooltip class="item" effect="dark" :content="'Ver archivo'" placement="top">
@@ -63,10 +57,48 @@
                                     </div>
                                 </vs-td>
                                 <vs-td>
+                                    <div class="d-flex justify-content-center">
+                                        <template v-if="tr.rutaContestacion != null">
+                                            <el-tooltip class="item h-100" effect="dark" placement="top">
+                                                <div slot="content">Ver contestación</div>
+                                                <vs-button icon color="rgb(58,197,55)" size="large"
+                                                    @click.prevent="verArchivo(tr, 2)">
+                                                    <i class="fas fa-file-pdf p-1"></i>
+                                                </vs-button>
+                                            </el-tooltip>
+                                        </template>
+                                        <template v-else>
+                                            <span>{{ tr.respuesta == 1 ? 'Sin respuesta' : 'N/A' }}</span>
+                                        </template>
+                                    </div>
+                                </vs-td>
+                                <vs-td class="">
+                                    <template v-if="tr.estatus == 'TRÁMITE'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-blue) !important; color: var(--iee-white)!important">TRÁMITE</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'PENDIENTE'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-orange) !important; color: var(--iee-white)!important">PENDIENTE</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'AVANZADO'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-red) !important; color: var(--iee-white)!important">AVANZADO</span>
+                                    </template>
+                                    <template v-else-if="tr.estatus == 'CONCLUIDO'">
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-green2) !important; color: var(--iee-white)!important">CONCLUIDO</span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="badge rounded-pill"
+                                            style="background-color: var(--iee-black) !important; color: var(--iee-white)!important">{{ tr.estatus }}</span>
+                                    </template>
+                                </vs-td>
+                                <vs-td>
                                     <div class="d-flex justify-content-center" v-if="tr.estatus != 'ENTERADO'">
                                         <el-tooltip class="item h-100" effect="dark" content="Enterado"
                                             placement="top">
-                                            <vs-button icon danger size="large" 
+                                            <vs-button icon size="large" style="background-color: var(--iee-blue) !important;" 
                                                 @click.prevent="accionEnterado(tr.idCopia, tr.idSolicitud)" v-if="tr.enterado == 'N'">
                                                 <span class="material-symbols-rounded"
                                                     style="color: white !important;">
@@ -193,10 +225,10 @@ export default {
         accionEnterado( copia, solicitud ) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Indicar valor de enterado como "Si"?',
+                title: '¿Marcar de enterado?',
                 showConfirmButton: true,
                 showCancelButton: true,
-                confirmButtonText: 'Si, indicar',
+                confirmButtonText: 'Si, marcar',
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
             }).then(async result => {
