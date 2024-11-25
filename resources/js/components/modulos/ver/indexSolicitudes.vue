@@ -25,16 +25,16 @@
                     <Tab title="Memorándum" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
                     <Tab title="Oficio" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
                     <Tab title="Circular" :active="activeTab == 4" @click.native="setActiveTab(4)"/>
-                    <Tab title="Copias C." :active="activeTab == 5" @click.native="setActiveTab(5)"/>
-                    <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)"/>
-                    <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
+                    <Tab title="Copias C." :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="showAdminTabs"/>
+                    <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
+                    <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)" v-if="showAdminTabs"/>
                 </div>
                 <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
                     <div>
-                        <Requisiciones v-if="activeTab == 1"/>
-                        <Memos v-else-if="activeTab == 2" />
-                        <Oficios v-else-if="activeTab == 3"/>
-                        <Circulares v-else-if="activeTab == 4"/>
+                        <Requisiciones v-if="activeTab == 1" :rol="rolUsuario" :user="idUsuario"/>
+                        <Memos v-else-if="activeTab == 2" :rol="rolUsuario" :user="idUsuario"/>
+                        <Oficios v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
+                        <Circulares v-else-if="activeTab == 4" :rol="rolUsuario" :user="idUsuario"/>
                         <Copias v-else-if="activeTab == 5"/>
                         <Seguimiento v-else-if="activeTab == 6"/>
                         <Historial v-else-if="activeTab == 7"/>
@@ -71,13 +71,19 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             activeTab: sessionStorage.getItem('tabSolicitudes') ? sessionStorage.getItem('tabSolicitudes') : 1,
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
+            idUsuario: sessionStorage.getItem('idUsuario') ? Number(sessionStorage.getItem('idUsuario')) : 0,
+        }
+    },
+    computed:{
+        showAdminTabs(){
+            return this.rolUsuario != 4;
         }
     },
     watch:{
     },
     created(){
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
-        
     },
     async mounted() {
     },

@@ -357,6 +357,8 @@ export default {
                     params: {
                         'nTipo': tipo,
                         'nDPTO': this.dptoUsuario,
+                        'nRol': this.$attrs.rol,
+                        'nUser': this.$attrs.user,
                     }
                 })
                 if (response.status === 200) {

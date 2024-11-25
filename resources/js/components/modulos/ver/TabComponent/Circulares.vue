@@ -169,6 +169,8 @@ export default {
                 const response = await axios.get(url,{ params: {
                     'nTipo': tipo,
                     'nDPTO': this.dptoUsuario,
+                    'nRol': this.$attrs.rol,
+                    'nUser': this.$attrs.user,
                 }})
                 if(response.status === 200){
                     this.listSolicitudes = response.data;

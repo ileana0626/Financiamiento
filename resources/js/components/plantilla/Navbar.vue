@@ -273,7 +273,7 @@ export default {
         listenNotify() {
             console.log('escuchando...');
             
-            Echo.private(`navNotifyy.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
+            Echo.private(`navNotify.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
             .listen('NavNotify', (data) => {
                 console.log("Evento recibido:", data.message);
                 this.notify_count++;

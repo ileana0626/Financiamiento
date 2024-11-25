@@ -229,12 +229,20 @@ class SolicitudController extends Controller
         if(!$request->ajax()) return redirect('/');
         $nTipo = $request->nTipo;
         $nDPTO = $request->nDPTO;
+        $nRol = $request->nRol;
+        $nUser = $request->nUser;
 
         $nTipo = ($nTipo == NULL) ? 0 : $nTipo;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nUser = ($nUser == NULL) ? Auth::id() : $nUser;
         
         DB::beginTransaction();
         try {
-            $rpta = DB::select('call sp_Solicitud_getAllByType(?,?)',[$nTipo,$nDPTO]);
+            if($nRol != 4){
+                $rpta = DB::select('call sp_Solicitud_getAllByType(?,?)',[$nTipo,$nDPTO]);
+            } else {
+                $rpta = DB::select('call sp_Solicitud_getAllByUser(?,?)',[$nTipo,$nUser]);
+            }
 
             DB::commit();
             return $rpta;
