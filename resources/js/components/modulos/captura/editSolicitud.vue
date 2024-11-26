@@ -171,7 +171,7 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino" :key="'termino' + tipoDoc"
-                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off">
+                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off" @change="handleTermino">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -284,7 +284,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino" :key="'termino' + tipoDoc"
-                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off">
+                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off"
+                                        @change="handleTermino()">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -469,7 +470,7 @@
                                             {{ errorSeguimiento }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento">
+                                            :value="item.idSeguimiento" :disabled="termino == 1 && item.idSeguimiento == 2">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -669,7 +670,9 @@ export default {
         load.close();
     },
     methods: {
-
+        handleTermino(){
+            this.seguimiento = "";
+        },
         inputFolio() {
             let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
             let temp = this.nfolio;

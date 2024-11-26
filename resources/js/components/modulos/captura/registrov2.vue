@@ -178,7 +178,7 @@
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino"
                                         :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
-                                        filter autocomplete="off">
+                                        filter autocomplete="off" @change="handleTermino()">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -298,7 +298,7 @@
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino"
                                         :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
-                                        filter autocomplete="off">
+                                        filter autocomplete="off" @change="handleTermino()">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -496,7 +496,7 @@
                                             {{ errorSeguimiento }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index"
-                                            :label="item.nombre" :value="item.idSeguimiento">
+                                            :label="item.nombre" :value="item.idSeguimiento" :disabled="termino == 1 && item.idSeguimiento == 2">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -649,14 +649,8 @@ export default {
         load.close();
     },
     methods: {
-        checkInputIntegrity() {
-            document.getElementById('numeroConsecutivo').addEventListener('keypress', event => {
-                if (!`${event.target.value}${event.key}`.match(/^[0-9]{0,10}$/)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return false;
-                }
-            });
+        handleTermino(){
+            this.seguimiento = "";
         },
         inputFolio() {
             let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
@@ -847,9 +841,13 @@ export default {
         async setRegistrarMemo(idARCHIVO, fechaAccion) {
             const url = '/administracion/solicitud/setRegistrarMemo';
             let idSOLICITUD = 0;
+            // si termino es 1, agregar a coordinacion financiera (id 2) a seguimiento
             const temp = [
                 { 'id': this.seguimiento }
             ]
+            if( this.termino == 1){
+                temp.push({'id': 2});
+            }
             const jsonSEG = JSON.stringify(temp);
             const strHora = this.hoursFormat(this.hora);
             try {
@@ -884,6 +882,9 @@ export default {
             const temp = [
                 { 'id': this.seguimiento }
             ]
+            if( this.termino == 1){
+                temp.push({'id': 2});
+            }
             const jsonSEG = JSON.stringify(temp);
             const strHora = this.hoursFormat(this.hora);
             try {
