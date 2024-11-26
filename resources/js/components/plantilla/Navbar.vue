@@ -138,6 +138,7 @@ export default {
     created(){
     },
     mounted() {
+        this.listenNotify();
         this.checkPermisos();
         this.getCurrentTime();
         if (localStorage.getItem('theme') == 'light') {
@@ -152,7 +153,6 @@ export default {
             this.id = data;
             this.getDatosPersonalesById();
         })
-        this.listenNotify();
     },
     methods: {
         checkPermisos() {
@@ -273,7 +273,7 @@ export default {
         listenNotify() {
             Echo.private(`navNotify.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
             .listen('NavNotify', (data) => {
-                console.log("Evento recibido:", data.message);
+                console.log("Evento recibido:", data);
                 this.notify_count++;
             });            
         },

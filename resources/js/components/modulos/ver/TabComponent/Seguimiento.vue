@@ -333,7 +333,7 @@ export default {
             try {
                 const response = await axios.post(url,{
                     'textNotify': 'texto prueba',
-                    'nRol': 2,
+                    'nRol': 4,
                     'nDPTO': dptoAsignar,
                 });
                 if(response.status === 200){

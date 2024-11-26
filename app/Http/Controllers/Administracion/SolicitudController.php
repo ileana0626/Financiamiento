@@ -465,7 +465,7 @@ class SolicitudController extends Controller
         // DB::transaction();
         try {
             //code...
-            event( new NavNotify($textNotify, $nRol, $nDPTO));
+            event(new NavNotify($textNotify, $nRol, $nDPTO));
             // DB::commit();
         } catch (\Illuminate\Database\QueryException $e) {
             // DB::rollBack();
