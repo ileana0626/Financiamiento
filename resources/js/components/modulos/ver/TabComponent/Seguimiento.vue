@@ -98,7 +98,7 @@
                                     </template>
                                 </vs-td>
                                 <vs-td>
-                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO' || tr.status != 'ENTERADO'">
+                                    <div class="d-flex justify-content-center" v-if="!(tr.estatus == 'CONCLUIDO' || tr.estatus == 'ENTERADO')">
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Email"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
