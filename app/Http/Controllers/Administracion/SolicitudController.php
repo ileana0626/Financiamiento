@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Administracion;
 
 use App\Events\Logout;
 use App\Events\NavNotify;
+use App\Events\Testear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -464,9 +465,11 @@ class SolicitudController extends Controller
         $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
         // DB::transaction();
         try {
-            //code...
-            event(new NavNotify($textNotify, $nRol, $nDPTO));
+            //el evento navnotify tiene problemas, se tiene que arreglar
+            // event(new NavNotify($textNotify, $nRol, $nDPTO));
+            event( new Testear('pusher si sirve xd'));
             // DB::commit();
+            return response()->json(['message' => 'ok']);
         } catch (\Illuminate\Database\QueryException $e) {
             // DB::rollBack();
             $errorCode = $e->errorInfo[1];

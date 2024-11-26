@@ -1189,10 +1189,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
-            if(this.copiasConocimiento.length === 0){
-                this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
-                this.error = true;
-            }
+            // if(this.copiasConocimiento.length === 0){
+            //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
+            //     this.error = true;
+            // }
         },
         ValidarMemo(){
             this.error = false;
@@ -1242,10 +1242,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
-            if(this.copiasConocimiento.length === 0){
-                this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
-                this.error = true;
-            }
+            // if(this.copiasConocimiento.length === 0){
+            //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
+            //     this.error = true;
+            // }
         },
         ValidarOficio(){
             this.error = false;
@@ -1295,10 +1295,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
-            if(this.copiasConocimiento.length === 0){
-                this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
-                this.error = true;
-            }                 
+            // if(this.copiasConocimiento.length === 0){
+            //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
+            //     this.error = true;
+            // }                 
         },
         ValidarCircular(){   
             if(this.fechaRecibido === ''){
@@ -1326,10 +1326,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione al menos una opción de seguimiento';
                 this.error = true;
             }
-            if(this.copiasConocimiento.length === 0){
-                this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
-                this.error = true;
-            }            
+            // if(this.copiasConocimiento.length === 0){
+            //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
+            //     this.error = true;
+            // }            
         },
 
         /**Limpia todos los mensajes de error */
@@ -1381,11 +1381,6 @@ export default {
             this.$refs.upload.clearFiles();
         },
         // funciones para obtener los datos de la solicitud
-        /**
-    Route::get(,'Administracion\SolicitudController@getDatosById');
-    Route::get(,'Administracion\SolicitudController@getArchivoById');
-    Route::get(,'Administracion\SolicitudController@getCopiasById');
-         */
         async getDatosById() {
             const url = '/administracion/solicitud/getDatosById';
             try {

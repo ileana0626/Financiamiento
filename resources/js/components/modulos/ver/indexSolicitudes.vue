@@ -21,11 +21,11 @@
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
                 <div class="d-flex justify-content-start align-items-center tabContainer">
-                    <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)"/>
-                    <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)"/>
-                    <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)"/>
-                    <Tab title="Copias C." :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs"/>
-                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)"/>
+                    <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor"/>
+                    <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor"/>
+                    <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor"/>
+                    <Tab title="Copias C." :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs && notSupervisor"/>
+                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor"/>
                     <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
                 </div>
@@ -78,7 +78,10 @@ export default {
     computed:{
         showAdminTabs(){
             return this.rolUsuario != 4;
-        }
+        },
+        notSupervisor() {
+            return this.rolUsuario != 3;
+        },
     },
     watch:{
     },
@@ -86,6 +89,10 @@ export default {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
     },
     async mounted() {
+        if( this.activeTab == 1 && !this.notSupervisor ){
+            this.activeTab = 6;
+            sessionStorage.setItem('tabSolicitudes', 6);
+        }
     },
     methods: {
         setActiveTab(num){

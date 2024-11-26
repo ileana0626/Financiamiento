@@ -106,7 +106,7 @@
                                                 style="background-color: var(--iee-white);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
-                                                    notifications
+                                                    forward_to_inbox
                                                 </span>
                                             </vs-button>
                                         </el-tooltip>
@@ -330,7 +330,7 @@ export default {
             try {
                 const response = await axios.post(url,{
                     'textNotify': 'texto prueba',
-                    'nRol': 4,
+                    'nRol': 2,
                     'nDPTO': dptoAsignar,
                 });
                 if(response.status === 200){

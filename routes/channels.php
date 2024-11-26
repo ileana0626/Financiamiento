@@ -15,3 +15,6 @@ Broadcast::channel('navNotify.{idRol}.{idDPTO}', function($user, $idRol, $idDPTO
     $hasRole = $user->roles->contains('idRol', $idRol);
     return $hasRole && $user->departamento == $idDPTO;
 });
+Broadcast::channel('test', function(){
+    return true;
+});

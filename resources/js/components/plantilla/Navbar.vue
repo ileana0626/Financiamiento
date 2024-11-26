@@ -271,11 +271,15 @@ export default {
         },
         // evento notificacion
         listenNotify() {
-            Echo.private(`navNotify.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
-            .listen('NavNotify', (data) => {
-                console.log("Evento recibido:", data);
-                this.notify_count++;
-            });            
+            // Echo.private(`navNotify.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
+            // .listen('NavNotify', (data) => {
+            //     console.log("Evento recibido:", data);
+            //     this.notify_count++;
+            // });   
+            Echo.private('test').listen('Testear', (data) => {
+                console.log(data, 'se recibio');
+                
+            })         
         },
     }
 }
