@@ -73,7 +73,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>{{ tr.respuesta == 1 ? 'Sin respuesta' : 'N/A'}}</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Pendiente' : 'N/A'}}</span>
                                         </template>
                                     </div>                                 
                                 </vs-td> 

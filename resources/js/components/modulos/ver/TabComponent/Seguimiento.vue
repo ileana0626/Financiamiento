@@ -12,11 +12,8 @@
                             <vs-tr>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'remitente')">Remitente</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'cargo')">Cargo</vs-th>
+                                <vs-th class="vsax-th">Número</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
@@ -24,10 +21,9 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaTermino')">Fecha termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaAsignada')">Área asignada</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaEmite')">Área emite</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
                                 <vs-th class="vsax-th">Requiere respuesta</vs-th>
-                                <vs-th class="vsax-th">Archivo</vs-th>
-                                <vs-th class="vsax-th">Contestación</vs-th>
+                                <vs-th class="vsax-th">Archivo recibido</vs-th>
+                                <vs-th class="vsax-th">Archivo respuesta</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
@@ -36,11 +32,13 @@
                             <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
-                                <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
-                                <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
-                                <vs-td>{{ tr.remitente ? tr.remitente : '-'}}</vs-td>
-                                <vs-td>{{ tr.cargo ? tr.cargo : '-'}}</vs-td>
+                                <vs-td>
+                                    <span v-if="tr.numFolio">{{ tr.numFolio}}</span>
+                                    <span v-else-if="tr.numMemo">{{ tr.numMemo}}</span>
+                                    <span v-else-if="tr.numOficio">{{ tr.numOficio}}</span>
+                                    <span v-else>-</span>
+                                </vs-td>
+                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
                                 <vs-td>{{ tr.fechaRecibido }}</vs-td>
                                 <vs-td>{{ tr.horaRecibido }}</vs-td>
@@ -50,7 +48,6 @@
                                 </vs-td>
                                 <vs-td>{{ tr.areaAsignar ? tr.areaAsignar : '-' }}</vs-td>
                                 <vs-td>{{ tr.areaEmite ? tr.areaEmite : '-' }}</vs-td>
-                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>{{ reqRespuesta(tr.respuesta) }}</vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
@@ -74,7 +71,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>N/A</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Pendiente' : 'N/A' }}</span>
                                         </template>
                                     </div>                                 
                                 </vs-td> 
