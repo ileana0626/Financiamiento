@@ -9,7 +9,7 @@ Broadcast::channel('escribiendo', function ($user) {
 Broadcast::channel('logout.user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-Broadcast::channel('navNotify.{idRol}.{idDPTO}', function($user, $idRol, $idDPTO){
+Broadcast::channel('navNotify.user.{idRol}.{idDPTO}', function($user, $idRol, $idDPTO){
     $user->load('roles');
     $idDPTO = ($idDPTO == NULL) ? 0 : $idDPTO;
     $hasRole = $user->roles->contains('idRol', $idRol);

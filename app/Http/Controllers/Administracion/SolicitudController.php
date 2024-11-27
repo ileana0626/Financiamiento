@@ -463,13 +463,11 @@ class SolicitudController extends Controller
         $textNotify = ($textNotify == NULL) ? 'prueba' : $textNotify;
         $nRol = ($nRol == NULL) ? 0 : $nRol;
         $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
         // DB::transaction();
         try {
-            //el evento navnotify tiene problemas, se tiene que arreglar
-            // event(new NavNotify($textNotify, $nRol, $nDPTO));
-            event( new Testear('pusher si sirve xd'));
+            event(new NavNotify($textNotify, $nRol, $nDPTO));
             // DB::commit();
-            return response()->json(['message' => 'ok']);
         } catch (\Illuminate\Database\QueryException $e) {
             // DB::rollBack();
             $errorCode = $e->errorInfo[1];
