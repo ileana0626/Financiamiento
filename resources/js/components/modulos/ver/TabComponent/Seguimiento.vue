@@ -324,7 +324,6 @@ export default {
             }
         },
         async sendNavNotify( dptoAsignar, idSolicitud, cTipo ) {
-            // methods.WIP( this.$vs );
             const url = '/administracion/solicitud/sendNavNotify'
             let datos = {
                 "DPTO": dptoAsignar,

@@ -304,7 +304,7 @@ export default {
         load.close();
     },
     mounted() {
-
+        EventBus.$emit('updateCounts','MEMORÁNDUM');
     },
     computed: {
         colorStatus() {
@@ -341,11 +341,9 @@ export default {
 
                         }
                     }
-                    return color
-
+                    return color;
                 }
             }
-
         },
     },
     methods: {

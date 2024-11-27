@@ -3,11 +3,11 @@
         style="background-color: var(--iee-white); border-bottom: 1px solid var(--iee-white);">
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
-                <p class="navText" @click.prevent="notify_count++">
+                <p class="navText">
                     <b>Sistema de la Dirección Administrativa</b>
                 </p>
 
-                <p class="navText" @click.prevent="notify_count = 0">
+                <p class="navText">
                     <small>
                         <b>Instituto Electoral del Estado</b>
                     </small>
@@ -181,6 +181,7 @@ export default {
             this.id = data;
             this.getDatosPersonalesById();
         })
+        this.updateCounts();
     },
     methods: {
         checkPermisos() {
@@ -339,6 +340,47 @@ export default {
                     }
                 })
             });          
+        },
+        updateCounts(){
+            EventBus.$on('updateCounts', (data) => {
+                console.log(data);
+                if(this.notify_count > 0){
+                    switch (data){
+                        case 'MEMORÁNDUM':
+                            if(this.memo_count > 0){
+                                this.notify_count -= this.memo_count;
+                                this.memo_count = 0;
+                                sessionStorage.setItem('memo_count', this.memo_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'OFICIO':
+                            if(this.oficio_count > 0){
+                                this.notify_count -= this.oficio_count;
+                                this.oficio_count = 0;
+                                sessionStorage.setItem('oficio_count', this.oficio_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'CIRCULAR':
+                            if(this.circular_count > 0){
+                                this.notify_count -= this.circular_count;
+                                this.circular_count = 0;
+                                sessionStorage.setItem('circular_count', this.circular_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'REQUISICIÓN':
+                            if(this.requi_count > 0){
+                                this.notify_count -= this.requi_count;
+                                this.requi_count = 0;
+                                sessionStorage.setItem('requi_count', this.requi_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                    }  
+                }              
+            })
         },
     }
 }
