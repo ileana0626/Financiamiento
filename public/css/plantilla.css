@@ -59,6 +59,7 @@
     --sky-card-bg: #ffffff;
     --iee-orange-t: rgba(255, 69, 0, 0.1);
     --iee-red-logout: #ff0000;
+    --gray-border: rgba(0,0,0, 0.125);
 }
 
 [data-theme="dark"] {
@@ -104,6 +105,7 @@
     --sky-card-bg: #cccccc;
     --iee-orange-t: rgba(255, 69, 0, 0.6);
     --iee-red-logout: rgb(255, 198, 198);
+    --gray-border: rgba(255,255,255, 0.875);
 }
 @font-face {
     font-family: 'KGHappy';
@@ -1755,6 +1757,11 @@ div.vs-dialog, div.swal2-popup{
 .nav-notify.show-count::after {
     transform: scale(1);
     opacity: 1;
+}
+.bs-li{
+    background-color: transparent; 
+    border: 1px solid var(--gray-border); 
+    color: var(--iee-white-dark);    
 }
 /*Media queries*/
 @media screen and (min-width: 375px) {

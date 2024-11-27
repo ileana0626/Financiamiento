@@ -17,14 +17,37 @@
 
         <div class="navul navbar-nav">
             <div class="row pr-sm-4 p-2">
-                <el-tooltip placement="bottom">
-                    <div class="nav-notify" :data-count="notify_count" :class="notify_count > 0 ? 'show-count' : ''">
-                        <span style="cursor: pointer;" class="material-symbols-rounded" ref="box_notify">
-                            notifications
-                        </span>
+                <el-popover placement="bottom" trigger="click">
+                    <div slot="reference">
+                        <el-tooltip placement="bottom">
+                            <div class="nav-notify" :data-count="notify_count" :class="notify_count > 0 ? 'show-count' : ''">
+                                <span style="cursor: pointer;" class="material-symbols-rounded" ref="box_notify">
+                                    notifications
+                                </span>
+                            </div>
+                            <div slot="content"> Notificaciones</div>
+                        </el-tooltip>
                     </div>
-                    <div slot="content"> Notificaciones</div>
-                </el-tooltip>
+                    <div class="d-flex container-fluid flex-column align-items-center">
+                        <ul class="list-group" v-if="notify_count > 0">
+                            <li class="list-group-item bs-li" v-if="memo_count > 0">
+                                <span class="font-weight-bold">{{ memo_count }}</span> {{ memo_count == 1 ? 'recordatorio' : 'recordatorios' }} de memorándum
+                            </li>
+                            <li class="list-group-item" v-if="oficio_count > 0">
+                                <span class="font-weight-bold">{{ oficio_count }}</span> {{ oficio_count == 1 ? 'recordatorio' : 'recordatorios' }} de oficio
+                            </li>
+                            <li class="list-group-item" v-if="circular_count > 0">
+                                <span class="font-weight-bold">{{ circular_count }}</span> {{ circular_count == 1 ? 'recordatorio' : 'recordatorios' }} de circular
+                            </li>
+                            <li class="list-group-item" v-if="requi_count > 0">
+                                <span class="font-weight-bold">{{ requi_count }}</span> {{ requi_count == 1 ? 'recordatorio' : 'recordatorios' }} de requisición
+                            </li>
+                        </ul>
+                        <div v-else class="d-flex py-2 px-3 text-center">
+                            <span>No se han recibido recordatorios</span>
+                        </div>
+                    </div>
+                </el-popover>
                 &nbsp;&nbsp;&nbsp;
                 <el-tooltip placement="bottom">
                     <span style="cursor: pointer;" @click="ruta" class="material-symbols-rounded">
