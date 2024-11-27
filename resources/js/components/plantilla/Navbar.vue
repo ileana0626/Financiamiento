@@ -343,7 +343,6 @@ export default {
         },
         updateCounts(){
             EventBus.$on('updateCounts', (data) => {
-                console.log(data);
                 if(this.notify_count > 0){
                     switch (data){
                         case 'MEMORÁNDUM':
