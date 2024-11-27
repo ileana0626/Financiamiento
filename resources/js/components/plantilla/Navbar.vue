@@ -79,6 +79,7 @@
     </nav>
 </template>
 <script>
+import Swal from 'sweetalert2';
 import methods from '../../methods.js'
 export default {
     props: ['showMenuBtn', 'listPermisos',],
@@ -104,7 +105,11 @@ export default {
             id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0,
             showDropDown: false,
 
-            notify_count: 0,
+            notify_count: sessionStorage.getItem('notify_count') ? Number(sessionStorage.getItem('notify_count')) : 0,
+            memo_count: sessionStorage.getItem('memo_count') ? Number(sessionStorage.getItem('memo_count')) : 0,
+            oficio_count: sessionStorage.getItem('oficio_count') ? Number(sessionStorage.getItem('oficio_count')) : 0,
+            circular_count: sessionStorage.getItem('circular_count') ? Number(sessionStorage.getItem('circular_count')) : 0,
+            requi_count: sessionStorage.getItem('requi_count') ? Number(sessionStorage.getItem('requi_count')) : 0,
         }
     },
 
@@ -271,10 +276,45 @@ export default {
         },
         // evento notificacion
         listenNotify() {
+            /**Se actualizan variables de contadores para el modal popover y se muestra un modal de sweetalert */
             Echo.private(`navNotify.user.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
             .listen('NavNotify', (data) => {
-                console.log("Evento recibido:", data);
+                let info = JSON.parse(data.info);
+                let showRedirigir = this.$route.path != '/indexSolicitudes';
                 this.notify_count++;
+                sessionStorage.setItem('notify_count', this.notify_count);
+                switch (info.cTipo){
+                    case 'MEMORÁNDUM':
+                        this.memo_count++;
+                        sessionStorage.setItem('memo_count', this.memo_count);
+                        break;
+                    case 'OFICIO':
+                        this.oficio_count++;
+                        sessionStorage.setItem('oficio_count', this.oficio_count);
+                        break;
+                    case 'CIRCULAR':
+                        this.circular_count++;
+                        sessionStorage.setItem('circular_count', this.circular_count);
+                        break;
+                    case 'REQUISICIÓN':
+                        this.requi_count++;
+                        sessionStorage.setItem('requi_count', this.requi_count);
+                        break;
+                }
+                Swal.fire({
+                    icon: 'info',
+                    title: `Recordatorio de ${info.cTipo} recibido`,
+                    showConfirmButton: showRedirigir,
+                    confirmButtonText: 'Ir a solicitudes',
+                    showCancelButton: true,
+                    cancelButtonText: 'De acuerdo',
+                    reverseButtons: true,
+                }).then( result => {
+                    if(result.isConfirmed){
+                        // redirigir a solicitudes
+                        this.$router.push('/indexSolicitudes');
+                    }
+                })
             });          
         },
     }

@@ -344,7 +344,7 @@ export default {
                     load.close();
                     Swal.fire({
                         icon: 'success',
-                        title: 'Se ha enviado el recordatorio dentro del sistema',
+                        title: 'El recordatorio se envió con éxito',
                         showConfirmButton: true,
                         confirmButtonText: 'De acuerdo'
                     }).then(async (result) => {
