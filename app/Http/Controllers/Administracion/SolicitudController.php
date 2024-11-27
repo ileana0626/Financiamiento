@@ -459,17 +459,27 @@ class SolicitudController extends Controller
         $textNotify = $request->textNotify;
         $nRol = $request->nRol;
         $nDPTO = $request->nDPTO;
+        $nSolicitud = $request->nSolicitud;
+        $fAccion = $request->fAccion;
 
         $textNotify = ($textNotify == NULL) ? 'prueba' : $textNotify;
         $nRol = ($nRol == NULL) ? 0 : $nRol;
         $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+        $nSolicitud = ($nSolicitud == NULL) ? 0 : $nSolicitud;
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
 
-        // DB::transaction();
+        DB::beginTransaction();
         try {
             event(new NavNotify($textNotify, $nRol, $nDPTO));
-            // DB::commit();
+            $rpta = DB::select('call sp_Solicitud_setUpdateSysNotify(?,?)',[
+                $nSolicitud,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
         } catch (\Illuminate\Database\QueryException $e) {
-            // DB::rollBack();
+            DB::rollBack();
             $errorCode = $e->errorInfo[1];
             throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
         }

@@ -112,8 +112,8 @@
                                         </el-tooltip>
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Sistema"
                                             placement="top">
-                                            <vs-button class="btn btn-flat btn-sm "
-                                                @click.prevent="sendNavNotify(tr.dptoAsignar)" 
+                                            <vs-button class="btn btn-flat btn-sm " :disabled="tr.minSysNotify != null && tr.minSysNotify < 59"
+                                                @click.prevent="sendNavNotify(tr.dptoAsignar, tr.idSolicitud, tr.solicitud)" 
                                                 style="background-color: var(--iee-gold);border-color: var(--iee-white);">
                                                 <span class="material-symbols-rounded"
                                                     style="color: #111 !important">
@@ -292,7 +292,7 @@ export default {
                     Swal.fire({
                         icon: "success",
                         title: "Correo Enviado",
-                        text: 'El recordatorio se envió con éxito',
+                        text: 'El recordatorio por email se envió con éxito',
                         showConfirmButton: true,
                         confirmButtonText: "De acuerdo",
                     });
@@ -323,22 +323,39 @@ export default {
                 return 0;
             }
         },
-        async sendNavNotify( dptoAsignar ) {
+        async sendNavNotify( dptoAsignar, idSolicitud, cTipo ) {
             // methods.WIP( this.$vs );
             const url = '/administracion/solicitud/sendNavNotify'
-
+            let datos = {
+                "DPTO": dptoAsignar,
+                "idSolicitud": idSolicitud,
+                'cTipo': cTipo
+            }
+            const load = methods.loading( this.$vs );
             try {
                 const response = await axios.post(url,{
-                    'textNotify': 'texto prueba',
+                    'textNotify': JSON.stringify(datos),
                     'nRol': 2,
                     'nDPTO': dptoAsignar,
+                    'nSolicitud': idSolicitud,
+                    'fAccion': methods.getTimestamp()
                 });
                 if(response.status === 200){
-                    console.log('se envio');
+                    load.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Se ha enviado el recordatorio dentro del sistema',
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo'
+                    }).then(async (result) => {
+                        this.listSolicitudes = [];
+                        await this.getSeguimiento();
+                    })
                 }
             } catch (error) {
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
+                load.close();
             }
         },
     }
