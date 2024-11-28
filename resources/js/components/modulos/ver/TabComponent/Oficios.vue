@@ -301,7 +301,7 @@ export default {
         load.close();
     },
     mounted() {
-        EventBus.$emit('updateCounts','OFICIO');
+        
     },
     computed: {
         colorStatus() {

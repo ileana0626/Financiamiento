@@ -156,7 +156,7 @@ export default {
         load.close();
     },
     mounted() {
-        EventBus.$emit('updateCounts','CIRCULAR');
+        
     },
     computed: {
 

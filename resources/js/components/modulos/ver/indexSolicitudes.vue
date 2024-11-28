@@ -21,11 +21,11 @@
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
                 <div class="d-flex justify-content-start align-items-center tabContainer">
-                    <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor"/>
-                    <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor"/>
-                    <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor"/>
+                    <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor" :class="tabColour(memo_count)"/>
+                    <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor" :class="tabColour(oficio_count)"/>
+                    <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor" :class="tabColour(circular_count)"/>
                     <Tab title="Copias C." :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs && notSupervisor"/>
-                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor"/>
+                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor" :class="tabColour(requi_count)"/>
                     <Tab title="Seguimiento" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 7" @click.native="setActiveTab(7)"/>
                 </div>
@@ -73,6 +73,11 @@ export default {
             activeTab: sessionStorage.getItem('tabSolicitudes') ? sessionStorage.getItem('tabSolicitudes') : 1,
             rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
             idUsuario: sessionStorage.getItem('idUsuario') ? Number(sessionStorage.getItem('idUsuario')) : 0,
+
+            memo_count: sessionStorage.getItem('memo_count') ? Number(sessionStorage.getItem('memo_count')) : 0,
+            oficio_count: sessionStorage.getItem('oficio_count') ? Number(sessionStorage.getItem('oficio_count')) : 0,
+            circular_count: sessionStorage.getItem('circular_count') ? Number(sessionStorage.getItem('circular_count')) : 0,
+            requi_count: sessionStorage.getItem('requi_count') ? Number(sessionStorage.getItem('requi_count')) : 0,
         }
     },
     computed:{
@@ -81,6 +86,13 @@ export default {
         },
         notSupervisor() {
             return this.rolUsuario != 3;
+        },
+        tabColour(){
+            return (count) => {
+                if(count){
+                    if(count > 0) return 'tab-notify';
+                }
+            }
         },
     },
     watch:{
@@ -93,13 +105,45 @@ export default {
             this.activeTab = 6;
             sessionStorage.setItem('tabSolicitudes', 6);
         }
+        // evento de la navbar
+        EventBus.$on('tabCounts', (data) => {
+            this.memo_count = data.memo;
+            this.oficio_count = data.oficio;
+            this.circular_count = data.circular;
+            this.requi_count = data.requi;
+        });
     },
     methods: {
         setActiveTab(num){
+            /**
+             * 1: memo
+             * 2: oficio
+             * 3: circular
+             * 5: requi
+             */
             this.activeTab = num;
             sessionStorage.setItem('tabSolicitudes', num);
+            
+            switch(num){
+                case 1:
+                    EventBus.$emit('updateCounts','MEMORÁNDUM');
+                    this.memo_count = 0;
+                    break;
+                case 2:
+                    EventBus.$emit('updateCounts','OFICIO');
+                    this.oficio_count = 0;
+                    break;
+                case 3:
+                    EventBus.$emit('updateCounts','CIRCULAR');
+                    this.circular_count = 0;
+                    break;
+                case 5:
+                    EventBus.$emit('updateCounts','REQUSICIÓN');
+                    this.requi_count = 0;
+                    break;
+            }
+            
         },
-
     },
 }
 </script>

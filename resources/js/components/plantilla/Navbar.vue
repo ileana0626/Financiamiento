@@ -29,7 +29,7 @@
                         </el-tooltip>
                     </div>
                     <div class="d-flex container-fluid flex-column align-items-center">
-                        <ul class="list-group" v-if="notify_count > 0">
+                        <ul class="list-group" v-if="notify_count > 0" @click.prevent="redirectSolicitudes" style="cursor: pointer;">
                             <li class="list-group-item bs-li" v-if="memo_count > 0">
                                 <span class="font-weight-bold">{{ memo_count }}</span> {{ memo_count == 1 ? 'recordatorio' : 'recordatorios' }} de memorándum
                             </li>
@@ -325,6 +325,12 @@ export default {
                         sessionStorage.setItem('requi_count', this.requi_count);
                         break;
                 }
+                EventBus.$emit('tabCounts',{
+                    'memo': this.memo_count,
+                    'oficio': this.oficio_count,
+                    'circular': this.circular_count,
+                    'requi': this.requi_count,                    
+                })
                 Swal.fire({
                     icon: 'info',
                     title: `Recordatorio de ${info.cTipo} recibido`,
@@ -380,6 +386,9 @@ export default {
                     }  
                 }              
             })
+        },
+        redirectSolicitudes() {
+            this.$router.push('/indexSolicitudes');
         },
     }
 }

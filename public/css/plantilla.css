@@ -24,6 +24,7 @@
     --iee-light-gray3: #f5f5f5;
     --iee-white: white;
     --iee-dorado-cafe: hsl(39, 32%, 60%);
+    --tab-notify-color: #FEF3E2;
     --iee-white-dark: #000000;
     --iee-table-color: rgb(240, 240, 240);
     /* --dorado: #af8909; */
@@ -73,6 +74,7 @@
     --iee-light-gray3: #272727;
     --iee-white: rgb(28, 28, 30);
     --iee-dorado-cafe: hsl(39, 32%, 60%);
+    --tab-notify-color: #E2EDFE;
     --iee-white-dark: #ffffff;
     --dorado: #d8ccac;
     --acento: #82d6d2;
@@ -1762,6 +1764,12 @@ div.vs-dialog, div.swal2-popup{
     background-color: transparent; 
     border: 1px solid var(--gray-border); 
     color: var(--iee-white-dark);    
+}
+.tab-notify{
+    background-color: var(--tab-notify-color) !important;
+}
+.tab-notify>span{
+    color: #595959 !important;
 }
 /*Media queries*/
 @media screen and (min-width: 375px) {

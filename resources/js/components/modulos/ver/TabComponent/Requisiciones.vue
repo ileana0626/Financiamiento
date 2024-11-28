@@ -286,7 +286,7 @@ export default {
         load.close();
     },
     mounted() {
-        EventBus.$emit('updateCounts','REQUICISIÓN');
+        
     },
     computed: {
 
