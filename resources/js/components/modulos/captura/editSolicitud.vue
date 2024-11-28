@@ -46,12 +46,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Capítulo</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="Capitulo" :key="'capitulo' + tipoDoc"
-                                        v-if="catCapitulo.length > 0" filter :color="colors[0].color" autocomplete="off">
+                                        v-if="catCapitulo.length > 0" filter :color="colors[0].color" autocomplete="off" 
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorCapitulo.length > 0">
                                             {{ errorCapitulo }}
                                         </template>
                                         <vs-option v-for="(item, index) in catCapitulo" :key="index" :label="item.serie"
-                                            :value="item.id">
+                                            :value="item.id" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.serie }}
                                         </vs-option>
                                     </vs-select>
@@ -59,7 +60,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Folio</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'folio' + tipoDoc"
-                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off" @input="inputFolio()">
+                                        placeholder="Número de folio" v-model="nfolio" autocomplete="off" @input="inputFolio()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorNFolio.length > 0">
                                             {{ errorNFolio }}
                                         </template>
@@ -68,7 +70,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Fecha de Recibido</label>
                                     <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
-                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido" 
+                                        :disabled="!(esCapturista || esAdmi)">
                                     </el-date-picker>
                                     <div class="danger-message">
                                         <template v-if="errorFechaRecibido.length > 0">
@@ -79,7 +82,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
                                     <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
-                                    :picker-options="timePicker">
+                                    :picker-options="timePicker"
+                                    :disabled="!(esCapturista || esAdmi)">
                                     </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
@@ -90,12 +94,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Área que Solicita</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
-                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaSolicita.length > 0">
                                             {{ errorAreaSolicita }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                            :value="item.id">
+                                            :value="item.id" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -103,12 +108,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar Requisición</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aAsignada' + tipoDoc"
-                                        v-model="areaAsignada0" v-if="cat_seguimiento.length > 0" autocomplete="off">
+                                        v-model="areaAsignada0" v-if="cat_seguimiento.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaAsignada0.length > 0">
                                             {{ errorAreaAsignada0 }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento">
+                                            :value="item.idSeguimiento" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -118,12 +124,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Área que solicita</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aSolicita' + tipoDoc"
-                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        v-model="areaSolicita" v-if="cat_departamentos.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaSolicita.length > 0">
                                             {{ errorAreaSolicita }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                            :value="item.id">
+                                            :value="item.id" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -131,7 +138,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Memorándum</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after :key="'nMemo' + tipoDoc"
-                                        placeholder="Número de memorándum" v-model="nMemorandum" autocomplete="off" @input="inputMemo()">
+                                        placeholder="Número de memorándum" v-model="nMemorandum" autocomplete="off" @input="inputMemo()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorNMemorandum.length > 0">
                                             {{ errorNMemorandum }}
                                         </template>
@@ -140,7 +148,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -149,7 +158,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Fecha de Recibido</label>
                                     <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
-                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido"
+                                        :disabled="!(esCapturista || esAdmi)">
                                     </el-date-picker>
                                     <div class="danger-message">
                                         <template v-if="errorFechaRecibido.length > 0">
@@ -160,7 +170,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
                                     <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
-                                    :picker-options="timePicker">
+                                    :picker-options="timePicker"
+                                    :disabled="!(esCapturista || esAdmi)">
                                     </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
@@ -171,12 +182,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino" :key="'termino' + tipoDoc"
-                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off" @change="handleTermino">
+                                        v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off" @change="handleTermino"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
                                         <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
-                                            :value="item.idTermino">
+                                            :value="item.idTermino" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -186,7 +198,8 @@
                                         <label class="col-form-label">Fecha de Termino</label>
                                         <el-date-picker type="date" placeholder="Fecha de Termino" :key="'fTermino' + tipoDoc"
                                             :picker-options="pickerOptions2" format="dd-MM-yyyy" value-format="yyyy-MM-dd"
-                                            v-model="fechaTermino">
+                                            v-model="fechaTermino"
+                                            :disabled="!(esCapturista || esAdmi)">
                                         </el-date-picker>
                                         <div class="danger-message">
                                             <template v-if="errorFechaTermino.length > 0">
@@ -198,12 +211,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'asignar' + tipoDoc"
-                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off">
+                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaAsignada.length > 0">
                                             {{ errorAreaAsignada }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento">
+                                            :value="item.idSeguimiento" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -211,12 +225,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Requiere Respuesta</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="respuesta" :key="'respuesta' + tipoDoc"
-                                        v-if="selectSiNo.length > 0" :color="colors[0].color" filter autocomplete="off">
+                                        v-if="selectSiNo.length > 0" :color="colors[0].color" filter autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorRespuesta.length > 0">
                                             {{ errorRespuesta }}
                                         </template>
                                         <vs-option v-for="(item, index) in selectSiNo" :key="index" :label="item.opcion"
-                                            :value="item.idSelect">
+                                            :value="item.idSelect" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.opcion }}
                                         </vs-option>
                                     </vs-select>
@@ -226,7 +241,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Oficio </label>
                                     <vs-input id="Remitente" color="#C2B280" icon-after placeholder="Número de Oficio" :key="'nOficio' + tipoDoc"
-                                        v-model="nOficio" autocomplete="off" @input="inputOficio()">
+                                        v-model="nOficio" autocomplete="off" @input="inputOficio()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorNOficio.length > 0">
                                             {{ errorNOficio }}
                                         </template>
@@ -235,7 +251,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Remitente </label>
                                     <vs-input id="Remitente" color="#C2B280" icon-after placeholder="Remitente" :key="'remitente' + tipoDoc"
-                                        v-model="remitente" autocomplete="off" @input="inputRemitente()">
+                                        v-model="remitente" autocomplete="off" @input="inputRemitente()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorRemitente.length > 0">
                                             {{ errorRemitente }}
                                         </template>
@@ -244,7 +261,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Cargo </label>
                                     <vs-input id="Cargo" color="#C2B280" icon-after placeholder="Cargo" v-model="cargo" :key="'cargo' + tipoDoc"
-                                        autocomplete="off" @input="inputCargo()">
+                                        autocomplete="off" @input="inputCargo()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorCargo.length > 0">
                                             {{ errorCargo }}
                                         </template>
@@ -253,7 +271,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -262,7 +281,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Fecha de Recibido</label>
                                     <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
-                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido"
+                                        :disabled="!(esCapturista || esAdmi)">
                                     </el-date-picker>
                                     <div class="danger-message">
                                         <template v-if="errorFechaRecibido.length > 0">
@@ -273,7 +293,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
                                     <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
-                                    :picker-options="timePicker">
+                                    :picker-options="timePicker"
+                                    :disabled="!(esCapturista || esAdmi)">
                                     </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
@@ -285,12 +306,13 @@
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino" :key="'termino' + tipoDoc"
                                         v-if="catTermino.length > 0" :color="colors[0].color" filter autocomplete="off"
-                                        @change="handleTermino()">
+                                        @change="handleTermino()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
                                         <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
-                                            :value="item.idTermino">
+                                            :value="item.idTermino" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -300,7 +322,8 @@
                                         <label class="col-form-label">Fecha de Termino</label>
                                         <el-date-picker type="date" placeholder="Fecha de Termino" :key="'fTermino' + tipoDoc"
                                             :picker-options="pickerOptions2" format="dd-MM-yyyy" value-format="yyyy-MM-dd"
-                                            v-model="fechaTermino">
+                                            v-model="fechaTermino"
+                                            :disabled="!(esCapturista || esAdmi)">
                                         </el-date-picker>
                                         <div class="danger-message">
                                             <template v-if="errorFechaTermino.length > 0">
@@ -312,12 +335,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'asignar' + tipoDoc"
-                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off">
+                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaAsignada.length > 0">
                                             {{ errorAreaAsignada }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento">
+                                            :value="item.idSeguimiento" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -327,7 +351,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Fecha de Recibido</label>
                                     <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy" :key="'fRecibido' + tipoDoc"
-                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                        :picker-options="pickerOptions" value-format="yyyy-MM-dd" v-model="fechaRecibido"
+                                        :disabled="!(esCapturista || esAdmi)">
                                     </el-date-picker>
                                     <div class="danger-message">
                                         <template v-if="errorFechaRecibido.length > 0">
@@ -338,7 +363,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Hora de Recibido</label>
                                     <el-time-picker v-model="hora" placeholder="Hora de Recibido" :key="'hRecibido' + tipoDoc"
-                                    :picker-options="timePicker">
+                                    :picker-options="timePicker"
+                                    :disabled="!(esCapturista || esAdmi)">
                                     </el-time-picker>
                                     <div class="danger-message">
                                         <template v-if="errorHora.length > 0">
@@ -349,12 +375,13 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Área que emite</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aEmite' + tipoDoc"
-                                        v-model="areaEmite" v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        v-model="areaEmite" v-if="cat_departamentos.length > 0" autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAreaEmite.length > 0">
                                             {{ errorAreaEmite }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_departamentos" :key="index" :label="item.nombre"
-                                            :value="item.id">
+                                            :value="item.id" :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -362,7 +389,8 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asunto</label>
                                     <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after placeholder="Asunto" :key="'asunto' + tipoDoc"
-                                        v-model="asunto" autocomplete="off" @input="inputAsunto()">
+                                        v-model="asunto" autocomplete="off" @input="inputAsunto()"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorAsunto.length > 0">
                                             {{ errorAsunto }}
                                         </template>
@@ -450,12 +478,14 @@
                                     <vs-select multiple filter :key="'seguimiento' + tipoDoc"
                                         :placeholder="(seguimiento.length > 0) ? '' : 'Seleccione una opción'"
                                         v-model="seguimiento" v-if="cat_seguimiento.length > 0" :color="colors[0].color"
-                                        autocomplete="off">
+                                        autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorSeguimiento.length > 0">
                                             {{ errorSeguimiento }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento">
+                                            :value="item.idSeguimiento"
+                                            :disabled="!(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -465,12 +495,13 @@
                                 <div class="col-12 col-md-6 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Seguimiento</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="seguimiento" :key="'seguimiento' + tipoDoc"
-                                        v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off">
+                                        v-if="cat_seguimiento.length > 0" :color="colors[0].color" filter autocomplete="off"
+                                        :disabled="!(esCapturista || esAdmi)">
                                         <template #message-danger v-if="errorSeguimiento.length > 0">
                                             {{ errorSeguimiento }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                            :value="item.idSeguimiento" :disabled="termino == 1 && item.idSeguimiento == 2">
+                                            :value="item.idSeguimiento" :disabled="(termino == 1 && item.idSeguimiento == 2) || !(esCapturista || esAdmi)">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -481,12 +512,13 @@
                                 <vs-select multiple filter
                                     :placeholder="(copiasConocimiento.length > 0) ? '' : 'Seleccione una opción'"
                                     v-model="copiasConocimiento" v-if="cat_seguimiento.length > 0" autocomplete="off"
-                                    :color="colors[0].color">
+                                    :color="colors[0].color"
+                                    :disabled="!(esCapturista || esAdmi)">
                                     <template #message-danger v-if="errorCopiasConocimiento.length > 0">
                                         {{ errorCopiasConocimiento }}
                                     </template>
                                     <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
-                                        :value="item.idSeguimiento">
+                                        :value="item.idSeguimiento" :disabled="!(esCapturista || esAdmi)">
                                         {{ item.nombre }}
                                     </vs-option>
                                 </vs-select>
@@ -550,6 +582,9 @@ export default {
     data() {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
+
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
+            idUsuario: sessionStorage.getItem('idUsuario') ? Number(sessionStorage.getItem('idUsuario')) : 0,
             idArchivo: 0,
             og: window.location.origin + '/',
             stamp: this.getLocalStamp(),
@@ -640,6 +675,14 @@ export default {
 
             showModalArchivo: false,
             datosArchivo: {},            
+        }
+    },
+    computed:{
+        esCapturista(){
+            return this.rolUsuario == 4;
+        },
+        esAdmi(){
+            return this.rolUsuario == 1 || this.rolUsuario == 5;
         }
     },
     watch:{
@@ -1408,7 +1451,6 @@ export default {
                     this.fechaTermino = datos.fechaTermino ? datos.fechaTermino : '';
                     this.setHoraSolicitud(datos.horaRecibido);       
                     this.setSeguimientoSolicitud(datos.tipo, datos.seguimiento);
-                    console.log(datos);
                     
                     this.idArchivo = datos.idArchivo;
                 }
@@ -1427,8 +1469,6 @@ export default {
                 if(response.status === 200){
                     const datos = response.data[0];
                     this.datosArchivo = datos;
-
-                    console.log(datos);
                 }
             } catch (error) {
                 const method = url.split('/');
@@ -1447,7 +1487,6 @@ export default {
                     datos.forEach(copia => {
                         this.copiasConocimiento.push(copia.id_departamento);
                     });
-                    console.log(datos);
                 }
             } catch (error) {
                 const method = url.split('/');
