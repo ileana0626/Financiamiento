@@ -182,7 +182,7 @@
                 <div class="col text-center">
                     <br />
                     <h4 class="not-margin">
-                        <b>Cargar Contestación Memorándum</b>
+                        <b>Cargar Contestación {{ tipoExtra }}</b>
                     </h4>
                 </div>
             </template>
@@ -190,7 +190,7 @@
                 <template v-if="Object.keys(datosContestacion).length > 0">
                     <div class="row overflow-hidden px-3">
                         <div class="col-12 px-3 pb-3 text-center">
-                            <label class="col-form-label">Núm. {{ datosContestacion.numMemo }}</label>
+                            <label class="col-form-label">&nbsp;</label>
                         </div>
                         <div class="col-12 px-3 pb-3">
                             <label class="col-form-label">Cargar archivo</label>
@@ -346,6 +346,21 @@ export default {
                 }
             }
         },
+        tipoExtra(){
+            let txt = '';
+            switch(this.idTipoSolicitud){
+                case 6:
+                    txt = 'Escrito';
+                    break;
+                case 7:
+                    txt = 'Tarjeta';
+                    break;
+                case 8:
+                    txt = 'Correo';
+                    break;
+            }
+            return txt;
+        }
     },
     methods: {
         async getAllByType(tipo = 1) {
@@ -369,7 +384,8 @@ export default {
             }
         },
         toEdit(id) {
-            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
+            methods.WIP(this.$vs);
+            // this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
         },
         verArchivo(datos, tipo) {
             this.tipoModal = tipo;
@@ -480,7 +496,7 @@ export default {
                             this.datosContestacion.idSolicitud,
                             this.archivoContestacion,
                             '',
-                            5
+                            (this.idTipoSolicitud - 1)
                         );
                         await this.setGuardaContestacion(archivo, tStamp);
                         let estatus = await this.setUpdateEstatus(this.datosContestacion.idSolicitud, 4, tStamp);
