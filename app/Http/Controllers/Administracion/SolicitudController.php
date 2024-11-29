@@ -199,6 +199,53 @@ class SolicitudController extends Controller
         }        
     }
 
+    public function setRegistrarExtra(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nTipo = $request->nTipo;
+        $nAreaSolicita = $request->nAreaSolicita;
+        $cAsunto = $request->cAsunto;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $nTermino = $request->nTermino;
+        $fTermino = $request->fTermino;
+        $nAsignacion = $request->nAsignacion;
+        $nRespuesta = $request->nRespuesta;
+        $nIdArchivo = $request->nIdArchivo;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $nIdAuth = $request->nIdAuth;
+        $fAccion = $request->fAccion;
+
+        $fTermino = ($fTermino == NULL) ? NULL : $fTermino;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarExtra( ?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+                $nTipo,
+                $nAreaSolicita,
+                $cAsunto,
+                $fRecibido,
+                $hRecibido,
+                $nTermino,
+                $fTermino,
+                $nAsignacion,
+                $nRespuesta,
+                $nIdArchivo,
+                $jsonSeguimiento,
+                $nIdAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
     public function setRegistrarCopiaCon(Request $request){
         if(!$request->ajax()) return redirect('/');
         

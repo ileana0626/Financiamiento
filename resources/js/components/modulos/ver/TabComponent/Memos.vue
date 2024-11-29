@@ -310,7 +310,7 @@ export default {
         colorStatus() {
             return (fechaTermino, estatus) => {
                 let color = ''
-                if (fechaTermino != null) {
+                if (fechaTermino != null && estatus != 'CONCLUIDO') {
                     const moment = require('moment');
                     let currentDate = moment();
                     let formattedDate = currentDate.format('DD/MM/YYYY');

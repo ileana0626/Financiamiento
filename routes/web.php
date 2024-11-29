@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/setRegistrarMemo','Administracion\SolicitudController@setRegistrarMemo');
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');
+    Route::post('/administracion/solicitud/setRegistrarExtra','Administracion\SolicitudController@setRegistrarExtra');
     Route::post('/administracion/solicitud/setRegistrarCopiaCon','Administracion\SolicitudController@setRegistrarCopiaCon');
     Route::get('/administracion/solicitud/getAllByType','Administracion\SolicitudController@getAllByType');
     Route::get('/administracion/solicitud/getDatosById','Administracion\SolicitudController@getDatosById');
