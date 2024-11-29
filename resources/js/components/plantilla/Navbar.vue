@@ -39,6 +39,15 @@
                             <li class="list-group-item" v-if="circular_count > 0">
                                 <span class="font-weight-bold">{{ circular_count }}</span> {{ circular_count == 1 ? 'recordatorio' : 'recordatorios' }} de circular
                             </li>
+                            <li class="list-group-item" v-if="escrito_count > 0">
+                                <span class="font-weight-bold">{{ escrito_count }}</span> {{ escrito_count == 1 ? 'recordatorio' : 'recordatorios' }} de escrito
+                            </li>
+                            <li class="list-group-item" v-if="tarjeta_count > 0">
+                                <span class="font-weight-bold">{{ tarjeta_count }}</span> {{ tarjeta_count == 1 ? 'recordatorio' : 'recordatorios' }} de tarjeta
+                            </li>
+                            <li class="list-group-item" v-if="correo_count > 0">
+                                <span class="font-weight-bold">{{ correo_count }}</span> {{ correo_count == 1 ? 'recordatorio' : 'recordatorios' }} de correo
+                            </li>
                             <li class="list-group-item" v-if="requi_count > 0">
                                 <span class="font-weight-bold">{{ requi_count }}</span> {{ requi_count == 1 ? 'recordatorio' : 'recordatorios' }} de requisición
                             </li>
@@ -133,6 +142,9 @@ export default {
             oficio_count: sessionStorage.getItem('oficio_count') ? Number(sessionStorage.getItem('oficio_count')) : 0,
             circular_count: sessionStorage.getItem('circular_count') ? Number(sessionStorage.getItem('circular_count')) : 0,
             requi_count: sessionStorage.getItem('requi_count') ? Number(sessionStorage.getItem('requi_count')) : 0,
+            escrito_count: sessionStorage.getItem('escrito_count') ? Number(sessionStorage.getItem('escrito_count')) : 0,
+            tarjeta_count: sessionStorage.getItem('tarjeta_count') ? Number(sessionStorage.getItem('tarjeta_count')) : 0,
+            correo_count: sessionStorage.getItem('correo_count') ? Number(sessionStorage.getItem('correo_count')) : 0,
         }
     },
 
@@ -320,6 +332,18 @@ export default {
                         this.circular_count++;
                         sessionStorage.setItem('circular_count', this.circular_count);
                         break;
+                    case 'ESCRITO':
+                        this.escrito_count++;
+                        sessionStorage.setItem('escrito_count', this.escrito_count);
+                        break;
+                    case 'TARJETA':
+                        this.tarjeta_count++;
+                        sessionStorage.setItem('tarjeta_count', this.tarjeta_count);
+                        break;
+                    case 'CORREO':
+                        this.correo_count++;
+                        sessionStorage.setItem('correo_count', this.correo_count);
+                        break;
                     case 'REQUISICIÓN':
                         this.requi_count++;
                         sessionStorage.setItem('requi_count', this.requi_count);
@@ -329,7 +353,10 @@ export default {
                     'memo': this.memo_count,
                     'oficio': this.oficio_count,
                     'circular': this.circular_count,
-                    'requi': this.requi_count,                    
+                    'requi': this.requi_count,
+                    'escrito': this.escrito_count,
+                    'tarjeta': this.tarjeta_count,
+                    'correo': this.correo_count,
                 })
                 Swal.fire({
                     icon: 'info',
@@ -372,6 +399,30 @@ export default {
                                 this.notify_count -= this.circular_count;
                                 this.circular_count = 0;
                                 sessionStorage.setItem('circular_count', this.circular_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'ESCRITO':
+                            if(this.escrito_count > 0){
+                                this.notify_count -= this.escrito_count;
+                                this.escrito_count = 0;
+                                sessionStorage.setItem('escrito_count', this.escrito_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'TARJETA':
+                            if(this.tarjeta_count > 0){
+                                this.notify_count -= this.tarjeta_count;
+                                this.tarjeta_count = 0;
+                                sessionStorage.setItem('tarjeta_count', this.tarjeta_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'CORREO':
+                            if(this.correo_count > 0){
+                                this.notify_count -= this.correo_count;
+                                this.correo_count = 0;
+                                sessionStorage.setItem('correo_count', this.correo_count);
                                 sessionStorage.setItem('notify_count', this.notify_count);
                             }
                             break;

@@ -525,10 +525,11 @@ class SolicitudController extends Controller
 
             DB::commit();
             return $rpta;
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            $errorCode = $e->errorInfo[1];
-            throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
         }
     }
 }
