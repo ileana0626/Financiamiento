@@ -27,7 +27,7 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr" :class="colorStatus(tr.fechaTermino, tr.estatus)">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr" :class="colorStatus(tr.fechaTermino, tr.estatus)">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.numOficio }}</vs-td>
                                 <vs-td>{{ tr.remitente }}</vs-td>

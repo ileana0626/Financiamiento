@@ -12,9 +12,7 @@
                             <vs-tr>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
+                                <vs-th class="vsax-th">Número</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'remitente')">Remitente</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'cargo')">Cargo</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
@@ -32,12 +30,15 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
-                                <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
-                                <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
+                                <vs-td>
+                                    <span v-if="tr.numFolio">{{ tr.numFolio}}</span>
+                                    <span v-else-if="tr.numMemo">{{ tr.numMemo}}</span>
+                                    <span v-else-if="tr.numOficio">{{ tr.numOficio}}</span>
+                                    <span v-else>-</span>
+                                </vs-td>
                                 <vs-td>{{ tr.remitente ? tr.remitente : '-'}}</vs-td>
                                 <vs-td>{{ tr.cargo ? tr.cargo : '-'}}</vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
