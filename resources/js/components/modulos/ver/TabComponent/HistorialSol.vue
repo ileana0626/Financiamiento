@@ -3,6 +3,22 @@
         <div class="row col-12 mx-0 card-info">
             <div class="container-fluid" style="background-color: var(--iee-white);">
                 <div class="center">
+                    <!-- <div class="container-fluid d-flex justify-content-center">
+                        <div class="row d-flex px-3 py-2 w-100">
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
+                                <span>op1</span>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
+                                <span>op2</span>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
+                                <span>op3</span>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
+                                <span>op4</span>
+                            </div>
+                        </div>
+                    </div> -->
                     <vs-table>
                         <template #header>
                             <vs-input v-model="search" border placeholder="Escribe un dato"

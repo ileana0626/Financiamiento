@@ -17,6 +17,7 @@
     --acentoOscuro: #0d1616;
     --vs-primary: #ffffff !important;
     --gray: #727475 !important;
+    --other-gray: #DCDCDC;
     --text-color: #727475;
     --iee-shadow: 7px 7px 30px 0 rgb(0 0 0 / 15%);
     --header-card: #2e2c2c;
@@ -65,6 +66,7 @@
     --acentoOscuro: #0d1616;
     --vs-primary: rgb(15, 15, 22) !important;
     --gray: #c0c0c0 !important;
+    --other-gray: #a1a1a1;
     --text-color: #dbdbdb;
     --iee-shadow: 7px 7px 30px 0 rgba(0, 0, 0, 0.3);
     --header-card: #575757;
@@ -608,6 +610,35 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav)
     /* box-shadow: 0 30px 0 0 var(--iee-white); */
 }
 
+.scrollTab{
+    width: 100%;
+    height: 4rem;
+    overflow-x: auto;
+}
+/* width */
+.scrollTab::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    transition:all ease-in-out 300ms;
+}
+
+/* Track */
+.scrollTab::-webkit-scrollbar-track {
+    background-color: var(--iee-light-gray);
+    border-radius: 10px;
+}
+
+/* Handle */
+.scrollTab::-webkit-scrollbar-thumb {
+    background: var(--other-gray);
+    border-radius: 10px;
+    opacity: 0.2;
+}
+
+.scrollTab::-webkit-scrollbar-thumb:hover {
+    background: var(--gray);
+    border-radius: 10px;
+}
 
 .tabContent {
     box-shadow: 0px 0px 0.22rem rgb(197, 197, 197);
@@ -1855,6 +1886,14 @@ div.vs-dialog, div.swal2-popup{
     .w-pop{
         width: 325px;
     }  
+}
+@media screen and (min-width: 1850px) {
+    /*Desechar este MQ si se añaden más pestañas*/
+    .scrollTab{
+        width: fit-content;
+        height: fit-content;
+        overflow-x: hidden;
+    }
 }
 
 @media screen and (max-width: 1300px) {

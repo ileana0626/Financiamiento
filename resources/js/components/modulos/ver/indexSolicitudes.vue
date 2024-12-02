@@ -20,7 +20,7 @@
         <div class="px-3 px-md-5 container-fluid">
             <div class="mx-3 mt-5 mt-md-4">
                 <!--Todo el contenido principal de la vista irá dentro de este div-->
-                <div class="d-flex justify-content-start align-items-center tabContainer">
+                <div class="d-flex justify-content-start align-items-center tabContainer" :class="numTabs > 2 ? 'scrollTab' : ''" ref="tabContainer">
                     <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor" :class="tabColour(memo_count)"/>
                     <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor" :class="tabColour(oficio_count)"/>
                     <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor" :class="tabColour(circular_count)"/>
@@ -32,8 +32,8 @@
                     <Tab title="Seguimiento" :active="activeTab == 9" @click.native="setActiveTab(9)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 10" @click.native="setActiveTab(10)"/>
                 </div>
-                <div class="p-2-p-md-4 pb-0 mb-4 mx-3 mx-sm-0 tabContent">
-                    <div>
+                <div class="p-2-p-md-4 pb-0 mb-4 mx-0 tabContent">
+                    <div class="mx-0">
                         <Memos v-if="activeTab == 1" :rol="rolUsuario" :user="idUsuario"/>
                         <Oficios v-else-if="activeTab == 2" :rol="rolUsuario" :user="idUsuario"/>
                         <Circulares v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
@@ -91,6 +91,8 @@ export default {
             escrito_count: sessionStorage.getItem('escrito_count') ? Number(sessionStorage.getItem('escrito_count')) : 0,
             tarjeta_count: sessionStorage.getItem('tarjeta_count') ? Number(sessionStorage.getItem('tarjeta_count')) : 0,
             correo_count: sessionStorage.getItem('correo_count') ? Number(sessionStorage.getItem('correo_count')) : 0,
+
+            numTabs: 0,
         }
     },
     computed:{
@@ -128,8 +130,12 @@ export default {
             this.tarjeta_count = data.tarjeta;
             this.correo_count = data.correo;
         });
+        this.numTabs = this.getNumTabs();
     },
     methods: {
+        getNumTabs(){
+            return this.$refs.tabContainer.children.length;
+        },
         setActiveTab(num){
             /**
              * 1: memo
