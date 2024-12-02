@@ -3,22 +3,44 @@
         <div class="row col-12 mx-0 card-info">
             <div class="container-fluid" style="background-color: var(--iee-white);">
                 <div class="center">
-                    <!-- <div class="container-fluid d-flex justify-content-center">
-                        <div class="row d-flex px-3 py-2 w-100">
-                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
-                                <span>op1</span>
+                    <div class="container-fluid d-flex justify-content-center">
+                        <div class="row d-flex px-3 py-4 w-100">
+                            <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold">
+                                    Mes:&nbsp;
+                                    <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar">
+                                        <el-option v-for="item in listMeses" :key="item.id" :label="item.nombre"
+                                            :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
-                                <span>op2</span>
+                            <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold">
+                                    Año:&nbsp;
+                                    <el-select filterable v-model="selectAnio" placeholder="Seleccione un año" class="con-consultar">
+                                        <el-option v-for="item in listaAnios" :key="item.id" :label="item.anio"
+                                            :value="item.anio">
+                                        </el-option>
+                                    </el-select>
+                                </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
-                                <span>op3</span>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-3 py-2 w-auto">
-                                <span>op4</span>
+                            <div class="col-12 col-xl-6 px-3 py-2 w-auto d-flex row row-columns">
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                    <i class="fas fa-search mr-2" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;Consultar</b> 
+                                </vs-button>
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                    <i class="fas fa-file-pdf mr-3" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte PDF</b> 
+                                </vs-button>
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                    <i class="fas fa-file-excel mr-3" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte Excel</b> 
+                                </vs-button>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                     <vs-table>
                         <template #header>
                             <vs-input v-model="search" border placeholder="Escribe un dato"
@@ -283,6 +305,10 @@ export default {
             errorFConte: 0,
 
             tipoModal: 0,
+            selectAnio: '',
+            listaAnios: [{id: 1, anio: 2024}],
+            selectMes: '',
+            listMeses: [{id: 12, nombre: 'Diciembre'}]
         }
     },
     async created() {
@@ -338,6 +364,9 @@ export default {
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
         },  
+        working() {
+          methods.WIP( this.$vs );  
+        },
     }
 }
 </script>
