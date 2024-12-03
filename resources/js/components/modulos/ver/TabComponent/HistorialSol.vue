@@ -6,7 +6,7 @@
                     <div class="container-fluid d-flex justify-content-center">
                         <div class="row d-flex px-3 py-4 w-100">
                             <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
-                                <div class="d-flex justify-content-center align-items-center font-weight-bold">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold" style="color: var(--iee-white-dark);">
                                     Mes:&nbsp;
                                     <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar" @change="customRango()">
                                         <el-option v-for="item in listMeses" :key="item.id" :label="item.mes"
@@ -16,7 +16,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
-                                <div class="d-flex justify-content-center align-items-center font-weight-bold">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold" style="color: var(--iee-white-dark);">
                                     Año:&nbsp;
                                     <el-select filterable v-model="selectAnio" placeholder="Seleccione un año" class="con-consultar" @change="customRango()">
                                         <el-option v-for="item in listaAnios" :key="item.id" :label="item.anio"
