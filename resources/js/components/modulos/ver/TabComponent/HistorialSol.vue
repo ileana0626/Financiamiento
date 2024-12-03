@@ -30,7 +30,7 @@
                                     <i class="fas fa-search mr-2" style="font-size: 15px;"></i>
                                     <b style="font-size: 0.8125rem;">&nbsp;Consultar</b> 
                                 </vs-button>
-                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="reporteMensualPDF()">
                                     <i class="fas fa-file-pdf mr-3" style="font-size: 15px;"></i>
                                     <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte PDF</b> 
                                 </vs-button>
@@ -313,6 +313,7 @@ export default {
             listMeses: [],
             rangoIni: '',
             rangoFin: '',
+            elMes: '',
         }
     },
     async created() {
@@ -391,8 +392,36 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             });
         },
-        toEdit( id ){
-            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
+        async reporteMensualPDF() {
+            const url = '/administracion/solicitud/reporteMensualPDF';
+            const config = {
+                responseType: 'blob',
+                params:{
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
+                    'nDPTO': this.dptoUsuario,
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                    'anio': this.selectAnio,
+                    'mesNombre': this.elMes,
+                }
+            };
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.get(url,config);
+                if(response.status === 200){
+                    const MyBlob = new Blob([response.data], { type: 'application/pdf'});
+                    let urlExcel = document.createElement('a');
+                    urlExcel.href = URL.createObjectURL(MyBlob);
+                    urlExcel.download = `solicitudes_${this.elMes}-${this.selectAnio}.pdf`;
+                    urlExcel.click();
+                    load.close();                 
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                load.close();
+            }
         },
         verArchivo(datos, tipo){
             this.tipoModal = tipo;
@@ -417,6 +446,8 @@ export default {
             let ff = new Date( Number(this.selectAnio), this.selectMes, 0);
             let tempFin = `${ff.getFullYear()}-${mes}-${ff.getDate()}`;
             this.rangoFin = tempFin;
+
+            this.elMes = this.listMeses[this.selectMes - 1].mes;
         },
         working() {
           methods.WIP( this.$vs );  

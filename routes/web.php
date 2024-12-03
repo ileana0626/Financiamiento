@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
     /**Historial solicitudes */
     Route::get('/administracion/solicitud/getAnios','Administracion\SolicitudController@getAnios');
     Route::get('/administracion/solicitud/getHistorial','Administracion\SolicitudController@getHistorial');
+    Route::get('/administracion/solicitud/reporteMensualPDF', 'Administracion\SolicitudController@reporteMensualPDF');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');

@@ -11,6 +11,7 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class SolicitudController extends Controller
 {
@@ -576,7 +577,7 @@ class SolicitudController extends Controller
                 $fInicio,
                 $fFin,
             ]);
-            
+
             return $rpta;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -586,4 +587,48 @@ class SolicitudController extends Controller
         }
     }
 
+    
+    // FUNCIONES PARA EXPORTAR EXCEL/PDF:
+    public function reporteMensualPDF(Request $request){
+        if(!$request -> ajax()) return redirect('/');
+
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+        $anio = $request->anio;
+        $mesNombre = $request->mesNombre;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        $mesNombre = ($mesNombre == NULL || $mesNombre == '') ? 'N/A' : $mesNombre;
+        $anio = ($anio == NULL) ? '2024' : $anio;
+
+        try {
+            $rpta = DB::select("call sp_Solicitud_getHistorial(?,?,?,?,?)",[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+
+            $rutaBlade = 'reportes.solicitudes.pdf.reporteMensual';
+            $data = [
+                'logoIEE' => asset('/img/logo-light.png'),
+                'logoNORMA' => asset('/img/LOGO_NORMA.png'),
+                'mes' => $mesNombre,
+                'data' => $rpta,
+                'anio' => $anio,
+            ];
+
+            $pdf = PDF::loadView($rutaBlade, $data)->setPaper('legal','landscape');
+            return $pdf->download('invoice.pdf');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
 }
