@@ -8,7 +8,7 @@
                             <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
                                 <div class="d-flex justify-content-center align-items-center font-weight-bold">
                                     Mes:&nbsp;
-                                    <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar">
+                                    <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar" @change="customRango()">
                                         <el-option v-for="item in listMeses" :key="item.id" :label="item.mes"
                                             :value="item.id">
                                         </el-option>
@@ -18,7 +18,7 @@
                             <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
                                 <div class="d-flex justify-content-center align-items-center font-weight-bold">
                                     Año:&nbsp;
-                                    <el-select filterable v-model="selectAnio" placeholder="Seleccione un año" class="con-consultar">
+                                    <el-select filterable v-model="selectAnio" placeholder="Seleccione un año" class="con-consultar" @change="customRango()">
                                         <el-option v-for="item in listaAnios" :key="item.id" :label="item.anio"
                                             :value="item.anio">
                                         </el-option>
@@ -26,7 +26,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-xl-6 px-3 py-2 w-auto d-flex row row-columns">
-                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="getHistorial()">
                                     <i class="fas fa-search mr-2" style="font-size: 15px;"></i>
                                     <b style="font-size: 0.8125rem;">&nbsp;Consultar</b> 
                                 </vs-button>
@@ -286,6 +286,8 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            rolUsuario: Number(sessionStorage.getItem('rolUsuario')),
+            idUsuario: Number(sessionStorage.getItem('idUsuario')),
             dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             darkMode: localStorage.getItem('theme') == 'dark', 
             og: window.location.origin + '/',
@@ -308,16 +310,19 @@ export default {
             selectAnio: '',
             listaAnios: [],
             selectMes: '',
-            listMeses: []
+            listMeses: [],
+            rangoIni: '',
+            rangoFin: '',
         }
     },
     async created() {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         const load = methods.loading( this.$vs );
-        await this.getAllByType(5);
         await this.getAnios();
         await this.obtenerDatos(); //get meses
+        this.customRango();
         load.close();
+        await this.getHistorial();
     },
     mounted() {
 
@@ -329,23 +334,31 @@ export default {
                     return respuesta == 1 ? 'Si' : 'No';
                 } else return '-';
             }
-        }
+        },
+        mesActual(){
+            let date = new Date();
+            return date.getMonth() + 1;
+        },
     },
     methods: {
-        async getAllByType( tipo = 1) {
-            const url = '/administracion/solicitud/getAllByType';
-
+        async getHistorial() {
+            const url = '/administracion/solicitud/getHistorial';
+            const load = methods.loading( this.$vs );
             try {
-                const response = await axios.get(url,{ params: {
-                    'nTipo': tipo,
+                this.listSolicitudes = [];
+                const response = await axios.get(url, {params: {
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
                     'nDPTO': this.dptoUsuario,
-                    'nRol': this.$attrs.rol,
-                    'nUser': this.$attrs.user,
-                }})
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                }});
                 if(response.status === 200){
                     this.listSolicitudes = response.data;
+                    load.close();
                 }
             } catch (error) {
+                load.close();
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
             }
@@ -356,6 +369,7 @@ export default {
                 const response = await axios.get(url);
                 if(response.status === 200){
                     this.listaAnios = response.data;
+                    this.selectAnio = response.data[0].anio;
                 }
             } catch (error) {
                 let method = url.split('/');
@@ -371,6 +385,7 @@ export default {
                 }
             }).then(response => {
                 this.listMeses = response.data;
+                this.selectMes = this.mesActual;
             }).catch(error => {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
@@ -391,7 +406,18 @@ export default {
         },    
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
-        },  
+        }, 
+        customRango() {
+            if(this.selectAnio == '' && this.selectMes == '') return;
+
+            let mes = String(this.selectMes).padStart(2, '00');
+            let tempInicio = `${this.selectAnio}-${mes}-01`;   
+            this.rangoIni = tempInicio;
+
+            let ff = new Date( Number(this.selectAnio), this.selectMes, 0);
+            let tempFin = `${ff.getFullYear()}-${mes}-${ff.getDate()}`;
+            this.rangoFin = tempFin;
+        },
         working() {
           methods.WIP( this.$vs );  
         },

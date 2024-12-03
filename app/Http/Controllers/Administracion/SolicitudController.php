@@ -556,4 +556,34 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function getHistorial(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        try {
+            $rpta = DB::select('call sp_Solicitud_getHistorial(?,?,?,?,?)',[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+            
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
 }
