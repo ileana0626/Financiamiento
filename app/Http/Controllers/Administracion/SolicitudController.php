@@ -532,4 +532,28 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+    public function getAnios(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_Solicitud_getAnios');
+            $anios = [];
+            if(sizeof($rpta) > 0){
+                foreach($rpta as $index => $value){
+                    $value->id = $index + 1;
+                }
+                $anios = $rpta;
+            } else{
+                array_push($anios, ['id' => 1, 'anio' => date('Y')]);
+            }
+
+            return $anios;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }

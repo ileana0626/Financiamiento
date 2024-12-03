@@ -9,7 +9,7 @@
                                 <div class="d-flex justify-content-center align-items-center font-weight-bold">
                                     Mes:&nbsp;
                                     <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar">
-                                        <el-option v-for="item in listMeses" :key="item.id" :label="item.nombre"
+                                        <el-option v-for="item in listMeses" :key="item.id" :label="item.mes"
                                             :value="item.id">
                                         </el-option>
                                     </el-select>
@@ -306,15 +306,17 @@ export default {
 
             tipoModal: 0,
             selectAnio: '',
-            listaAnios: [{id: 1, anio: 2024}],
+            listaAnios: [],
             selectMes: '',
-            listMeses: [{id: 12, nombre: 'Diciembre'}]
+            listMeses: []
         }
     },
     async created() {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         const load = methods.loading( this.$vs );
         await this.getAllByType(5);
+        await this.getAnios();
+        await this.obtenerDatos(); //get meses
         load.close();
     },
     mounted() {
@@ -347,6 +349,32 @@ export default {
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
             }
+        },
+        async getAnios() {
+            const url = '/administracion/solicitud/getAnios';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.listaAnios = response.data;
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            }
+        },
+        async obtenerDatos() {
+            let url = '/administracion/usuario/obtenerDatos'
+            await axios.get(url, {
+                params: {
+                    'tipo': 11, // cat meses
+                    'consulta': 2
+                }
+            }).then(response => {
+                this.listMeses = response.data;
+            }).catch(error => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            });
         },
         toEdit( id ){
             this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
