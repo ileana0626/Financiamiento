@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Administracion;
 use App\Events\Logout;
 use App\Events\NavNotify;
 use App\Events\Testear;
+use App\Exports\SolicitudesExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
@@ -540,7 +541,7 @@ class SolicitudController extends Controller
         try {
             $rpta = DB::select('call sp_Solicitud_getAnios');
             $anios = [];
-            if(sizeof($rpta) > 0){
+            if(sizeof($rpta) > 0 && $rpta[0]->anio != null){
                 foreach($rpta as $index => $value){
                     $value->id = $index + 1;
                 }
@@ -627,6 +628,46 @@ class SolicitudController extends Controller
 
             $pdf = PDF::loadView($rutaBlade, $data)->setPaper('legal','landscape');
             return $pdf->download('invoice.pdf');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+    public function reporteMensualExcel(Request $request){
+        if(!$request -> ajax()) return redirect('/');
+
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+        $anio = $request->anio;
+        $mesNombre = $request->mesNombre;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        $mesNombre = ($mesNombre == NULL || $mesNombre == '') ? 'N/A' : $mesNombre;
+        $anio = ($anio == NULL) ? '2024' : $anio;
+
+        try {
+            $rpta = DB::select("call sp_Solicitud_getHistorial(?,?,?,?,?)",[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+
+            $data = [
+                'logoIEE' => '/img/logo-light.png',
+                'logoNORMA' => '/img/LOGO_NORMA.png',
+                'mes' => $mesNombre,
+                'datos' => $rpta,
+                'anio' => $anio,
+            ];
+
+            return (new SolicitudesExport)->setDatos($data)->download('invoice.xlsx');
         } catch (\Exception $e) {
             throw new \Exception($e);
         }

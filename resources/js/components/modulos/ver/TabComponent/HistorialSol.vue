@@ -34,7 +34,7 @@
                                     <i class="fas fa-file-pdf mr-3" style="font-size: 15px;"></i>
                                     <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte PDF</b> 
                                 </vs-button>
-                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="working()">
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="reporteMensualExcel()">
                                     <i class="fas fa-file-excel mr-3" style="font-size: 15px;"></i>
                                     <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte Excel</b> 
                                 </vs-button>
@@ -423,6 +423,40 @@ export default {
                 load.close();
             }
         },
+        async reporteMensualExcel(){
+            const url = '/administracion/solicitud/reporteMensualExcel';
+            const config = {
+                responseType: 'blob',
+                params:{
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
+                    'nDPTO': this.dptoUsuario,
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                    'anio': this.selectAnio,
+                    'mesNombre': this.elMes,
+                }
+            };
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.get(url, config);
+                if(response.status === 200){
+                    const MyBlob = new Blob([response.data], { type: 'application/vnd.ms-excel'});
+                    let urlExcel = document.createElement('a');
+                    urlExcel.href = URL.createObjectURL(MyBlob);
+                    urlExcel.download = `solicitudes_${this.elMes}-${this.selectAnio}.xlsx`;
+                    urlExcel.click();
+                }else{
+                    throw new Error('Error al obtener datos');
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            } finally {
+                load.close();
+            }
+        },
+
         verArchivo(datos, tipo){
             this.tipoModal = tipo;
             this.datosArchivo = datos;
