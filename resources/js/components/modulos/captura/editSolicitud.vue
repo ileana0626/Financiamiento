@@ -397,32 +397,129 @@
                                     </vs-input>
                                 </div>
                             </template>
-                        </div>
-                        <div class="row px-4 py-1">
-                            <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
-                                <label class="col-form-label" @click.prevent="verArchivo()">Cargar Archivo</label>
-                                <!-- <div class="row px-0 pr-sm-5 pb-3">
-                                    <div class="col-md-6">
-                                        <el-upload class="upload-demo col-md-12"
-                                            action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleF1"
-                                            accept="application/pdf" :on-preview="handlePreview" :on-remove="handleRemoveF1"
-                                            multiple :limit="1" :on-exceed="handleExceed" :auto-upload="false" ref="upload">
-                                            <vs-button type="primary"
-                                                style="background-color: #af8909; border-color: #af8909;"><strong
-                                                    style="color: white !important;">Clic
-                                                    para
-                                                    subir
-                                                    archivo</strong></vs-button>
-                                            <div slot="tip" class="el-upload__tip">Solo archivos de tipo PDF
-                                            </div>
-                                        </el-upload>
+                            <template v-else-if="tipoDoc == 5 || tipoDoc == 6 || tipoDoc == 7">
+                                <!--Inicio extra: registro de escrito, tarjeta y correo-->
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Área que solicita</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                                        :key="'aSolicita' + tipoDoc" v-model="areaSolicita"
+                                        v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaSolicita.length > 0">
+                                            {{ errorAreaSolicita }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in cat_departamentos" :key="index"
+                                            :label="item.nombre" :value="item.id">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Asunto</label>
+                                    <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after
+                                        placeholder="Asunto" :key="'asunto' + tipoDoc" v-model="asunto"
+                                        autocomplete="off" @input="inputAsunto()">
+                                        <template #message-danger v-if="errorAsunto.length > 0">
+                                            {{ errorAsunto }}
+                                        </template>
+                                    </vs-input>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Fecha de Recibido</label>
+                                    <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy"
+                                        :key="'fRecibido' + tipoDoc" :picker-options="pickerOptions"
+                                        value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                    </el-date-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorFechaRecibido.length > 0">
+                                            {{ errorFechaRecibido }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Hora de Recibido</label>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido"
+                                        :key="'hRecibido' + tipoDoc" :picker-options="timePicker">
+                                    </el-time-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorHora.length > 0">
+                                            {{ errorHora }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Termino</label>
+                                    <vs-select placeholder="Seleccione una opción" v-model="termino"
+                                        :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
+                                        filter autocomplete="off" @change="handleTermino()">
+                                        <template #message-danger v-if="errorTermino.length > 0">
+                                            {{ errorTermino }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
+                                            :value="item.idTermino">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <template v-if="termino == 1">
+                                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                        <label class="col-form-label">Fecha de Termino</label>
+                                        <el-date-picker type="date" placeholder="Fecha de Termino"
+                                            :key="'fTermino' + tipoDoc" :picker-options="pickerOptions2"
+                                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaTermino">
+                                        </el-date-picker>
                                         <div class="danger-message">
-                                            <template v-if="errorF1 == 1">
-                                                Seleccione un archivo para subir
+                                            <template v-if="errorFechaTermino.length > 0">
+                                                {{ errorFechaTermino }}
                                             </template>
                                         </div>
                                     </div>
-                                </div> -->
+                                </template>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Asignar</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                                        :key="'asignar' + tipoDoc" v-model="areaAsignada"
+                                        v-if="cat_seguimiento.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaAsignada.length > 0">
+                                            {{ errorAreaAsignada }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in cat_seguimiento" :key="index"
+                                            :label="item.nombre" :value="item.idSeguimiento">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Requiere Respuesta</label>
+                                    <vs-select placeholder="Seleccione una opción" v-model="respuesta"
+                                        :key="'respuesta' + tipoDoc" v-if="selectSiNo.length > 0"
+                                        :color="colors[0].color" filter autocomplete="off">
+                                        <template #message-danger v-if="errorRespuesta.length > 0">
+                                            {{ errorRespuesta }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in selectSiNo" :key="index" :label="item.opcion"
+                                            :value="item.idSelect">
+                                            {{ item.opcion }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="row px-4 py-1">
+                            <div class="col-12 col-md-6 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label">Archivo Cargado</label>
+                                <div class="d-flex justify-content-center">
+                                    <vs-button class="btn btn-flat btn-sm py-1 font-weight-bold" :color="!!(darkMode) ? '#f5f5f5' : '#595959'"
+                                        @click.prevent="verArchivo()" :key="'editS'+darkMode">
+                                        <div style="color: var(--btn-txt-color);">
+                                            Ver Archivo &nbsp;&nbsp;
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                    </vs-button>
+                                </div>
+                            </div>
+                            <div class="col-12"></div>
+                            <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label" @click.prevent="verArchivo()">Cargar Nuevo Archivo</label>
                                 <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
                                     <template v-if="documentos.F1.length === 0">
                                         <el-upload class="upload-demo my-4" :class="documentos.F1.length > 0 ? 'd-none' : 'd-block'" drag

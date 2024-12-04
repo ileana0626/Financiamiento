@@ -384,8 +384,7 @@ export default {
             }
         },
         toEdit(id) {
-            methods.WIP(this.$vs);
-            // this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
+            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id } })
         },
         verArchivo(datos, tipo) {
             this.tipoModal = tipo;
