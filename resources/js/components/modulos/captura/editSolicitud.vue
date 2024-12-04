@@ -519,7 +519,7 @@
                             </div>
                             <div class="col-12"></div>
                             <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
-                                <label class="col-form-label" @click.prevent="verArchivo()">Cargar Nuevo Archivo</label>
+                                <label class="col-form-label">Cargar Nuevo Archivo</label>
                                 <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
                                     <template v-if="documentos.F1.length === 0">
                                         <el-upload class="upload-demo my-4" :class="documentos.F1.length > 0 ? 'd-none' : 'd-block'" drag
@@ -620,6 +620,16 @@
                                     </vs-option>
                                 </vs-select>
                             </div>
+                            <div class="col-12 px-0 pr-sm-5 pb-5">
+                                <label class="col-form-label">Motivo del cambio</label>
+                                <el-input type="textarea" :rows="5" placeholder="Especifique el motivo por el que se realizará el cambio en la información" v-model="motivo">
+                                </el-input>
+                                <div class="danger-message">
+                                    <template v-if="errorMotivo.length > 0">
+                                        {{ errorMotivo }}
+                                    </template>
+                                </div>
+                            </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
                                     <vs-button color="#a5904a" block
@@ -709,7 +719,7 @@ export default {
             fechaRecibido: '',
             fechaTermino: '',
             hora: new Date(),
-            mamadas: '',
+            motivo: '',
             documentos: {
                 F1: '',
             },
@@ -748,6 +758,7 @@ export default {
             errorNMemorandum: '',
             errorSeguimiento: '',
             errorCopiasConocimiento: '',
+            errorMotivo: '',
 
             errorFechaRecibido: '',
             errorFechaTermino: '',
@@ -1116,7 +1127,6 @@ export default {
             }
         },       
         guardarSolicitud() {
-            // const loading = methods.loading(this.$vs);
             if (this.tipoDoc == '') {
                 Swal.fire({
                     icon: 'warning',
@@ -1137,6 +1147,35 @@ export default {
                 else if (this.tipoDoc == 4) {
                     this.GuardarCircular()    
                 }
+            }
+        },
+        /**(WIP) Actualiza todos los tipos de solicitud */
+        actualizaTodo() {
+            this.limpiarErrores();
+            let nombreDoc = '';
+            switch(this.tipoDoc){
+                case 1:
+                    this.ValidarRequi();
+                    nombreDoc = 'requisición';
+                    break;
+                case 2:
+                    this.ValidarMemo();
+                    nombreDoc = 'memorándum';
+                    break;
+                case 3:
+                    this.ValidarOficio();
+                    nombreDoc = 'oficio';
+                    break;
+                case 4:
+                    this.ValidarCircular();
+                    nombreDoc = 'circular';
+                    break;
+                case 5,6,7:
+                    this.ValidarExtra();
+                    if(this.tipoDoc = 5) nombreDoc = 'escrito';
+                    else if(this.tipoDoc = 6) nombreDoc = 'tarjeta';
+                    else if(this.tipoDoc = 5) nombreDoc = 'correo';
+                    break;
             }
         },
         GuardarRequi() {
@@ -1329,6 +1368,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
+            if(this.motivo.length === 0){
+                this.errorMotivo = 'El motivo del cambio es obligatorio';
+                this.error = true;
+            }
             // if(this.copiasConocimiento.length === 0){
             //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
             //     this.error = true;
@@ -1380,6 +1423,10 @@ export default {
             }
             if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
+                this.error = true;
+            }
+            if(this.motivo.length === 0){
+                this.errorMotivo = 'El motivo del cambio es obligatorio';
                 this.error = true;
             }
             // if(this.copiasConocimiento.length === 0){
@@ -1435,6 +1482,10 @@ export default {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
             }
+            if(this.motivo.length === 0){
+                this.errorMotivo = 'El motivo del cambio es obligatorio';
+                this.error = true;
+            }
             // if(this.copiasConocimiento.length === 0){
             //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
             //     this.error = true;
@@ -1466,12 +1517,65 @@ export default {
                 this.errorSeguimiento = 'Seleccione al menos una opción de seguimiento';
                 this.error = true;
             }
+            if(this.motivo.length === 0){
+                this.errorMotivo = 'El motivo del cambio es obligatorio';
+                this.error = true;
+            }
             // if(this.copiasConocimiento.length === 0){
             //     this.errorCopiasConocimiento = 'Seleccione al menos una opción para copia de conocimiento';
             //     this.error = true;
             // }            
         },
 
+        ValidarExtra() {
+            this.error = false;
+            if (this.areaSolicita === '') {
+                this.errorAreaSolicita = 'El área que solicita es obligatoria';
+                this.error = true;
+            }
+            if (this.asunto === '') {
+                this.errorAsunto = 'El asunto es obligatorio';
+                this.error = true;
+            }
+            if (this.fechaRecibido === '') {
+                this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
+                this.error = false;
+            }
+            if (this.hora === '' || this.hora === null) {
+                this.errorHora = 'La hora de recibido es obligatoria';
+                this.error = true;
+            }
+            if (this.termino === '') {
+                this.errorTermino = 'El termino es obligatorio';
+                this.error = true;
+            } else if (this.termino === 1) {
+                if (this.fechaTermino === '') {
+                    this.errorFechaTermino = 'La fecha de termino es obligatoria';
+                    this.error = true;
+                }
+            }
+            if (this.areaAsignada === '') {
+                this.errorAreaAsignada = 'La asignación es obligatoria';
+                this.error = true;
+            }
+            if (this.respuesta === '') {
+                this.errorRespuesta = 'Seleccione una opción para respuesta';
+                this.error = true;
+            }
+
+            if (this.documentos.F1 === '') {
+                this.errorF1 = 1;
+                this.error = true;
+            }
+            if (this.seguimiento.length === 0) {
+                this.errorSeguimiento = 'Seleccione una opción de seguimiento';
+                this.error = true;
+            }
+            if(this.motivo.length === 0){
+                this.errorMotivo = 'El motivo del cambio es obligatorio';
+                this.error = true;
+            }
+        },
         /**Limpia todos los mensajes de error */
         limpiarErrores() {
             this.errorRespuesta = '';
@@ -1494,7 +1598,7 @@ export default {
             this.errorHora = ''; 
             this.errorSeguimiento = '';   
             this.errorCopiasConocimiento = '';
-            this.errorCopiasConocimiento = '';    
+            this.errorMotivo = '';
         },
         limpiarCampos() {
             this.tipoDoc = '';
@@ -1519,6 +1623,7 @@ export default {
             this.copiasConocimiento = [];
             this.tipoDoc = '';
             this.$refs.upload.clearFiles();
+            this.motivo = '';
         },
         // funciones para obtener los datos de la solicitud
         async getDatosById() {

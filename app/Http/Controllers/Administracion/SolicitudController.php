@@ -672,4 +672,70 @@ class SolicitudController extends Controller
             throw new \Exception($e);
         }
     }
+    
+    public function setUpdateCaptura(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdSolicitud = $request->nIdSolicitud;
+        $nTipo = $request->nTipo;
+        $nIdArchivo = $request->nIdArchivo;
+        $nAreaSolicita = $request->nAreaSolicita;
+        $nAreaEmite = $request->nAreaEmite;
+        $nAreaAsignar = $request->nAreaAsignar;
+        $cOficio = $request->cOficio;
+        $cAsunto = $request->cAsunto;
+        $cCargo = $request->cCargo;
+        $cRemitente = $request->cRemitente;
+        $cFolio = $request->cFolio;
+        $cMemo = $request->cMemo;
+        $nCapitulo = $request->nCapitulo;
+        $nTermino = $request->nTermino;
+        $nRespuesta = $request->nRespuesta;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $fTermino = $request->fTermino;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $fAccion = $request->fAccion;
+        $nIdAuth = $request->nIdAuth;
+        $cMotivo = $request->cMotivo;
+
+        $fTermino = ($fTermino == NULL) ? NULL : $fTermino;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setUpdateCaptura( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+                $nIdSolicitud,
+                $nTipo,
+                $nIdArchivo,
+                $nAreaSolicita,
+                $nAreaEmite,
+                $nAreaAsignar,
+                $cOficio,
+                $cAsunto,
+                $cCargo,
+                $cRemitente,
+                $cFolio,
+                $cMemo,
+                $nCapitulo,
+                $nTermino,
+                $nRespuesta,
+                $fRecibido,
+                $hRecibido,
+                $fTermino,
+                $jsonSeguimiento,
+                $fAccion,
+                $nIdAuth,
+                $cMotivo,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
 }
