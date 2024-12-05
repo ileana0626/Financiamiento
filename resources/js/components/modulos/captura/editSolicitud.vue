@@ -633,7 +633,7 @@
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
                                     <vs-button color="#a5904a" block
-                                        @click.prevent="guardarSolicitud" disabled>
+                                        @click.prevent="actualizaTodo">
                                         <b style="font-size: medium !important;">
                                             <span class="px-5 text-white">Actualizar</span>
                                         </b>
@@ -725,6 +725,8 @@ export default {
             },
             seguimiento: '',
             copiasConocimiento: [],
+            copiasPrevias: [], 
+            copiasQuitar: [],
 
             catTermino: [],
             catCapitulo: [],
@@ -803,6 +805,13 @@ export default {
             } else {
                 this.seguimiento = '';
             }
+        },
+        copiasConocimiento(newVal, oldVal) {
+            // añadir la copia al array para eliminacion
+            const quitadas = oldVal.filter((copia) => !newVal.includes(copia));
+            this.copiasQuitar = [
+                ... new Set([... this.copiasQuitar, ... quitadas])
+            ].filter((tq) => !newVal.includes(tq)); //quitar reagreado
         },
     },
     created(){
@@ -1125,7 +1134,28 @@ export default {
                 methods.catchHandler(error, method[3], this.$router);
                 return 0;
             }
-        },       
+        },
+        
+        async setUpdateCopias() {
+            const url = '/administracion/solicitud/setUpdateCopias';
+
+            try {
+                const response = await axios.post(url,{
+                    'nIdSolicitud': this.idSolicitud,
+                    'copiasPrevias': JSON.stringify(this.copiasPrevias), 
+                    'copiasConocimiento': this.copiasConocimiento,
+                    'copiasQuitar': this.copiasQuitar,
+                    'fAccion': methods.getTimestamp(),
+                });
+                if(response.status === 200){
+                    return 1;
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router); 
+                return 0;
+            }
+        },
         guardarSolicitud() {
             if (this.tipoDoc == '') {
                 Swal.fire({
@@ -1153,6 +1183,7 @@ export default {
         actualizaTodo() {
             this.limpiarErrores();
             let nombreDoc = '';
+            
             switch(this.tipoDoc){
                 case 1:
                     this.ValidarRequi();
@@ -1170,12 +1201,43 @@ export default {
                     this.ValidarCircular();
                     nombreDoc = 'circular';
                     break;
-                case 5,6,7:
+                case 5:
                     this.ValidarExtra();
-                    if(this.tipoDoc = 5) nombreDoc = 'escrito';
-                    else if(this.tipoDoc = 6) nombreDoc = 'tarjeta';
-                    else if(this.tipoDoc = 5) nombreDoc = 'correo';
+                    nombreDoc = 'escrito';
                     break;
+                case 6:
+                    this.ValidarExtra();
+                    nombreDoc = 'tarjeta';
+                    break;
+                case 7:
+                    this.ValidarExtra();
+                    nombreDoc = 'correo';
+                    break;
+            }
+            if(!this.error){
+                let fechaAccion = methods.getTimestamp();
+                Swal.fire({
+                    icon: 'warning',
+                    title: `¿Actualizar los datos de la solicitud de ${nombreDoc}?`,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Si, actualizar',
+                    cancelButtonText: 'No, cancelar',
+                    reverseButtons: true,
+                }).then(async (result) => {
+                    if(result.isConfirmed){
+                        methods.WIP(this.$vs);
+                        // const load = methods.loading( this.$vs );
+                        // Por hacer
+                        // - validar y subir el nuevo archivo
+                        // - actualizar las copias de conocimiento
+                        // - actualizar los datos de la solicitud
+                        // - limpiar las variables y recargar la información
+                        // - definir como manejar el campo de motivo del cambio
+                        // - borrar funciones no usadas
+                        // load.close();
+                    }
+                });
             }
         },
         GuardarRequi() {
@@ -1360,10 +1422,10 @@ export default {
                 this.errorAreaAsignada0 = 'La asignación de requisición es obligatoria';
                 this.error = true;
             }
-            if(this.documentos.F1 === ''){
-                this.errorF1 = 1;
-                this.error = true;
-            }
+            // if(this.documentos.F1 === ''){
+            //     this.errorF1 = 1;
+            //     this.error = true;
+            // }
             if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
@@ -1417,10 +1479,10 @@ export default {
                 this.error = true;
             }
 
-            if(this.documentos.F1 === ''){
-                this.errorF1 = 1;
-                this.error = true;
-            }
+            // if(this.documentos.F1 === ''){
+            //     this.errorF1 = 1;
+            //     this.error = true;
+            // }
             if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
@@ -1474,10 +1536,10 @@ export default {
                 this.error = true;
             }   
 
-            if(this.documentos.F1 === ''){
-                this.errorF1 = 1;
-                this.error = true;
-            }
+            // if(this.documentos.F1 === ''){
+            //     this.errorF1 = 1;
+            //     this.error = true;
+            // }
             if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
@@ -1509,10 +1571,10 @@ export default {
                 this.error = true;
             }
 
-            if(this.documentos.F1 === ''){
-                this.errorF1 = 1;
-                this.error = true;
-            }
+            // if(this.documentos.F1 === ''){
+            //     this.errorF1 = 1;
+            //     this.error = true;
+            // }
             if(this.seguimiento.length === 0){
                 this.errorSeguimiento = 'Seleccione al menos una opción de seguimiento';
                 this.error = true;
@@ -1563,10 +1625,10 @@ export default {
                 this.error = true;
             }
 
-            if (this.documentos.F1 === '') {
-                this.errorF1 = 1;
-                this.error = true;
-            }
+            // if (this.documentos.F1 === '') {
+            //     this.errorF1 = 1;
+            //     this.error = true;
+            // }
             if (this.seguimiento.length === 0) {
                 this.errorSeguimiento = 'Seleccione una opción de seguimiento';
                 this.error = true;
@@ -1685,7 +1747,7 @@ export default {
                 }});
                 if(response.status === 200){
                     const datos = response.data;
-
+                    this.copiasPrevias = datos;
                     datos.forEach(copia => {
                         this.copiasConocimiento.push(copia.id_departamento);
                     });

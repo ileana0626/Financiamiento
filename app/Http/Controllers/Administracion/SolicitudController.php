@@ -738,4 +738,61 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+    public function setUpdateCopias(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdSolicitud = $request->nIdSolicitud;
+        $copiasPrevias = json_decode($request->copiasPrevias);
+        $copiasConocimiento = $request->copiasConocimiento;
+        $copiasQuitar = $request->copiasQuitar;
+        $fAccion = $request->fAccion;
+
+        DB::beginTransaction();
+        try {
+            if(sizeof($copiasPrevias) > 0 && sizeof($copiasQuitar) > 0){
+                // borrar los registros indicados en copiasQuitar y quitar el elemento relacionado de copiasPrevias
+                for($cQ = 0; $cQ < sizeof($copiasQuitar); $cQ++){
+                    foreach($copiasPrevias as $index => $pCopia){
+                        if($pCopia->id_departamento === $copiasQuitar[$cQ]){
+                            DB::select('call sp_Solicitud_deleteCopiaCon(?,?)',[
+                                $nIdSolicitud,
+                                $pCopia->id_departamento,
+                            ]);
+                            unset($copiasPrevias[$index]);
+                        }
+                    }
+                }
+            }
+            if(sizeof($copiasConocimiento) > 0){
+                if(sizeof($copiasPrevias) > 0){
+                    // añadir solo las copias que no se encuentren ya registradas
+                    for($cC = 0; $cC < sizeof($copiasConocimiento); $cC++){
+                        foreach($copiasPrevias as $index => $pCopia){
+                            if($pCopia->id_departamento !== $copiasConocimiento[$cC]){
+                                DB::select('call sp_Solicitud_setRegistrarCopiaCon(?,?,?)',[
+                                    $nIdSolicitud,
+                                    $copiasConocimiento[$cC],
+                                    $fAccion,
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    // añadir los registros como de primera vez
+                    foreach($copiasConocimiento as $cono){
+                        DB::select('call sp_Solicitud_setRegistrarCopiaCon(?,?,?)',[
+                            $nIdSolicitud,
+                            $cono,
+                            $fAccion,
+                        ]);                      
+                    }
+                }
+            }
+            DB::commit();
+            return response()->json(['message' => 'ok']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+        }
+    }
 }

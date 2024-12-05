@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/setEnteradoCopia','Administracion\SolicitudController@setEnteradoCopia');
     /**Actualización de solicitudes */
     Route::post('/administracion/solicitud/setUpdateCaptura','Administracion\SolicitudController@setUpdateCaptura');
+    Route::post('/administracion/solicitud/setUpdateCopias','Administracion\SolicitudController@setUpdateCopias');
     /**Historial solicitudes */
     Route::get('/administracion/solicitud/getAnios','Administracion\SolicitudController@getAnios');
     Route::get('/administracion/solicitud/getHistorial','Administracion\SolicitudController@getHistorial');
