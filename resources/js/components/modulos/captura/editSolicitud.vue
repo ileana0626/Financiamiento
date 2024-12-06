@@ -108,10 +108,10 @@
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Asignar Requisición</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color" :key="'aAsignada' + tipoDoc"
-                                        v-model="areaAsignada0" v-if="cat_seguimiento.length > 0" autocomplete="off"
+                                        v-model="areaAsignada" v-if="cat_seguimiento.length > 0" autocomplete="off"
                                         :disabled="!(esCapturista || esAdmi)">
-                                        <template #message-danger v-if="errorAreaAsignada0.length > 0">
-                                            {{ errorAreaAsignada0 }}
+                                        <template #message-danger v-if="errorAreaAsignada.length > 0">
+                                            {{ errorAreaAsignada }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index" :label="item.nombre"
                                             :value="item.idSeguimiento" :disabled="!(esCapturista || esAdmi)">
@@ -704,7 +704,6 @@ export default {
             ],
             tipoDoc: '',
             areaSolicita: '',
-            areaAsignada0: '',
             areaAsignada: '',
             areaEmite: '',
             nOficio: '',
@@ -1004,7 +1003,7 @@ export default {
                     'fRecibido': this.fechaRecibido,
                     'hRecibido': strHora,
                     'nAreaSolicita': this.areaSolicita,
-                    'nAsignacion': this.areaAsignada0,
+                    'nAsignacion': this.areaAsignada,
                     'nIdArchivo': idARCHIVO,
                     'jsonSeguimiento': jsonSEG,
                     'fAccion': fechaAccion,                
@@ -1135,8 +1134,58 @@ export default {
                 return 0;
             }
         },
-        
-        async setUpdateCopias() {
+        async setUpdateCaptura(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setUpdateCaptura';
+            // validar seguimiento para circular
+            let temp = [];
+            if(this.tipoDoc == 4){
+                for(let i = 0;i< this.seguimiento.length; i++){
+                    temp.push({'id': this.seguimiento[i]})
+                }                
+            } else {
+                temp.push({ 'id': this.seguimiento });
+                // si termino es 1, agregar a coordinacion financiera (id 2) a seguimiento
+                if( this.termino == 1){
+                    temp.push({'id': 2});
+                }
+            }
+            const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
+            try {
+                const response = await axios.post(url,{
+                    'nIdSolicitud': this.idSolicitud,
+                    'nTipo': this.tipoDoc,
+                    'nIdArchivo': idARCHIVO,
+                    'nAreaSolicita': this.areaSolicita,
+                    'nAreaEmite': this.areaEmite,
+                    'nAreaAsignar': this.areaAsignada,
+                    'cOficio': this.nOficio,
+                    'cAsunto': this.asunto,
+                    'cCargo': this.cargo,
+                    'cRemitente': this.remitente,
+                    'cFolio': this.nfolio,
+                    'cMemo': this.nMemorandum,
+                    'nCapitulo': this.Capitulo,
+                    'nTermino': this.termino,
+                    'nRespuesta': this.respuesta,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': strHora,
+                    'fTermino': this.fechaTermino,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,
+                    'nIdAuth': this.idUsuario,
+                    'cMotivo': this.motivo,                  
+                });
+                if(response.status === 200){
+                    return 1;
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                return -1;
+            }
+        },
+        async setUpdateCopias(fechaAccion) {
             const url = '/administracion/solicitud/setUpdateCopias';
 
             try {
@@ -1145,7 +1194,7 @@ export default {
                     'copiasPrevias': JSON.stringify(this.copiasPrevias), 
                     'copiasConocimiento': this.copiasConocimiento,
                     'copiasQuitar': this.copiasQuitar,
-                    'fAccion': methods.getTimestamp(),
+                    'fAccion': fechaAccion,
                 });
                 if(response.status === 200){
                     return 1;
@@ -1226,16 +1275,33 @@ export default {
                     reverseButtons: true,
                 }).then(async (result) => {
                     if(result.isConfirmed){
-                        methods.WIP(this.$vs);
-                        // const load = methods.loading( this.$vs );
+                        const load = methods.loading( this.$vs );
+                        let archivo;
+                        if(this.documentos.F1 !== ''){
+                            load.text = 'Actualizando archivo...';
+                            archivo = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nfolio);    
+                        } else {
+                            archivo = this.datosArchivo.idDOCUMENTO;
+                        }
+                        load.text = 'Actualizando copias de conocimiento...';
+                        const statusCopias = await this.setUpdateCopias(fechaAccion);
+                        
+                        load.text = 'Finalizando actualización...';
+                        const statuscaptura = await this.setUpdateCaptura(archivo,fechaAccion);
                         // Por hacer
-                        // - validar y subir el nuevo archivo
-                        // - actualizar las copias de conocimiento
-                        // - actualizar los datos de la solicitud
-                        // - limpiar las variables y recargar la información
                         // - definir como manejar el campo de motivo del cambio
                         // - borrar funciones no usadas
-                        // load.close();
+                        if(statuscaptura == 1){
+                            Swal.fire({
+                                icon: 'success',
+                                title:'Solicitud actualizada correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then( result => {
+                                window.location.reload();
+                            })                            
+                        }
+                        load.close();
                     }
                 });
             }
@@ -1418,8 +1484,8 @@ export default {
                 this.errorAreaSolicita = 'El área que solicita es obligatoria';
                 this.error = true;
             }
-            if(this.areaAsignada0 === ''){
-                this.errorAreaAsignada0 = 'La asignación de requisición es obligatoria';
+            if(this.areaAsignada === ''){
+                this.errorAreaAsignada = 'La asignación de requisición es obligatoria';
                 this.error = true;
             }
             // if(this.documentos.F1 === ''){
@@ -1665,7 +1731,6 @@ export default {
         limpiarCampos() {
             this.tipoDoc = '';
             this.areaSolicita = '';
-            this.areaAsignada0 = '';
             this.areaAsignada = '';
             this.areaEmite = '';
             this.nOficio = '';
@@ -1699,7 +1764,6 @@ export default {
 
                     this.tipoDoc = datos.tipo;
                     this.areaSolicita = datos.areaSolicita ? datos.areaSolicita : '';
-                    this.areaAsignada0 = datos.areaAsignar ? datos.areaAsignar : '';
                     this.areaAsignada = datos.areaAsignar ? datos.areaAsignar : '';
                     this.areaEmite = datos.areaEmite ? datos.areaEmite : '';
                     this.nOficio = datos.numOficio ? datos.numOficio : '';
