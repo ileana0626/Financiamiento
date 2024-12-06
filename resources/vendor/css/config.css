@@ -20,6 +20,7 @@
     --other-gray: #DCDCDC;
     --text-color: #727475;
     --iee-shadow: 7px 7px 30px 0 rgb(0 0 0 / 15%);
+    --updated-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.12);
     --header-card: #2e2c2c;
     --header-card-2: #0d1616;
     --footer-bg: white;
@@ -69,6 +70,7 @@
     --other-gray: #a1a1a1;
     --text-color: #dbdbdb;
     --iee-shadow: 7px 7px 30px 0 rgba(0, 0, 0, 0.3);
+    --updated-shadow: 0px 4px 15px 0px rgba(125, 125, 125, 0.88);
     --header-card: #575757;
     --header-card-2: #888888;
     --footer-bg: #1e1e1f;
@@ -1784,6 +1786,15 @@ div.vs-dialog, div.swal2-popup{
 }
 .tab-notify>span{
     color: #595959 !important;
+}
+.update-alert.vs-alert--shadow{
+    -webkit-box-shadow: var(--updated-shadow);
+    box-shadow: var(--updated-shadow);
+    color: var(--iee-white-dark);
+    min-height: 100% !important;
+}
+.vs-alert.update-alert::after{
+    background-color: var(--iee-white-dark);
 }
 /*Media queries*/
 @media screen and (min-width: 375px) {

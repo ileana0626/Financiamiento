@@ -630,6 +630,16 @@
                                     </template>
                                 </div>
                             </div>
+                            <div class="col-12 px-0 pr-sm-5 pb-5" v-if="lastMotivo">
+                                <vs-alert shadow class="update-alert">
+                                    <template #title>
+                                    Última actualización: {{ formatoFecha(lastUpdate) }}
+                                    </template>
+                                    <div class="pb-2 pb-md-0">
+                                        Motivo: "{{ lastMotivo }}"
+                                    </div>
+                                </vs-alert>                                
+                            </div>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
                                     <vs-button color="#a5904a" block
@@ -765,6 +775,8 @@ export default {
             errorFechaTermino: '',
             errorHora: '',
 
+            lastMotivo: null,
+
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -781,7 +793,6 @@ export default {
                 selectableRange: '09:00:00 - 18:00:00'
             }, 
 
-
             showModalArchivo: false,
             datosArchivo: {},            
         }
@@ -792,7 +803,16 @@ export default {
         },
         esAdmi(){
             return this.rolUsuario == 1 || this.rolUsuario == 5;
-        }
+        },
+        formatoFecha() {
+            return( strFecha ) => {
+                if(strFecha){
+                    let temp = strFecha.replace(/\s/g, "T");
+                    const dFecha = new Date(temp + "-06:00");
+                    return dFecha.toLocaleString('es-Es',{day:'2-digit', month:'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true});
+                }
+            }
+        },
     },
     watch:{
         tipoDoc(newVal, oldVal){
@@ -1134,6 +1154,7 @@ export default {
                 return 0;
             }
         },
+
         async setUpdateCaptura(idARCHIVO, fechaAccion) {
             const url = '/administracion/solicitud/setUpdateCaptura';
             // validar seguimiento para circular
@@ -1205,30 +1226,7 @@ export default {
                 return 0;
             }
         },
-        guardarSolicitud() {
-            if (this.tipoDoc == '') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No se ha seleccionado el tipo de la solicitud.',
-                    showConfirmButton: true,
-                    confirmButtonText: 'De acuerdo'
-                });
-            } else {
-                if (this.tipoDoc == 1) {
-                    this.GuardarRequi()   
-                }
-                else if (this.tipoDoc == 2) {
-                    this.GuardarMemo()    
-                }
-                else if (this.tipoDoc == 3) {
-                    this.GuardarOficio()  
-                }
-                else if (this.tipoDoc == 4) {
-                    this.GuardarCircular()    
-                }
-            }
-        },
-        /**(WIP) Actualiza todos los tipos de solicitud */
+        /** Actualiza todos los tipos de solicitud */
         actualizaTodo() {
             this.limpiarErrores();
             let nombreDoc = '';
@@ -1290,7 +1288,6 @@ export default {
                         const statuscaptura = await this.setUpdateCaptura(archivo,fechaAccion);
                         // Por hacer
                         // - definir como manejar el campo de motivo del cambio
-                        // - borrar funciones no usadas
                         if(statuscaptura == 1){
                             Swal.fire({
                                 icon: 'success',
@@ -1305,162 +1302,6 @@ export default {
                     }
                 });
             }
-        },
-        GuardarRequi() {
-            this.limpiarErrores();
-            this.ValidarRequi();
-            if(!this.error){
-                let fechaAccion = methods.getTimestamp();
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¿Registrar la solicitud de requisición?',
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Registrar solicitud',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                }).then( async (result) => {
-                    if(result.isConfirmed){
-                        const load = methods.loading( this.$vs );
-                        // Registrar el archivo
-                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nfolio);
-                        // Registrar la solicitud
-                        load.text = 'Registrando solicitud...';
-                        const idSOLICITUD = await this.setRegistrarRequi(idARCHIVO, fechaAccion);
-                        // Registrar las copias de conocimiento
-                        load.text = 'Registrando copias...';
-                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                        if(exitoCopias > 0){
-                            Swal.fire({
-                                icon: 'success',
-                                title:'Registrado correctamente',
-                                showConfirmButton: true,
-                                confirmButtonText: 'De acuerdo',
-                            }).then( result => {
-                                this.limpiarCampos();
-                            })
-                        }
-                        load.close();
-                    }
-                })
-            }
-        },
-        GuardarMemo() { 
-            this.limpiarErrores();
-            this.ValidarMemo();
-            if(!this.error){
-                let fechaAccion = methods.getTimestamp();
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¿Quieres registrar el memorándum?',
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Registrar',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                }).then(async (result) => {
-                    if(result.isConfirmed){
-                        const load = methods.loading( this.$vs );
-                        // Registrar el archivo
-                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nMemorandum);
-                        // Registrar la solicitud
-                        load.text = 'Registrando solicitud...';
-                        const idSOLICITUD = await this.setRegistrarMemo(idARCHIVO, fechaAccion);
-                        // Registrar las copias de conocimiento
-                        load.text = 'Registrando copias...';
-                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                        if(exitoCopias > 0){
-                            Swal.fire({
-                                icon: 'success',
-                                title:'Registrado correctamente',
-                                showConfirmButton: true,
-                                confirmButtonText: 'De acuerdo',
-                            }).then( result => {
-                                this.limpiarCampos();
-                            })
-                        }
-                        load.close();
-                    }
-                })
-            }
-        },
-        GuardarOficio() {
-            this.limpiarErrores();
-            this.ValidarOficio();
-            if(!this.error){
-                let fechaAccion = methods.getTimestamp();
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¿Registrar la solicitud de oficio?',
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Registrar solicitud',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                }).then(async (result) => {
-                    if(result.isConfirmed){
-                        const load = methods.loading( this.$vs );
-                        // Registrar el archivo
-                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.nOficio);
-                        // Registrar la solicitud
-                        load.text = 'Registrando solicitud...';
-                        const idSOLICITUD = await this.setRegistrarOficio(idARCHIVO, fechaAccion);
-                        // Registrar las copias de conocimiento
-                        load.text = 'Registrando copias...';
-                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                        if(exitoCopias > 0){
-                            Swal.fire({
-                                icon: 'success',
-                                title:'Registrado correctamente',
-                                showConfirmButton: true,
-                                confirmButtonText: 'De acuerdo',
-                            }).then( result => {
-                                this.limpiarCampos();
-                            });
-                        }                     
-                        load.close();
-                    }
-                });
-            }
-        },
-        GuardarCircular() { 
-            this.limpiarErrores();
-            this.ValidarCircular();
-            if(!this.error){
-                let fechaAccion = methods.getTimestamp();
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¿Registrar la solicitud de circular?',
-                    showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Registrar solicitud',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                }).then(async (result) => {
-                    if(result.isConfirmed){
-                        const load = methods.loading( this.$vs );
-                        // Registrar el archivo
-                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1,'',this.tipoDoc, this.asunto);
-                        // Registrar la solicitud
-                        load.text = 'Registrando solicitud...';
-                        const idSOLICITUD = await this.setRegistrarCircular(idARCHIVO, fechaAccion);
-                        // Registrar las copias de conocimiento
-                        load.text = 'Registrando copias...';
-                        const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                        if(exitoCopias > 0){
-                            Swal.fire({
-                                icon: 'success',
-                                title:'Registrado correctamente',
-                                showConfirmButton: true,
-                                confirmButtonText: 'De acuerdo',
-                            }).then( result => {
-                                this.limpiarCampos();
-                            })
-                        }
-                        load.close();
-                    }
-                })
-            }            
         },
         ValidarRequi(){
             this.error = false;
@@ -1654,7 +1495,6 @@ export default {
             //     this.error = true;
             // }            
         },
-
         ValidarExtra() {
             this.error = false;
             if (this.areaSolicita === '') {
@@ -1779,6 +1619,8 @@ export default {
                     this.fechaTermino = datos.fechaTermino ? datos.fechaTermino : '';
                     this.setHoraSolicitud(datos.horaRecibido);       
                     this.setSeguimientoSolicitud(datos.tipo, datos.seguimiento);
+                    this.lastMotivo = datos.motivoCambio;
+                    this.lastUpdate = datos.updated_at;
                     
                     this.idArchivo = datos.idArchivo;
                 }
