@@ -24,11 +24,11 @@
                     <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor" :class="tabColour(memo_count)"/>
                     <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor" :class="tabColour(oficio_count)"/>
                     <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor" :class="tabColour(circular_count)"/>
-                    <Tab title="Escrito" :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="notSupervisor" :class="tabColour(escrito_count)"/>
-                    <Tab title="Tarjeta" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor" :class="tabColour(tarjeta_count)"/>
-                    <Tab title="Correo" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="notSupervisor" :class="tabColour(correo_count)"/>
                     <Tab title="Copias C." :active="activeTab == 7" @click.native="setActiveTab(7)" v-if="showAdminTabs && notSupervisor"/>
                     <Tab title="Requisición" :active="activeTab == 8" @click.native="setActiveTab(8)" v-if="notSupervisor" :class="tabColour(requi_count)"/>
+                    <Tab title="Correo" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="notSupervisor" :class="tabColour(correo_count)"/>
+                    <Tab title="Escrito" :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="notSupervisor" :class="tabColour(escrito_count)"/>
+                    <Tab title="Tarjeta" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor" :class="tabColour(tarjeta_count)"/>
                     <Tab title="Seguimiento" :active="activeTab == 9" @click.native="setActiveTab(9)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 10" @click.native="setActiveTab(10)"/>
                 </div>

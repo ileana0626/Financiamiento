@@ -29,7 +29,7 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr" :class="colorStatus(tr.fechaTermino, tr.estatus)">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
                                 <vs-td>
@@ -103,7 +103,7 @@
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
                                                 @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino, tr.idSolicitud)" 
-                                                style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                style="background-color: var(--iee-white);border-color: var(--iee-white);" v-if="habilitarRecordatorio">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
                                                     forward_to_inbox
@@ -114,7 +114,7 @@
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.minSysNotify != null && tr.minSysNotify < 59"
                                                 @click.prevent="sendNavNotify(tr.dptoAsignar, tr.idSolicitud, tr.solicitud)" 
-                                                style="background-color: var(--iee-gold);border-color: var(--iee-white);">
+                                                style="background-color: var(--iee-gold);border-color: var(--iee-white);" v-if="habilitarRecordatorio">
                                                 <span class="material-symbols-rounded"
                                                     style="color: #111 !important">
                                                     notifications_active
@@ -191,6 +191,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
             dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             darkMode: localStorage.getItem('theme') == 'dark', 
             og: window.location.origin + '/',
@@ -222,13 +223,56 @@ export default {
 
     },
     computed: {
+        colorStatus() {
+            return (fechaTermino, estatus) => {
+                let color = ''
+                if (fechaTermino != null && estatus != 'CONCLUIDO') {
+                    const moment = require('moment');
+                    let currentDate = moment();
+                    let formattedDate = currentDate.format('DD/MM/YYYY');
+                    let validDate = moment(formattedDate, 'DD/MM/YYYY');
+                    let validDate2 = moment(fechaTermino, 'DD/MM/YYYY');
+                    let date1 = new Date(validDate)
+                    let date2 = new Date(validDate2)
+                    let differenceInMs = Math.abs(date1 - date2);
+                    let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+                    
+                    if(date1 >= date2){
+                        color = 'css-conundial'
+                    }else if (estatus == 'TRÁMITE') {
+                        switch (differenceInDays) {
+                            case 0:
+                                color = 'css-conundia'
+                                break;
+                            case 1:
+                                color = 'css-conundia'
+                                break;
+                            case 2:
+                                color = 'css-condosdias'
+                                break;
+                            case 3:
+                                color = 'css-condosdias'
+                                break;
+                            default:
+
+                        }
+                    }
+                    return color;
+                }
+            }
+        },
         reqRespuesta(){
             return (respuesta) =>{
                 if(respuesta){
                     return respuesta == 1 ? 'Si' : 'No';
                 } else return '-';
             }
-        }
+        },
+        habilitarRecordatorio() {
+            if(this.rolUsuario == 1 || this.rolUsuario == 5) return true;
+
+            return (this.rolUsuario == 3 && this.dptoUsuario == 2);
+        },
     },
     methods: {
         async getSeguimiento() {
