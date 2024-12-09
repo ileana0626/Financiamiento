@@ -63,6 +63,9 @@
     --iee-orange-t: rgba(255, 69, 0, 0.1);
     --iee-red-logout: #ff0000;
     --gray-border: rgba(0,0,0, 0.125);
+    --sunset-cloud: #fff4dd;
+    --night-cloud: #e5f1ff;
+    --shadow-banner:  0 .5rem 1rem rgba(1,1,1,.15);
 }
 
 [data-theme="dark"] {
@@ -108,10 +111,10 @@
     --btn-txt-color: #595959;
     --scroll-color-back: white;
     --vs-shadow: rgba(255,255,255, 0.25);
-    --sky-card-bg: #cccccc;
     --iee-orange-t: rgba(255, 69, 0, 0.6);
     --iee-red-logout: rgb(255, 198, 198);
     --gray-border: rgba(255,255,255, 0.875);
+    --shadow-banner:  0 .5rem 1rem rgba(255,255,255,.65);
 }
 @font-face {
     font-family: 'KGHappy';
@@ -1386,10 +1389,10 @@ h4 {
     color: var(--text-color);
 }
 .shadow-dark{
-    box-shadow: 0 .5rem 1rem rgba(255,255,255,.15);
+    box-shadow: var(--shadow-banner);
 }
 .shadow-lg-dark{
-   box-shadow: 0 1rem 3rem rgba(255,255,255,.175);
+   box-shadow: 0 1rem 3rem rgba(255,255,255,.825);
 }
 
 .el-upload-dragger {
@@ -1643,8 +1646,16 @@ div.vs-dialog, div.swal2-popup{
 }
 .sky-card{
     width: 100%;
-    background-color: var(--sky-card-bg);    
     transition: ease-in-out 300ms;
+}
+.day{
+    background-color: var(--sky-card-bg);
+}
+.sunset{
+    background-color: var(--sunset-cloud);
+}
+.night{
+    background-color: var(--night-cloud);    
 }
 .top-bg{
     width: 100%;
@@ -1659,6 +1670,7 @@ div.vs-dialog, div.swal2-popup{
     z-index: 1;
     top: 0;
     left: 0;
+    transition: all ease-in 300ms;
 }
 .rocket-img{
     width: 111px;

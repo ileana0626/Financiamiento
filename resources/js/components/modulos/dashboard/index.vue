@@ -4,8 +4,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="container-fluid px-3 px-md-5">
-                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'" :title="infoFuente" @click.prevent="fuente++">
-                            <div class="top-bg" style="background-image: url('/img/sky-bg-card.png')"></div>
+                        <div class="card p-3 mt-5 position-relative sky-card day shadow-dark" :class="classSky" :title="infoFuente">
+                            <div class="top-bg" :style="testSky" @click="sky++"></div>
                             <div class="py-5">
                                 <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
                             </div>
@@ -217,6 +217,9 @@ export default {
             globos: [],
             showListaCumple: false,
             fuente: 0,
+
+            sky: 0,
+            classSky: 'day',
         }
     },
     watch:{
@@ -233,6 +236,16 @@ export default {
                 this.fuente = 0;
             }
         },
+        sky(newVal,oldVal){
+            if(newVal == 1){
+                this.classSky = 'sunset';
+            } else if(newVal == 2){
+                this.classSky = 'night';
+            } else if(newVal > 2){
+                this.sky = 0;
+                this.classSky = 'day';
+            }
+        },
     },
     computed: {
         // funciones de prueba, borrar tras seleccionar una fuente
@@ -241,7 +254,14 @@ export default {
         },
         infoFuente(){
             return (this.fuente === 0) ? 'Fuente original' : `Prueba de fuente ${this.fuente}`;
-        }
+        },
+        testSky() {
+            let image = ''
+            if(this.sky == 0) image = "background-image: url('/img/sky-bg_day.png')";
+            else if( this.sky == 1) image = "background-image: url('/img/sky-bg_sunset.png')";
+            else if( this.sky == 2) image = "background-image: url('/img/sky-bg_night.png')";
+            return image;
+        },
     },
     mounted() {
         this.getUsuario();
