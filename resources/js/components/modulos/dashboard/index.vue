@@ -4,8 +4,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="container-fluid px-3 px-md-5">
-                        <div class="card p-3 mt-5 position-relative sky-card day shadow-dark" :class="classSky" :title="infoFuente">
-                            <div class="top-bg" :style="testSky" @click="sky++"></div>
+                        <div class="card p-3 mt-5 position-relative sky-card day shadow-dark" :class="daytime">
+                            <div class="top-bg" :style="skyLight"></div>
                             <div class="py-5">
                                 <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
                             </div>
@@ -219,7 +219,9 @@ export default {
             fuente: 0,
 
             sky: 0,
-            classSky: 'day',
+            daytime: sessionStorage.getItem('daytime') ? sessionStorage.getItem('daytime') : 'day',
+            clientTime: '',
+            clientInterval: null,
         }
     },
     watch:{
@@ -236,16 +238,18 @@ export default {
                 this.fuente = 0;
             }
         },
-        sky(newVal,oldVal){
-            if(newVal == 1){
-                this.classSky = 'sunset';
-            } else if(newVal == 2){
-                this.classSky = 'night';
-            } else if(newVal > 2){
-                this.sky = 0;
-                this.classSky = 'day';
+        clientTime(newVal,oldVal) {
+            if(newVal >= '07:00' && newVal <= '15:59'){
+                this.daytime = 'day';
+                sessionStorage.setItem('daytime', this.daytime);
+            } else if(newVal >= '16:00' && newVal <= '17:59'){
+                this.daytime = 'sunset';
+                sessionStorage.setItem('daytime', this.daytime);
+            } else{
+                this.daytime = 'night';
+                sessionStorage.setItem('daytime', this.daytime);
             }
-        },
+        }, 
     },
     computed: {
         // funciones de prueba, borrar tras seleccionar una fuente
@@ -255,11 +259,11 @@ export default {
         infoFuente(){
             return (this.fuente === 0) ? 'Fuente original' : `Prueba de fuente ${this.fuente}`;
         },
-        testSky() {
-            let image = ''
-            if(this.sky == 0) image = "background-image: url('/img/sky-bg_day.png')";
-            else if( this.sky == 1) image = "background-image: url('/img/sky-bg_sunset.png')";
-            else if( this.sky == 2) image = "background-image: url('/img/sky-bg_night.png')";
+        skyLight() {
+            let image = '';
+            if(this.daytime == 'day') image = "background-image: url('/img/sky-bg_day.png')";
+            else if( this.daytime == 'sunset') image = "background-image: url('/img/sky-bg_sunset.png')";
+            else if( this.daytime == 'night') image = "background-image: url('/img/sky-bg_night.png')";
             return image;
         },
     },
@@ -271,6 +275,13 @@ export default {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         this.getFechas();
         await this.getTodayDates();
+        this.clientTime = this.hours();
+        this.clientInterval = setInterval(() => {
+            this.clientTime = this.hours();
+        }, 1000);
+    },
+    beforeDestroy(){
+        window.clearInterval(this.clientInterval);
     },
     methods: {
         getFechas() {
@@ -620,8 +631,11 @@ export default {
                 },
             });
         },
+        hours() {
+            let tempT = new Date();
+            return `${String(tempT.getHours()).padStart(2,'00')}:${String(tempT.getMinutes()).padStart(2,'00')}`;
+        },
     }
-
 }
 </script>
 <style>
