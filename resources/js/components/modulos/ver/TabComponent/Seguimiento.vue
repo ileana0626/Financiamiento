@@ -102,7 +102,7 @@
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Email"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
-                                                @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino, tr.idSolicitud)" 
+                                                @click.prevent="sendRecordatorio(tr.areaAsignar, tr.correoNotificar, tr.asunto, tr.fechaTermino, tr.idSolicitud)" 
                                                 style="background-color: var(--iee-white);border-color: var(--iee-white);" v-if="habilitarRecordatorio">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
@@ -307,18 +307,15 @@ export default {
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
         }, 
-        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino, solicitud) {
+        sendRecordatorio(usuario , correo, asunto, termino, solicitud) {
             // si termino es null, poner la fecha de mañana
             let tempHoy = new Date();
             tempHoy.setDate( tempHoy.getDate() + 1);
             let strHoy = tempHoy.toLocaleDateString('es-ES',{'day':'2-digit', 'month': '2-digit', 'year': 'numeric'});
             let terminoValido = termino ? termino : strHoy;
 
-            usuario = 'Prueba';
-            otroUsuario = 'Prueba-2';
-            asunto = '(Prueba) Revisión de solicitud';
             if (correo.length > 0) {
-                let nombre = (usuario != null) ? usuario : otroUsuario
+                let nombre = usuario;
                 const loading = methods.loading(this.$vs);
                 let url = '/send-mail'
                 axios.get(url, {
