@@ -24,11 +24,11 @@
                     <Tab title="Memorándum" :active="activeTab == 1" @click.native="setActiveTab(1)" v-if="notSupervisor" :class="tabColour(memo_count)"/>
                     <Tab title="Oficio" :active="activeTab == 2" @click.native="setActiveTab(2)" v-if="notSupervisor" :class="tabColour(oficio_count)"/>
                     <Tab title="Circular" :active="activeTab == 3" @click.native="setActiveTab(3)" v-if="notSupervisor" :class="tabColour(circular_count)"/>
-                    <Tab title="Copias C." :active="activeTab == 7" @click.native="setActiveTab(7)" v-if="showAdminTabs && notSupervisor"/>
-                    <Tab title="Requisición" :active="activeTab == 8" @click.native="setActiveTab(8)" v-if="notSupervisor" :class="tabColour(requi_count)"/>
+                    <Tab title="Copias C." :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="showAdminTabs && notSupervisor"/>
+                    <Tab title="Requisición" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor" :class="tabColour(requi_count)"/>
                     <Tab title="Correo" :active="activeTab == 6" @click.native="setActiveTab(6)" v-if="notSupervisor" :class="tabColour(correo_count)"/>
-                    <Tab title="Escrito" :active="activeTab == 4" @click.native="setActiveTab(4)" v-if="notSupervisor" :class="tabColour(escrito_count)"/>
-                    <Tab title="Tarjeta" :active="activeTab == 5" @click.native="setActiveTab(5)" v-if="notSupervisor" :class="tabColour(tarjeta_count)"/>
+                    <Tab title="Escrito" :active="activeTab == 7" @click.native="setActiveTab(7)" v-if="notSupervisor" :class="tabColour(escrito_count)"/>
+                    <Tab title="Tarjeta" :active="activeTab == 8" @click.native="setActiveTab(8)" v-if="notSupervisor" :class="tabColour(tarjeta_count)"/>
                     <Tab title="Seguimiento" :active="activeTab == 9" @click.native="setActiveTab(9)" v-if="showAdminTabs"/>
                     <Tab title="Historial" :active="activeTab == 10" @click.native="setActiveTab(10)"/>
                 </div>
@@ -37,11 +37,11 @@
                         <Memos v-if="activeTab == 1" :rol="rolUsuario" :user="idUsuario"/>
                         <Oficios v-else-if="activeTab == 2" :rol="rolUsuario" :user="idUsuario"/>
                         <Circulares v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
-                        <Escrito v-else-if="activeTab == 4" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="6"/>
-                        <Tarjeta v-else-if="activeTab == 5" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="7"/>
+                        <Copias v-else-if="activeTab == 4"/>
+                        <Requisiciones v-else-if="activeTab == 5" :rol="rolUsuario" :user="idUsuario"/>
                         <Correo v-else-if="activeTab == 6" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="8"/>
-                        <Copias v-else-if="activeTab == 7"/>
-                        <Requisiciones v-else-if="activeTab == 8" :rol="rolUsuario" :user="idUsuario"/>
+                        <Escrito v-else-if="activeTab == 7" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="6"/>
+                        <Tarjeta v-else-if="activeTab == 8" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="7"/>
                         <Seguimiento v-else-if="activeTab == 9"/>
                         <Historial v-else-if="activeTab == 10" :rol="rolUsuario" :user="idUsuario"/>
                     </div>
@@ -141,10 +141,10 @@ export default {
              * 1: memo
              * 2: oficio
              * 3: circular
-             * 4: escrito
-             * 5: tarjeta
+             * 5: requi
              * 6: correo
-             * 8: requi
+             * 7: escrito
+             * 8: tarjeta
              */
             this.activeTab = num;
             sessionStorage.setItem('tabSolicitudes', num);
@@ -162,21 +162,21 @@ export default {
                     EventBus.$emit('updateCounts','CIRCULAR');
                     this.circular_count = 0;
                     break;
-                case 4:
-                    EventBus.$emit('updateCounts','ESCRITO');
-                    this.escrito_count = 0;
-                    break;
                 case 5:
-                    EventBus.$emit('updateCounts','TARJETA');
-                    this.tarjeta_count = 0;
+                    EventBus.$emit('updateCounts','REQUSICIÓN');
+                    this.requi_count = 0;
                     break;
                 case 6:
                     EventBus.$emit('updateCounts','CORREO');
                     this.correo_count = 0;
                     break;
+                case 7:
+                    EventBus.$emit('updateCounts','ESCRITO');
+                    this.escrito_count = 0;
+                    break;
                 case 8:
-                    EventBus.$emit('updateCounts','REQUSICIÓN');
-                    this.requi_count = 0;
+                    EventBus.$emit('updateCounts','TARJETA');
+                    this.tarjeta_count = 0;
                     break;
             }
             
