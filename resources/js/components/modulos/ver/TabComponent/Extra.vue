@@ -581,33 +581,4 @@ export default {
 </script>
 
 <style scoped>
-.vs-table__tr,
-tr.vs-table__tr>>>td {
-    border-radius: 0% !important;
-}
-
-.css-condosdias {
-    background-color: #ffd060 !important;
-}
-
-.css-condosdias:hover td {
-    background-color: #FFC300 !important;
-}
-
-.css-conundia:hover td {
-    background-color: #f07a28 !important;
-}
-
-.css-conundia {
-    background-color: #f08d49 !important;
-}
-
-
-.css-conundial:hover td {
-    background-color: #f03c18 !important;
-}
-
-.css-conundial {
-    background-color: #f0785dcb !important;
-}
 </style>

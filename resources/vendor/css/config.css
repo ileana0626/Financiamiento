@@ -905,6 +905,42 @@ div:where(.swal2-container) div:where(.swal2-popup) {
     color: #fff !important;
 }
 
+/* Coloreo de filas en las tablas de solicitudes*/
+.vs-table__tr,
+tr.vs-table__tr > td {
+    border-radius: 0% !important;
+}
+.vs-table__tr.css-condosdias {
+    background-color: #ffd060 !important;
+}
+.vs-table__tr.css-condosdias span{
+    color: var(--iee-white-dark) !important;
+    transition: ease-in 120ms;
+}
+.vs-table__tr.css-condosdias:hover td {
+    background-color: #FFC300 !important;
+}
+.vs-table__tr.css-conundia:hover td {
+    background-color: #f07a28 !important;
+}
+.vs-table__tr.css-conundia span{
+    color: var(--iee-white-dark) !important;
+    transition: ease-in 120ms;
+}
+.vs-table__tr.css-conundia {
+    background-color: #f08d49 !important;
+}
+.vs-table__tr.css-conundial:hover td {
+    background-color: #f03c18 !important;
+}
+.vs-table__tr.css-conundial span{
+    color: var(--iee-white-dark) !important;
+    transition: ease-in 120ms;
+}
+.vs-table__tr.css-conundial {
+    background-color: #f0785dcb !important;
+}
+
 .vs-table__tr:hover .vs-table__td {
     background-color: var(--iee-table-color) !important;
 }
@@ -1583,6 +1619,7 @@ div.vs-dialog, div.swal2-popup{
     background-color: var(--iee-white) !important;
     width: 30px !important;
 }
+
 /* primer diseño de banner de bienvenida*/
 .izq-row{
     height: 100%;
