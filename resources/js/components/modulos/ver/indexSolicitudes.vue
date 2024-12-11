@@ -117,8 +117,8 @@ export default {
     },
     async mounted() {
         if( this.activeTab == 1 && !this.notSupervisor ){
-            this.activeTab = 6;
-            sessionStorage.setItem('tabSolicitudes', 6);
+            this.activeTab = 9;
+            sessionStorage.setItem('tabSolicitudes', 9);
         }
         // evento de la navbar
         EventBus.$on('tabCounts', (data) => {
