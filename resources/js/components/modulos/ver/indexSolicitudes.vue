@@ -39,9 +39,9 @@
                         <Circulares v-else-if="activeTab == 3" :rol="rolUsuario" :user="idUsuario"/>
                         <Copias v-else-if="activeTab == 4"/>
                         <Requisiciones v-else-if="activeTab == 5" :rol="rolUsuario" :user="idUsuario"/>
-                        <Correo v-else-if="activeTab == 6" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="8"/>
-                        <Escrito v-else-if="activeTab == 7" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="6"/>
-                        <Tarjeta v-else-if="activeTab == 8" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="7"/>
+                        <Correo v-else-if="activeTab == 6" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="6"/>
+                        <Escrito v-else-if="activeTab == 7" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="7"/>
+                        <Tarjeta v-else-if="activeTab == 8" :rol="rolUsuario" :user="idUsuario" :idTipoSolicitud="8"/>
                         <Seguimiento v-else-if="activeTab == 9"/>
                         <Historial v-else-if="activeTab == 10" :rol="rolUsuario" :user="idUsuario"/>
                     </div>

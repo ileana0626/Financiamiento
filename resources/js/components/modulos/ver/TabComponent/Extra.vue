@@ -350,13 +350,13 @@ export default {
             let txt = '';
             switch(this.idTipoSolicitud){
                 case 6:
-                    txt = 'Escrito';
+                    txt = 'Correo';
                     break;
                 case 7:
-                    txt = 'Tarjeta';
+                    txt = 'Escrito';
                     break;
                 case 8:
-                    txt = 'Correo';
+                    txt = 'Tarjeta';
                     break;
             }
             return txt;
