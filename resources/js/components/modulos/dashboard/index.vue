@@ -4,79 +4,21 @@
             <div class="row">
                 <div class="col-12">
                     <div class="container-fluid px-3 px-md-5">
-                        <div class="card p-3 mt-5 position-relative sky-card" :class="!!darkMode ? 'shadow-lg-dark' : 'shadow'" :title="infoFuente" @click.prevent="fuente++">
-                            <div class="top-bg" style="background-image: url('/img/sky-bg-card.png')"></div>
+                        <div class="card p-3 mt-5 position-relative sky-card day shadow-dark" :class="daytime">
+                            <div class="top-bg" :style="skyLight"></div>
                             <div class="py-5">
                                 <img src="/img/rocket-bg-card.png" alt="" class="rocket-img">
                             </div>
                             <div style="z-index: 2;" class="pt-5 mt-3" :class="testFuente" :key="`font${fuente}`">
-                                <h1 class="text-center text-md-left font-weight-bold px-1">{{ `¡Buen día ${cfullname}!` }}</h1>
+                                <h1 class="text-center text-md-left font-weight-bold px-1">{{ `¡${greeting} ${cfullname}!` }}</h1>
                                 <p class="text-justify p-2" style="color: #595959;">
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, facere explicabo! Culpa in debitis qui, 
-                                    praesentium, ea facilis quidem earum non recusandae iste sequi blanditiis animi voluptatibus iure consequuntur deserunt.
+                                    {{ saludo }}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>            
-            <div class="row px-3 px-md-5 mt-4">
-                <div class="col-12 col-xl-6">
-                    <vs-table>
-                        <template #thead>
-                            <vs-tr>
-                                <vs-th style="width:100px; background-color: var(--iee-white);" @click.prevent="showListaCumple = !showListaCumple">
-                                    Name
-                                </vs-th>
-                                <vs-th style="width:100px; background-color: var(--iee-white);">
-                                    Email
-                                </vs-th>
-                            </vs-tr>
-                        </template>
-                        <template #tbody>
-                            <vs-tr :key="i" v-for="(tr, i) in $vs.getPage(users, page, max)" :data="tr"
-                                style="max-height: 100px !important">
-                                <vs-td class="tableRowHeight">
-                                    {{ tr.name }}
-                                </vs-td>
-                                <vs-td class="tableRowHeight">
-                                    {{ tr.email }}
-                                </vs-td>
-                            </vs-tr>
-                        </template>
-                        <template #notFound>
-                            <div style="background-color: var(--iee-white) !important;">
-                                Sin resultados...
-                            </div>
-                        </template>
-                        <template #footer>
-                            <vs-pagination color="dark" v-model="page" :length="$vs.getLength(users, max)"
-                                style="background-color: var(--iee-white) !important;" />
-                        </template>
-                    </vs-table>
-                </div>
-            </div>
-            <!-- <div class="col-11 card fechasPeriodos mx-auto my-4"
-                style="background-color: var(--iee-white) !important; color: var(--text-color)">
-                <div class="row d-flex justify-content-center my-5">
-                    <div class="col-sm-12 col-xl-6 mx-auto d-flex flex-column justify-content-center p-2">
-                        <div class="card d-flex justify-content-center align-items-center px-4 py-2 mx-auto my-3"
-                            v-if="renderComponent" style="box-shadow: var(--iee-shadow);">
-                            <div v-for="periodo in periodos" :key="periodo.nombre">
-                                <div v-if="periodo.nombre == 'Registro'" class="mx-auto text-center">
-                                    <h5 class="mx-auto py-2"><strong>Eventos</strong></h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-for="periodo in periodos" :key="periodo.nombre">
-                            <div v-if="periodo.nombre == 'Registro'" class="d-flex justify-content-center">
-                                <v-calendar v-if="periodo.calendario" expanded :columns="2" :rows="1"
-                                    :attributes="attrsRegistro" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->        
+            </div>       
         </div>
         <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
             <template #header>
@@ -217,6 +159,12 @@ export default {
             globos: [],
             showListaCumple: false,
             fuente: 0,
+
+            sky: 0,
+            daytime: sessionStorage.getItem('daytime') ? sessionStorage.getItem('daytime') : 'day',
+            clientTime: '',
+            clientInterval: null,
+            greeting: sessionStorage.getItem('greeting') ? sessionStorage.getItem('greeting') : 'Buen día',
         }
     },
     watch:{
@@ -233,6 +181,29 @@ export default {
                 this.fuente = 0;
             }
         },
+        clientTime(newVal,oldVal) {
+            if(newVal >= '07:00' && newVal <= '15:59'){
+                this.daytime = 'day';
+                sessionStorage.setItem('daytime', this.daytime);
+                this.greeting = newVal >= '12:00' ? 'Buena tarde' : 'Buen día';
+                sessionStorage.setItem('greeting', this.greeting);
+            } else if(newVal >= '16:00' && newVal <= '17:59'){
+                this.daytime = 'sunset';
+                sessionStorage.setItem('daytime', this.daytime);
+                this.greeting = 'Buena tarde';
+                sessionStorage.setItem('greeting', this.greeting);
+            } else{
+                this.daytime = 'night';
+                sessionStorage.setItem('daytime', this.daytime);
+                if(newVal >= '18:00' || newVal <= '04:59'){
+                    this.greeting = 'Buena noche';
+                    sessionStorage.setItem('greeting', this.greeting);
+                } else {
+                    this.greeting = 'Buen día';
+                    sessionStorage.setItem('greeting', this.greeting);
+                }
+            }
+        }, 
     },
     computed: {
         // funciones de prueba, borrar tras seleccionar una fuente
@@ -241,7 +212,14 @@ export default {
         },
         infoFuente(){
             return (this.fuente === 0) ? 'Fuente original' : `Prueba de fuente ${this.fuente}`;
-        }
+        },
+        skyLight() {
+            let image = '';
+            if(this.daytime == 'day') image = "background-image: url('/img/sky-bg_day.png')";
+            else if( this.daytime == 'sunset') image = "background-image: url('/img/sky-bg_sunset.png')";
+            else if( this.daytime == 'night') image = "background-image: url('/img/sky-bg_night.png')";
+            return image;
+        },
     },
     mounted() {
         this.getUsuario();
@@ -251,6 +229,13 @@ export default {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         this.getFechas();
         await this.getTodayDates();
+        this.clientTime = this.hours();
+        this.clientInterval = setInterval(() => {
+            this.clientTime = this.hours();
+        }, 1000);
+    },
+    beforeDestroy(){
+        window.clearInterval(this.clientInterval);
     },
     methods: {
         getFechas() {
@@ -600,8 +585,11 @@ export default {
                 },
             });
         },
+        hours() {
+            let tempT = new Date();
+            return `${String(tempT.getHours()).padStart(2,'00')}:${String(tempT.getMinutes()).padStart(2,'00')}`;
+        },
     }
-
 }
 </script>
 <style>

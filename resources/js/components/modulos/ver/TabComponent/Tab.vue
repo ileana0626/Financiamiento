@@ -16,7 +16,7 @@
   <style>
   .tabItem {
     padding: 10px 30px;
-    height: fit-content;
+    height: 3.225rem;
     font-weight: bold;
     font-size: 18px;
     border: 2px solid transparent;
@@ -35,7 +35,7 @@
   }
   
   .borderActive {
-    border-bottom: 2px solid var(--dorado);
+    border-bottom: 4px solid var(--dorado);
     background: var(--iee-white);
   }
   

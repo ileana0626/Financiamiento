@@ -79,6 +79,18 @@ class FileController extends Controller
                     $publicPath .= 'circular';
                     $storagePath .= 'circular/';
                     break;
+                case 5:
+                    $publicPath .= 'escrito';
+                    $storagePath .= 'escrito/';
+                    break;
+                case 6:
+                    $publicPath .= 'tarjeta';
+                    $storagePath .= 'tarjeta/';
+                    break;
+                case 7:
+                    $publicPath .= 'correo';
+                    $storagePath .= 'correo/';
+                    break;
             }
             Storage::putFileAs($publicPath, $file , $fileserver);
 

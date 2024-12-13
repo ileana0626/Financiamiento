@@ -12,11 +12,8 @@
                             <vs-tr>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'remitente')">Remitente</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'cargo')">Cargo</vs-th>
+                                <vs-th class="vsax-th">Número</vs-th>
+                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaRecibido')">Fecha recibido</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'horaRecibido')">Hora recibido</vs-th>
@@ -24,23 +21,24 @@
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'fechaTermino')">Fecha termino</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaAsignada')">Área asignada</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaEmite')">Área emite</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'areaSolicita')">Área solicita</vs-th>
                                 <vs-th class="vsax-th">Requiere respuesta</vs-th>
-                                <vs-th class="vsax-th">Archivo</vs-th>
-                                <vs-th class="vsax-th">Contestación</vs-th>
+                                <vs-th class="vsax-th">Archivo recibido</vs-th>
+                                <vs-th class="vsax-th">Archivo respuesta</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">Estatus</vs-th>
                                 <vs-th class="vsax-th">Acciones</vs-th>
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr" :class="colorStatus(tr.fechaTermino, tr.estatus)">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
-                                <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
-                                <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
-                                <vs-td>{{ tr.remitente ? tr.remitente : '-'}}</vs-td>
-                                <vs-td>{{ tr.cargo ? tr.cargo : '-'}}</vs-td>
+                                <vs-td>
+                                    <span v-if="tr.numFolio">{{ tr.numFolio}}</span>
+                                    <span v-else-if="tr.numMemo">{{ tr.numMemo}}</span>
+                                    <span v-else-if="tr.numOficio">{{ tr.numOficio}}</span>
+                                    <span v-else>-</span>
+                                </vs-td>
+                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
                                 <vs-td>{{ tr.fechaRecibido }}</vs-td>
                                 <vs-td>{{ tr.horaRecibido }}</vs-td>
@@ -50,7 +48,6 @@
                                 </vs-td>
                                 <vs-td>{{ tr.areaAsignar ? tr.areaAsignar : '-' }}</vs-td>
                                 <vs-td>{{ tr.areaEmite ? tr.areaEmite : '-' }}</vs-td>
-                                <vs-td>{{ tr.areaSolicita ? tr.areaSolicita : '-' }}</vs-td>
                                 <vs-td>{{ reqRespuesta(tr.respuesta) }}</vs-td>
                                 <vs-td>
                                     <div class="d-flex justify-content-center">
@@ -74,7 +71,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>N/A</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Pendiente' : 'N/A' }}</span>
                                         </template>
                                     </div>                                 
                                 </vs-td> 
@@ -101,23 +98,23 @@
                                     </template>
                                 </vs-td>
                                 <vs-td>
-                                    <div class="d-flex justify-content-center" v-if="tr.estatus != 'CONCLUIDO' || tr.status != 'ENTERADO'">
+                                    <div class="d-flex justify-content-center" v-if="!(tr.estatus == 'CONCLUIDO' || tr.estatus == 'ENTERADO')">
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Email"
                                             placement="top">
                                             <vs-button class="btn btn-flat btn-sm " :disabled="tr.horasRecordatorio != null && tr.horasRecordatorio < 23"
-                                                @click.prevent="sendRecordatorio('Prueba', 'Prueba-2', tr.correoNotificar, 'Revisar solicitud', tr.fechaTermino, tr.idSolicitud)" 
-                                                style="background-color: var(--iee-white);border-color: var(--iee-white);">
+                                                @click.prevent="sendRecordatorio(tr.areaAsignar, tr.correoNotificar, tr.asunto, tr.fechaTermino, tr.idSolicitud)" 
+                                                style="background-color: var(--iee-white);border-color: var(--iee-white);" v-if="habilitarRecordatorio">
                                                 <span class="material-symbols-rounded"
                                                     style="color: var(--text-color);">
-                                                    notifications
+                                                    forward_to_inbox
                                                 </span>
                                             </vs-button>
                                         </el-tooltip>
                                         <el-tooltip class="item h-100" effect="dark" content="Recordatorio Sistema"
                                             placement="top">
-                                            <vs-button class="btn btn-flat btn-sm "
-                                                @click.prevent="sendNavNotify(tr.dptoAsignar)" 
-                                                style="background-color: var(--iee-gold);border-color: var(--iee-white);">
+                                            <vs-button class="btn btn-flat btn-sm " :disabled="tr.minSysNotify != null && tr.minSysNotify < 59"
+                                                @click.prevent="sendNavNotify(tr.dptoAsignar, tr.idSolicitud, tr.solicitud)" 
+                                                style="background-color: var(--iee-gold);border-color: var(--iee-white);" v-if="habilitarRecordatorio">
                                                 <span class="material-symbols-rounded"
                                                     style="color: #111 !important">
                                                     notifications_active
@@ -194,6 +191,7 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            rolUsuario: sessionStorage.getItem('rolUsuario') ? Number(sessionStorage.getItem('rolUsuario')) : 0,
             dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             darkMode: localStorage.getItem('theme') == 'dark', 
             og: window.location.origin + '/',
@@ -225,13 +223,56 @@ export default {
 
     },
     computed: {
+        colorStatus() {
+            return (fechaTermino, estatus) => {
+                let color = ''
+                if (fechaTermino != null && estatus != 'CONCLUIDO') {
+                    const moment = require('moment');
+                    let currentDate = moment();
+                    let formattedDate = currentDate.format('DD/MM/YYYY');
+                    let validDate = moment(formattedDate, 'DD/MM/YYYY');
+                    let validDate2 = moment(fechaTermino, 'DD/MM/YYYY');
+                    let date1 = new Date(validDate)
+                    let date2 = new Date(validDate2)
+                    let differenceInMs = Math.abs(date1 - date2);
+                    let differenceInDays = Math.floor(differenceInMs / (1000 * 3600 * 24));
+                    
+                    if(date1 >= date2){
+                        color = 'css-conundial'
+                    }else if (estatus == 'TRÁMITE') {
+                        switch (differenceInDays) {
+                            case 0:
+                                color = 'css-conundia'
+                                break;
+                            case 1:
+                                color = 'css-conundia'
+                                break;
+                            case 2:
+                                color = 'css-condosdias'
+                                break;
+                            case 3:
+                                color = 'css-condosdias'
+                                break;
+                            default:
+
+                        }
+                    }
+                    return color;
+                }
+            }
+        },
         reqRespuesta(){
             return (respuesta) =>{
                 if(respuesta){
                     return respuesta == 1 ? 'Si' : 'No';
                 } else return '-';
             }
-        }
+        },
+        habilitarRecordatorio() {
+            if(this.rolUsuario == 1 || this.rolUsuario == 5) return true;
+
+            return (this.rolUsuario == 3 && this.dptoUsuario == 2);
+        },
     },
     methods: {
         async getSeguimiento() {
@@ -266,18 +307,15 @@ export default {
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
         }, 
-        sendRecordatorio(usuario, otroUsuario, correo, asunto, termino, solicitud) {
+        sendRecordatorio(usuario , correo, asunto, termino, solicitud) {
             // si termino es null, poner la fecha de mañana
             let tempHoy = new Date();
             tempHoy.setDate( tempHoy.getDate() + 1);
             let strHoy = tempHoy.toLocaleDateString('es-ES',{'day':'2-digit', 'month': '2-digit', 'year': 'numeric'});
             let terminoValido = termino ? termino : strHoy;
 
-            usuario = 'Prueba';
-            otroUsuario = 'Prueba-2';
-            asunto = '(Prueba) Revisión de solicitud';
             if (correo.length > 0) {
-                let nombre = (usuario != null) ? usuario : otroUsuario
+                let nombre = usuario;
                 const loading = methods.loading(this.$vs);
                 let url = '/send-mail'
                 axios.get(url, {
@@ -295,7 +333,7 @@ export default {
                     Swal.fire({
                         icon: "success",
                         title: "Correo Enviado",
-                        text: 'El recordatorio se envió con éxito',
+                        text: 'El recordatorio por email se envió con éxito',
                         showConfirmButton: true,
                         confirmButtonText: "De acuerdo",
                     });
@@ -326,22 +364,38 @@ export default {
                 return 0;
             }
         },
-        async sendNavNotify( dptoAsignar ) {
-            // methods.WIP( this.$vs );
+        async sendNavNotify( dptoAsignar, idSolicitud, cTipo ) {
             const url = '/administracion/solicitud/sendNavNotify'
-
+            let datos = {
+                "DPTO": dptoAsignar,
+                "idSolicitud": idSolicitud,
+                'cTipo': cTipo
+            }
+            const load = methods.loading( this.$vs );
             try {
                 const response = await axios.post(url,{
-                    'textNotify': 'texto prueba',
+                    'textNotify': JSON.stringify(datos),
                     'nRol': 2,
                     'nDPTO': dptoAsignar,
+                    'nSolicitud': idSolicitud,
+                    'fAccion': methods.getTimestamp()
                 });
                 if(response.status === 200){
-                    console.log('se envio');
+                    load.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'El recordatorio se envió con éxito',
+                        showConfirmButton: true,
+                        confirmButtonText: 'De acuerdo'
+                    }).then(async (result) => {
+                        this.listSolicitudes = [];
+                        await this.getSeguimiento();
+                    })
                 }
             } catch (error) {
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
+                load.close();
             }
         },
     }
@@ -349,33 +403,4 @@ export default {
 </script>
 
 <style scoped>
-.vs-table__tr,
-tr.vs-table__tr>>>td {
-    border-radius: 0% !important;
-}
-
-.css-condosdias {
-    background-color: #ffd060 !important;
-}
-
-.css-condosdias:hover td {
-    background-color: #FFC300 !important;
-}
-
-.css-conundia:hover td {
-    background-color: #f07a28 !important;
-}
-
-.css-conundia {
-    background-color: #f08d49 !important;
-}
-
-
-.css-conundial:hover td {
-    background-color: #f03c18 !important;
-}
-
-.css-conundial {
-    background-color: #f0785dcb !important;
-}
 </style>

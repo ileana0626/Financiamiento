@@ -116,8 +116,8 @@ Consulta de Errores
             </template>
             <template #footer>
                 <div class="container-fluid d-flex justify-content-between mx-0 px-0 flex-column-reverse flex-lg-row footer-sb">
-                    <!-- <div class="">
-                        <vs-tooltip top>
+                    <div class="">
+                        <!-- <vs-tooltip top>
                             <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
                                 <span class="material-symbols-rounded"
                                     style="color: #FFFFFF !important; font-size: 20px !important; ">
@@ -127,8 +127,8 @@ Consulta de Errores
                             <template #tooltip>
                                 Salir
                             </template>
-                        </vs-tooltip>
-                    </div> -->
+                        </vs-tooltip> -->
+                    </div>
                     <div class="d-flex align-items-center pb-4">
                         <div class='toggle-switch'>
                             <label>

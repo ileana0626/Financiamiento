@@ -52,5 +52,4 @@ window.Echo = new Echo({
   key: '794c5092cade8ed189ba',
   cluster: 'us2',
   forceTLS: true,
-  authEndpoint: '/broadcasting/auth',
 });

@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Administracion;
 
 use App\Events\Logout;
 use App\Events\NavNotify;
+use App\Events\Testear;
+use App\Exports\SolicitudesExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class SolicitudController extends Controller
 {
@@ -198,6 +201,53 @@ class SolicitudController extends Controller
         }        
     }
 
+    public function setRegistrarExtra(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nTipo = $request->nTipo;
+        $nAreaSolicita = $request->nAreaSolicita;
+        $cAsunto = $request->cAsunto;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $nTermino = $request->nTermino;
+        $fTermino = $request->fTermino;
+        $nAsignacion = $request->nAsignacion;
+        $nRespuesta = $request->nRespuesta;
+        $nIdArchivo = $request->nIdArchivo;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $nIdAuth = $request->nIdAuth;
+        $fAccion = $request->fAccion;
+
+        $fTermino = ($fTermino == NULL) ? NULL : $fTermino;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setRegistrarExtra( ?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+                $nTipo,
+                $nAreaSolicita,
+                $cAsunto,
+                $fRecibido,
+                $hRecibido,
+                $nTermino,
+                $fTermino,
+                $nAsignacion,
+                $nRespuesta,
+                $nIdArchivo,
+                $jsonSeguimiento,
+                $nIdAuth,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
     public function setRegistrarCopiaCon(Request $request){
         if(!$request->ajax()) return redirect('/');
         
@@ -458,19 +508,291 @@ class SolicitudController extends Controller
         $textNotify = $request->textNotify;
         $nRol = $request->nRol;
         $nDPTO = $request->nDPTO;
+        $nSolicitud = $request->nSolicitud;
+        $fAccion = $request->fAccion;
 
         $textNotify = ($textNotify == NULL) ? 'prueba' : $textNotify;
         $nRol = ($nRol == NULL) ? 0 : $nRol;
         $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
-        // DB::transaction();
+        $nSolicitud = ($nSolicitud == NULL) ? 0 : $nSolicitud;
+        $fAccion = ($fAccion == NULL) ? date('Y-m-d H:m:s') : $fAccion;
+
+        DB::beginTransaction();
         try {
-            //code...
-            event( new NavNotify($textNotify, $nRol, $nDPTO));
-            // DB::commit();
-        } catch (\Illuminate\Database\QueryException $e) {
-            // DB::rollBack();
-            $errorCode = $e->errorInfo[1];
-            throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
+            event(new NavNotify($textNotify, $nRol, $nDPTO));
+            $rpta = DB::select('call sp_Solicitud_setUpdateSysNotify(?,?)',[
+                $nSolicitud,
+                $fAccion,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido notificar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function getAnios(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        try {
+            $rpta = DB::select('call sp_Solicitud_getAnios');
+            $anios = [];
+            if(sizeof($rpta) > 0 && $rpta[0]->anio != null){
+                foreach($rpta as $index => $value){
+                    $value->id = $index + 1;
+                }
+                $anios = $rpta;
+            } else{
+                array_push($anios, ['id' => 1, 'anio' => date('Y')]);
+            }
+
+            return $anios;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function getHistorial(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        try {
+            $rpta = DB::select('call sp_Solicitud_getHistorial(?,?,?,?,?)',[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido recuperar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    
+    // FUNCIONES PARA EXPORTAR EXCEL/PDF:
+    public function reporteMensualPDF(Request $request){
+        if(!$request -> ajax()) return redirect('/');
+
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+        $anio = $request->anio;
+        $mesNombre = $request->mesNombre;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        $mesNombre = ($mesNombre == NULL || $mesNombre == '') ? 'N/A' : $mesNombre;
+        $anio = ($anio == NULL) ? '2024' : $anio;
+
+        try {
+            $rpta = DB::select("call sp_Solicitud_getHistorial(?,?,?,?,?)",[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+
+            $rutaBlade = 'reportes.solicitudes.pdf.reporteMensual';
+            $data = [
+                'logoIEE' => asset('/img/logo-light.png'),
+                'logoNORMA' => asset('/img/LOGO_NORMA.png'),
+                'mes' => $mesNombre,
+                'data' => $rpta,
+                'anio' => $anio,
+            ];
+
+            $pdf = PDF::loadView($rutaBlade, $data)->setPaper('legal','landscape');
+            return $pdf->download('invoice.pdf');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+    public function reporteMensualExcel(Request $request){
+        if(!$request -> ajax()) return redirect('/');
+
+        $nUsuario = $request->nUsuario;
+        $nRol = $request->nRol;
+        $nDPTO = $request->nDPTO;
+        $fInicio = $request->fInicio;
+        $fFin = $request->fFin;
+        $anio = $request->anio;
+        $mesNombre = $request->mesNombre;
+
+        $nUsuario = ($nUsuario == NULL) ? Auth::id() : $nUsuario;
+        $nRol = ($nRol == NULL) ? 0 : $nRol;
+        $nDPTO = ($nDPTO == NULL) ? 0 : $nDPTO;
+
+        $mesNombre = ($mesNombre == NULL || $mesNombre == '') ? 'N/A' : $mesNombre;
+        $anio = ($anio == NULL) ? '2024' : $anio;
+
+        try {
+            $rpta = DB::select("call sp_Solicitud_getHistorial(?,?,?,?,?)",[
+                $nUsuario,
+                $nRol,
+                $nDPTO,
+                $fInicio,
+                $fFin,
+            ]);
+
+            $data = [
+                'logoIEE' => '/img/logo-light.png',
+                'logoNORMA' => '/img/LOGO_NORMA.png',
+                'mes' => $mesNombre,
+                'datos' => $rpta,
+                'anio' => $anio,
+            ];
+
+            return (new SolicitudesExport)->setDatos($data)->download('invoice.xlsx');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+    
+    public function setUpdateCaptura(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdSolicitud = $request->nIdSolicitud;
+        $nTipo = $request->nTipo;
+        $nIdArchivo = $request->nIdArchivo;
+        $nAreaSolicita = $request->nAreaSolicita;
+        $nAreaEmite = $request->nAreaEmite;
+        $nAreaAsignar = $request->nAreaAsignar;
+        $cOficio = $request->cOficio;
+        $cAsunto = $request->cAsunto;
+        $cCargo = $request->cCargo;
+        $cRemitente = $request->cRemitente;
+        $cFolio = $request->cFolio;
+        $cMemo = $request->cMemo;
+        $nCapitulo = $request->nCapitulo;
+        $nTermino = $request->nTermino;
+        $nRespuesta = $request->nRespuesta;
+        $fRecibido = $request->fRecibido;
+        $hRecibido = $request->hRecibido;
+        $fTermino = $request->fTermino;
+        $jsonSeguimiento = $request->jsonSeguimiento;
+        $fAccion = $request->fAccion;
+        $nIdAuth = $request->nIdAuth;
+        $cMotivo = $request->cMotivo;
+
+        $fTermino = ($fTermino == NULL) ? NULL : $fTermino;
+        $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            $rpta =  DB::select('call sp_Solicitud_setUpdateCaptura( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )', [
+                $nIdSolicitud,
+                $nTipo,
+                $nIdArchivo,
+                $nAreaSolicita,
+                $nAreaEmite,
+                $nAreaAsignar,
+                $cOficio,
+                $cAsunto,
+                $cCargo,
+                $cRemitente,
+                $cFolio,
+                $cMemo,
+                $nCapitulo,
+                $nTermino,
+                $nRespuesta,
+                $fRecibido,
+                $hRecibido,
+                $fTermino,
+                $jsonSeguimiento,
+                $fAccion,
+                $nIdAuth,
+                $cMotivo,
+            ]);
+
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+    public function setUpdateCopias(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdSolicitud = $request->nIdSolicitud;
+        $copiasPrevias = json_decode($request->copiasPrevias);
+        $copiasConocimiento = $request->copiasConocimiento;
+        $copiasQuitar = $request->copiasQuitar;
+        $fAccion = $request->fAccion;
+
+        DB::beginTransaction();
+        try {
+            if(sizeof($copiasPrevias) > 0 && sizeof($copiasQuitar) > 0){
+                // borrar los registros indicados en copiasQuitar y quitar el elemento relacionado de copiasPrevias
+                for($cQ = 0; $cQ < sizeof($copiasQuitar); $cQ++){
+                    foreach($copiasPrevias as $index => $pCopia){
+                        if($pCopia->id_departamento === $copiasQuitar[$cQ]){
+                            DB::select('call sp_Solicitud_deleteCopiaCon(?,?)',[
+                                $nIdSolicitud,
+                                $pCopia->id_departamento,
+                            ]);
+                            unset($copiasPrevias[$index]);
+                        }
+                    }
+                }
+            }
+            if(sizeof($copiasConocimiento) > 0){
+                if(sizeof($copiasPrevias) > 0){
+                    // añadir solo las copias que no se encuentren ya registradas
+                    for($cC = 0; $cC < sizeof($copiasConocimiento); $cC++){
+                        foreach($copiasPrevias as $index => $pCopia){
+                            if($pCopia->id_departamento !== $copiasConocimiento[$cC]){
+                                DB::select('call sp_Solicitud_setRegistrarCopiaCon(?,?,?)',[
+                                    $nIdSolicitud,
+                                    $copiasConocimiento[$cC],
+                                    $fAccion,
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    // añadir los registros como de primera vez
+                    foreach($copiasConocimiento as $cono){
+                        DB::select('call sp_Solicitud_setRegistrarCopiaCon(?,?,?)',[
+                            $nIdSolicitud,
+                            $cono,
+                            $fAccion,
+                        ]);                      
+                    }
+                }
+            }
+            DB::commit();
+            return response()->json(['message' => 'ok']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e);
         }
     }
 }

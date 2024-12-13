@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/setRegistrarMemo','Administracion\SolicitudController@setRegistrarMemo');
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');
+    Route::post('/administracion/solicitud/setRegistrarExtra','Administracion\SolicitudController@setRegistrarExtra');
     Route::post('/administracion/solicitud/setRegistrarCopiaCon','Administracion\SolicitudController@setRegistrarCopiaCon');
     Route::get('/administracion/solicitud/getAllByType','Administracion\SolicitudController@getAllByType');
     Route::get('/administracion/solicitud/getDatosById','Administracion\SolicitudController@getDatosById');
@@ -51,6 +52,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/setGuardaContestacion','Administracion\SolicitudController@setGuardaContestacion');
     Route::post('/administracion/solicitud/setUpdateEstatus','Administracion\SolicitudController@setUpdateEstatus');
     Route::post('/administracion/solicitud/setEnteradoCopia','Administracion\SolicitudController@setEnteradoCopia');
+    /**Actualización de solicitudes */
+    Route::post('/administracion/solicitud/setUpdateCaptura','Administracion\SolicitudController@setUpdateCaptura');
+    Route::post('/administracion/solicitud/setUpdateCopias','Administracion\SolicitudController@setUpdateCopias');
+    /**Historial solicitudes */
+    Route::get('/administracion/solicitud/getAnios','Administracion\SolicitudController@getAnios');
+    Route::get('/administracion/solicitud/getHistorial','Administracion\SolicitudController@getHistorial');
+    Route::get('/administracion/solicitud/reporteMensualPDF', 'Administracion\SolicitudController@reporteMensualPDF');
+    Route::get('/administracion/solicitud/reporteMensualExcel', 'Administracion\SolicitudController@reporteMensualExcel');
     /*****Catalogos *****/
     Route::post('/administracion/usuario/registrar', 'Administracion\UsersController@registrar');
     Route::post('/administracion/usuario/editar', 'Administracion\UsersController@editar');

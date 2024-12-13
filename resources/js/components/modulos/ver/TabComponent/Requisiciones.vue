@@ -24,7 +24,7 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.capitulo }}</vs-td>
                                 <vs-td>{{ tr.numFolio }}</vs-td>
@@ -54,7 +54,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>{{ tr.respuesta == 1 ? 'Sin respuesta' : 'N/A' }}</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Pendiente' : 'N/A' }}</span>
                                         </template>
                                     </div>                                 
                                 </vs-td>
@@ -286,7 +286,7 @@ export default {
         load.close();
     },
     mounted() {
-
+        
     },
     computed: {
 
@@ -496,33 +496,4 @@ export default {
 </script>
 
 <style scoped>
-.vs-table__tr,
-tr.vs-table__tr>>>td {
-    border-radius: 0% !important;
-}
-
-.css-condosdias {
-    background-color: #ffd060 !important;
-}
-
-.css-condosdias:hover td {
-    background-color: #FFC300 !important;
-}
-
-.css-conundia:hover td {
-    background-color: #f07a28 !important;
-}
-
-.css-conundia {
-    background-color: #f08d49 !important;
-}
-
-
-.css-conundial:hover td {
-    background-color: #f03c18 !important;
-}
-
-.css-conundial {
-    background-color: #f0785dcb !important;
-}
 </style>

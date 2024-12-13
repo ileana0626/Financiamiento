@@ -3,11 +3,11 @@
         style="background-color: var(--iee-white); border-bottom: 1px solid var(--iee-white);">
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
-                <p class="navText" @click.prevent="notify_count++">
+                <p class="navText">
                     <b>Sistema de la Dirección Administrativa</b>
                 </p>
 
-                <p class="navText" @click.prevent="notify_count = 0">
+                <p class="navText">
                     <small>
                         <b>Instituto Electoral del Estado</b>
                     </small>
@@ -17,14 +17,46 @@
 
         <div class="navul navbar-nav">
             <div class="row pr-sm-4 p-2">
-                <el-tooltip placement="bottom">
-                    <div class="nav-notify" :data-count="notify_count" :class="notify_count > 0 ? 'show-count' : ''">
-                        <span style="cursor: pointer;" class="material-symbols-rounded" ref="box_notify">
-                            notifications
-                        </span>
+                <el-popover placement="bottom" trigger="click">
+                    <div slot="reference">
+                        <el-tooltip placement="bottom">
+                            <div class="nav-notify" :data-count="notify_count" :class="notify_count > 0 ? 'show-count' : ''">
+                                <span style="cursor: pointer;" class="material-symbols-rounded" ref="box_notify">
+                                    notifications
+                                </span>
+                            </div>
+                            <div slot="content"> Notificaciones</div>
+                        </el-tooltip>
                     </div>
-                    <div slot="content"> Notificaciones</div>
-                </el-tooltip>
+                    <div class="d-flex container-fluid flex-column align-items-center">
+                        <ul class="list-group" v-if="notify_count > 0" @click.prevent="redirectSolicitudes" style="cursor: pointer;">
+                            <li class="list-group-item bs-li" v-if="memo_count > 0">
+                                <span class="font-weight-bold">{{ memo_count }}</span> {{ memo_count == 1 ? 'recordatorio' : 'recordatorios' }} de memorándum
+                            </li>
+                            <li class="list-group-item" v-if="oficio_count > 0">
+                                <span class="font-weight-bold">{{ oficio_count }}</span> {{ oficio_count == 1 ? 'recordatorio' : 'recordatorios' }} de oficio
+                            </li>
+                            <li class="list-group-item" v-if="circular_count > 0">
+                                <span class="font-weight-bold">{{ circular_count }}</span> {{ circular_count == 1 ? 'recordatorio' : 'recordatorios' }} de circular
+                            </li>
+                            <li class="list-group-item" v-if="escrito_count > 0">
+                                <span class="font-weight-bold">{{ escrito_count }}</span> {{ escrito_count == 1 ? 'recordatorio' : 'recordatorios' }} de escrito
+                            </li>
+                            <li class="list-group-item" v-if="tarjeta_count > 0">
+                                <span class="font-weight-bold">{{ tarjeta_count }}</span> {{ tarjeta_count == 1 ? 'recordatorio' : 'recordatorios' }} de tarjeta
+                            </li>
+                            <li class="list-group-item" v-if="correo_count > 0">
+                                <span class="font-weight-bold">{{ correo_count }}</span> {{ correo_count == 1 ? 'recordatorio' : 'recordatorios' }} de correo
+                            </li>
+                            <li class="list-group-item" v-if="requi_count > 0">
+                                <span class="font-weight-bold">{{ requi_count }}</span> {{ requi_count == 1 ? 'recordatorio' : 'recordatorios' }} de requisición
+                            </li>
+                        </ul>
+                        <div v-else class="d-flex py-2 px-3 text-center">
+                            <span>No se han recibido recordatorios</span>
+                        </div>
+                    </div>
+                </el-popover>
                 &nbsp;&nbsp;&nbsp;
                 <el-tooltip placement="bottom">
                     <span style="cursor: pointer;" @click="ruta" class="material-symbols-rounded">
@@ -79,6 +111,7 @@
     </nav>
 </template>
 <script>
+import Swal from 'sweetalert2';
 import methods from '../../methods.js'
 export default {
     props: ['showMenuBtn', 'listPermisos',],
@@ -104,7 +137,14 @@ export default {
             id: sessionStorage.getItem('idUsuario') ? JSON.parse(sessionStorage.getItem('idUsuario')) : 0,
             showDropDown: false,
 
-            notify_count: 0,
+            notify_count: sessionStorage.getItem('notify_count') ? Number(sessionStorage.getItem('notify_count')) : 0,
+            memo_count: sessionStorage.getItem('memo_count') ? Number(sessionStorage.getItem('memo_count')) : 0,
+            oficio_count: sessionStorage.getItem('oficio_count') ? Number(sessionStorage.getItem('oficio_count')) : 0,
+            circular_count: sessionStorage.getItem('circular_count') ? Number(sessionStorage.getItem('circular_count')) : 0,
+            requi_count: sessionStorage.getItem('requi_count') ? Number(sessionStorage.getItem('requi_count')) : 0,
+            escrito_count: sessionStorage.getItem('escrito_count') ? Number(sessionStorage.getItem('escrito_count')) : 0,
+            tarjeta_count: sessionStorage.getItem('tarjeta_count') ? Number(sessionStorage.getItem('tarjeta_count')) : 0,
+            correo_count: sessionStorage.getItem('correo_count') ? Number(sessionStorage.getItem('correo_count')) : 0,
         }
     },
 
@@ -138,6 +178,7 @@ export default {
     created(){
     },
     mounted() {
+        this.listenNotify();
         this.checkPermisos();
         this.getCurrentTime();
         if (localStorage.getItem('theme') == 'light') {
@@ -152,7 +193,7 @@ export default {
             this.id = data;
             this.getDatosPersonalesById();
         })
-        this.listenNotify();
+        this.updateCounts();
     },
     methods: {
         checkPermisos() {
@@ -271,11 +312,134 @@ export default {
         },
         // evento notificacion
         listenNotify() {
-            Echo.private(`navNotify.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
+            /**Se actualizan variables de contadores para el modal popover y se muestra un modal de sweetalert */
+            Echo.private(`navNotify.user.${this.datosPersonales.idRol}.${this.datosPersonales.idDPTO}`)
             .listen('NavNotify', (data) => {
-                console.log("Evento recibido:", data.message);
+                let info = JSON.parse(data.info);
+                let showRedirigir = this.$route.path != '/indexSolicitudes';
                 this.notify_count++;
-            });            
+                sessionStorage.setItem('notify_count', this.notify_count);
+                switch (info.cTipo){
+                    case 'MEMORÁNDUM':
+                        this.memo_count++;
+                        sessionStorage.setItem('memo_count', this.memo_count);
+                        break;
+                    case 'OFICIO':
+                        this.oficio_count++;
+                        sessionStorage.setItem('oficio_count', this.oficio_count);
+                        break;
+                    case 'CIRCULAR':
+                        this.circular_count++;
+                        sessionStorage.setItem('circular_count', this.circular_count);
+                        break;
+                    case 'ESCRITO':
+                        this.escrito_count++;
+                        sessionStorage.setItem('escrito_count', this.escrito_count);
+                        break;
+                    case 'TARJETA':
+                        this.tarjeta_count++;
+                        sessionStorage.setItem('tarjeta_count', this.tarjeta_count);
+                        break;
+                    case 'CORREO':
+                        this.correo_count++;
+                        sessionStorage.setItem('correo_count', this.correo_count);
+                        break;
+                    case 'REQUISICIÓN':
+                        this.requi_count++;
+                        sessionStorage.setItem('requi_count', this.requi_count);
+                        break;
+                }
+                EventBus.$emit('tabCounts',{
+                    'memo': this.memo_count,
+                    'oficio': this.oficio_count,
+                    'circular': this.circular_count,
+                    'requi': this.requi_count,
+                    'escrito': this.escrito_count,
+                    'tarjeta': this.tarjeta_count,
+                    'correo': this.correo_count,
+                })
+                Swal.fire({
+                    icon: 'info',
+                    title: `Recordatorio de ${info.cTipo} recibido`,
+                    showConfirmButton: showRedirigir,
+                    confirmButtonText: 'Ir a solicitudes',
+                    showCancelButton: true,
+                    cancelButtonText: 'De acuerdo',
+                    reverseButtons: true,
+                }).then( result => {
+                    if(result.isConfirmed){
+                        // redirigir a solicitudes
+                        this.$router.push('/indexSolicitudes');
+                    }
+                })
+            });          
+        },
+        updateCounts(){
+            EventBus.$on('updateCounts', (data) => {
+                if(this.notify_count > 0){
+                    switch (data){
+                        case 'MEMORÁNDUM':
+                            if(this.memo_count > 0){
+                                this.notify_count -= this.memo_count;
+                                this.memo_count = 0;
+                                sessionStorage.setItem('memo_count', this.memo_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'OFICIO':
+                            if(this.oficio_count > 0){
+                                this.notify_count -= this.oficio_count;
+                                this.oficio_count = 0;
+                                sessionStorage.setItem('oficio_count', this.oficio_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'CIRCULAR':
+                            if(this.circular_count > 0){
+                                this.notify_count -= this.circular_count;
+                                this.circular_count = 0;
+                                sessionStorage.setItem('circular_count', this.circular_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'ESCRITO':
+                            if(this.escrito_count > 0){
+                                this.notify_count -= this.escrito_count;
+                                this.escrito_count = 0;
+                                sessionStorage.setItem('escrito_count', this.escrito_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'TARJETA':
+                            if(this.tarjeta_count > 0){
+                                this.notify_count -= this.tarjeta_count;
+                                this.tarjeta_count = 0;
+                                sessionStorage.setItem('tarjeta_count', this.tarjeta_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'CORREO':
+                            if(this.correo_count > 0){
+                                this.notify_count -= this.correo_count;
+                                this.correo_count = 0;
+                                sessionStorage.setItem('correo_count', this.correo_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                        case 'REQUISICIÓN':
+                            if(this.requi_count > 0){
+                                this.notify_count -= this.requi_count;
+                                this.requi_count = 0;
+                                sessionStorage.setItem('requi_count', this.requi_count);
+                                sessionStorage.setItem('notify_count', this.notify_count);
+                            }
+                            break;
+                    }  
+                }              
+            })
+        },
+        redirectSolicitudes() {
+            this.$router.push('/indexSolicitudes');
         },
     }
 }

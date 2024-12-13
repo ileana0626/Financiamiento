@@ -388,7 +388,7 @@
 											<b>{{$details['asunto']}}</b>
 										</h3>
 										<h3>
-											Vence:
+											Termino:
 											<b>{{$details['termino']}}</b>
 										</h3>
 										<p>

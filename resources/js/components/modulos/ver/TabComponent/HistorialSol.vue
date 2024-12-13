@@ -3,6 +3,44 @@
         <div class="row col-12 mx-0 card-info">
             <div class="container-fluid" style="background-color: var(--iee-white);">
                 <div class="center">
+                    <div class="container-fluid d-flex justify-content-center">
+                        <div class="row d-flex px-3 py-4 w-100">
+                            <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold" style="color: var(--iee-white-dark);">
+                                    Mes:&nbsp;
+                                    <el-select filterable v-model="selectMes" placeholder="Seleccione un mes" class="con-consultar" @change="customRango()">
+                                        <el-option v-for="item in listMeses" :key="item.id" :label="item.mes"
+                                            :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-3 px-3 py-2 w-auto">
+                                <div class="d-flex justify-content-center align-items-center font-weight-bold" style="color: var(--iee-white-dark);">
+                                    Año:&nbsp;
+                                    <el-select filterable v-model="selectAnio" placeholder="Seleccione un año" class="con-consultar" @change="customRango()">
+                                        <el-option v-for="item in listaAnios" :key="item.id" :label="item.anio"
+                                            :value="item.anio">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-6 px-3 py-2 w-auto d-flex row row-columns">
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="getHistorial()">
+                                    <i class="fas fa-search mr-2" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;Consultar</b> 
+                                </vs-button>
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="reporteMensualPDF()">
+                                    <i class="fas fa-file-pdf mr-3" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte PDF</b> 
+                                </vs-button>
+                                <vs-button color="#1a2e35" class="mx-auto mb-3" @click.prevent="reporteMensualExcel()">
+                                    <i class="fas fa-file-excel mr-3" style="font-size: 15px;"></i>
+                                    <b style="font-size: 0.8125rem;">&nbsp;&nbsp;Reporte Excel</b> 
+                                </vs-button>
+                            </div>
+                        </div>
+                    </div>
                     <vs-table>
                         <template #header>
                             <vs-input v-model="search" border placeholder="Escribe un dato"
@@ -12,9 +50,7 @@
                             <vs-tr>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'idSolicitud')">id</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'solicitud')">Tipo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numFolio')">Núm. Folio</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numMemo')">Núm. Memo</vs-th>
-                                <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'numOficio')">Núm. Oficio</vs-th>
+                                <vs-th class="vsax-th">Número</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'remitente')">Remitente</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'cargo')">Cargo</vs-th>
                                 <vs-th class="vsax-th" sort @click="listSolicitudes = $vs.sortData($event, listSolicitudes, 'asunto')">Asunto</vs-th>
@@ -32,12 +68,15 @@
                             </vs-tr>
                         </template>
                         <template #tbody>
-                            <vs-tr v-for="(tr, index) in $vs.getSearch(listSolicitudes, search)" :key="index" :data="tr">
+                            <vs-tr v-for="(tr, index) in $vs.getPage($vs.getSearch(listSolicitudes, search), page, max)" :key="index" :data="tr">
                                 <vs-td>{{ tr.idSolicitud }}</vs-td>
                                 <vs-td>{{ tr.solicitud }}</vs-td>
-                                <vs-td>{{ tr.numFolio ? tr.numFolio : '-'}}</vs-td>
-                                <vs-td>{{ tr.numMemo ? tr.numMemo : '-'}}</vs-td>
-                                <vs-td>{{ tr.numOficio ? tr.numOficio : '-'}}</vs-td>
+                                <vs-td>
+                                    <span v-if="tr.numFolio">{{ tr.numFolio}}</span>
+                                    <span v-else-if="tr.numMemo">{{ tr.numMemo}}</span>
+                                    <span v-else-if="tr.numOficio">{{ tr.numOficio}}</span>
+                                    <span v-else>-</span>
+                                </vs-td>
                                 <vs-td>{{ tr.remitente ? tr.remitente : '-'}}</vs-td>
                                 <vs-td>{{ tr.cargo ? tr.cargo : '-'}}</vs-td>
                                 <vs-td>{{ tr.asunto ? tr.asunto : '-'}}</vs-td>
@@ -73,7 +112,7 @@
                                             </el-tooltip>
                                         </template>
                                         <template v-else>
-                                            <span>{{ tr.respuesta == 1 ? 'Sin respuesta' : 'N/A'}}</span>
+                                            <span>{{ tr.respuesta == 1 ? 'Pendiente' : 'N/A'}}</span>
                                         </template>
                                     </div>                                 
                                 </vs-td> 
@@ -247,6 +286,8 @@ let methods = require('../../../../methods')
 export default {
     data() {
         return {
+            rolUsuario: Number(sessionStorage.getItem('rolUsuario')),
+            idUsuario: Number(sessionStorage.getItem('idUsuario')),
             dptoUsuario: Number(sessionStorage.getItem('idDepartamento')),
             darkMode: localStorage.getItem('theme') == 'dark', 
             og: window.location.origin + '/',
@@ -266,13 +307,23 @@ export default {
             errorFConte: 0,
 
             tipoModal: 0,
+            selectAnio: '',
+            listaAnios: [],
+            selectMes: '',
+            listMeses: [],
+            rangoIni: '',
+            rangoFin: '',
+            elMes: '',
         }
     },
     async created() {
         EventBus.$on('darkMode', (data)=>{this.darkMode = data});
         const load = methods.loading( this.$vs );
-        await this.getAllByType(5);
+        await this.getAnios();
+        await this.obtenerDatos(); //get meses
+        this.customRango();
         load.close();
+        await this.getHistorial();
     },
     mounted() {
 
@@ -284,30 +335,128 @@ export default {
                     return respuesta == 1 ? 'Si' : 'No';
                 } else return '-';
             }
-        }
+        },
+        mesActual(){
+            let date = new Date();
+            return date.getMonth() + 1;
+        },
     },
     methods: {
-        async getAllByType( tipo = 1) {
-            const url = '/administracion/solicitud/getAllByType';
-
+        async getHistorial() {
+            const url = '/administracion/solicitud/getHistorial';
+            const load = methods.loading( this.$vs );
             try {
-                const response = await axios.get(url,{ params: {
-                    'nTipo': tipo,
+                this.listSolicitudes = [];
+                const response = await axios.get(url, {params: {
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
                     'nDPTO': this.dptoUsuario,
-                    'nRol': this.$attrs.rol,
-                    'nUser': this.$attrs.user,
-                }})
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                }});
                 if(response.status === 200){
                     this.listSolicitudes = response.data;
+                    load.close();
+                }
+            } catch (error) {
+                load.close();
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            }
+        },
+        async getAnios() {
+            const url = '/administracion/solicitud/getAnios';
+            try {
+                const response = await axios.get(url);
+                if(response.status === 200){
+                    this.listaAnios = response.data;
+                    this.selectAnio = response.data[0].anio;
                 }
             } catch (error) {
                 let method = url.split('/');
                 methods.catchHandler(error, method[3], this.$router);
             }
         },
-        toEdit( id ){
-            this.$router.push({ name: 'editar.solicitud', params: { idSolicitud: id} })
+        async obtenerDatos() {
+            let url = '/administracion/usuario/obtenerDatos'
+            await axios.get(url, {
+                params: {
+                    'tipo': 11, // cat meses
+                    'consulta': 2
+                }
+            }).then(response => {
+                this.listMeses = response.data;
+                this.selectMes = this.mesActual;
+            }).catch(error => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            });
         },
+        async reporteMensualPDF() {
+            const url = '/administracion/solicitud/reporteMensualPDF';
+            const config = {
+                responseType: 'blob',
+                params:{
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
+                    'nDPTO': this.dptoUsuario,
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                    'anio': this.selectAnio,
+                    'mesNombre': this.elMes,
+                }
+            };
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.get(url,config);
+                if(response.status === 200){
+                    const MyBlob = new Blob([response.data], { type: 'application/pdf'});
+                    let urlExcel = document.createElement('a');
+                    urlExcel.href = URL.createObjectURL(MyBlob);
+                    urlExcel.download = `solicitudes_${this.elMes}-${this.selectAnio}.pdf`;
+                    urlExcel.click();
+                    load.close();                 
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                load.close();
+            }
+        },
+        async reporteMensualExcel(){
+            const url = '/administracion/solicitud/reporteMensualExcel';
+            const config = {
+                responseType: 'blob',
+                params:{
+                    'nUsuario': this.idUsuario,
+                    'nRol': this.rolUsuario,
+                    'nDPTO': this.dptoUsuario,
+                    'fInicio': this.rangoIni,
+                    'fFin': this.rangoFin,
+                    'anio': this.selectAnio,
+                    'mesNombre': this.elMes,
+                }
+            };
+            const load = methods.loading( this.$vs );
+            try {
+                const response = await axios.get(url, config);
+                if(response.status === 200){
+                    const MyBlob = new Blob([response.data], { type: 'application/vnd.ms-excel'});
+                    let urlExcel = document.createElement('a');
+                    urlExcel.href = URL.createObjectURL(MyBlob);
+                    urlExcel.download = `solicitudes_${this.elMes}-${this.selectAnio}.xlsx`;
+                    urlExcel.click();
+                }else{
+                    throw new Error('Error al obtener datos');
+                }
+            } catch (error) {
+                let method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+            } finally {
+                load.close();
+            }
+        },
+
         verArchivo(datos, tipo){
             this.tipoModal = tipo;
             this.datosArchivo = datos;
@@ -320,39 +469,26 @@ export default {
         },    
         getLocalStamp(){
             return '?stamp=' + new Date().getTime();
-        },  
+        }, 
+        customRango() {
+            if(this.selectAnio == '' && this.selectMes == '') return;
+
+            let mes = String(this.selectMes).padStart(2, '00');
+            let tempInicio = `${this.selectAnio}-${mes}-01`;   
+            this.rangoIni = tempInicio;
+
+            let ff = new Date( Number(this.selectAnio), this.selectMes, 0);
+            let tempFin = `${ff.getFullYear()}-${mes}-${ff.getDate()}`;
+            this.rangoFin = tempFin;
+
+            this.elMes = this.listMeses[this.selectMes - 1].mes;
+        },
+        working() {
+          methods.WIP( this.$vs );  
+        },
     }
 }
 </script>
 
 <style scoped>
-.vs-table__tr,
-tr.vs-table__tr>>>td {
-    border-radius: 0% !important;
-}
-
-.css-condosdias {
-    background-color: #ffd060 !important;
-}
-
-.css-condosdias:hover td {
-    background-color: #FFC300 !important;
-}
-
-.css-conundia:hover td {
-    background-color: #f07a28 !important;
-}
-
-.css-conundia {
-    background-color: #f08d49 !important;
-}
-
-
-.css-conundial:hover td {
-    background-color: #f03c18 !important;
-}
-
-.css-conundial {
-    background-color: #f0785dcb !important;
-}
 </style>

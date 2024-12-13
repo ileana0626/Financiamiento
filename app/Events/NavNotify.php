@@ -37,7 +37,7 @@ class NavNotify implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('navNotifyy'. $this->idRol . $this->idDPTO);
+        return new PrivateChannel('navNotify.user.'. $this->idRol .'.'. $this->idDPTO);
     }
 
     public function broadcastWith()

@@ -44,17 +44,16 @@
                                     <template #thead>
                                         <vs-tr class="dark-th">
                                             <vs-th>#</vs-th>
-                                            <vs-th>Nombre</vs-th>
-                                            <vs-th>Correo</vs-th>
-                                            <vs-th>Usuario</vs-th>
-                                            <vs-th>Rol</vs-th>
-                                            <vs-th>Estado</vs-th>
+                                            <vs-th sort @click="listaUsuario = $vs.sortData($event, listaUsuario, 'fullname')">Nombre</vs-th>
+                                            <vs-th sort @click="listaUsuario = $vs.sortData($event, listaUsuario, 'email')">Correo</vs-th>
+                                            <vs-th sort @click="listaUsuario = $vs.sortData($event, listaUsuario, 'username')">Usuario</vs-th>
+                                            <vs-th sort @click="listaUsuario = $vs.sortData($event, listaUsuario, 'nombreRol')">Rol</vs-th>
+                                            <vs-th sort @click="listaUsuario = $vs.sortData($event, listaUsuario, 'state')">Estado</vs-th>
                                             <vs-th>Acciones</vs-th>
                                         </vs-tr>
                                     </template>
                                     <template #tbody>
-                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)"
-                                            :key="index">
+                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)" :key="index" :data="item">
                                             <vs-td style="width: 2%; text-align:center;" ><div v-text="index + 1"></div></vs-td>
                                             <vs-td style=""><div v-text="item.fullname"></div></vs-td>
                                             <vs-td style=""><div v-text="item.email"></div></vs-td>
@@ -137,7 +136,7 @@
                                     </template>
                                     <template #footer>
                                         <vs-pagination color="rgb(175, 137, 9)" v-model="page"
-                                            :length="$vs.getLength(listaUsuario, max)" />
+                                            :length="$vs.getLength($vs.getSearch(listaUsuario,searchTable), max)" />
                                     </template>
                                 </vs-table>
                             </template>

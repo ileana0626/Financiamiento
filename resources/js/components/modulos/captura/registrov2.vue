@@ -40,6 +40,7 @@
                                 </vs-select>
                             </div>
                             <template v-if="tipoDoc == 1">
+                                <!--Inicio requi-->
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Capítulo</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="Capitulo"
@@ -117,6 +118,7 @@
                                 </div>
                             </template>
                             <template v-else-if="tipoDoc == 2">
+                                <!--Inicio memo-->
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Área que solicita</label>
                                     <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
@@ -178,7 +180,7 @@
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino"
                                         :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
-                                        filter autocomplete="off">
+                                        filter autocomplete="off" @change="handleTermino()">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -232,6 +234,7 @@
                                 </div>
                             </template>
                             <template v-else-if="tipoDoc == 3">
+                                <!--Inicio oficio-->
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Número de Oficio </label>
                                     <vs-input id="Remitente" color="#C2B280" icon-after placeholder="Número de Oficio"
@@ -298,7 +301,7 @@
                                     <label class="col-form-label">Termino</label>
                                     <vs-select placeholder="Seleccione una opción" v-model="termino"
                                         :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
-                                        filter autocomplete="off">
+                                        filter autocomplete="off" @change="handleTermino()">
                                         <template #message-danger v-if="errorTermino.length > 0">
                                             {{ errorTermino }}
                                         </template>
@@ -338,6 +341,7 @@
                                 </div>
                             </template>
                             <template v-else-if="tipoDoc == 4">
+                                <!--Inicio circular-->
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label">Fecha de Recibido</label>
                                     <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy"
@@ -386,32 +390,116 @@
                                     </vs-input>
                                 </div>
                             </template>
+                            <template v-else-if="tipoDoc == 5 || tipoDoc == 6 || tipoDoc == 7">
+                                <!--Inicio extra: registro de escrito, tarjeta y correo-->
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Área que solicita</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                                        :key="'aSolicita' + tipoDoc" v-model="areaSolicita"
+                                        v-if="cat_departamentos.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaSolicita.length > 0">
+                                            {{ errorAreaSolicita }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in cat_departamentos" :key="index"
+                                            :label="item.nombre" :value="item.id">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Asunto</label>
+                                    <vs-input id="numeroConsecutivo" type="tel" color="#C2B280" icon-after
+                                        placeholder="Asunto" :key="'asunto' + tipoDoc" v-model="asunto"
+                                        autocomplete="off" @input="inputAsunto()">
+                                        <template #message-danger v-if="errorAsunto.length > 0">
+                                            {{ errorAsunto }}
+                                        </template>
+                                    </vs-input>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Fecha de Recibido</label>
+                                    <el-date-picker type="date" placeholder="Fecha de Recibido" format="dd-MM-yyyy"
+                                        :key="'fRecibido' + tipoDoc" :picker-options="pickerOptions"
+                                        value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                    </el-date-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorFechaRecibido.length > 0">
+                                            {{ errorFechaRecibido }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Hora de Recibido</label>
+                                    <el-time-picker v-model="hora" placeholder="Hora de Recibido"
+                                        :key="'hRecibido' + tipoDoc" :picker-options="timePicker">
+                                    </el-time-picker>
+                                    <div class="danger-message">
+                                        <template v-if="errorHora.length > 0">
+                                            {{ errorHora }}
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Termino</label>
+                                    <vs-select placeholder="Seleccione una opción" v-model="termino"
+                                        :key="'termino' + tipoDoc" v-if="catTermino.length > 0" :color="colors[0].color"
+                                        filter autocomplete="off" @change="handleTermino()">
+                                        <template #message-danger v-if="errorTermino.length > 0">
+                                            {{ errorTermino }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in catTermino" :key="index" :label="item.nombre"
+                                            :value="item.idTermino">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <template v-if="termino == 1">
+                                    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                        <label class="col-form-label">Fecha de Termino</label>
+                                        <el-date-picker type="date" placeholder="Fecha de Termino"
+                                            :key="'fTermino' + tipoDoc" :picker-options="pickerOptions2"
+                                            format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaTermino">
+                                        </el-date-picker>
+                                        <div class="danger-message">
+                                            <template v-if="errorFechaTermino.length > 0">
+                                                {{ errorFechaTermino }}
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Asignar</label>
+                                    <vs-select filter placeholder="Seleccione una opción" :color="colors[0].color"
+                                        :key="'asignar' + tipoDoc" v-model="areaAsignada"
+                                        v-if="cat_seguimiento.length > 0" autocomplete="off">
+                                        <template #message-danger v-if="errorAreaAsignada.length > 0">
+                                            {{ errorAreaAsignada }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in cat_seguimiento" :key="index"
+                                            :label="item.nombre" :value="item.idSeguimiento">
+                                            {{ item.nombre }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Requiere Respuesta</label>
+                                    <vs-select placeholder="Seleccione una opción" v-model="respuesta"
+                                        :key="'respuesta' + tipoDoc" v-if="selectSiNo.length > 0"
+                                        :color="colors[0].color" filter autocomplete="off">
+                                        <template #message-danger v-if="errorRespuesta.length > 0">
+                                            {{ errorRespuesta }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in selectSiNo" :key="index" :label="item.opcion"
+                                            :value="item.idSelect">
+                                            {{ item.opcion }}
+                                        </vs-option>
+                                    </vs-select>
+                                </div>
+                            </template>
                         </div>
                         <div class="row px-4 py-1">
                             <div class="col-12 col-xl-6 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Cargar Archivo</label>
-                                <!-- <div class="row px-0 pr-sm-5 pb-3">
-                                    <div class="col-md-6">
-                                        <el-upload class="upload-demo col-md-12"
-                                            action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleF1"
-                                            accept="application/pdf" :on-preview="handlePreview" :on-remove="handleRemoveF1"
-                                            multiple :limit="1" :on-exceed="handleExceed" :auto-upload="false" ref="upload">
-                                            <vs-button type="primary"
-                                                style="background-color: #af8909; border-color: #af8909;"><strong
-                                                    style="color: white !important;">Clic
-                                                    para
-                                                    subir
-                                                    archivo</strong></vs-button>
-                                            <div slot="tip" class="el-upload__tip">Solo archivos de tipo PDF
-                                            </div>
-                                        </el-upload>
-                                        <div class="danger-message">
-                                            <template v-if="errorF1 == 1">
-                                                Seleccione un archivo para subir
-                                            </template>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <div class="d-flex justify-content-start justify-content-md-center overflow-auto">
                                     <template v-if="documentos.F1.length === 0">
                                         <el-upload class="upload-demo my-4"
@@ -496,7 +584,7 @@
                                             {{ errorSeguimiento }}
                                         </template>
                                         <vs-option v-for="(item, index) in cat_seguimiento" :key="index"
-                                            :label="item.nombre" :value="item.idSeguimiento">
+                                            :label="item.nombre" :value="item.idSeguimiento" :disabled="termino == 1 && item.idSeguimiento == 2">
                                             {{ item.nombre }}
                                         </vs-option>
                                     </vs-select>
@@ -649,14 +737,8 @@ export default {
         load.close();
     },
     methods: {
-        checkInputIntegrity() {
-            document.getElementById('numeroConsecutivo').addEventListener('keypress', event => {
-                if (!`${event.target.value}${event.key}`.match(/^[0-9]{0,10}$/)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return false;
-                }
-            });
+        handleTermino(){
+            this.seguimiento = "";
         },
         inputFolio() {
             let regex = /[^a-zA-ZáíóéúüÁÉÍÓÚÜñÑ\-\/0-9 ]/g;
@@ -847,9 +929,13 @@ export default {
         async setRegistrarMemo(idARCHIVO, fechaAccion) {
             const url = '/administracion/solicitud/setRegistrarMemo';
             let idSOLICITUD = 0;
+            // si termino es 1, agregar a coordinacion financiera (id 2) a seguimiento
             const temp = [
                 { 'id': this.seguimiento }
             ]
+            if( this.termino == 1){
+                temp.push({'id': 2});
+            }
             const jsonSEG = JSON.stringify(temp);
             const strHora = this.hoursFormat(this.hora);
             try {
@@ -884,6 +970,9 @@ export default {
             const temp = [
                 { 'id': this.seguimiento }
             ]
+            if( this.termino == 1){
+                temp.push({'id': 2});
+            }
             const jsonSEG = JSON.stringify(temp);
             const strHora = this.hoursFormat(this.hora);
             try {
@@ -960,6 +1049,44 @@ export default {
                 return 0;
             }
         },
+        /**Registro de escrito, tarjeta y correo porque tienen los mismos campos */
+        async setRegistrarExtra(idARCHIVO, fechaAccion) {
+            const url = '/administracion/solicitud/setRegistrarExtra';
+            let idSOLICITUD = 0;
+            // si termino es 1, agregar a coordinacion financiera (id 2) a seguimiento
+            const temp = [
+                { 'id': this.seguimiento }
+            ]
+            if( this.termino == 1){
+                temp.push({'id': 2});
+            }
+            const jsonSEG = JSON.stringify(temp);
+            const strHora = this.hoursFormat(this.hora);
+            try {
+                const response = await axios.post(url, {
+                    'nTipo': this.tipoDoc,
+                    'nAreaSolicita': this.areaSolicita,
+                    'cAsunto': this.asunto,
+                    'fRecibido': this.fechaRecibido,
+                    'hRecibido': strHora,
+                    'nTermino': this.termino,
+                    'fTermino': this.fechaTermino,
+                    'nAsignacion': this.areaAsignada,
+                    'nRespuesta': this.respuesta,
+                    'nIdArchivo': idARCHIVO,
+                    'jsonSeguimiento': jsonSEG,
+                    'fAccion': fechaAccion,
+                });
+                if (response.status === 200) {
+                    idSOLICITUD = response.data[0].idSOLICITUD;
+                    return idSOLICITUD;
+                }
+            } catch (error) {
+                const method = url.split('/');
+                methods.catchHandler(error, method[3], this.$router);
+                return idSOLICITUD;
+            }
+        },
         guardarSolicitud() {
             // const loading = methods.loading(this.$vs);
             if (this.tipoDoc == '') {
@@ -981,6 +1108,9 @@ export default {
                 }
                 else if (this.tipoDoc == 4) {
                     this.GuardarCircular()
+                }
+                else if (this.tipoDoc == 5 || this.tipoDoc == 6 || this.tipoDoc == 7) {
+                    this.GuardarExtra();
                 }
             }
         },
@@ -1185,6 +1315,68 @@ export default {
                 })
             }
         },
+        GuardarExtra() {
+            this.limpiarErrores();
+            this.ValidarExtra();
+            let cDoc = '';
+            switch(this.tipoDoc){
+                case 5:
+                    cDoc = 'el escrito'
+                    break;
+                case 6:
+                    cDoc = 'la tarjeta'
+                    break;
+                case 7:
+                    cDoc = 'el correo'
+                    break;
+            }
+            if (!this.error) {
+                let fechaAccion = methods.getTimestamp();
+                Swal.fire({
+                    icon: 'warning',
+                    title: `¿Quieres registrar ${cDoc}?`,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Registrar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const load = methods.loading(this.$vs);
+                        // Registrar el archivo
+                        const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1, '', this.tipoDoc, this.nMemorandum);
+                        // Registrar la solicitud
+                        load.text = 'Registrando solicitud...';
+                        const idSOLICITUD = await this.setRegistrarMemo(idARCHIVO, fechaAccion);
+                        // Registrar las copias de conocimiento
+                        if (this.copiasConocimiento.length === 0) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Registrado correctamente',
+                                showConfirmButton: true,
+                                confirmButtonText: 'De acuerdo',
+                            }).then(result => {
+                                this.limpiarCampos();
+                            })
+                        } else {
+                            load.text = 'Registrando copias...';
+                            const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
+                            if (exitoCopias > 0) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Registrado correctamente',
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'De acuerdo',
+                                }).then(result => {
+                                    this.limpiarCampos();
+                                })
+                            }
+                        }
+                        load.close();
+                    }
+                })
+            }
+        },
         ValidarRequi() {
             this.error = false;
             if (this.Capitulo === '') {
@@ -1362,6 +1554,51 @@ export default {
             // }
         },
 
+        ValidarExtra() {
+            this.error = false;
+            if (this.areaSolicita === '') {
+                this.errorAreaSolicita = 'El área que solicita es obligatoria';
+                this.error = true;
+            }
+            if (this.asunto === '') {
+                this.errorAsunto = 'El asunto es obligatorio';
+                this.error = true;
+            }
+            if (this.fechaRecibido === '') {
+                this.errorFechaRecibido = 'La fecha de recibido es obligatoria';
+                this.error = false;
+            }
+            if (this.hora === '' || this.hora === null) {
+                this.errorHora = 'La hora de recibido es obligatoria';
+                this.error = true;
+            }
+            if (this.termino === '') {
+                this.errorTermino = 'El termino es obligatorio';
+                this.error = true;
+            } else if (this.termino === 1) {
+                if (this.fechaTermino === '') {
+                    this.errorFechaTermino = 'La fecha de termino es obligatoria';
+                    this.error = true;
+                }
+            }
+            if (this.areaAsignada === '') {
+                this.errorAreaAsignada = 'La asignación es obligatoria';
+                this.error = true;
+            }
+            if (this.respuesta === '') {
+                this.errorRespuesta = 'Seleccione una opción para respuesta';
+                this.error = true;
+            }
+
+            if (this.documentos.F1 === '') {
+                this.errorF1 = 1;
+                this.error = true;
+            }
+            if (this.seguimiento.length === 0) {
+                this.errorSeguimiento = 'Seleccione una opción de seguimiento';
+                this.error = true;
+            }
+        },
         /**Limpia todos los mensajes de error */
         limpiarErrores() {
             this.errorRespuesta = '';
