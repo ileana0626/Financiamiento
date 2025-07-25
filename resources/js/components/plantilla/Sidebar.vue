@@ -28,15 +28,29 @@
                     </template>
 Consulta de Errores
 </vs-sidebar-item> -->
-                <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
-                    to="/capturav2">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            app_registration
-                        </span>
-                    </template>
-                    Captura
-                </vs-sidebar-item>
+            <vs-sidebar-group>
+                <template #header>
+                    <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
+                        to="/calculo" arrow>
+                        <template #icon>
+                            <span class="material-symbols-rounded">
+                                calculate
+                            </span>
+                        </template>
+                        Apartado de calculo
+                    </vs-sidebar-item>
+                </template>
+                <template>
+             <vs-sidebar-item id="listado">
+                <template #icon>
+                  <i class="fas fa-file-alt color"></i>
+                </template>
+                  <router-link class="nav-link color" :to="'/listado'">
+                    Listado de cálculos
+                </router-link>
+              </vs-sidebar-item>
+            </template>
+            </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
                     to="/recordatorios">
@@ -66,6 +80,27 @@ Consulta de Errores
                     </template>
                     Solicitudes
                 </vs-sidebar-item> -->
+
+                <vs-sidebar-group>
+              <template #header>
+                <vs-sidebar-item arrow>
+                  <template #icon>
+                  <i class="fas fa-folder"></i>
+                  </template>
+                  DOCUMENTOS
+                </vs-sidebar-item>
+              </template>
+              <template>
+             <vs-sidebar-item id="Memo">
+                <template #icon>
+                  <i class="fas fa-file-alt color"></i>
+                </template>
+                  <router-link class="nav-link color" :to="'/memo'">
+                    Memorándum
+                </router-link>
+              </vs-sidebar-item>
+            </template>
+            </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
                     <template #icon>
@@ -129,6 +164,20 @@ Consulta de Errores
                             </template>
                         </vs-tooltip> -->
                     </div>
+                    <!-- helper -->
+                     <vs-row justify="space-between" v-if="listPermisos.includes('faq.index')">
+                    <vs-tooltip top>
+                        <vs-button id="faqBtn" size="large" icon href="/faq"
+                            v-loading.fullscreen.lock="fullscreenLoading"
+                            style="cursor: pointer; background-color: var(--text-color);">
+                            <span class="material-symbols-rounded" style="color: var(--iee-bg-color) !important;">
+                                help
+                            </span>
+                        </vs-button>
+                        <template #tooltip> Ayuda</template>
+                    </vs-tooltip>
+                </vs-row>
+                <!--------------------------------->
                     <div class="d-flex align-items-center pb-4">
                         <div class='toggle-switch'>
                             <label>
@@ -187,6 +236,7 @@ export default {
     },
     mounted() {
         this.getRolUsuario();
+        console.log('Permisos recibidos:', this.listPermisos);
     },
     methods: {
         // Método que obtiene eltamaño del margin top que se debe aplicar al elemento
@@ -273,6 +323,9 @@ export default {
             // console.log(localStorage.getItem('theme'));
             // console.log(this.darkmode);
             EventBus.$emit('darkMode', this.darkmode);
+        },
+        ruta() {
+            this.$router.push({ name: "faq.index" });
         },
     }
 }

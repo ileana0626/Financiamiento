@@ -20,7 +20,7 @@
                 </div>
             </div>       
         </div>
-        <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
+    <!--     <vs-dialog v-model="showListaCumple" prevent-close auto-width id="listaCumple">
             <template #header>
                 <div class="col text-center">
                     <div>
@@ -58,7 +58,7 @@
                     </div>                    
                 </div>
             </template>
-        </vs-dialog>        
+        </vs-dialog>  -->       
     </div>
 </template>
 <script>

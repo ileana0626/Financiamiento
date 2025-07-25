@@ -4,7 +4,7 @@
         <ul class="navul mr-auto navbar-nav">
             <li class="nav-item">
                 <p class="navText">
-                    <b>Sistema de la Dirección Administrativa</b>
+                    <b>Sistema de la Dirección de Prerrogativas y Partidos Políticos</b>
                 </p>
 
                 <p class="navText">
@@ -58,12 +58,12 @@
                     </div>
                 </el-popover>
                 &nbsp;&nbsp;&nbsp;
-                <el-tooltip placement="bottom">
+                <!-- <el-tooltip placement="bottom">
                     <span style="cursor: pointer;" @click="ruta" class="material-symbols-rounded">
                         help
                     </span>
                     <div slot="content"> Ayuda</div>
-                </el-tooltip>
+                </el-tooltip> -->
             </div>
         </div>
         <div class="d-flex align-items-center" style="gap: 10px;">

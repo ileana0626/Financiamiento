@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth']], function () {
     /**Nuevo registro de solicitudes */
     Route::post('/administracion/solicitud/setRegistrarRequi','Administracion\SolicitudController@setRegistrarRequi');
     Route::post('/administracion/solicitud/setRegistrarMemo','Administracion\SolicitudController@setRegistrarMemo');
+    Route::post('/administracion/solicitud/setRegistrarCalculo','Administracion\SolicitudController@setRegistrarCalculo');
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');
     Route::post('/administracion/solicitud/setRegistrarExtra','Administracion\SolicitudController@setRegistrarExtra');
@@ -112,6 +113,7 @@ Route::group(['middleware' => ['auth']], function () {
     
     /***Captura v2***/
     Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');
+    Route::get('/administracion/usuario/getAnioFiscal','Administracion\UsersController@getAnioFiscal');
     Route::get('/administracion/usuario/getCapitulo','Administracion\UsersController@getCapitulo');
 });
 

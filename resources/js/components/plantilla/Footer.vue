@@ -3,7 +3,7 @@
         <div class="main-footer d-flex text-sm-center justify-content-between"
             style="background: var(--footer-bg) !important; color: var(--text-color); border-top: 1px solid var(--iee-light-gray-2);">
             <div class="d-sm-block mr-2 cr px-2">
-                <small class="mr-1">Copyright &copy; 2024</small>
+                <small class="mr-1">Copyright &copy; 2025</small>
                 <small>Instituto Electoral del Estado </small>
             </div>
             <div class="d-none d-sm-block">
@@ -12,7 +12,7 @@
                     Informática</small>
             </div>
             <div class="d-sm-block ml-2 text-right text-sm-center">
-                <small>Versión 1.21.42.11122024</small>
+                <small>Versión 1.0.0.18072025</small>
             </div>
         </div>
     </footer>

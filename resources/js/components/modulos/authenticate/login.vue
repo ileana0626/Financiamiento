@@ -17,7 +17,7 @@
             font-weight: 700;
           "
         >
-          SISTEMA DE LA DIRECCIÓN ADMINISTRATIVA
+          SISTEMA DE LA DIRECCIÓN DE PRERROGATIVAS Y PARTIDOS POLÍTICOS
         </h3>
         <br /><br />
         <div class="center">
@@ -393,6 +393,7 @@ export default {
       me.listRolPermisosByUsuario.map(function (x, y) {
         me.listRolPermisosByUsuarioFilter.push(x.SLUG);
       });
+
       sessionStorage.setItem(
         "lisRolPermisosByUsuario",
         JSON.stringify(me.listRolPermisosByUsuarioFilter)
