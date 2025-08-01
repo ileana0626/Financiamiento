@@ -504,15 +504,6 @@ export default {
                             return idSOLICITUD;
                         }
 
-
-
-
-
-
-
-
-
-
                         /*const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1, '', this.tipoDoc, this.nOficio);
                         // Registrar la solicitud
                         load.text = 'Registrando solicitud...';

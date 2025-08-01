@@ -62,7 +62,7 @@ Consulta de Errores
                     Notificaciones
                 </vs-sidebar-item>
 
-                <vs-sidebar-item v-if="listPermisos.includes('solicitudes.index')" id="solicitudes.index"
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('solicitudes.index')" id="solicitudes.index"
                     to="/indexSolicitudes">
                     <template #icon>
                         <span class="material-symbols-rounded">
@@ -70,7 +70,7 @@ Consulta de Errores
                         </span>
                     </template>
                     Solicitudes
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
                 <!-- <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
                     to="/gestionSolicitudes">
                     <template #icon>
@@ -81,7 +81,7 @@ Consulta de Errores
                     Solicitudes
                 </vs-sidebar-item> -->
 
-                <vs-sidebar-group>
+                <!-- vs-sidebar-group>
               <template #header>
                 <vs-sidebar-item arrow>
                   <template #icon>
@@ -100,16 +100,16 @@ Consulta de Errores
                 </router-link>
               </vs-sidebar-item>
             </template>
-            </vs-sidebar-group>
+            </vs-sidebar-group> -->
 
-                <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
+               <!--  <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             menu_book
                         </span>
                     </template>
                     Catálogos
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
                 <!-- <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
                     :to="'/perfil/' + usuario.id">
@@ -121,7 +121,7 @@ Consulta de Errores
                     Mi Perfil
                 </vs-sidebar-item> -->
 
-                <vs-sidebar-item id="birthday.index" to="/birthday" v-if="listPermisos.includes('birthday.index')">
+                <!-- <vs-sidebar-item id="birthday.index" to="/birthday" v-if="listPermisos.includes('birthday.index')">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             featured_seasonal_and_gifts
@@ -129,17 +129,17 @@ Consulta de Errores
                     </template>
                     Cumpleaños
                 </vs-sidebar-item>
-
-                <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')" id="admin.usuarios" to="/usuarios">
+ -->
+                <!-- <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')" id="admin.usuarios" to="/usuarios">
                     <template #icon>
                         <span class="material-symbols-rounded">
                             list
                         </span>
                     </template>
                     Usuarios
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
 
-                <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')" id="admin.preferencias"
+               <!--  <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')" id="admin.preferencias"
                     to="/preferenciasInterfaz">
                     <template #icon>
                         <span class="material-symbols-rounded">
@@ -147,7 +147,7 @@ Consulta de Errores
                         </span>
                     </template>
                     Configuraciones
-                </vs-sidebar-item>
+                </vs-sidebar-item> -->
             </template>
             <template #footer>
                 <div class="container-fluid d-flex justify-content-between mx-0 px-0 flex-column-reverse flex-lg-row footer-sb">
