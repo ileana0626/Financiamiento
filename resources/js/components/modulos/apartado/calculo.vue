@@ -82,7 +82,7 @@
                                 <vs-input
                                 class="disabled-bold"
                                 placeholder="65% UMA"
-                                :value="calculo"
+                                :value="calculo_65_UMA_formatoMoneda"
                                 type="text"
                                 disabled
                                 >
@@ -123,13 +123,13 @@
                                     <div class="col-sm-12 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
                                         <label class="col-form-label">Partidos sin representación en el Congreso </label>
                                         <vs-select multiple filter
-                                            :placeholder="(partidosPoliticos.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="partidosPoliticos" v-if="cat_partido.length > 0" autocomplete="off"
+                                            :placeholder="(partidosPoliticos_sinRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                            v-model="partidosPoliticos_sinRepr" v-if="cat_partido_sinRepresentacion.length > 0" autocomplete="off"
                                             :color="colors[0].color">
-                                            <template #message-danger v-if="errorPartidosPoliticos.length > 0">
-                                                {{ errorPartidosPoliticos }}
+                                            <template #message-danger v-if="errorPartidosPoliticos_sinRepr.length > 0">
+                                                {{ errorPartidosPoliticos_sinRepr }}
                                             </template>
-                                            <vs-option v-for="(item, index) in cat_partido" :key="index"
+                                            <vs-option v-for="(item, index) in cat_partido_sinRepresentacion" :key="index"
                                                 :label="item.siglas" :value="item.id">
                                                 {{ item.siglas }}
                                             </vs-option>
@@ -142,7 +142,7 @@
                             <div class="row px-4">
                                 <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                     <label class="col-form-label"> 2% del FPAOP para </label>
-                                        <div v-for="partido in partidosSeleccionados" :key="partido.id" class="pb-2">
+                                        <div v-for="partido in partidos_sinRepr_Seleccionados" :key="partido.id" class="pb-2">
                                             <div class="d-flex align-items-center">
                                                 <span class="mr-2">{{ partido.siglas }}</span>
                                                 <vs-input
@@ -200,11 +200,11 @@
                                     <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
                                         <label class="col-form-label">Partidos con representación en el Congreso </label>
                                         <vs-select multiple filter
-                                            :placeholder="(partidosPoliticosWith.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="partidosPoliticosWith" v-if="cat_partido_conRepresentacion.length > 0" autocomplete="off"
+                                            :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                            v-model="partidosPoliticos_conRepr" v-if="cat_partido_conRepresentacion.length > 0" autocomplete="off"
                                             :color="colors[0].color">
-                                            <template #message-danger v-if="errorPartidosPoliticosWith.length > 0">
-                                                {{ errorPartidosPoliticosWith }}
+                                            <template #message-danger v-if="errorPartidosPoliticos_conRepr.length > 0">
+                                                {{ errorPartidosPoliticos_conRepr }}
                                             </template>
                                             <vs-option v-for="(item, index) in cat_partido_conRepresentacion" :key="index"
                                                 :label="item.siglas" :value="item.id">
@@ -221,8 +221,8 @@
                                         class="flex-grow-1 disabled-bold"
                                         type="text"
                                         disabled
-                                        :placeholder="(partidosPoliticosWith.length > 0) ? '' : 'Ningún PP seleccionado'"
-                                        v-model="partidosPoliticosWith.length"
+                                        :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Ningún PP seleccionado'"
+                                        v-model="partidosPoliticos_conRepr.length"
                                         :color="colors[0].color"
                                         />
                                 </div>
@@ -319,31 +319,40 @@ export default {
                     color: 'warn'
                 }
             ],
-            anio: '',
-            uma: '',
-            resu: '',
-            conversion: '',
-            total: '',
-            totalmonto: '',
-            totalMonto30: '',
-            totalMonto70: '',
-            comprobacion: '',
-            umaInput: '',
-            errorUMA: false,
-            fechaRecibido: '',
-            numeroPadron: '',
-            seguimientoPartido: '',
-            partidosPoliticos: [],
-            partidosPoliticosWith: [],
-            catAnio: [],
-            cat_partido: [],
-            cat_partido_conRepresentacion: [],
-            errorPartidosPoliticos: '',
-            errorPartidosPoliticosWith: '',
-            errorAnio: '',
-            errorFechaRecibido: '',
-            errorNumeroPadron: '',
+            anio: '', // Año fiscal
+            uma: null,   // valor de UMA en float
+            //resu: '', //No se usa
+            //conversion: '', //No se usa
+            //total: '', //No se usa
+            totalmonto: '', // Monto total efectivo
+            totalMonto30: '',  // 30% Monto total efectivo 
+            totalMonto70: '',   // 70% Monto total efectivo 
+            //comprobacion: '', // No se usa
+            umaInput: '',   // valor de UMA para el input
+            
+            fechaRecibido: '', // fecha de publicacion de la UMA
+            numeroPadron: '', // número de personas en padrón electoral para el input
+            seguimientoPartido: '', //No se usa
+            partidosPoliticos_sinRepr: [], // lista de partidos políticos sin representación Seleccionados
+            partidosPoliticos_conRepr: [], // lista de partidos políticos con representación Seleccionados
+            // Catálogos
+            catAnio: [], // lista de años fiscales
+            cat_partido_sinRepresentacion: [], // lista de partidos políticos sin representación
+            cat_partido_conRepresentacion: [], // lista de partidos políticos con representación
+            // Mensajes de error y validación
+            errorUMA: '', // Para el mensaje de error UMA y bandera por su 'length' > 0 -> Error
+            errorPartidosPoliticos_sinRepr: '',
+            errorPartidosPoliticos_conRepr: '',
+            errorAnio: '', // Para el mensaje de error de año fiscal
+            errorFechaRecibido: '', // Para el mensaje de error de fecha de publicación de la UMA
+            errorNumeroPadron: '', // Para el mensaje de error de número de personas en padrón electoral
 
+            // Variables de cache reactivas para evitar errores de javascript en la consola
+            // por calculos inec
+            /*_cachedFPAOP: null,
+            _cachedFPAOPFormatted: '',
+            _needsRecalculation: false,
+            */
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -377,6 +386,10 @@ export default {
         load.close();
     },
     methods: {
+        /**
+         * Obtiene los años fiscales
+         * @returns {void}
+         */
         async getAnio() {
             this.catAnio = []
             let url = '/administracion/usuario/getAnioFiscal'
@@ -389,16 +402,21 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router)
             })
         },
+        /**
+         * Formatea el valor de UMA a moneda
+         * @returns {void}
+         */
         formatearUMA() {
             let valorNumerico = parseFloat(this.umaInput.toString().replace(/[^0-9.]/g, ''));
 
-            if (isNaN(valorNumerico)) {
+            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
             this.errorUMA = 'Ingrese un valor válido para UMA';
-            this.errorUMA = true;
+            // this.errorUMA = true; // No es necesario por el mensaje
             this.uma = null;
             this.umaInput = '';
             } else {
-            this.errorUMA = false;
+            //this.errorUMA = false; // No es necesario
+            this.errorUMA = '';
             this.uma = valorNumerico;
 
             this.umaInput = valorNumerico.toLocaleString('es-MX', {
@@ -409,6 +427,11 @@ export default {
             });
             }
         },
+        /**
+         * Obtiene los datos de la base de datos
+         * @param {number} tipo - Tipo de datos a obtener
+         * @returns {void}
+         */
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
             await axios.get(url, {
@@ -443,7 +466,7 @@ export default {
                         this.cat_estutus = response.data
                         break;
                     case 9:
-                        this.cat_partido = response.data
+                        this.cat_partido_sinRepresentacion = response.data
                         break;
                     case 10:
                         this.cat_partido_conRepresentacion = response.data
@@ -457,7 +480,10 @@ export default {
 
             });
         },
-        //guardar el calculo
+        /**
+         * Guarda el calculo
+         * @returns {void}
+         */
         guardarCalculo() {
             this.validarCampos();
             if (!this.error) {
@@ -475,34 +501,81 @@ export default {
                          const load = methods.loading(this.$vs);
                         // Registrar el archivo
                         const url = '/administracion/solicitud/setRegistrarCalculo';
-                        let idSOLICITUD = 0;
+                        let idGenerado = 0;
                         const strHora = this.hoursFormat(this.hora);
                         try {
                             const response = await axios.post(url, {
                                 //cambiar a los campos de las tres tablas que se tienen que guardar (checar con los declarados en data y en el template)
-                                'nTipo': this.tipoDoc,
-                                'nAreaSolicita': this.areaSolicita,
-                                'nMemo': this.nMemorandum,
-                                'cAsunto': this.asunto,
-                                'fRecibido': this.fechaRecibido,
-                                'hRecibido': strHora,
-                                'nTermino': this.termino,
-                                'fTermino': this.fechaTermino,
-                                'nAsignacion': this.areaAsignada,
-                                'nRespuesta': this.respuesta,
-                                'nIdArchivo': idARCHIVO,
-                                'jsonSeguimiento': jsonSEG,
-                                'fAccion': fechaAccion,
+                                'nAnio': this.anio, // anio fiscal
+                                'fPublicacion': this.fechaRecibido, // se manda con formato YYYY-MM-DD a la base de datos
+                                //'fPublicacion': this.formatDate(this.fecha_publicacion, 'DataBase'),
+                                'cUMA': this.uma, // valor de UMA
+                                'cPersonas_padron': this.numeroPadron, // numero de personas en el padron
+                                'cbPartidosPoliticosSinRepr': this.formateaPartidosSeleccionadosSinRepDB,
+                                'cbPartidosPoliticosConRepr': this.formateaPartidosSeleccionadosConRepDB,
+                                
+                               //'nIdAuth': Auth.id(),
+                                // 'fAccion': fechaAccion,
                             });
+                            console.log('Respuesta completa:', JSON.stringify(response.data, null, 2));
+                            load.text = 'Registrando calculos...';
                             if (response.status === 200) {
-                                idSOLICITUD = response.data[0].idSOLICITUD;
+                                //Exito al guardar datos
+                                if (response.data && response.data[0]) {
+                                    idGenerado = response.data[0].idInsertado;
+                                    console.log('ID generado:', idGenerado);
+                                    Swal.fire({ // Manda la alerta de Éxito
+                                        icon: 'success',
+                                        title: 'Registrado correctamente',
+                                        showConfirmButton: true,
+                                        confirmButtonText: 'De acuerdo',
+                                    }).then(result => {
+                                        this.limpiarCampos();
+                                    });
+                                } else {
+                                    console.error('No se recibió el ID del servidor');
+                                }
+                                
+                                 // Error del servidor
+                            } else {
+                                console.error('Error:', response.data.message);
+                            }
+                        } catch (error) {
+                            // Bloque de código para verificar cual es el error de inserción
+                            console.error('Error en la petición:', error.response?.data?.message || error.message);
+                            if (error.response) {
+                                // El servidor respondió con un código de error
+                                if (error.response.status === 422) {
+                                    // Errores de validación
+                                    console.error('Errores de validación:', error.response.data.errors);
+                                } else {
+                                    // Otros errores del servidor
+                                    console.error('Error del servidor:', error.response.data.message);
+                                }
+                            } else if (error.request) {
+                                // La petición fue hecha pero no se recibió respuesta
+                                console.error('No se recibió respuesta del servidor');
+                            } else {
+                                // Error al configurar la petición
+                                console.error('Error al realizar la petición:', error.message);
+                            }
+                            // Fin del bloque
+
+                            const method = url.split('/');
+                            methods.catchHandler(error, method[3], this.$router);
+                            return idGenerado;
+                        }   
+                        /*    
+                            if (response.status === 200) {
+                                idSOLICITUD = response.data[0].p_new_id;
+                                console.log('idCaptura ', idSOLICITUD);
                                 return idSOLICITUD;
                             }
                         } catch (error) {
                             const method = url.split('/');
                             methods.catchHandler(error, method[3], this.$router);
                             return idSOLICITUD;
-                        }
+                        }*/
 
                         /*const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1, '', this.tipoDoc, this.nOficio);
                         // Registrar la solicitud
@@ -537,6 +610,10 @@ export default {
                 });
             }
         },
+        /**
+         * Valida los campos del formulario
+         * @returns {void}
+         */
         validarCampos() {
             this.error = false;
             if (this.anio === '') {
@@ -549,52 +626,66 @@ export default {
             }
             if (this.umaInput === '') {
                 this.errorUMA = 'Ingrese un valor para UMA';
-                this.error = true;
+                //this.error = true;
             }
             if (this.numeroPadron === '') {
                 this.errorNumeroPadron = 'Ingrese el número de personas en Padrón Electoral';
                 this.error = true;
             }
-            if (!Array.isArray(this.partidosPoliticosWith) || this.partidosPoliticosWith.length === 0) {
-                this.errorPartidosPoliticosWith = 'Debe seleccionar al menos un Partido Político';
+            if (!Array.isArray(this.partidosPoliticos_conRepr) || this.partidosPoliticos_conRepr.length === 0) {
+                this.errorPartidosPoliticos_conRepr = 'Debe seleccionar al menos un Partido Político';
                 this.error = true;
             }
         },
-        /**Limpia todos los mensajes de error */
+        /**
+         * Limpia todos los mensajes de error
+         * @returns {void}
+         */
         limpiarErrores() {
             this.errorFechaRecibido = '';
-            this.errorPartidosPoliticos = '';
-            this.errorPartidosPoliticosWith = '';
-            this.errorPartidosPoliticos = '',
-            this.errorPartidosPoliticosWith = '',
+            this.errorPartidosPoliticos_sinRepr = '';
+            this.errorPartidosPoliticos_conRepr = '';
             this.errorAnio = '',
             this.errorFechaRecibido = '',
             this.errorNumeroPadron = ''
         },
+        /**
+         * Limpia todos los campos del formulario
+         * @returns {void}
+         */
         limpiarCampos() {
             this.fechaRecibido = '';
             this.anio = '';
-            this.partidosPoliticos = [];
-            this.partidosPoliticosWith = [];
+            this.partidosPoliticos_sinRepr = [];
+            this.partidosPoliticos_conRepr = [];
             this.anio= '',
             this.uma= '',
             this.umaInput= '',
             this.numeroPadron= ''
         },
         /**Recibe un objeto fecha y devuelve un string con las horas */
-        hoursFormat(dateOBJ) {
+        hoursFormat(dateOBJ, tipo) {
             let time = new Date(dateOBJ);
             let str = time.getHours().toString().padStart(2, '00') + ':' + time.getMinutes().toString().padStart(2, '00') + ':' + time.getSeconds().toString().padStart(2, '00');
             return str;
         },
     },
     computed: {
-        calculoForm() { //funcion que realiza los calculos
+        /**
+         * Realiza los calculos 65% de UMA -> (UMA*65)/100
+         * @returns {number}
+         */
+        calculoForm_65_UMA() { 
         return this.uma * 0.65;
         
     },
-    calculo() {
-        const res = this.calculoForm;
+    /**
+     * Formatea el valor 65% de UMA a moneda
+     * calculoForm_65_UMA {number}
+     * @returns {string}
+     */
+    calculo_65_UMA_formatoMoneda() {
+        const res = this.calculoForm_65_UMA;
         if (isNaN(res)) return '$0.00';
 
         return res.toLocaleString('es-MX', {
@@ -604,12 +695,22 @@ export default {
         maximumFractionDigits: 2
         });
     },
+    /**
+     * Realiza los calculos monto total de Financiamiento Público para AOP 
+     * -> (65% de UMA * personas)
+     * @returns {number}
+     */
     financiamientoAOPForm() { //funcion para hacer calculos
         const personas = parseInt(this.numeroPadron);
 
-        return this.calculoForm * personas;
+        return this.calculoForm_65_UMA  * personas;
     },
 
+    /**
+     * Formatea el monto total de Financiamiento Público para AOP a moneda
+     * financiamientoAOPForm {number}
+     * @returns {string}
+     */
     financiamientoAOP() {
         const resultado = this.financiamientoAOPForm;
 
@@ -623,15 +724,31 @@ export default {
             maximumFractionDigits: 2
         });
     },
-    partidosSeleccionados() {
-        return this.cat_partido.filter(partido => this.partidosPoliticos.includes(partido.id));
-    },
+    /**
+     * Realiza los calculos del 2% del monto total de Financiamiento Público para AOP 
+     * por cada partido seleccionado sin representación
+     * -> (monto total de Financiamiento Público para AOP * 0.02)
+     * @returns {number}
+     */
     calculoFPAOPForm() {
+        /*if (!this._cachedFPAOP || this._needsRecalculation) {
+            this._cachedFPAOP = this.financiamientoAOPForm * 0.02;
+            this._needsRecalculation = false;
+        }
+        return this._cachedFPAOP;*/
+        // Validar primero para evitar cálculos innecesarios
         
         return this.financiamientoAOPForm * 0.02;      
     },
+    /**
+     * Formatea el valor del 2% del monto total de Financiamiento Público para AOP a moneda
+     * calculoFPAOPForm {number}
+     * @returns {string}
+     */
     calculoFPAOP() {
         const resultado = this.calculoFPAOPForm;
+        //validacion y limpieza de datos
+        if(isNaN(resultado)) return '$0.00';
         
         return resultado.toLocaleString('es-MX', {
             style: 'currency',
@@ -640,10 +757,20 @@ export default {
             maximumFractionDigits: 2
         });
     },
+    /**
+     * Suma  del "2% de FPAOP" de todos los partidos seleccionados sin representación 
+     * lo mismo que multiplicar calculoFPAOPForm por la cantidad de partidos seleccionados
+     * @returns {number}
+     */
     totalFPForm() {
 
-        return this.calculoFPAOPForm * this.partidosSeleccionados.length; 
+        return this.calculoFPAOPForm * this.partidos_sinRepr_Seleccionados.length; 
     },
+    /**
+     * Da formato totalFPForm a moneda
+     * totalFPForm {number}
+     * @returns {string}
+     */
     totalFP() {
         const resultado = this.totalFPForm;
 
@@ -657,9 +784,19 @@ export default {
             maximumFractionDigits: 2
         });
     },
+    /**
+     * Monto total efectivo
+     * Monto total de financiamiento púlico para AOP - el total de FP partidos sin representación en el congreso
+     * @returns {number}
+     */
     montoTotalForm() {
         return this.financiamientoAOPForm - this.totalFPForm; 
     },
+    /**
+     * Formatea el valor monto total efectivo a moneda
+     * montoTotalForm {number}
+     * @returns {string}
+     */
     montoTotal() {
         const resultado = this.montoTotalForm;
 
@@ -673,11 +810,21 @@ export default {
             maximumFractionDigits: 2
         });
     },
+    /**
+     * 30% Monto total efectivo 
+     * Monto total efectivo * 0.3
+     * @returns {number}
+     */
     montoTotal30Form() {
 
         return this.montoTotalForm * 0.3; 
 
     },
+    /**
+     * Formatea el 30% Monto total efectivo a moneda
+     * montoTotal30Form {number}
+     * @returns {string}
+     */
     montoTotal30() {
         const resultado = this.montoTotal30Form;
         
@@ -690,10 +837,20 @@ export default {
             maximumFractionDigits: 2
         });
     },
+     /**
+     * 30% Monto total efectivo 
+     * Monto total efectivo * 0.7
+     * @returns {number}
+     */
     montoTotal70Form() {
         return this.montoTotalForm * 0.7; 
         
     },
+    /**
+     * Formatea el 70% Monto total efectivo a moneda
+     * montoTotal70Form {number}
+     * @returns {string}
+     */
     montoTotal70() {
         const resultado = this.montoTotal70Form;
 
@@ -707,11 +864,21 @@ export default {
             maximumFractionDigits: 2
         });
     },
+    /**
+     * Comprobación del monto total de financiamiento público para AOP
+     * 30% Monto total efectivo + 70% Monto total efectivo + Total FP partidos sin representación en el congreso
+     * @returns {number}
+     */
     comprobacionMontoForm() {
         
         return this.montoTotal30Form + this.montoTotal70Form + this.totalFPForm; 
     
     },
+    /**
+     * Formatea el valor comprobacion monto a moneda
+     * comprobacionMontoForm {number}
+     * @returns {string}
+     */
     comprobacionMonto() {
 
         const valorTotal = this.comprobacionMontoForm;
@@ -726,10 +893,34 @@ export default {
             maximumFractionDigits: 2
         });
     },
-    partidosSeleccionadosWith() {
-        return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticosWith.includes(partido.id));
+    /**
+     * Filtra los partidos seleccionados sin representación del catálogo
+     * @returns {Array}
+     */
+     partidos_sinRepr_Seleccionados() {
+        return this.cat_partido_sinRepresentacion.filter(partido => this.partidosPoliticos_sinRepr.includes(partido.id));
     },
-
+    /**
+     * Filtra los partidos seleccionados con representación del catálogo
+     * @returns {Array}
+     */
+    partidos_sinRepr_Seleccionados() {
+        return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticos_conRepr.includes(partido.id));
+    },
+    /*
+    * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
+    */
+    formateaPartidosSeleccionadosSinRepDB() {
+        return this.partidos_sinRepr_Seleccionados.map(partido => partido.id).join(',');
+    },
+    /*
+    * Formatea los partidos seleccionados con representacion para guardarlos en la base de datos por sus 'id'
+    */
+    formateaPartidosSeleccionadosConRepDB() {
+        return this.partidos_sinRepr_Seleccionados.map(partido => partido.id).join(',');
+    },
+    
+   
     }
 }
 

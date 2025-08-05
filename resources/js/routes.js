@@ -17,7 +17,11 @@ import EditSolicitud from './components/modulos/captura/editSolicitud.vue';
 
 import Editar from './components/modulos/captura/editar.vue';
 import Capturav2 from './components/modulos/captura/registrov2.vue';
+
+// Calculos de Prerrogativas Partidos Politicos
 import Calculo from './components/modulos/apartado/calculo.vue';
+import ListadoCalculos from './components/modulos/apartado/ListadoCalculos.vue';
+
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
 import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
 
@@ -142,7 +146,11 @@ export default new Router({
         { path: '/solicitudes/editar/:idSolicitud', name: 'editar.solicitud', component: EditSolicitud, props: true, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         // { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         { path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+
+        // Financiamiento
         { path: '/calculo', name: 'captura.index', component: Calculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/listado', name:'solicitudes.ver', component: ListadoCalculos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        
         { path: '*', name: 'faq.index', component: Error404 }
 
 
