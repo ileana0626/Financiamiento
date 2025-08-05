@@ -18,6 +18,7 @@ import EditSolicitud from './components/modulos/captura/editSolicitud.vue';
 import Editar from './components/modulos/captura/editar.vue';
 import Capturav2 from './components/modulos/captura/registrov2.vue';
 import Calculo from './components/modulos/apartado/calculo.vue';
+import DistribucionCalculo from './components/modulos/distribucion/distribucionCalculo.vue';
 import Perfil from './components/modulos/usuario/perfil/perfil.vue';
 import EditPerfil from './components/modulos/usuario/perfil/editPerfil.vue';
 
@@ -143,6 +144,7 @@ export default new Router({
         // { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         { path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/calculo', name: 'captura.index', component: Calculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/distribucion', name: 'captura.index', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 
 

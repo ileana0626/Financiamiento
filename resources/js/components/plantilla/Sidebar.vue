@@ -37,7 +37,30 @@ Consulta de Errores
                                 calculate
                             </span>
                         </template>
-                        Apartado de calculo
+                        Cálculo
+                    </vs-sidebar-item>
+                </template>
+                <template>
+             <vs-sidebar-item id="listado">
+                <template #icon>
+                  <i class="fas fa-file-alt color"></i>
+                </template>
+                  <router-link class="nav-link color" :to="'/listado'">
+                    Listado de cálculos
+                </router-link>
+              </vs-sidebar-item>
+            </template>
+            </vs-sidebar-group>
+
+            <!-- modulo distribucion -->
+            <vs-sidebar-group>
+                <template #header>
+                    <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
+                        to="/distribucion" arrow>
+                        <template #icon>
+                            <span class="material-symbols-rounded">scatter_plot</span>
+                        </template>
+                        Distribución
                     </vs-sidebar-item>
                 </template>
                 <template>
@@ -323,9 +346,6 @@ export default {
             // console.log(localStorage.getItem('theme'));
             // console.log(this.darkmode);
             EventBus.$emit('darkMode', this.darkmode);
-        },
-        ruta() {
-            this.$router.push({ name: "faq.index" });
         },
     }
 }
