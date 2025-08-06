@@ -12,10 +12,206 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use PDO;
 use PDF;
 
 class SolicitudController extends Controller
 {
+    //Desactivar transacciones del lado de la Base de Datos y evitar conflictos
+    protected static $useTransaction = false;
+
+    public function setRegistrarCalculoFinanciamiento(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nAnio = $request->nAnio;
+        $fPublicacion = $request->fPublicacion;
+        $cUMA = $request->cUMA;
+        $cPersonas_padron = $request->cPersonas_padron;
+        $cbPartidosPoliticosSinRepr = $request->cbPartidosPoliticosSinRepr;
+        $pp_sin_repr_siglas = $request->pp_sin_repr_siglas;
+        $cbPartidosPoliticosConRepr = $request->cbPartidosPoliticosConRepr;
+        $pp_con_repr_siglas = $request->pp_con_repr_siglas;
+        //$nIdAuth = $request->nIdAuth;
+       
+        // $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            DB::statement('SET @p_new_id = 0');
+            $rpta =  DB::statement('call sp_insert_calculo(?,?,?,?,?,?,?,?,?, @p_new_id)', [
+                $nAnio,
+                $fPublicacion,
+                $cUMA,
+                $cPersonas_padron,
+                $cbPartidosPoliticosSinRepr,
+                $pp_sin_repr_siglas,
+                $cbPartidosPoliticosConRepr,
+                $pp_con_repr_siglas,
+                //$nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+                self::$useTransaction, // bandera estática
+                
+            ]); 
+
+            $rpta = DB::select('SELECT @p_new_id as idInsertado');
+            //$idInsertado = $rpta[0]->p_new_id; // o el nombre de la columna que devuelve el procedimiento
+            Log::info('Cálculo insertado con id: '.$rpta[0]->idInsertado);
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error en setRegistrarCalculo', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            throw $e;
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    public function getCalculosFinanciamiento(Request $request)
+    {
+        if (!$request->ajax()) {return redirect('/');}
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        try {
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Consulta SQL ejecutada:', $queryLog);
+        
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'calculos' => $rpta,
+                'message' => 'Cálculos obtenidos correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error en getCalculosFinanciamiento', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cálculos'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function get_Partidos_Calculo_porId(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $id = $request->input('id', null); // Valor por defecto null
+        $rpta = DB::select('call sp_get_Partidos_Calculo_porId(?)', [$id]);
+        // Obtener y loguear la consulta
+        $queryLog = DB::getQueryLog();
+        Log::info('Listado -> Consulta SQL ejecutada:', $queryLog);
+    
+        DB::commit();
+        return response()->json([
+            'success' => true,
+            'calculos' => $rpta,
+            'message' => 'Cálculos obtenidos correctamente'
+        ]);
+    }
+
+    
+    /**
+     * Exporta el reporte de financiamiento a Excel
+     *
+     * @param Request $request
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarCalculosFinanciamientoExcel(Request $request, $id = null)
+    {
+        try {
+            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            Log::info('Partidos sin representación:', $partidosSinRep);
+            Log::info('Partidos con representación:', $partidosConRep);
+
+
+            $data = [
+                'calculo' => $calculoData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+
+            // Log::info('Datos preparados para la exportación:', $data);
+            
+            // Usar la clase FinanciamientoExport para generar el Excel
+            // return (new \App\Exports\CalculosFinanciamientoExport($data))
+            //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
+                
+                 // Retornamos la vista sin datos
+            return (new \App\Exports\CalculosFinanciamientoExport($data))
+            ->download(date('Y-m-d') . 'calculos_financiamiento.xlsx', \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+
     public function setRegistrarRequi(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
@@ -112,6 +308,10 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+
+
+
     public function setRegistrarCalculo(Request $request){
         if(!$request->ajax()) return redirect('/');
 
