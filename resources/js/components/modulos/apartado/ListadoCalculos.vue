@@ -29,9 +29,6 @@
                     </template> -->
                     <template #thead>
                         <vs-tr>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
-                                Descargar Excel
-                            </vs-th>
                             <!-- 1 -->
                             <vs-th style="width: 30px; background-color: var(--iee-white);">
                                 Año fiscal
@@ -79,19 +76,15 @@
                             <vs-th style="width: 30px; background-color: var(--iee-white);">
                                 Comprobación del Monto total de Financiamiento Público para AOP
                             </vs-th>
+                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                                Descargar Excel
+                            </vs-th>
                         </vs-tr>
                     </template>
                     <template #tbody>
                         <vs-tr :key="i"
                             v-for="(tr, i) in $vs.getPage($vs.getSearch(NewlistCalculos, search), page, max)" :data="tr"
                             style="max-height: 100px !important">
-                            <vs-td class="tableRowHeight text-center">
-                                <div style="width: 100%; display: flex; justify-content: center;">
-                                    <vs-button icon color="success" size="small" @click="exportToExcel(tr.id)" title="Descargar Excel">
-                                        <i class="fas fa-file-excel"></i>
-                                    </vs-button>
-                                </div>
-                            </vs-td>
                             <!-- 1 -->
                             <vs-td class="tableRowHeight">
                                 {{ tr.anioFiscal }}
@@ -138,7 +131,14 @@
                             </vs-td>
                             <vs-td class="tableRowHeight">
                                 {{ formatCurrency(tr.comprobacion_monto) }}
-                            </vs-td>                    
+                            </vs-td>
+                            <vs-td class="tableRowHeight text-center">
+                                <div style="width: 100%; display: flex; justify-content: center;">
+                                    <vs-button icon color="success" size="small" @click="exportToExcel(tr.id)" title="Descargar Excel">
+                                        <i class="fas fa-file-excel"></i>
+                                    </vs-button>
+                                </div>
+                            </vs-td>         
                         </vs-tr>
                     </template>
                     <template #notFound>
