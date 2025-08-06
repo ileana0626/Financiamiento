@@ -54,18 +54,56 @@
                                     <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
                                         <label class="col-form-label">Tipo de distribución de Financiamiento </label>
                                         <vs-select multiple filter
-                                            :placeholder="(partidosPoliticosWith.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="partidosPoliticosWith" v-if="cat_partido_conRepresentacion.length > 0" autocomplete="off"
+                                            :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                            v-model="distribucion" v-if="tipo_distribucion.length > 0" autocomplete="off"
                                             :color="colors[0].color">
-                                            <template #message-danger v-if="errorPartidosPoliticosWith.length > 0">
-                                                {{ errorPartidosPoliticosWith }}
+                                            <template #message-danger v-if="errorDistribucion.length > 0">
+                                                {{ errorDistribucion }}
                                             </template>
-                                            <vs-option v-for="(item, index) in cat_partido_conRepresentacion" :key="index"
-                                                :label="item.id" :value="item.nombre">
+                                            <vs-option v-for="(item, index) in tipo_distribucion" :key="index"
+                                                :label="item.nombre" :value="item.id_tipo">
                                                 {{ item.nombre }}
                                             </vs-option>
                                         </vs-select>
                                     </div>
+
+                                    <!-- formulario para Financiamiento público para actividades ordinarias permanentes -->
+                                     <div v-if="distribucion.includes(1)" class="row px-4">>
+                                        <h5>Financiamiento público para actividades ordinarias permanentes</h5>
+                                           <vs-table class="tabla-ajustada">
+                                            <template #thead>
+                                                <vs-tr>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        Emblema Partido Político
+                                                    </vs-th>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        % de votación de partido político en elección inmediata anterior de diputaciones
+                                                    </vs-th>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        A. 30% en forma igualitaria
+                                                    </vs-th>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        B. 70% conforme al % de votación
+                                                    </vs-th>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        Total de B. después del ajuste
+                                                    </vs-th>
+                                                    <vs-th style="background-color: var(--iee-white);">
+                                                        C. Financiamiento público para actividades ordinarias permanentes (A+B)
+                                                    </vs-th>
+                                                </vs-tr>
+                                            </template>
+                                        </vs-table>
+                                     </div>
+                                    
+                                    
+                                     <!-- formulario para Financiamiento público para actividades tendientes a la obtención del voto -->
+                                     <div v-if="distribucion.includes(2)" class="row px-4">
+                                        <h5>Financiamiento público para actividades tendientes a la obtención del voto</h5>
+                                           <v-table>
+
+                                           </v-table> 
+                                     </div>
 
 
 
@@ -354,12 +392,12 @@ export default {
             numeroPadron: '',
             seguimientoPartido: '',
             partidosPoliticos: [],
-            partidosPoliticosWith: [],
+            distribucion: [],
             catAnio: [],
             cat_partido: [],
-            cat_partido_conRepresentacion: [],
+            tipo_distribucion: [],
             errorPartidosPoliticos: '',
-            errorPartidosPoliticosWith: '',
+            errorDistribucion: '',
             errorAnio: '',
             errorFechaRecibido: '',
             errorNumeroPadron: '',
@@ -466,7 +504,7 @@ export default {
                         this.cat_partido = response.data
                         break;
                     case 11:
-                        this.cat_partido_conRepresentacion = response.data
+                        this.tipo_distribucion = response.data
                         break;
                     default:
                         break;
@@ -575,8 +613,8 @@ export default {
                 this.errorNumeroPadron = 'Ingrese el número de personas en Padrón Electoral';
                 this.error = true;
             }
-            if (!Array.isArray(this.partidosPoliticosWith) || this.partidosPoliticosWith.length === 0) {
-                this.errorPartidosPoliticosWith = 'Debe seleccionar al menos un Partido Político';
+            if (!Array.isArray(this.distribucion) || this.distribucion.length === 0) {
+                this.errorDistribucion = 'Debe seleccionar al menos un Partido Político';
                 this.error = true;
             }
         },
@@ -584,9 +622,9 @@ export default {
         limpiarErrores() {
             this.errorFechaRecibido = '';
             this.errorPartidosPoliticos = '';
-            this.errorPartidosPoliticosWith = '';
+            this.errorDistribucion = '';
             this.errorPartidosPoliticos = '',
-            this.errorPartidosPoliticosWith = '',
+            this.errorDistribucion = '',
             this.errorAnio = '',
             this.errorFechaRecibido = '',
             this.errorNumeroPadron = ''
@@ -595,7 +633,7 @@ export default {
             this.fechaRecibido = '';
             this.anio = '';
             this.partidosPoliticos = [];
-            this.partidosPoliticosWith = [];
+            this.distribucion = [];
             this.anio= '',
             this.uma= '',
             this.umaInput= '',
@@ -746,16 +784,28 @@ export default {
             maximumFractionDigits: 2
         });
     },
-    partidosSeleccionadosWith() {
-        return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticosWith.includes(partido.id));
-    },
-
     }
 }
 
 </script>
 
 <style>
+.tabla-ajustada {
+        width: 100% !important;
+        margin-left: 0 !important; 
+        padding-left: 0 !important; 
+        }
+
+    .vs-table__content {
+        justify-content: flex-start !important; 
+        }
+
+    .vs-table__th {
+        text-align: center !important;
+        font-size: 12px;
+        padding: 10px;
+        }
+
 .vs-checkbox--checked .vs-checkbox__check {
   background-color: #1E90FF !important; /* azul visible */
   border-color: #1E90FF !important;

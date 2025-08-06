@@ -21,8 +21,8 @@
             <h3 class="card-title font-weight-bold">Cálculos de Financiamiento Público para AOP</h3>
         </div>
         <div class="card-body container-fluid" style="background-color: var(--iee-white);">
-            <div class="center">
-                <vs-table striped>
+            <div>
+                <vs-table class="tabla-ajustada">
                     <!-- <template #header>
                         <vs-input v-model="search" border placeholder="Escribe un Nombre"
                             class="inputSearchPreguntas" />
@@ -30,53 +30,53 @@
                     <template #thead>
                         <vs-tr>
                             <!-- 1 -->
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Año fiscal
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Fecha de Publicación de la UMA
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 UMA
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 65% de UMA
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 No. de personas en Padrón Electoral
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Monto total de Financiamiento Público para AOP
                             </vs-th>
                             <!-- 7 -->
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Partidos sin representación en el Congreso
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 2% de FPAOP para Partidos sin representación en el Congreso
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Total de FPAOP para Partidos con representación en el Congreso
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Monto total efectivo
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 30% Monto total efectivo
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Partidos con representación en el Congreso
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Núm de Partidos con representación en el Congreso
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 70% Monto total efectivo
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Comprobación del Monto total de Financiamiento Público para AOP
                             </vs-th>
-                            <vs-th style="width: 30px; background-color: var(--iee-white);">
+                            <vs-th style="background-color: var(--iee-white);">
                                 Descargar Excel
                             </vs-th>
                         </vs-tr>
@@ -281,9 +281,21 @@ export default {
 }
 </script>
 <style>
+    .tabla-ajustada {
+        width: 100% !important;
+        margin-left: 0 !important; 
+        padding-left: 0 !important; 
+        }
+
+    .vs-table__content {
+        justify-content: flex-start !important; 
+        }
+
     .vs-table__th {
         text-align: center !important;
-    }
+        font-size: 12px;
+        padding: 10px;
+        }
 
 </style>
 
