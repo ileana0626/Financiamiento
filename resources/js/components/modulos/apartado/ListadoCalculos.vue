@@ -134,6 +134,9 @@
                             </vs-td>
                             <vs-td class="tableRowHeight text-center">
                                 <div style="width: 100%; display: flex; justify-content: center;">
+                                    <!-- <a :href="`/calculos/${tr.id}/descargar-excel`" target="_blank">
+                                        Descargar Excel
+                                    </a> -->
                                     <vs-button icon color="success" size="small" @click="exportToExcel(tr.id)" title="Descargar Excel">
                                         <i class="fas fa-file-excel"></i>
                                     </vs-button>
@@ -218,13 +221,14 @@ export default {
             })
         },
         exportToExcel(id) {
+            // Crear un nuevo loader
             const loading = this.$vs.loading({
                 type: 'points',
                 color: '#7D0CFF',
                 text: 'Generando archivo Excel...'
             });
 
-            // Create a temporary link for download
+            // Crear un enlace temporal para la descarga
             const link = document.createElement('a');
             link.style.display = 'none';
             document.body.appendChild(link);
@@ -232,19 +236,25 @@ export default {
             axios({
                 url: `/administracion/solicitud/exportarCalculosFinanciamientoExcel/${id}`,
                 method: 'GET',
-                responseType: 'blob', // Important for handling binary files
+                responseType: 'blob'
             }).then((response) => {
-                // Create a URL for the blob
+              // Crear URL para el blob
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 
-                // Configure the download link
+                // Crear enlace temporal
+                const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`);
                 
-                // Trigger the download
+                // Establecer el nombre del archivo
+                const filename = `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`;
+                link.setAttribute('download', filename);
+                
+                // Añadir al documento, hacer clic y limpiar
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
                 
-                // Clean up
+                // Liberar memoria
                 window.URL.revokeObjectURL(url);
                 
                 this.$vs.notification({
@@ -256,7 +266,7 @@ export default {
                 console.error('Error al exportar a Excel:', error);
                 
                 let errorMessage = 'Error al exportar a Excel';
-                if (error.response && error.response.data && error.response.data.message) {
+                if (error.response?.data?.message) {
                     errorMessage = error.response.data.message;
                 } else if (error.message) {
                     errorMessage = error.message;
@@ -268,15 +278,11 @@ export default {
                     color: 'danger',
                     time: 10000
                 });
-                
-                // Handle error as needed
-                let nombreMetodo = 'exportToExcel';
-                methods.catchHandler(error, nombreMetodo, this.$router);
             }).finally(() => {
                 loading.close();
                 document.body.removeChild(link);
             });
-        },  
+        }
     }
 }
 </script>

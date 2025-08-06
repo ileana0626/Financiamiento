@@ -13960,203 +13960,428 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
 
+
+
+
 USE `admin`;
-select * from users;
-select * from cat_partido_conRepresentacion;
 
-CALL sp_ConsultarTipoDoc();
-CALL sp_Solicitud_getAniosFiscales();
-CALL sp_ConsultarDatos(10,1);
+DROP TABLE IF EXISTS anios_fiscales;
+-- Volcando estructura para tabla admin.años fiscales
+CREATE TABLE IF NOT EXISTS `anios_fiscales` (
+  `anio` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*tabla calculo*/
-CREATE TABLE calculo_dppp (
-    id_calculo INT PRIMARY KEY AUTO_INCREMENT,
-    anio_ejercicio YEAR NOT NULL,
-    fecha_publicacion DATE NOT NULL,
-    uma DECIMAL(30,15) NOT NULL,
-    uma_65 DECIMAL(30,15) NOT NULL,
-    personas_padron INT NOT NULL,
-    financiamiento_aop DECIMAL(30,15) NOT NULL,
-    monto_total_efectivo DECIMAL(30,15) NOT NULL,
-    monto_30_por_ciento DECIMAL(30,15) NOT NULL,
-    monto_70_por_ciento DECIMAL(30,15) NOT NULL,
-    total_fp_sin_repr DECIMAL(30,15) NOT NULL,
-    num_pp_con_repr INT NOT NULL,
-    comprobacion_monto DECIMAL(30,15) NOT NULL
-);
+INSERT INTO anios_fiscales (anio) VALUES
+(2025),
+(2026),
+(2027),
+(2028),
+(2029),
+(2030),
+(2031),
+(2032),
+(2033),
+(2034),
+(2035);
 
+DROP TABLE IF EXISTS cat_partido; -- Actualizamos el nombre del catálogo
+DROP TABLE IF EXISTS cat_partido_sin_repr;
+CREATE TABLE IF NOT EXISTS `cat_partido_sin_repr` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `siglas` varchar(10) DEFAULT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
+INSERT INTO `cat_partido_sin_repr` (`id`, `siglas`, `nombre`, `tipo`) VALUES
+	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
+	(2, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
+	(3, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
+    
+
+DROP TABLE IF EXISTS cat_partido_conRepresentacion; -- Actualizamos el nombre del catálogo
+DROP TABLE IF EXISTS cat_partido_con_repr;
+CREATE TABLE IF NOT EXISTS `cat_partido_con_repr` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `siglas` varchar(10) DEFAULT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
+INSERT INTO `cat_partido_con_repr` (`id`, `siglas`, `nombre`, `tipo`) VALUES
+	(1, 'PAN', 'PARTIDO ACCIÓN NACIONAL', 'PP'),
+	(2, 'PRI', 'PARTIDO REVOLUCIONARIO INSTITUCIONAL', 'PP'),
+	(3, 'PT', 'PARTIDO DEL TRABAJO', 'PP'),
+	(4, 'PVEM', 'PARTIDO VERDE ECOLOGISTA DE MÉXICO', 'PP'),
+	(5, 'MC', 'MOVIMIENTO CIUDADANO', 'PP'),
+	(6, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
+	(7, 'MORENA', 'MORENA', 'PP'),
+	(8, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
+	(9, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
 
 /*tabla intermedia*/
+DROP TABLE IF EXISTS calculo_partido_sin_repr;
 CREATE TABLE calculo_partido_sin_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
-    monto_2_por_ciento DECIMAL(30,15) NOT NULL,
+    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '%2 del FPAOP por partido sin representación en el congreso',
     PRIMARY KEY (id_calculo, id_partido),
-    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo),
-    FOREIGN KEY (id_partido) REFERENCES cat_partido(id)
+    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT,
+    FOREIGN KEY (id_partido) REFERENCES cat_partido_sin_repr(id)
+		ON DELETE RESTRICT
 );
 
+DROP TABLE IF EXISTS calculo_partido_con_repr;
 CREATE TABLE calculo_partido_con_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
     PRIMARY KEY (id_calculo, id_partido),
-    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo),
-    FOREIGN KEY (id_partido) REFERENCES cat_partido_conRepresentacion(id)
+    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT,
+    FOREIGN KEY (id_partido) REFERENCES cat_partido_con_repr(id)
+		ON DELETE RESTRICT
 );
 
--- Volcando estructura para procedimiento de calculo
-DELIMITER //
+/*tabla calculo*/
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS calculo_dppp;
+SET FOREIGN_KEY_CHECKS = 1;
+/*
+* @table Tabla de calculos para Financiamiento
+* @description Personal de la DPPP
+*/
+CREATE TABLE calculo_dppp (
+    id_calculo INT PRIMARY KEY AUTO_INCREMENT,
+    anio_ejercicio YEAR NOT NULL COMMENT 'Año del ejercicio',
+    fecha_publicacion DATE NOT NULL COMMENT 'Fecha de publicación de la UMA',
+    uma DECIMAL(30,15) NOT NULL COMMENT 'Unidad de Medida y Actualización -> Calcula al insertar',
+    uma_65 DECIMAL(30,15) NOT NULL COMMENT '65% de UMA -> Calcula al insertar',
+    personas_padron INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'No de personas en padrón electoral',
+    financiamiento_aop DECIMAL(30,15) NULL COMMENT  'fx=(uma_65 * personas_padron)',
+    pp_sin_repr VARCHAR(255) NULL DEFAULT '' COMMENT "Id's de partidos sin representación en el congreso -> Ej: '1,2,3'",
+    num_pp_sin_repr INT UNSIGNED NULL DEFAULT 0  COMMENT 'Número de partidos políticos con representación en el congreso',
+    pp_sin_repr_siglas VARCHAR(255) NULL DEFAULT '' COMMENT "Siglas de partidos sin representación en el congreso -> Ej: 'PSI, NAP, FXMP'",
+    pp_con_repr VARCHAR(255) NULL DEFAULT '' COMMENT "Id's de partidos con representación en el congreso -> Ej: '2,4,6,9'",
+    pp_con_repr_siglas VARCHAR(255) NULL DEFAULT '' COMMENT "Siglas de partidos con representación en el congreso -> Ej: 'PAN, MORENA, PRI, PSI'",
+    num_pp_con_repr INT UNSIGNED NULL DEFAULT 0  COMMENT 'Número de partidos políticos con representación en el congreso',
+    -- Calculos que pueden ser NULL, ya que se van agregar durante la inserción
+    total_fp_sin_repr DECIMAL(30,15) NOT NULL default 0.00 COMMENT'%2 del FPAOP para cada partido sin representación en el congreso 
+     -> SUM((financiamiento_aop)  * 0.02) // Se calculará al guardar y recorrer cada partido_sin_repr',
+    monto_total_efectivo DECIMAL(30,15) NOT NULL default 0.00 COMMENT 'Monto total efectivo -> financiamiento_aop - total_fp_sin_repr',
+    monto_30_por_ciento DECIMAL(30,15) NOT NULL default 0.00 COMMENT '30% Monto total efectivo -> monto_total_efectivo * 0.3',
+    monto_70_por_ciento DECIMAL(30,15) NOT NULL default 0.00 COMMENT '70% Monto total efectivo -> monto_total_efectivo * 0.7',
+    comprobacion_monto DECIMAL(30,15) NOT NULL default 0.00 COMMENT 'Comprobación del monto total de financiamiento público para AOP',
+    -- -> monto_30_por_ciento * monto_70_por_ciento + monto_total_efectivo
+	created_at TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
+
+-- Actualizamos la consulta de los catálogos
+USE `admin`;
+
+DROP PROCEDURE  IF EXISTS `sp_ConsultarDatos`;
+-- Volcando estructura para procedimiento admin.sp_ConsultarDatos
+DELIMITER //
+CREATE PROCEDURE `sp_ConsultarDatos`(
+	IN `tipo` INT,
+	IN `consulta` INT
+)
+BEGIN
+if consulta = 1 then
+if tipo = 1  THEN
+	SELECT * FROM cat_cargos WHERE status = 'A';
+ELSEIF tipo = 2   THEN
+		SELECT * FROM cat_remitentes WHERE status = 'A';
+ELSEIF tipo = 3   THEN
+		SELECT * FROM cat_terminos WHERE status = 'A' ;
+ELSEIF tipo = 4   THEN
+		SELECT * FROM cat_dias_termino ORDER BY cat_dias_termino.idDiasTermino desc ;
+ELSEIF tipo = 5   THEN
+		SELECT * FROM cat_seguimiento WHERE status = 'A';
+ELSEIF tipo = 6   THEN
+		SELECT * FROM cat_departamentos WHERE status = 'A';
+ELSEIF tipo = 7   THEN
+		SELECT * FROM cat_tipo WHERE status = 'A';
+ELSEIF tipo = 8   THEN
+		SELECT * FROM cat_estatus WHERE status = 'A';
+ELSEIF tipo = 9   THEN
+		SELECT * FROM cat_partido_sin_repr;
+ELSEIF tipo = 10   THEN
+		SELECT * FROM cat_partido_con_repr;
+END if;
+ELSEIF  consulta = 2 then
+	if tipo = 1  THEN
+			SELECT * FROM cat_cargos;
+	ELSEIF tipo = 2   THEN
+			SELECT * FROM cat_remitentes;
+	ELSEIF tipo = 3   THEN
+			SELECT * FROM cat_terminos;
+	ELSEIF tipo = 5   THEN
+			SELECT * FROM cat_seguimiento;
+	ELSEIF tipo = 6   THEN
+			SELECT * FROM cat_departamentos;
+	ELSEIF tipo = 7   THEN
+			SELECT * FROM cat_tipo;
+	ELSEIF tipo = 8   THEN
+			SELECT * FROM cat_estatus;	
+	ELSEIF tipo = 9   THEN
+			SELECT * FROM saludos;
+	ELSEIF tipo = 10   THEN
+			SELECT * FROM cat_adscripcion;	
+	ELSEIF tipo = 11   THEN
+			SELECT * FROM cat_meses;	
+	END if;	
+END if;
+END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS sp_insert_calculo;
+DELIMITER //
+/*
+* @name Almacena los cálculos para Financiamiento
+* @description Guarda la primera parte y después de guardar los partidos póliticos involucrados actualiza el resto de cálculos
+* @example
+	CALL `admin`.`sp_insert_calculo`(2025, '2015-06-12', 3500.43, 23, '1,3,4,5', '1,3',true, @Id );
+	CALL `admin`.`sp_insert_calculo`(2035, '2025-02-13', 1231.43, 23, '1,4,5', '3',true, @Id );
+	CALL `admin`.`sp_insert_calculo`(2024, '2025-04-08', 1000.00, 4, '1,2,4,5', '1,2',true, @Id );
+	SELECT @ID;
+*/
 CREATE PROCEDURE sp_insert_calculo (
   IN p_anio YEAR,
   IN p_fecha_publicacion DATE,
-  IN p_uma DECIMAL(30,15),
-  IN p_personas_padron INT,
-  OUT p_new_id INT
+  IN p_uma DECIMAL (30,15),
+  IN p_personas_padron INT UNSIGNED,
+  IN p_pp_sin_repr VARCHAR(255), -- ID
+  IN p_pp_sin_repr_siglas VARCHAR(255), -- Siglas
+  IN p_pp_con_repr VARCHAR(255), -- ID
+  IN p_pp_con_repr_siglas VARCHAR(255), -- Siglas
+  IN p_use_transaction BOOLEAN,
+  OUT p_new_id INT UNSIGNED
 )
 BEGIN
+-- Declaración de variables
   DECLARE v_uma65 DECIMAL(30,15);
   DECLARE v_fin_aop DECIMAL(30,15);
+  DECLARE v_total_fp_sin_repr DECIMAL(30,15) DEFAULT 0; 
   DECLARE v_monto_total_efectivo DECIMAL(30,15);
+  DECLARE v_num_pp_con_repr INT UNSIGNED DEFAULT 0; -- Número de particos con representación
   DECLARE v_monto30 DECIMAL(30,15);
   DECLARE v_monto70 DECIMAL(30,15);
-
+  
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+            END;
+    -- Inicia transacción si está habilitado
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+	-- Hace los primeros cálculos
   SET v_uma65 = p_uma * 0.65;
   SET v_fin_aop = v_uma65 * p_personas_padron;
-  SET v_monto_total_efectivo = v_fin_aop; -- luego se descuenta el total de partidos sin representación
-  SET v_monto30 = v_monto_total_efectivo * 0.3;
-  SET v_monto70 = v_monto_total_efectivo * 0.7;
+  -- SET v_monto_total_efectivo = v_fin_aop; -- luego se descuenta el total de partidos sin representación
+  -- SET v_monto30 = v_monto_total_efectivo * 0.3;
+  -- SET v_monto70 = v_monto_total_efectivo * 0.7;
 
   INSERT INTO calculo_dppp(
-    anio_ejercicio,
-    fecha_publicacion,
-    uma,
-    uma_65,
-    personas_padron,
-    financiamiento_aop,
-    monto_total_efectivo,
-    monto_30_por_ciento,
-    monto_70_por_ciento,
-    total_fp_sin_repr,
-    num_pp_con_repr,
-    comprobacion_monto
+	-- id_calculo, -- AutoIncrement
+	anio_ejercicio,	fecha_publicacion, uma,	uma_65, personas_padron, financiamiento_aop, pp_sin_repr, pp_con_repr,
+    pp_sin_repr_siglas, pp_con_repr_siglas
+	-- num_pp_con_repr,
+	-- total_fp_sin_repr,
+	-- monto_total_efectivo,
+	-- monto_30_por_ciento,
+	-- monto_70_por_ciento,
+	-- comprobacion_monto
   ) VALUES (
-    p_anio,
-    p_fecha_publicacion,
-    p_uma,
-    v_uma65,
-    p_personas_padron,
-    v_fin_aop,
-    -- temporalmente monto_total_efectivo antes del descuento
-    v_monto_total_efectivo,
-    v_monto30,
-    v_monto70,
-    0,  -- total de FP partidos sin representación aún no se calcula
-    0,
-    v_uma65 * p_personas_padron  -- comprobación inicial
+    p_anio, p_fecha_publicacion, p_uma, v_uma65, p_personas_padron, v_fin_aop, p_pp_sin_repr, p_pp_con_repr,
+		p_pp_sin_repr_siglas, p_pp_con_repr_siglas
   );
-
-  SET p_new_id = LAST_INSERT_ID();
-END;
-//
-
+  
+  SET p_new_id = LAST_INSERT_ID(); -- Se obtiene el último Id de la tabla de los calculos
+  -- Se agregan los registros de los partidos en tablas
+   CALL sp_insert_partidos_sin_repr(p_new_id, p_pp_sin_repr);
+   CALL sp_insert_partidos_con_repr(p_new_id, p_pp_con_repr);
+  
+    IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;//
 DELIMITER ;
 
-/*guardar datos de partidos sin representantes*/
-DELIMITER //
 
+DROP PROCEDURE IF EXISTS sp_insert_partidos_sin_repr;
+/*guardar datos de partidos sin representantes*/
+/*
+* @name Procedimiento para vincular un cálculo con cartidos politicos sin representación
+* @description Procedimiento que es llamado por sp_insert_calculo
+* @param IN p_id_calculo INT,
+* @param IN p_partidos VARCHAR(255) -- IDs separados por coma, e.g. '1,2'
+* @example Solo para pruebas individuales
+	CALL sp_insert_partidos_sin_repr(1,'2');
+*/
+DELIMITER //
 CREATE PROCEDURE sp_insert_partidos_sin_repr (
-  IN p_id_calculo INT,
-  IN p_partidos TEXT -- IDs separados por coma, e.g. '1,2'
+	IN p_id_calculo INT,
+	IN p_partidos VARCHAR(255)
 )
 BEGIN
-  DECLARE v_fin_aop DECIMAL(30,15);
-  DECLARE v_partido_id INT;
-  DECLARE v_monto2 DECIMAL(30,15);
-  DECLARE v_total_sin_repr DECIMAL(30,15) DEFAULT 0;
+	DECLARE v_fin_aop DECIMAL(30,15); -- Variable de consulta
+	-- Variables para iterar el ciclo
+	DECLARE v_partido_id INT;
+	DECLARE v_count INT DEFAULT 0;
+	DECLARE v_monto2 DECIMAL(30,15); -- Variable temporal para monto de financiamiento * 0.02
+	DECLARE v_total_fp_sin_repr DECIMAL(30,15) DEFAULT 0;
+	-- Variables para hacer los cálculos
+	DECLARE v_monto_total_efectivo DECIMAL(30,15);
+	DECLARE v_num_pp_con_repr INT UNSIGNED DEFAULT 0; -- Número de particos con representación
+	DECLARE v_monto30 DECIMAL(30,15);
+	DECLARE v_monto70 DECIMAL(30,15);
+	    
+	  -- COALESC: si financiamiento_aop es NULL, se usará 0 
+	  SELECT COALESCE(financiamiento_aop, 0) INTO v_fin_aop FROM calculo_dppp 
+		WHERE id_calculo = p_id_calculo
+	  FOR UPDATE; -- Evita que otros procesos modifiquen estos registros hasta que termine la transacción actual
+	  -- SELECT financiamiento_aop INTO v_fin_aop FROM calculo_dppp WHERE id_calculo = p_id_calculo;
+      
+	  SET v_monto2 = v_fin_aop * 0.02;
+      
+	  -- Borra registros previos si existen
+	  DELETE FROM calculo_partido_sin_repr WHERE id_calculo = p_id_calculo;
 
-  SELECT financiamiento_aop INTO v_fin_aop FROM calculo_dppp WHERE id_calculo = p_id_calculo;
-
-  -- Borra registros previos si existen
-  DELETE FROM calculo_partido_sin_repr WHERE id_calculo = p_id_calculo;
-
-  WHILE LENGTH(p_partidos) > 0 DO
-    SET v_partido_id = CAST(SUBSTRING_INDEX(p_partidos, ',', 1) AS UNSIGNED);
-    SET p_partidos = 
-      IF(INSTR(p_partidos, ',') > 0, SUBSTRING(p_partidos, INSTR(p_partidos, ',') + 1), '');
-    SET v_monto2 = v_fin_aop * 0.02;
-    INSERT INTO calculo_partido_sin_repr(id_calculo, id_partido, monto_2_por_ciento)
-      VALUES (p_id_calculo, v_partido_id, v_monto2);
-    SET v_total_sin_repr = v_total_sin_repr + v_monto2;
-  END WHILE;
-
-  -- Actualiza cálculo con total de FP sin representación y monto efectivo y comprobaciones
-  UPDATE calculo_dppp
-  SET total_fp_sin_repr = v_total_sin_repr,
-      monto_total_efectivo = financiamiento_aop - v_total_sin_repr,
-      monto_30_por_ciento = (financiamiento_aop - v_total_sin_repr) * 0.3,
-      monto_70_por_ciento = (financiamiento_aop - v_total_sin_repr) * 0.7,
-      comprobacion_monto = ((financiamiento_aop - v_total_sin_repr) * 0.3) +
-                           ((financiamiento_aop - v_total_sin_repr) * 0.7) +
-                           v_total_sin_repr
-  WHERE id_calculo = p_id_calculo;
+	  WHILE LENGTH(p_partidos) > 0 DO
+		SET v_partido_id = CAST(SUBSTRING_INDEX(p_partidos, ',', 1) AS UNSIGNED);
+		SET p_partidos =  -- Busca la siguiente coma, entonces extrae la subcadena saltando la coma con +1
+		  IF(INSTR(p_partidos, ',') > 0, SUBSTRING(p_partidos, INSTR(p_partidos, ',') + 1), '');
+		
+		-- Inserta el id del calculo y del partido encontrado, más el monto de financiamiento público AOP * 0.02, por cada partido
+		INSERT INTO calculo_partido_sin_repr(id_calculo, id_partido, monto_2_por_ciento)
+		  VALUES (p_id_calculo, v_partido_id, v_monto2);
+		SET v_count = v_count + 1; -- incrementa conteo de partidos
+		SET v_total_fp_sin_repr = v_total_fp_sin_repr + v_monto2; -- Sumatoria de los montos por partido
+	  END WHILE;
+      
+	-- Asignamos los nuevos cálculos antes de actualizar la tabla de cálculos
+	  SET v_monto_total_efectivo = v_fin_aop - v_total_fp_sin_repr;
+      SET v_monto30 = v_monto_total_efectivo * 0.3;
+      SET v_monto70 = v_monto_total_efectivo * 0.7;
+      
+	  -- Actualiza cálculo con total de FP sin representación y monto efectivo y comprobaciones
+	  UPDATE calculo_dppp
+	  SET num_pp_sin_repr = v_count,
+		  total_fp_sin_repr = v_total_fp_sin_repr,
+		  monto_total_efectivo = v_monto_total_efectivo,
+		  monto_30_por_ciento = v_monto30,
+		  monto_70_por_ciento = v_monto70,
+		  comprobacion_monto = (v_monto30 + v_monto70 + v_total_fp_sin_repr)
+	  WHERE id_calculo = p_id_calculo;
 END;
 //
-
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_insert_partidos_con_repr;
 /*guardar datoos de partidos con representantes*/
 DELIMITER //
-
+/*
+* @name Procedimiento para vincular un cálculo con cartidos politicos con representación
+* @description Procedimiento que es llamado por sp_insert_calculo
+* @param IN p_id_calculo INT,
+* @param IN p_partidos VARCHAR(255) -- IDs separados por coma, e.g. '1,2,6'
+* @example Solo para pruebas individuales
+	CALL sp_insert_partidos_sin_repr(1,'1,2');
+*/
 CREATE PROCEDURE sp_insert_partidos_con_repr (
-  IN p_id_calculo INT,
-  IN p_partidos TEXT -- IDs separados '3,5,7'
+	IN p_id_calculo Varchar(250),
+	IN p_partidos Varchar(250) -- IDs separados '3,5,7'
 )
 BEGIN
-  DECLARE v_partido_id INT;
-  DECLARE v_count INT DEFAULT 0;
+	DECLARE v_partido_id INT;
+	DECLARE v_count INT DEFAULT 0;
 
-  DELETE FROM calculo_partido_con_repr WHERE id_calculo = p_id_calculo;
+	  DELETE FROM calculo_partido_con_repr WHERE id_calculo = p_id_calculo;
 
-  WHILE LENGTH(p_partidos) > 0 DO
-    SET v_partido_id = CAST(SUBSTRING_INDEX(p_partidos, ',', 1) AS UNSIGNED);
-    SET p_partidos = 
-      IF(INSTR(p_partidos, ',') > 0, SUBSTRING(p_partidos, INSTR(p_partidos, ',') + 1), '');
-    INSERT INTO calculo_partido_con_repr(id_calculo, id_partido)
-      VALUES (p_id_calculo, v_partido_id);
-    SET v_count = v_count + 1;
-  END WHILE;
+	  WHILE LENGTH(p_partidos) > 0 DO
+		SET v_partido_id = CAST(SUBSTRING_INDEX(p_partidos, ',', 1) AS UNSIGNED);
+		SET p_partidos =  -- Busca la siguiente coma, entonces extrae la subcadena saltando la coma con +1
+		  IF(INSTR(p_partidos, ',') > 0, SUBSTRING(p_partidos, INSTR(p_partidos, ',') + 1), '');
+          -- Inserta el id del calculo y del partido encontrado
+		INSERT INTO calculo_partido_con_repr(id_calculo, id_partido)
+		  VALUES (p_id_calculo, v_partido_id);
+		SET v_count = v_count + 1;  -- incrementa conteo de partidos
+	  END WHILE;
 
-  UPDATE calculo_dppp
-  SET num_pp_con_repr = v_count
-  WHERE id_calculo = p_id_calculo;
+	  UPDATE calculo_dppp SET num_pp_con_repr = v_count WHERE id_calculo = p_id_calculo;
 END;
 //
-
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_get_calculo_completo;
 /*obtener datos completos del calculo*/
 DELIMITER //
-
-CREATE PROCEDURE sp_get_calculo_completo(IN p_id_calculo INT)
+/*
+* @name Procedimiento para listar los cálculos de Financiamiento
+* @description Retorna todos los cálculos financieros registrados
+* @param p_id_calculo -- opcional
+* -- Todos los registros
+* CALL sp_get_calculo_completo(NULL);
+* -- Un registro específico
+* CALL sp_get_calculo_completo(2);
+*/
+CREATE PROCEDURE sp_get_calculo_completo(IN p_id_calculo INT UNSIGNED)
 BEGIN
-  SELECT * FROM calculo_dppp WHERE id_calculo = p_id_calculo;
-
-  SELECT r.siglas, r.nombre, c.monto_2_por_ciento
-  FROM calculo_partido_sin_repr c
-  JOIN cat_partido_sin_repr r ON c.id_partido = r.id
-  WHERE c.id_calculo = p_id_calculo;
-
-  SELECT r.siglas, r.nombre
-  FROM calculo_partido_con_repr c
-  JOIN cat_partido_con_repr r ON c.id_partido = r.id
-  WHERE c.id_calculo = p_id_calculo;
+	-- Variables locales
+	DECLARE strQ2 VARCHAR(25);
+	-- Variable de usuario para la consulta
+    SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%d/%m/%Y') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, 
+		pp_sin_repr, pp_con_repr, pp_sin_repr_siglas, pp_con_repr_siglas, num_pp_sin_repr, num_pp_con_repr, 
+		total_fp_sin_repr, monto_total_efectivo, monto_30_por_ciento, monto_70_por_ciento, comprobacion_monto 
+		FROM calculo_dppp WHERE ? IS NULL OR id_calculo = ?;";
+    SET @id = p_id_calculo;
+	PREPARE stmt FROM @strQuery;
+	EXECUTE stmt USING @id, @id;
+	DEALLOCATE PREPARE stmt;
+    
+	SET @strQuery = NULL;
 END;
 //
-
 DELIMITER ;
 
-
+DROP PROCEDURE IF EXISTS sp_get_Partidos_Calculo_porId;
+DELIMiTER //
+/*
+* @name Procedimiento para obtener Partidos Políticos Con Representación y Sin Representación
+* @description Va de la mano con sp_get_calculo_completo, se llama por separado para poder listar los partidos políticos de un cálculo determinado
+* 	y poder llamarse en el Frontend para agregarlos a una columna y darles formato
+* @param id_calculo
+* @example
+* CALL sp_get_PartidosporIdCalculo(2);
+*/
+CREATE PROCEDURE sp_get_Partidos_Calculo_porId(IN id_calculo INT UNSIGNED)
+BEGIN
+	-- Retornamos los partidos sin representación
+	SELECT cat_psr.siglas, cat_psr.nombre, psr.monto_2_por_ciento
+		FROM calculo_partido_sin_repr psr 
+        INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
+        WHERE psr.id_calculo = id_calculo;
+	-- Retornamos los partidos con representación
+	SELECT cat_pcr.siglas, cat_pcr.nombre
+		FROM calculo_partido_con_repr pcr
+		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id 
+		WHERE pcr.id_calculo = id_calculo;
+END;
+//DELIMITER ;
 
 
 
