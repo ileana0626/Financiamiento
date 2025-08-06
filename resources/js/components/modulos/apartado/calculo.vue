@@ -514,6 +514,8 @@ export default {
                                 'cPersonas_padron': this.numeroPadron, // numero de personas en el padron
                                 'cbPartidosPoliticosSinRepr': this.formateaPartidosSeleccionadosSinRepDB,
                                 'cbPartidosPoliticosConRepr': this.formateaPartidosSeleccionadosConRepDB,
+                                'pp_sin_repr_siglas': this.formateaPartidosSeleccionadosSinRepSiglasDB,
+                                'pp_con_repr_siglas': this.formateaPartidosSeleccionadosConRepSiglasDB,
                                 
                                //'nIdAuth': Auth.id(),
                                 // 'fAccion': fechaAccion,
@@ -894,33 +896,44 @@ export default {
             maximumFractionDigits: 2
         });
     },
-    /**
-     * Filtra los partidos seleccionados sin representación del catálogo
-     * @returns {Array}
-     */
-     partidos_sinRepr_Seleccionados() {
-        return this.cat_partido_sinRepresentacion.filter(partido => this.partidosPoliticos_sinRepr.includes(partido.id));
-    },
-    /**
-     * Filtra los partidos seleccionados con representación del catálogo
-     * @returns {Array}
-     */
-    partidos_conRepr_Seleccionados() {
-        return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticos_conRepr.includes(partido.id));
-    },
-    /*
-    * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
-    */
-    formateaPartidosSeleccionadosSinRepDB() {
-        return this.partidos_sinRepr_Seleccionados.map(partido => partido.id).join(',');
-    },
-    /*
-    * Formatea los partidos seleccionados con representacion para guardarlos en la base de datos por sus 'id'
-    */
-    formateaPartidosSeleccionadosConRepDB() {
-        return this.partidos_conRepr_Seleccionados.map(partido => partido.id).join(',');
-    },
-    
+        /**
+         * Filtra los partidos seleccionados sin representación del catálogo
+         * @returns {Array}
+         */
+        partidos_sinRepr_Seleccionados() {
+            return this.cat_partido_sinRepresentacion.filter(partido => this.partidosPoliticos_sinRepr.includes(partido.id));
+        },
+        /**
+         * Filtra los partidos seleccionados con representación del catálogo
+         * @returns {Array}
+         */
+        partidos_conRepr_Seleccionados() {
+            return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticos_conRepr.includes(partido.id));
+        },
+        /*
+        * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
+        */
+        formateaPartidosSeleccionadosSinRepDB() {
+            return this.partidos_sinRepr_Seleccionados.map(partido => partido.id).join(',');
+        },
+        /*
+        * Formatea los partidos seleccionados con representacion para guardarlos en la base de datos por sus 'id'
+        */
+        formateaPartidosSeleccionadosConRepDB() {
+            return this.partidos_conRepr_Seleccionados.map(partido => partido.id).join(',');
+        },
+         /*
+        * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
+        */
+        formateaPartidosSeleccionadosSinRepSiglasDB() {
+            return this.partidos_sinRepr_Seleccionados.map(partido => partido.siglas).join(', ');
+        },
+        /*
+        * Formatea los partidos seleccionados con representacion para guardarlos en la base de datos por sus 'id'
+        */
+        formateaPartidosSeleccionadosConRepSiglasDB() {
+            return this.partidos_conRepr_Seleccionados.map(partido => partido.siglas).join(', ');
+        },
    
     }
 }

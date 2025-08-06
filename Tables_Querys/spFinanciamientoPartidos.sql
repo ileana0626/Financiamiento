@@ -85,8 +85,10 @@ CREATE PROCEDURE sp_insert_calculo (
   IN p_fecha_publicacion DATE,
   IN p_uma DECIMAL (30,15),
   IN p_personas_padron INT UNSIGNED,
-  IN p_pp_sin_repr VARCHAR(255),
-  IN p_pp_con_repr VARCHAR(255),
+  IN p_pp_sin_repr VARCHAR(255), -- ID
+  IN p_pp_sin_repr_siglas VARCHAR(255), -- Siglas
+  IN p_pp_con_repr VARCHAR(255), -- ID
+  IN p_pp_con_repr_siglas VARCHAR(255), -- Siglas
   IN p_use_transaction BOOLEAN,
   OUT p_new_id INT UNSIGNED
 )
@@ -121,8 +123,9 @@ BEGIN
   -- SET v_monto70 = v_monto_total_efectivo * 0.7;
 
   INSERT INTO calculo_dppp(
-	-- id_calculo, Autoincrement
-	anio_ejercicio,	fecha_publicacion, uma,	uma_65, personas_padron, financiamiento_aop, pp_sin_repr, pp_con_repr
+	-- id_calculo, -- AutoIncrement
+	anio_ejercicio,	fecha_publicacion, uma,	uma_65, personas_padron, financiamiento_aop, pp_sin_repr, pp_con_repr,
+    pp_sin_repr_siglas, pp_con_repr_siglas
 	-- num_pp_con_repr,
 	-- total_fp_sin_repr,
 	-- monto_total_efectivo,
@@ -130,14 +133,8 @@ BEGIN
 	-- monto_70_por_ciento,
 	-- comprobacion_monto
   ) VALUES (
-    p_anio, p_fecha_publicacion, p_uma, v_uma65, p_personas_padron, v_fin_aop, p_pp_sin_repr, p_pp_con_repr
-    -- temporalmente monto_total_efectivo antes del descuento
-    -- v_monto_total_efectivo,
-    -- v_monto30,
-    -- v_monto70,
-    -- 0,  -- total de FP partidos sin representación aún no se calcula
-    -- 0, -- num partidos con representación
-    -- v_uma65 * p_personas_padron  -- comprobación inicial
+    p_anio, p_fecha_publicacion, p_uma, v_uma65, p_personas_padron, v_fin_aop, p_pp_sin_repr, p_pp_con_repr,
+		p_pp_sin_repr_siglas, p_pp_con_repr_siglas
   );
   
   SET p_new_id = LAST_INSERT_ID(); -- Se obtiene el último Id de la tabla de los calculos
@@ -212,12 +209,10 @@ BEGIN
 	  UPDATE calculo_dppp
 	  SET num_pp_sin_repr = v_count,
 		  total_fp_sin_repr = v_total_fp_sin_repr,
-		  monto_total_efectivo = v_monto_total_efectivo, -- financiamiento_aop - v_total_sin_repr,
-		  monto_30_por_ciento = v_monto30, -- (financiamiento_aop - v_total_sin_repr) * 0.3,
-		  monto_70_por_ciento = v_monto70, -- (financiamiento_aop - v_total_sin_repr) * 0.7,
-		  comprobacion_monto = (v_monto30 + v_monto70 + v_total_fp_sin_repr) -- ((financiamiento_aop - v_total_sin_repr) * 0.3) +
-							  -- ((financiamiento_aop - v_total_sin_repr) * 0.7) +
-							   -- v_total_sin_repr
+		  monto_total_efectivo = v_monto_total_efectivo,
+		  monto_30_por_ciento = v_monto30,
+		  monto_70_por_ciento = v_monto70,
+		  comprobacion_monto = (v_monto30 + v_monto70 + v_total_fp_sin_repr)
 	  WHERE id_calculo = p_id_calculo;
 END;
 //
@@ -276,7 +271,8 @@ BEGIN
 	-- Variables locales
 	DECLARE strQ2 VARCHAR(25);
 	-- Variable de usuario para la consulta
-    SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%d/%m/%Y') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, pp_sin_repr, pp_con_repr, num_pp_sin_repr, num_pp_con_repr,
+    SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%d/%m/%Y') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, 
+		pp_sin_repr, pp_con_repr, pp_sin_repr_siglas, pp_con_repr_siglas, num_pp_sin_repr, num_pp_con_repr, 
 		total_fp_sin_repr, monto_total_efectivo, monto_30_por_ciento, monto_70_por_ciento, comprobacion_monto 
 		FROM calculo_dppp WHERE ? IS NULL OR id_calculo = ?;";
     SET @id = p_id_calculo;

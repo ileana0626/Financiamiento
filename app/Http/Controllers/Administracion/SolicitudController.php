@@ -29,7 +29,9 @@ class SolicitudController extends Controller
         $cUMA = $request->cUMA;
         $cPersonas_padron = $request->cPersonas_padron;
         $cbPartidosPoliticosSinRepr = $request->cbPartidosPoliticosSinRepr;
+        $pp_sin_repr_siglas = $request->pp_sin_repr_siglas;
         $cbPartidosPoliticosConRepr = $request->cbPartidosPoliticosConRepr;
+        $pp_con_repr_siglas = $request->pp_con_repr_siglas;
         //$nIdAuth = $request->nIdAuth;
        
         // $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
@@ -37,15 +39,18 @@ class SolicitudController extends Controller
         DB::beginTransaction();
         try {
             DB::statement('SET @p_new_id = 0');
-            $rpta =  DB::statement('call sp_insert_calculo(?,?,?,?,?,?,?, @p_new_id)', [
+            $rpta =  DB::statement('call sp_insert_calculo(?,?,?,?,?,?,?,?,?, @p_new_id)', [
                 $nAnio,
                 $fPublicacion,
                 $cUMA,
                 $cPersonas_padron,
                 $cbPartidosPoliticosSinRepr,
+                $pp_sin_repr_siglas,
                 $cbPartidosPoliticosConRepr,
-                self::$useTransaction, // bandera estática
+                $pp_con_repr_siglas,
                 //$nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+                self::$useTransaction, // bandera estática
+                
             ]); 
 
             $rpta = DB::select('SELECT @p_new_id as idInsertado');
@@ -166,8 +171,8 @@ class SolicitudController extends Controller
             // Obtener el segundo conjunto de resultados (partidos con representación)
             $partidosConRep = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Log::info('Partidos sin representación:', $partidosSinRep);
-            // Log::info('Partidos con representación:', $partidosConRep);
+            Log::info('Partidos sin representación:', $partidosSinRep);
+            Log::info('Partidos con representación:', $partidosConRep);
 
 
             $data = [
@@ -179,9 +184,14 @@ class SolicitudController extends Controller
             // Log::info('Datos preparados para la exportación:', $data);
             
             // Usar la clase FinanciamientoExport para generar el Excel
-            return (new \App\Exports\CalculosFinanciamientoExport($data))
-                ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
+            // return (new \App\Exports\CalculosFinanciamientoExport($data))
+            //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
                 
+                 // Retornamos la vista sin datos
+            return (new \App\Exports\CalculosFinanciamientoExport($data))
+            ->download(date('Y-m-d') . 'calculos_financiamiento.xlsx', \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         } catch (\Exception $e) {
             Log::error('Error al exportar el reporte de financiamiento', [
                 'error' => $e->getMessage(),

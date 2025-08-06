@@ -48,7 +48,7 @@
 </head>
 <body>
     <div class="header">
-        FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO {{ $datos->calculo->anioFiscal }}
+        FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO 
     </div>
     
     <table>
@@ -61,47 +61,47 @@
         <tbody>
             <tr>
                 <td>1. NÚMERO DE CIUDADANOS INSCRITOS EN EL PADRÓN ELECTORAL</td>
-                <td class="text-right">{{ number_format($datos->calculo->personas_padron, 0) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>2. UNIDAD DE MEDIDA Y ACTUALIZACIÓN (UMA) VIGENTE</td>
-                <td class="text-right">${{ number_format($datos->calculo->uma, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>3. 65% DE LA UMA VIGENTE</td>
-                <td class="text-right">${{ number_format($datos->calculo->uma_65, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr class="total">
                 <td>4. MONTO TOTAL DE FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES</td>
-                <td class="text-right">${{ number_format($datos->calculo->financiamiento_aop, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>5. 2% DEL MONTO TOTAL DE FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES</td>
-                <td class="text-right">${{ number_format($datos->calculo->total_fp_sin_repr, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr class="total">
                 <td>6. MONTO TOTAL EFECTIVO</td>
-                <td class="text-right">${{ number_format($datos->calculo->monto_total_efectivo, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>7. 30% DEL MONTO TOTAL EFECTIVO</td>
-                <td class="text-right">${{ number_format($datos->calculo->monto_30_por_ciento, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>8. 70% DEL MONTO TOTAL EFECTIVO</td>
-                <td class="text-right">${{ number_format($datos->calculo->monto_70_por_ciento, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>9. NÚMERO DE PARTIDOS POLÍTICOS CON REPRESENTACIÓN EN EL CONGRESO</td>
-                <td class="text-right">{{ $datos->calculo->num_pp_con_repr }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr>
                 <td>10. NÚMERO DE PARTIDOS POLÍTICOS SIN REPRESENTACIÓN EN EL CONGRESO</td>
-                <td class="text-right">{{ $datos->calculo->num_pp_sin_repr }}</td>
+                <td class="text-right"></td>
             </tr>
             <tr class="total">
                 <td>11. COMPROBACIÓN DEL MONTO TOTAL DE FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES</td>
-                <td class="text-right">${{ number_format($datos->calculo->comprobacion_monto, 2) }}</td>
+                <td class="text-right"></td>
             </tr>
         </tbody>
     </table>

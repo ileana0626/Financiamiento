@@ -33,7 +33,7 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
                 'partidos_sin_rep' => (array) $this->datos['partidos_sin_rep'],
                 'partidos_con_rep' => (array) $this->datos['partidos_con_rep']
             ];
-            
+
             // Convert the data to array for logging
             Log::info('Datos para la exportación:', ['data' => json_decode(json_encode($data), true)]);
             

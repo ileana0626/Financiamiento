@@ -23,10 +23,10 @@
         <div class="card-body container-fluid" style="background-color: var(--iee-white);">
             <div class="center">
                 <vs-table striped>
-                    <template #header>
+                    <!-- <template #header>
                         <vs-input v-model="search" border placeholder="Escribe un Nombre"
                             class="inputSearchPreguntas" />
-                    </template>
+                    </template> -->
                     <template #thead>
                         <vs-tr>
                             <vs-th style="width: 30px; background-color: var(--iee-white);">
@@ -53,7 +53,7 @@
                             </vs-th>
                             <!-- 7 -->
                             <vs-th style="width: 30px; background-color: var(--iee-white);">
-                                Núm de Partidos sin representación en el Congreso
+                                Partidos sin representación en el Congreso
                             </vs-th>
                             <vs-th style="width: 30px; background-color: var(--iee-white);">
                                 2% de FPAOP para Partidos sin representación en el Congreso
@@ -113,7 +113,7 @@
                             </vs-td>
                             <!-- 7 -->
                             <vs-td class="tableRowHeight">
-                                {{ tr.pp_sin_repr }}
+                                {{ tr.pp_sin_repr_siglas }}
                             </vs-td>
                             <vs-td class="tableRowHeight">
                                 {{ formatCurrency(tr.total_fp_sin_repr) }}
@@ -128,7 +128,7 @@
                                 {{ formatCurrency(tr.monto_30_por_ciento) }}
                             </vs-td>
                             <vs-td class="tableRowHeight">
-                                {{ tr.pp_con_repr }}
+                                {{ tr.pp_con_repr_siglas }}
                             </vs-td>
                             <vs-td class="tableRowHeight">
                                 {{ tr.num_pp_con_repr }}
@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import methods from '../../../methods';
+import methods, { loading } from '../../../methods';
 export default {
     data() {
         return{
@@ -171,7 +171,6 @@ export default {
             search: '', // Para la busqueda
             page: 1, // Para la paginacion
             max: 10, // Para la paginacion
-            loading: false, // Manejo de loading extra
         }
     },
     created() {
@@ -183,8 +182,8 @@ export default {
     },
     mounted() {
         //Está declarado en la importación de 'methods' - personalizada
-        // const loading = this.$vs.loading(); 
-        this.getCalculos(methods.loading(this.$vs));
+        const loading = this.$vs.loading(); 
+        this.getCalculos(loading);
     },
     methods: {
         formatCurrency(value) {
@@ -216,31 +215,69 @@ export default {
             })
             .finally(() => {
                 loading.close();
-                this.loading = false;
             })
         },
         exportToExcel(id) {
-            let url = '/administracion/solicitud/exportarCalculosFinanciamientoExcel/' + id;
-            axios.get(url).then((response) => {
-                if (response.data?.success) {
-                    window.open(response.data.url, '_blank');
-                } else {
-                    const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
-                    throw new Error(errorMessage);
-                }
+            const loading = this.$vs.loading({
+                type: 'points',
+                color: '#7D0CFF',
+                text: 'Generando archivo Excel...'
+            });
+
+            // Create a temporary link for download
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            axios({
+                url: `/administracion/solicitud/exportarCalculosFinanciamientoExcel/${id}`,
+                method: 'GET',
+                responseType: 'blob', // Important for handling binary files
+            }).then((response) => {
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                
+                // Configure the download link
+                link.href = url;
+                link.setAttribute('download', `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`);
+                
+                // Trigger the download
+                link.click();
+                
+                // Clean up
+                window.URL.revokeObjectURL(url);
+                
+                this.$vs.notification({
+                    title: 'Éxito',
+                    text: 'El archivo Excel se está descargando',
+                    color: 'success'
+                });
             }).catch((error) => {
                 console.error('Error al exportar a Excel:', error);
+                
+                let errorMessage = 'Error al exportar a Excel';
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
                 this.$vs.notification({
                     title: 'Error',
-                    text: 'Error al exportar a Excel',
-                    color: 'danger'
+                    text: errorMessage,
+                    color: 'danger',
+                    time: 10000
                 });
                 
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3], this.$router);
-            })
+                // Handle error as needed
+                let nombreMetodo = 'exportToExcel';
+                methods.catchHandler(error, nombreMetodo, this.$router);
+            }).finally(() => {
+                loading.close();
+                document.body.removeChild(link);
+            });
         },  
-    },
+    }
 }
 </script>
 <style>
