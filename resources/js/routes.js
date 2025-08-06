@@ -141,11 +141,11 @@ export default new Router({
         { path: '/birthday', name: 'birthday.index', component: Cumplea },
         { path: '/usuarios', name: 'admin.usuarios', component: IndexUsers , beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/usuarios/editar/:id', name: 'usuario.editar', component: EditUser, props: true, beforeEnter: async (to, from, next) => {await userValidToEdit(to, from, next); } },
-        { path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        //{ path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/indexSolicitudes', name: 'solicitudes.index', component: IndexSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/solicitudes/editar/:idSolicitud', name: 'editar.solicitud', component: EditSolicitud, props: true, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         // { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
-        { path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        //{ path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
 
         // Financiamiento
         { path: '/calculo', name: 'captura.index', component: Calculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },

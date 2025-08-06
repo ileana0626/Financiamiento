@@ -545,6 +545,7 @@ class ComposerStaticInit720dced1d87bbc657742842f253d1e43
         'App\\Events\\NuevoMensaje' => __DIR__ . '/../..' . '/app/Events/NuevoMensaje.php',
         'App\\Events\\Testear' => __DIR__ . '/../..' . '/app/Events/Testear.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exports\\CalculosFinanciamientoExport' => __DIR__ . '/../..' . '/app/Exports/CalculosFinanciamientoExport.php',
         'App\\Exports\\CandidatosExport' => __DIR__ . '/../..' . '/app/Exports/CandidatosExport.php',
         'App\\Exports\\CandidaturasAyuntaExport' => __DIR__ . '/../..' . '/app/Exports/CandidaturasAyuntaExport.php',
         'App\\Exports\\CandidaturasGubernaturaExport' => __DIR__ . '/../..' . '/app/Exports/CandidaturasGubernaturaExport.php',

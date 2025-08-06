@@ -274,7 +274,7 @@
                                     </vs-button>
                                 </div>
 
-                                <div class="d-flex justify-content-center">
+                                <!-- <div class="d-flex justify-content-center">
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
                                     @click.prevent="guardarSolicitud"
                                     style="padding: 0.20rem; font-size: 1rem;">
@@ -282,7 +282,8 @@
                                             <i class="fas fa-file-alt pr-2" style="font-size: 0.8125rem !important;"></i>Generar reporte
                                         </div>
                                     </vs-button>
-                                </div>
+                                </div> -->
+
                             </div>
 
 
@@ -500,7 +501,7 @@ export default {
                     if (result.isConfirmed) {
                          const load = methods.loading(this.$vs);
                         // Registrar el archivo
-                        const url = '/administracion/solicitud/setRegistrarCalculo';
+                        const url = '/administracion/solicitud/setRegistrarCalculoFinanciamiento';
                         let idGenerado = 0;
                         const strHora = this.hoursFormat(this.hora);
                         try {
@@ -517,7 +518,7 @@ export default {
                                //'nIdAuth': Auth.id(),
                                 // 'fAccion': fechaAccion,
                             });
-                            console.log('Respuesta completa:', JSON.stringify(response.data, null, 2));
+                            //console.log('Respuesta completa:', JSON.stringify(response.data, null, 2));
                             load.text = 'Registrando calculos...';
                             if (response.status === 200) {
                                 //Exito al guardar datos
@@ -562,7 +563,7 @@ export default {
                             // Fin del bloque
 
                             const method = url.split('/');
-                            methods.catchHandler(error, method[3], this.$router);
+                            methods.catchHandler(error, method[3], this.$router);c
                             return idGenerado;
                         }   
                         /*    
@@ -904,7 +905,7 @@ export default {
      * Filtra los partidos seleccionados con representación del catálogo
      * @returns {Array}
      */
-    partidos_sinRepr_Seleccionados() {
+    partidos_conRepr_Seleccionados() {
         return this.cat_partido_conRepresentacion.filter(partido => this.partidosPoliticos_conRepr.includes(partido.id));
     },
     /*
@@ -917,7 +918,7 @@ export default {
     * Formatea los partidos seleccionados con representacion para guardarlos en la base de datos por sus 'id'
     */
     formateaPartidosSeleccionadosConRepDB() {
-        return this.partidos_sinRepr_Seleccionados.map(partido => partido.id).join(',');
+        return this.partidos_conRepr_Seleccionados.map(partido => partido.id).join(',');
     },
     
    

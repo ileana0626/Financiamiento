@@ -324,7 +324,7 @@ export default {
             // console.log(this.darkmode);
             EventBus.$emit('darkMode', this.darkmode);
         },
-        ruta() {
+        rutaFAQ() {
             this.$router.push({ name: "faq.index" });
         },
     }
