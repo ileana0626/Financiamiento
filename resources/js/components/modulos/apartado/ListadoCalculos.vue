@@ -184,19 +184,23 @@ export default {
         EventBus.$off('darkMode');
     },
     mounted() {
-        //Está declarado en la importación de 'methods' - personalizada
-        const loading = this.$vs.loading(); 
-        this.getCalculos(loading);
+        this.getCalculos();
     },
     methods: {
+        /*
+        * Formatea un número con separadores de miles y decimales
+        */
         formatCurrency(value) {
-            return '$' + parseFloat(value).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
-        getCalculos(loading) {
-            this.loading = true;
+        /*
+        * Obtiene los cálculos de financiamiento para listarlos
+        */
+        getCalculos() {
+            const loader = loading(this.$vs);
             let url = '/administracion/solicitud/getCalculosFinanciamiento';
             this.NewlistCalculos = [];
-            loading.text = 'Cargando datos...';
+            loader.text = 'Cargando datos...';
             axios.get(url).then((response) => {
                 if (response.data?.success) {
                     this.NewlistCalculos = response.data.calculos || [];
@@ -217,17 +221,18 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             })
             .finally(() => {
-                loading.close();
+                loader.close();
             })
         },
         exportToExcel(id) {
             // Crear un nuevo loader
-            const loading = this.$vs.loading({
-                type: 'points',
-                color: '#7D0CFF',
-                text: 'Generando archivo Excel...'
-            });
-
+            // const loading = this.$vs.loading({
+            //     type: 'points',
+            //     color: '#7D0CFF',
+            //     text: 'Generando archivo Excel...'
+            // });
+            const loader = loading(this.$vs);
+            loader.text = 'Generando archivo Excel...';
             // Crear un enlace temporal para la descarga
             const link = document.createElement('a');
             link.style.display = 'none';
@@ -279,7 +284,7 @@ export default {
                     time: 10000
                 });
             }).finally(() => {
-                loading.close();
+                loader.close();
                 document.body.removeChild(link);
             });
         }
