@@ -103,194 +103,90 @@
         <template>
             <div class="center">
                 <vs-dialog v-model="active" overflow-hidden width="90%">
-                <!-- HEADER -->
-                <template #header>
-                    <h4 class="not-margin">
-                    Distribución del cálculo
-                    </h4>
-                </template>
-
-                <div>
-                    <div>
-                    <label class="col-form-label">Selecciona un año fiscal: </label>
-                    <vs-select
-                        placeholder="Seleccione una opción"
-                        v-model="anio"
-                        v-if="catAnio.length > 0"
-                        filter
-                        :color="colors[0].color"
-                        autocomplete="off"
-                    >
-                        <template #message-danger v-if="errorAnio.length > 0">
-                        {{ errorAnio }}
-                        </template>
-                        <vs-option
-                        v-for="(item, index) in catAnio"
-                        :key="index"
-                        :label="item.anio"
-                        :value="item.anio"
-                        >
-                        {{ item.anio }}
-                        </vs-option>
-                    </vs-select>
-                    </div>
+                    <!-- HEADER -->
+                    <template #header>
+                        <h4 class="not-margin">
+                            Distribución del cálculo
+                        </h4>
+                    </template>
 
                     <div>
-                    <label class="col-form-label">Tipo de distribución de Financiamiento</label>
-                    <vs-select
-                        multiple
-                        filter
-                        :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
-                        v-model="distribucion"
-                        v-if="tipo_distribucion.length > 0"
-                        autocomplete="off"
-                        :color="colors[0].color"
-                    >
-                        <template #message-danger v-if="errorDistribucion.length > 0">
-                        {{ errorDistribucion }}
-                        </template>
-                        <vs-option
-                        v-for="(item, index) in tipo_distribucion"
-                        :key="index"
-                        :label="item.nombre"
-                        :value="item.id_tipo"
-                        >
-                        {{ item.nombre }}
-                        </vs-option>
-                    </vs-select>
+                        <div>
+                            <label class="col-form-label">Selecciona un año fiscal: </label>
+                            <vs-select placeholder="Seleccione una opción" v-model="anio" v-if="catAnio.length > 0"
+                                filter :color="colors[0].color" autocomplete="off">
+                                <template #message-danger v-if="errorAnio.length > 0">
+                                    {{ errorAnio }}
+                                </template>
+                                <vs-option v-for="(item, index) in catAnio" :key="index" :label="item.anio"
+                                    :value="item.anio">
+                                    {{ item.anio }}
+                                </vs-option>
+                            </vs-select>
+                        </div>
+
+                        <div>
+                            <label class="col-form-label">Tipo de distribución de Financiamiento</label>
+                            <vs-select multiple filter
+                                :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                v-model="distribucion" v-if="tipo_distribucion.length > 0" autocomplete="off"
+                                :color="colors[0].color">
+                                <template #message-danger v-if="errorDistribucion.length > 0">
+                                    {{ errorDistribucion }}
+                                </template>
+                                <vs-option v-for="(item, index) in tipo_distribucion" :key="index" :label="item.nombre"
+                                    :value="item.id_tipo">
+                                    {{ item.nombre }}
+                                </vs-option>
+                            </vs-select>
+                        </div>
+
+                        <!-- formularios extras -->
+                        <div v-if="distribucion.includes(1)" class="row px-4">
+                            <h5 class="mt-4">Financiamiento público para actividades ordinarias permanentes</h5>
+                            <vs-table class="tabla-ajustada">
+                                <template #thead>
+                                    <vs-tr>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            Emblema Partido Político
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            % de votación de partido político en elección inmediata anterior de
+                                            diputaciones
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            A. 30% en forma igualitaria
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            B. 70% conforme al % de votación
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            Total de B. después del ajuste
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            C. Financiamiento público para actividades ordinarias permanentes (A+B)
+                                        </vs-th>
+                                    </vs-tr>
+                                </template>
+                                <template #tbody>
+                                    <vs-tr style="max-height: 100px !important">
+                                        <vs-td class="tableRowHeight">
+                                            {{ tr.pp_con_repr_siglas }}
+                                        </vs-td>
+                                    </vs-tr>
+                                </template>
+                            </vs-table>
+                        </div>
+                        <div v-if="distribucion.includes(2)" class="row px-4">
+                            <h5>Financiamiento público para actividades tendientes a la obtención del voto</h5>
+                            <v-table>
+
+                            </v-table>
+                        </div>
                     </div>
-                </div>
                 </vs-dialog>
             </div>
-            </template>
-
-        <!-- <div class="px-3 px-md-5 container-fluid">
-            <div class="mx-3 mt-5 mt-md-4">
-          
-                <div class="card-info pb-4">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title font-weight-bold">Distribución cálculo</h3>
-                    </div>
-                    <div class="card-body container-fluid" style="background-color: var(--iee-white) !important;">
-                        <div class="row p-4">
-                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                <label class="col-form-label">Selecciona un año fiscal: </label>
-                               <vs-select
-                                    placeholder="Seleccione una opción"
-                                    v-model="anio"
-                                    v-if="catAnio.length > 0"
-                                    filter
-                                    :color="colors[0].color"
-                                    autocomplete="off"
-                                    >
-                                    <template #message-danger v-if="errorAnio.length > 0">
-                                        {{ errorAnio }}
-                                    </template>
-
-                                    <vs-option
-                                        v-for="(item, index) in catAnio"
-                                        :key="index"
-                                        :label="item.anio"
-                                        :value="item.anio"
-                                    >
-                                        {{ item.anio }}
-                                    </vs-option>
-                                    </vs-select>
-                            </div>
-
-                                    <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
-                                        <label class="col-form-label">Tipo de distribución de Financiamiento </label>
-                                        <vs-select multiple filter
-                                            :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="distribucion" v-if="tipo_distribucion.length > 0" autocomplete="off"
-                                            :color="colors[0].color">
-                                            <template #message-danger v-if="errorDistribucion.length > 0">
-                                                {{ errorDistribucion }}
-                                            </template>
-                                            <vs-option v-for="(item, index) in tipo_distribucion" :key="index"
-                                                :label="item.nombre" :value="item.id_tipo">
-                                                {{ item.nombre }}
-                                            </vs-option>
-                                        </vs-select>
-                                    </div>
-
-                                  
-                                     <div v-if="distribucion.includes(1)" class="row px-4">
-                                        <h5>Financiamiento público para actividades ordinarias permanentes</h5>
-                                           <vs-table class="tabla-ajustada">
-                                            <template #thead>
-                                                <vs-tr>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        Emblema Partido Político
-                                                    </vs-th>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        % de votación de partido político en elección inmediata anterior de diputaciones
-                                                    </vs-th>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        A. 30% en forma igualitaria
-                                                    </vs-th>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        B. 70% conforme al % de votación
-                                                    </vs-th>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        Total de B. después del ajuste
-                                                    </vs-th>
-                                                    <vs-th style="background-color: var(--iee-white);">
-                                                        C. Financiamiento público para actividades ordinarias permanentes (A+B)
-                                                    </vs-th>
-                                                </vs-tr>
-                                            </template>
-                                        </vs-table>
-                                     </div>
-                                    
-                                    
-                                     
-                                     <div v-if="distribucion.includes(2)" class="row px-4">
-                                        <h5>Financiamiento público para actividades tendientes a la obtención del voto</h5>
-                                           <v-table>
-
-                                           </v-table> 
-                                     </div>
-                        </div>
-                            
-                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="guardarCalculo" 
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
-                                            Guardar
-                                        </div>
-                                    </vs-button>
-                                </div>
-                           
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="limpiarCampos"
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                        </div>
-                                    </vs-button>
-                                </div>
-
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="guardarSolicitud"
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-file-alt pr-2" style="font-size: 0.8125rem !important;"></i>Generar reporte
-                                        </div>
-                                    </vs-button>
-                                </div>
-                            </div>
-
-
-                    </div>
-                </div>
-            </div>
-        </div> -->
+        </template>
     </div>
 </template>
 
@@ -386,6 +282,12 @@ export default {
         abrirDialog(calculo) {
             this.selectedCalculo = calculo;
             this.active = true;
+
+            axios.get(`/administracion/usuario/obtenerCalculo${calculo.id}`).then(res => {
+                this.selectedCalculo = res.data;
+            }).catch(err => {
+                this.$vs.notification({ color: 'danger', text: 'Error al cargar detalles del cálculo' });
+            });
         },
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
@@ -507,8 +409,9 @@ export default {
 }
 
 .custom-dialog {
-  width: 90vw; /* o un valor fijo como 800px */
-  max-width: 1000px;
-  padding: 20px;
+    width: 90vw;
+    /* o un valor fijo como 800px */
+    max-width: 1000px;
+    padding: 20px;
 }
 </style>

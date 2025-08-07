@@ -72,6 +72,27 @@ class SolicitudController extends Controller
         }
     }
 
+    //modificar con la consulta o crear consulta
+    public function obtenerCalculo(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $tipo = $request->tipo;
+        $consulta = $request->consulta;
+
+        $tipo = ($tipo == NULL) ? 0 : $tipo;
+        $consulta = ($consulta == NULL) ? 0 : $consulta;
+
+        try {
+            $rpta = DB::select('call sp_ConsultarC( ?, ? )', [$tipo, $consulta]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
     public function getCalculosFinanciamiento(Request $request)
     {
         if (!$request->ajax()) {return redirect('/');}
