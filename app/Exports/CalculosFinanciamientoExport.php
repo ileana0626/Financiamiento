@@ -68,71 +68,65 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
                 $sheet->getColumnDimension('A')->setAutoSize(false);
                 $sheet->getColumnDimension('A')->setWidth(20);
                 $sheet->getColumnDimension('B')->setAutoSize(false);
-                $sheet->getColumnDimension('B')->setWidth(80);
+                $sheet->getColumnDimension('B')->setWidth(90);
                 $sheet->getColumnDimension('C')->setAutoSize(false);
-                $sheet->getColumnDimension('C')->setWidth(40);
+                $sheet->getColumnDimension('C')->setWidth(20);
 
+                // Tamaño de fuente de todo el documento -- No aplica correctamente si se da estilo a -> td
+                //$sheet->getParent()->getDefaultStyle()->getFont()->setName('Arial');
+                //$sheet->getParent()->getDefaultStyle()->getFont()->setSize(14);
 
-                // Agregar un log para depuración
+                 // Aplicar estilos específicos a celdas
+                 $sheet->getStyle('A1:Z1000')->applyFromArray([
+                    'font' => [
+                        'name' => 'Calibri',
+                        'size' => 10
+                    ]
+                ]);
+
+                // Log para depuración
                 Log::info('Anchos de columna configurados', [
                     'ancho_A' => $sheet->getDelegate()->getColumnDimension('A')->getWidth(),
                     'ancho_B' => $sheet->getDelegate()->getColumnDimension('B')->getWidth(),
                     'ancho_C' => $sheet->getDelegate()->getColumnDimension('C')->getWidth()
                 ]);
-                // $sheet->getColumnDimension('D')->setWidth(20);
-                // $sheet->getColumnDimension('E')->setWidth(20);
+
+                //Merge cells
+                //$sheet->mergeCells('B3:C3');
+
+                // Para la columna C (montos)
+                $sheet->getStyle('C1:C1000')->getAlignment()->setHorizontal('right');
                 
-                // Ejemplo color amarillo
-                // $sheet->getStyle('A1:C1')->applyFromArray([
-                //     'font' => ['bold' => true, 'color' => ['rgb' => 'FF0000']],
-                //     'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'color' => ['rgb' => 'FFFF00']]
+                /*
+                $sheet->getStyle('B3')->applyFromArray([
+                    'alignment' => [
+                        'wrapText' => true,
+                        'vertical' => 'top',
+                        'horizontal' => 'left'
+                    ]
+                ]);
+                $sheet->getRowDimension(3)->setRowHeight(-1); // -1 para autoajustar
+
+                // Si es necesario, forzar el recálculo
+                $sheet->calculateColumnWidths();
+                */
+                // Configuración general para la columna B
+                $sheet->getStyle('B4:B100')->applyFromArray([
+                    'alignment' => [
+                        'wrapText' => true,
+                        'vertical' => 'top',
+                        'horizontal' => 'right'  // Importante para el texto largo
+                    ]
+                ]);
+
+                // $sheet->getStyle('B3')->getAlignment()->applyFromArray([
+                //     'wrapText' => true,
+                //     'vertical' => 'top',  // Alinea el texto en la parte superior
                 // ]);
 
-                // Estilo para el título principal
-                // $sheet->mergeCells('A1:E1');
-                // $sheet->setCellValue('A1', 'CÁLCULO DE FINANCIAMIENTO PÚBLICO');
-                // $sheet->getStyle('A1')->applyFromArray([
-                //     'font' => [
-                //         'bold' => true,
-                //         'size' => 14,
-                //     ],
-                //     'alignment' => [
-                //         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                //     ],
-                // ]);
-                
-                // Estilo para encabezados de tablas
-                // $headerStyle = [
-                //     'font' => [
-                //         'bold' => true,
-                //         'color' => ['rgb' => 'FFFFFF'],
-                //     ],
-                //     'fill' => [
-                //         'fillType' => Fill::FILL_SOLID,
-                //         'startColor' => ['rgb' => '4472C4'],
-                //     ],
-                //     'borders' => [
-                //         'allBorders' => [
-                //             'borderStyle' => Border::BORDER_THIN,
-                //         ],
-                //     ],
-                // ];
-                
-                // Aplicar estilos a las celdas de datos
-                // $sheet->getStyle('A3:E' . $sheet->getHighestRow())->applyFromArray([
-                //     'borders' => [
-                //         'allBorders' => [
-                //             'borderStyle' => Border::BORDER_THIN,
-                //         ],
-                //     ],
-                //     'alignment' => [
-                //         'vertical' => Alignment::VERTICAL_CENTER,
-                //     ],
-                // ]);
-                
-                // Formato de moneda para columnas numéricas
-                // $sheet->getStyle('B3:E' . $sheet->getHighestRow())->getNumberFormat()
-                //     ->setFormatCode('"$"#,##0.00');
+
+                // Aplicar color rojo a montos específicos
+                //$sheet->getStyle('C8:C100')->getFont()->getColor()->setARGB('FF0000');
             },
         ];
     }
@@ -140,10 +134,8 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
     public function columnFormats(): array
     {
         return [
+            //Ejemplo de formato de moneda
             // 'B' => NumberFormat::FORMAT_NUMBER_00,
-            // 'C' => NumberFormat::FORMAT_NUMBER_00,
-            // 'D' => NumberFormat::FORMAT_NUMBER_00,
-            // 'E' => NumberFormat::FORMAT_NUMBER_00,
         ];
     }
 }
