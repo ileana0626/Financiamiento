@@ -144,7 +144,7 @@ export default new Router({
         { path: '/usuarios/editar/:id', name: 'usuario.editar', component: EditUser, props: true, beforeEnter: async (to, from, next) => {await userValidToEdit(to, from, next); } },
         //{ path: '/gestionSolicitudes', name: 'solicitudes.ver', component: GestioSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/indexSolicitudes', name: 'solicitudes.index', component: IndexSolicitudes, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
-        { path: '/solicitudes/editar/:idSolicitud', name: 'editar.solicitud', component: EditSolicitud, props: true, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/solicitudes/editar/:idSolicitud', name: 'editar.solicitud', component: DistribucionCalculo, props: true, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         // { path: '/editar/:id', name: 'editar.solicitud', component: Editar, props:true },
         //{ path: '/capturav2', name: 'captura.index', component: Capturav2, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
 

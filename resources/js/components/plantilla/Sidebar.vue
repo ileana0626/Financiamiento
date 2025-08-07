@@ -63,7 +63,7 @@ Consulta de Errores
                         Distribución
                     </vs-sidebar-item>
                 </template>
-                <template>
+                <!-- <template>
              <vs-sidebar-item id="listado">
                 <template #icon>
                   <i class="fas fa-file-alt color"></i>
@@ -72,7 +72,7 @@ Consulta de Errores
                     Listado de cálculos
                 </router-link>
               </vs-sidebar-item>
-            </template>
+            </template> -->
             </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
