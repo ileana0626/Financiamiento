@@ -145,7 +145,7 @@ class SolicitudController extends Controller
 
             // Obtener los datos del cálculo
             $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
-            Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
 
             if (empty($calculo)) {
                 Log::error('No se encontró el cálculo con ID: ' . $id);
@@ -163,16 +163,16 @@ class SolicitudController extends Controller
             $stmt->execute([$id]);
             
             // Obtener el primer conjunto de resultados (partidos sin representación)
-            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
             
             // Avanzar al siguiente conjunto de resultados
             $stmt->nextRowset();
             
             // Obtener el segundo conjunto de resultados (partidos con representación)
-            $partidosConRep = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-            Log::info('Partidos sin representación:', $partidosSinRep);
-            Log::info('Partidos con representación:', $partidosConRep);
+            //Log::info('Partidos sin representación:', $partidosSinRep);
+            //Log::info('Partidos con representación:', $partidosConRep);
 
 
             $data = [
@@ -181,16 +181,17 @@ class SolicitudController extends Controller
                 'partidos_con_rep' => $partidosConRep
             ];
 
-            // Log::info('Datos preparados para la exportación:', $data);
+             Log::info('Datos preparados para la exportación:', $data);
             
             // Usar la clase FinanciamientoExport para generar el Excel
             // return (new \App\Exports\CalculosFinanciamientoExport($data))
             //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
-                
+            
+            $filename = date('Y-m-d') . '_calculos_financiamiento' . '.xlsx';
                  // Retornamos la vista sin datos
             return (new \App\Exports\CalculosFinanciamientoExport($data))
-            ->download(date('Y-m-d') . 'calculos_financiamiento.xlsx', \Maatwebsite\Excel\Excel::XLSX, [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
             Log::error('Error al exportar el reporte de financiamiento', [
