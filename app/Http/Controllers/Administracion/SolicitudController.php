@@ -21,6 +21,11 @@ class SolicitudController extends Controller
     //Desactivar transacciones del lado de la Base de Datos y evitar conflictos
     protected static $useTransaction = false;
 
+    /**
+     * Registrar un nuevo cálculo de financiamiento público
+     * @param $request
+     * @return json con el id del cálculo insertado
+     */
     public function setRegistrarCalculoFinanciamiento(Request $request){
         if(!$request->ajax()) return redirect('/');
 
@@ -93,6 +98,11 @@ class SolicitudController extends Controller
         }
     }
 
+    /**
+     * Obtiene los cálculos de financiamiento para listarlos
+     * @param $id Id del cálculo o null para obtener todos los cálculos
+     * @return json con los cálculos de financiamiento
+     */
     public function getCalculosFinanciamiento(Request $request)
     {
         if (!$request->ajax()) {return redirect('/');}
@@ -127,28 +137,85 @@ class SolicitudController extends Controller
             throw $e;
         }
     }
-
-    public function get_Partidos_Calculo_porId(Request $request){
+    /** -- Puede no ser útil
+     * Obtiene los partidos políticos de un cálculo de financiamiento
+     * @param Id del cálculo
+     * @return tablas con los partidos políticos de
+     * 1. Partidos políticos con representación
+     */
+    public function Distribucion_get_Partidos_Con_Representacion(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $id = $request->input('id', null); // Valor por defecto null
-        $rpta = DB::select('call sp_get_Partidos_Calculo_porId(?)', [$id]);
-        // Obtener y loguear la consulta
-        $queryLog = DB::getQueryLog();
-        Log::info('Listado -> Consulta SQL ejecutada:', $queryLog);
-    
-        DB::commit();
-        return response()->json([
-            'success' => true,
-            'calculos' => $rpta,
-            'message' => 'Cálculos obtenidos correctamente'
-        ]);
+        try{
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_Distribucion_get_Partidos_Con_Representacion(?)', [$id]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'partidosConRep' => $rpta,
+                'message' => 'Datos de los partidos obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en sp_Distribucion_get_Partidos_Con_Representacion', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los partidos políticos'
+            ]);
+            throw $e;
+        }
     }
 
+
+    /** -- Puede no ser útil
+     * Obtiene los partidos políticos de un cálculo de financiamiento
+     * @param Id del cálculo
+     * @return tablas con los partidos políticos de
+     * 1. Partidos políticos sin representación
+     * 2. Partidos políticos con representación
+     */
+    public function get_Partidos_Calculo_porId(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_get_Partidos_Calculo_porId(?)', [$id]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'partidosSinRep' => $rpta,
+                'partidosConRep' => $rpta,
+                'message' => 'Datos de los partidos obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en get_Partidos_Calculo_porId', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los partidos políticos'
+            ]);
+            throw $e;
+        }
+    }
     
     /**
-     * Exporta el reporte de financiamiento a Excel
+     * Exporta el reporte de Anexo 1. Cálculo Financiamiento a Excel
      *
-     * @param Request $request
+     * @param $id Id del cálculo 
      * @return \Maatwebsite\Excel\BinaryFileResponse
      */
     public function exportarCalculosFinanciamientoExcel(Request $request, $id = null)

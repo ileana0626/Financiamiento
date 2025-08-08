@@ -251,7 +251,8 @@ export default {
                 link.href = url;
                 
                 // Establecer el nombre del archivo
-                const filename = `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`;
+                //const filename = `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`;
+                const filename = `Anexo 1. Cálculo.xlsx`;
                 link.setAttribute('download', filename);
                 
                 // Añadir al documento, hacer clic y limpiar
