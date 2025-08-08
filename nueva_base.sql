@@ -13961,6 +13961,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
 
 
+-- EMPIEZAN LOS NUEVOS QUERYS
 
 
 USE `admin`;
@@ -13985,50 +13986,59 @@ INSERT INTO anios_fiscales (anio) VALUES
 (2035);
 
 DROP TABLE IF EXISTS cat_partido; -- Actualizamos el nombre del catálogo
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS cat_partido_sin_repr;
+SET FOREIGN_KEY_CHECKS = 0;
 CREATE TABLE IF NOT EXISTS `cat_partido_sin_repr` (
   `id` int NOT NULL AUTO_INCREMENT,
   `siglas` varchar(10) DEFAULT NULL,
   `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  logo varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
-INSERT INTO `cat_partido_sin_repr` (`id`, `siglas`, `nombre`, `tipo`) VALUES
-	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
-	(2, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
-	(3, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
+INSERT INTO `cat_partido_sin_repr` (`id`, `siglas`, `nombre`, `tipo`, logo) VALUES
+	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP','PSI.webp'),
+	(2, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP','NAP_Small.webp'),
+	(3, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP','FXMP_Small.webp');
     
 
 DROP TABLE IF EXISTS cat_partido_conRepresentacion; -- Actualizamos el nombre del catálogo
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS cat_partido_con_repr;
+SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE IF NOT EXISTS `cat_partido_con_repr` (
   `id` int NOT NULL AUTO_INCREMENT,
   `siglas` varchar(10) DEFAULT NULL,
   `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  logo varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
-INSERT INTO `cat_partido_con_repr` (`id`, `siglas`, `nombre`, `tipo`) VALUES
-	(1, 'PAN', 'PARTIDO ACCIÓN NACIONAL', 'PP'),
-	(2, 'PRI', 'PARTIDO REVOLUCIONARIO INSTITUCIONAL', 'PP'),
-	(3, 'PT', 'PARTIDO DEL TRABAJO', 'PP'),
-	(4, 'PVEM', 'PARTIDO VERDE ECOLOGISTA DE MÉXICO', 'PP'),
-	(5, 'MC', 'MOVIMIENTO CIUDADANO', 'PP'),
-	(6, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
-	(7, 'MORENA', 'MORENA', 'PP'),
-	(8, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
-	(9, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
+INSERT INTO `cat_partido_con_repr` (`id`, `siglas`, `nombre`, `tipo`, logo) VALUES
+	(1, 'PAN', 'PARTIDO ACCIÓN NACIONAL', 'PP','PAN_Small.webp'),
+	(2, 'PRI', 'PARTIDO REVOLUCIONARIO INSTITUCIONAL', 'PP','PRI_Small.webp'),
+	(3, 'PT', 'PARTIDO DEL TRABAJO', 'PP','PT_Small.webp'),
+	(4, 'PVEM', 'PARTIDO VERDE ECOLOGISTA DE MÉXICO', 'PP','PVEM_Small.webp'),
+	(5, 'MC', 'MOVIMIENTO CIUDADANO', 'PP','MC_Small.webp'),
+	(6, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP','PSI_Small.webp'),
+	(7, 'MORENA', 'MORENA', 'PP','MORENA_Small.webp'),
+	(8, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP', 'NAP_Small.webp'),
+	(9, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP', 'FXMP_Small.webp');
 
 /*tabla intermedia*/
 DROP TABLE IF EXISTS calculo_partido_sin_repr;
 CREATE TABLE calculo_partido_sin_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
-    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '%2 del FPAOP por partido sin representación en el congreso',
+    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
+    
+    dist_
+    
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -14040,6 +14050,10 @@ DROP TABLE IF EXISTS calculo_partido_con_repr;
 CREATE TABLE calculo_partido_con_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
+    
+    dist_monto_30_por_ciento  DECIMAL(30,15) NOT NULL COMMENT' 30% del monto total efectovo dividido entre cada partido político con representación',
+    
+    
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -14082,6 +14096,19 @@ CREATE TABLE calculo_dppp (
 );
 
 
+DROP TABlE IF EXISTS cat_tipo_distribucion;
+/*
+* table Tipo de distribucion de financiamiento
+*/
+CREATE TABLE cat_tipo_distribucion (
+    id_tipo INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(200) NOT NULL
+);
+
+insert into `cat_tipo_distribucion` (`id_tipo`, `nombre`) VALUES (1, "Financiamiento público para actividades ordinarias permanentes"), 
+(2, "Financiamiento público para actividades tendientes a la obtención del voto");
+
+
 -- Actualizamos la consulta de los catálogos
 USE `admin`;
 
@@ -14114,6 +14141,8 @@ ELSEIF tipo = 9   THEN
 		SELECT * FROM cat_partido_sin_repr;
 ELSEIF tipo = 10   THEN
 		SELECT * FROM cat_partido_con_repr;
+ELSEIF tipo = 11   THEN
+		SELECT * FROM cat_tipo_distribucion;
 END if;
 ELSEIF  consulta = 2 then
 	if tipo = 1  THEN
@@ -14220,7 +14249,6 @@ BEGIN
     END IF;
 END;//
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS sp_insert_partidos_sin_repr;
 /*guardar datos de partidos sin representantes*/
@@ -14363,7 +14391,7 @@ DELIMiTER //
 /*
 * @name Procedimiento para obtener Partidos Políticos Con Representación y Sin Representación
 * @description Va de la mano con sp_get_calculo_completo, se llama por separado para poder listar los partidos políticos de un cálculo determinado
-* 	y poder llamarse en el Frontend para agregarlos a una columna y darles formato
+* 	y poder llamarse en el Frontend para agregarlos a una columna y darles formato en la exportación a Excel
 * @param id_calculo
 * @example
 * CALL sp_get_PartidosporIdCalculo(2);
@@ -14371,14 +14399,37 @@ DELIMiTER //
 CREATE PROCEDURE sp_get_Partidos_Calculo_porId(IN id_calculo INT UNSIGNED)
 BEGIN
 	-- Retornamos los partidos sin representación
-	SELECT cat_psr.siglas, cat_psr.nombre, psr.monto_2_por_ciento
+	SELECT cat_psr.siglas, cat_psr.nombre, cat_psr.logo, psr.monto_2_por_ciento
 		FROM calculo_partido_sin_repr psr 
         INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
         WHERE psr.id_calculo = id_calculo;
 	-- Retornamos los partidos con representación
-	SELECT cat_pcr.siglas, cat_pcr.nombre
+	SELECT cat_pcr.siglas, cat_pcr.nombre, cat_pcr.logo
 		FROM calculo_partido_con_repr pcr
 		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id 
+		WHERE pcr.id_calculo = id_calculo;
+END;
+//DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_Distribucion_get_Partidos_Con_Representacion;
+DELIMiTER //
+/*
+* @name Procedimiento para obtener Partidos Políticos Con Representación en el Congreso
+* @description Obtiene los partidos con representación en el Congreso a partir de un Id cálculo
+* @param id_calculo
+* @example
+* CALL sp_Distribucion_get_Partidos_Con_Representacion(2);
+*/
+CREATE PROCEDURE sp_Distribucion_get_Partidos_Con_Representacion(IN id_calculo INT UNSIGNED)
+BEGIN
+	-- Retornamos los partidos con representación
+    
+	SELECT
+		ROW_NUMBER() OVER (ORDER BY cat_pcr.siglas) AS num_fila,
+        pcr.id_calculo as 'id_calculo',
+		cat_pcr.siglas, cat_pcr.nombre, cat_pcr.logo
+		FROM calculo_partido_con_repr pcr
+		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id
 		WHERE pcr.id_calculo = id_calculo;
 END;
 //DELIMITER ;

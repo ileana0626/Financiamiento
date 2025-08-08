@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/setRegistrarCalculoFinanciamiento','Administracion\SolicitudController@setRegistrarCalculoFinanciamiento');
     Route::get('/administracion/solicitud/getCalculosFinanciamiento','Administracion\SolicitudController@getCalculosFinanciamiento');
     Route::get('/administracion/solicitud/exportarCalculosFinanciamientoExcel/{id}', 'Administracion\SolicitudController@exportarCalculosFinanciamientoExcel');
+    Route::get('/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion', 'Administracion\SolicitudController@Distribucion_get_Partidos_Con_Representacion');
 
 
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');

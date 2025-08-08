@@ -109,7 +109,22 @@
                             Distribución del cálculo
                         </h4>
                     </template>
-
+                    <!--<div name="Informacion_Calculo" class="p-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="col-form-label text-muted">Año fiscal</label>
+                                    <p class="font-semibold">{{ selectedCalculo.anioFiscal || 'No disponible' }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="col-form-label text-muted"> 30 %Monto total efectivo</label>
+                                    <p class="font-semibold">{{ selectedCalculo.monto_30_por_ciento ? formatCurrency(selectedCalculo.monto_30_por_ciento) : 'No disponible' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
                     <div>
                         <div>
                             <label class="col-form-label">Selecciona un año fiscal: </label>
@@ -124,29 +139,38 @@
                                 </vs-option>
                             </vs-select>
                         </div>
+                        <!-- <div>
+                            <vs-button color="primary" @click="">Generar tabla de distribución</vs-button>
+                        </div> -->
 
                         <div>
                             <label class="col-form-label">Tipo de distribución de Financiamiento</label>
                             <vs-select multiple filter
                                 :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                v-model="distribucion" v-if="tipo_distribucion.length > 0" autocomplete="off"
-                                :color="colors[0].color">
+                                v-model="distribucion" v-if="cat_tipo_distribucion.length > 0" autocomplete="off"
+                                :color="colors[0].color" @click.native.stop>
                                 <template #message-danger v-if="errorDistribucion.length > 0">
                                     {{ errorDistribucion }}
                                 </template>
-                                <vs-option v-for="(item, index) in tipo_distribucion" :key="index" :label="item.nombre"
-                                    :value="item.id_tipo">
+                                <vs-option v-for="(item, index) in cat_tipo_distribucion" :key="index" :label="item.nombre"
+                                    :value="item.id_tipo" @click.native.stop>
                                     {{ item.nombre }}
                                 </vs-option>
                             </vs-select>
                         </div>
 
+
+
                         <!-- formularios extras -->
                         <div v-if="distribucion.includes(1)" class="row px-4">
                             <h5 class="mt-4">Financiamiento público para actividades ordinarias permanentes</h5>
+                            <h5 v-if="distribucion.includes(2)">Financiamiento público para actividades tendientes a la obtención del voto</h5>
                             <vs-table class="tabla-ajustada">
                                 <template #thead>
                                     <vs-tr>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            Siglas
+                                        </vs-th>
                                         <vs-th style="background-color: var(--iee-white);">
                                             Emblema Partido Político
                                         </vs-th>
@@ -166,44 +190,72 @@
                                         <vs-th style="background-color: var(--iee-white);">
                                             C. Financiamiento público para actividades ordinarias permanentes (A+B)
                                         </vs-th>
+                                        <vs-th v-if="distribucion.includes(2)" style="background-color: var(--iee-white);">
+                                            D. Financiamiento público para actividades tendientes a la obtención del voto
+                                        </vs-th>
                                     </vs-tr>
                                 </template>
                                 <template #tbody>
-                                    <vs-tr style="max-height: 100px !important">
-                                        <vs-td class="tableRowHeight">
-                                            {{ tr.pp_con_repr_siglas }}
-                                        </vs-td>
+                                    <!-- Partidos sin representación -->
+                                    <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" 
+                                        :key="'sin-rep-'+i"
+                                        :data="partido">
+                                        <vs-td>{{ partido.siglas }}</vs-td>
+                                        <vs-td><img :src="'/img/logos/' + partido.logo" :alt="partido.siglas" 
+                                            class="img-fluid rounded"
+                                            style="max-width: 40px; max-height: 40px; width: auto; height: auto;"
+                                            onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+                                        ></vs-td>
+                                        <vs-input type="number"
+                                            v-model="partido.porcentaje_votacion"
+                                            placeholder="0.00" step="0.01" min="0" max="100"
+                                            @change="validarPorcentaje(partido)"
+                                        >
+                                            <template #message-success>
+                                                %
+                                            </template>
+                                        </vs-input> 
+                                        <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
+                                        <vs-td>{{ (selectedCalculo.monto_30_por_ciento/selectedCalculo.num_pp_con_repr ) || 'N/A' }}</vs-td>
+
+                                        <!-- Más celdas según necesites -->
                                     </vs-tr>
                                 </template>
                             </vs-table>
-                        </div>
+                     </div>
+                     <!--
                         <div v-if="distribucion.includes(2)" class="row px-4">
                             <h5>Financiamiento público para actividades tendientes a la obtención del voto</h5>
                             <v-table>
 
                             </v-table>
-                        </div>
+                        </div> -->
                     </div>
                 </vs-dialog>
             </div>
         </template>
+
     </div>
 </template>
 
 <script>
+
 import methods from '../../../methods';
+import { loading } from '../../../methods';
 export default {
     data() {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             // Variables para listar
-            //listCalculos: [],
+            selectedCalculo: {},
+            Partidos_Sin_Representacion: [],
+            Partidos_Con_Representacion: [],
             NewlistCalculos: [],
             // Variables para la paginacion
             search: '', // Para la busqueda
             page: 1, // Para la paginacion
             max: 10, // Para la paginacion
-            active: false,
+            active: false, // para el modal
             input1: '',
             input2: '',
             checkbox1: false,
@@ -216,7 +268,7 @@ export default {
                 }
             ],
             distribucion: [],
-            tipo_distribucion: [],
+            cat_tipo_distribucion: [],
             errorDistribucion: '',
         }
     },
@@ -229,11 +281,11 @@ export default {
     },
     async mounted() {
         //Está declarado en la importación de 'methods' - personalizada
-        const loading = this.$vs.loading();
-        this.getCalculos(loading);
+        //const loading = this.$vs.loading();
+        this.getCalculos();
         await this.getAnio();
         await this.obtenerDatos(11);
-        load.close();
+
     },
     methods: {
         async getAnio() {
@@ -249,13 +301,13 @@ export default {
             })
         },
         formatCurrency(value) {
-            return '$' + parseFloat(value).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
-        getCalculos(loading) {
-            this.loading = true;
+        getCalculos() {
+            const loader = loading(this.$vs);
+            loader.text = 'Cargando datos...';
             let url = '/administracion/solicitud/getCalculosFinanciamiento';
             this.NewlistCalculos = [];
-            loading.text = 'Cargando datos...';
             axios.get(url).then((response) => {
                 if (response.data?.success) {
                     this.NewlistCalculos = response.data.calculos || [];
@@ -276,18 +328,57 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             })
                 .finally(() => {
-                    loading.close();
+                    loader.close();
                 })
         },
-        abrirDialog(calculo) {
-            this.selectedCalculo = calculo;
-            this.active = true;
-
-            axios.get(`/administracion/usuario/obtenerCalculo${calculo.id}`).then(res => {
-                this.selectedCalculo = res.data;
-            }).catch(err => {
-                this.$vs.notification({ color: 'danger', text: 'Error al cargar detalles del cálculo' });
-            });
+        abrirDialog(calculo_tr) {
+            const loader = loading(this.$vs);
+            let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
+            this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+            this.datosCalculoSeleccionado = {};
+            //this.Partidos_Sin_Representacion = {};
+            this.Partidos_Con_Representacion = {};
+            //console.log(calculo_tr.id);
+            this.active = true; // activa el modal
+            loader.text = 'Cargando datos...';
+            //Obtener los datos principales del Cálculo Financiero
+            axios.get(url, {
+                params: {
+                    'id': calculo_tr.id
+                }
+            }).then(response => {
+                if (response.status === 200 && response.data?.success) {
+                    //Obtenemos los datos de los partidos politicos
+                    //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
+                    this.Partidos_Con_Representacion = response.data.partidosConRep;
+                } else {
+                    // success: false
+                    const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
+                    throw new Error(errorMessage);
+                }
+                response.data
+                console.log('Estructura de Partidos_Con_Representacion:', JSON.parse(JSON.stringify(this.Partidos_Con_Representacion)));
+            }).catch((error) => {
+                console.error('Error al cargar detalles del cálculo', error);
+                this.$vs.notification({
+                    title: 'Error',
+                    text: 'Error al cargar los detalles del cálculo',
+                    color: 'danger'
+                });
+                
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            })
+            .finally(() => {
+                loader.close();
+            })
+            //Obtener los datos de los partidos politicos del Cálculo Financiero
+            // axios.get(`/administracion/usuario/obtenerCalculo${calculo.id}`).then(res => {
+            //     this.selectedCalculo = res.data;
+            //     console.log(this.selectedCalculo);
+            // }).catch(err => {
+            //     this.$vs.notification({ color: 'danger', text: 'Error al cargar detalles del cálculo' });
+            // });
         },
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
@@ -326,7 +417,7 @@ export default {
                         this.cat_partido = response.data
                         break;
                     case 11:
-                        this.tipo_distribucion = response.data
+                        this.cat_tipo_distribucion = response.data
                         break;
                     default:
                         break;
