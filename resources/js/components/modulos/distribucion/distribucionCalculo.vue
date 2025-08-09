@@ -179,7 +179,13 @@
                                             diputaciones
                                         </vs-th>
                                         <vs-th style="background-color: var(--iee-white);">
+                                            Monto Total Efectivo (30%)” 
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
                                             A. 30% en forma igualitaria
+                                        </vs-th>
+                                        <vs-th style="background-color: var(--iee-white);">
+                                            Monto Total Efectivo (70%)
                                         </vs-th>
                                         <vs-th style="background-color: var(--iee-white);">
                                             B. 70% conforme al % de votación
@@ -200,25 +206,46 @@
                                     <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" 
                                         :key="'sin-rep-'+i"
                                         :data="partido">
-                                        <vs-td>{{ partido.siglas }}</vs-td>
-                                        <vs-td><img :src="'/img/logos/' + partido.logo" :alt="partido.siglas" 
+                                        <vs-td>
+                                            {{ partido.siglas }}
+                                        </vs-td>
+                                        <vs-td>
+                                            <img :src="'/img/logos/' + partido.logo" :alt="partido.siglas" 
                                             class="img-fluid rounded"
                                             style="max-width: 40px; max-height: 40px; width: auto; height: auto;"
                                             onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-                                        ></vs-td>
-                                        <vs-input type="number"
-                                            v-model="partido.porcentaje_votacion"
-                                            placeholder="0.00" step="0.01" min="0" max="100"
-                                            @change="validarPorcentaje(partido)"
                                         >
-                                            <template #message-success>
-                                                %
-                                            </template>
-                                        </vs-input> 
+                                        </vs-td>
+                                        <vs-td>
+                                            <vs-input type="text"
+                                                v-model="partido.porcentaje_votacion"
+                                                placeholder="0.00"
+                                            >
+                                            </vs-input>
+                                        </vs-td> 
+                                        <vs-td>
+                                            <vs-input type="text"
+                                                v-model="partido.monto30"
+                                                placeholder="0.00"
+                                            >
+                                            </vs-input>
+                                        </vs-td> 
                                         <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
-                                        <vs-td>{{ (selectedCalculo.monto_30_por_ciento/selectedCalculo.num_pp_con_repr ) || 'N/A' }}</vs-td>
+                                        <vs-td>
+                                            {{ (partido.monto30/selectedCalculo.num_pp_con_repr ) || 'N/A' }}
+                                        </vs-td>
 
-                                        <!-- Más celdas según necesites -->
+                                        <vs-td>
+                                            <vs-input type="text"
+                                                v-model="partido.monto70"
+                                                placeholder="0.00"
+                                            >
+                                            </vs-input>
+                                        </vs-td> 
+                                        <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
+                                        <vs-td>
+                                            {{ ((partido.monto70*partido.porcentaje_votacion)/suma ) || 'N/A' }}
+                                        </vs-td>
                                     </vs-tr>
                                 </template>
                             </vs-table>
@@ -262,6 +289,9 @@ export default {
             anio: '',
             catAnio: [],
             errorAnio: '',
+            monto30: '',
+            monto70: '',
+            suma: '',
             colors: [
                 {
                     color: 'warn'
@@ -351,6 +381,8 @@ export default {
                     //Obtenemos los datos de los partidos politicos
                     //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
                     this.Partidos_Con_Representacion = response.data.partidosConRep;
+                    this.monto30 = '';
+                    this.monto70 = '';
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
@@ -372,13 +404,7 @@ export default {
             .finally(() => {
                 loader.close();
             })
-            //Obtener los datos de los partidos politicos del Cálculo Financiero
-            // axios.get(`/administracion/usuario/obtenerCalculo${calculo.id}`).then(res => {
-            //     this.selectedCalculo = res.data;
-            //     console.log(this.selectedCalculo);
-            // }).catch(err => {
-            //     this.$vs.notification({ color: 'danger', text: 'Error al cargar detalles del cálculo' });
-            // });
+        
         },
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
