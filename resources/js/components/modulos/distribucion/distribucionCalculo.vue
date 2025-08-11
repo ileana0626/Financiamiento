@@ -103,7 +103,7 @@
         <template>
             <div class="center">
                 <vs-dialog v-model="active" overflow-hidden width="90%">
-  <!-- HEADER -->
+                    <!-- HEADER -->
                     <template #header>
                         <h4 class="not-margin">Distribución del cálculo</h4>
                     </template>
@@ -138,7 +138,6 @@
                                 <div class="col-12">
                                     <h5>Financiamiento público para actividades ordinarias permanentes</h5>
                                 </div>
-
                                 <!-- Montos globales -->
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
@@ -147,6 +146,14 @@
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (70%)</label>
                                     <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
+                                </div>
+                                <!-- Tipo de operación para: Financiamiento público para actividades tendientes a la obtención del voto -->
+                                <div v-if="distribucion.includes(2)" class="col-md-6">
+                                    <vs-select v-model="opcionSelecionadaPorcentaje" placeholder="Seleccione una opción"
+                                        class="mb-4" style="max-width: 300px;">
+                                        <vs-option value="gubernatura">A. 50% Gubernatura</vs-option>
+                                        <vs-option value="intermedia">B. 30% Intermedia</vs-option>
+                                    </vs-select>  
                                 </div>
                             </div>
 
@@ -168,65 +175,68 @@
                                 <template #tbody>
                                     <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" :key="'partido_sin_repr-' + i" :data="partido" 
                                     :class="{ 'bg-warning-light': partido.ajuste !== 0 }">
-                                    <!-- Siglas -->
-                                    <vs-td>{{ partido.siglas }}</vs-td>
+                                        <!-- Siglas -->
+                                        <vs-td>
+                                            <vs-checkbox v-model="seleccionados" :val="partido.id_partido" />
+                                            {{ partido.siglas }}
+                                        </vs-td>
 
-                                    <!-- Logo -->
-                                    <vs-td>
-                                        <img :src="'/img/logos/' + partido.logo"
-                                            :alt="partido.siglas"
-                                            class="img-fluid rounded"
-                                            style="max-width: 40px; max-height: 40px;"
-                                            
-                                            onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'">
-                                    </vs-td>
+                                        <!-- Logo -->
+                                        <vs-td>
+                                            <img :src="'/img/logos/' + partido.logo"
+                                                :alt="partido.siglas"
+                                                class="img-fluid rounded"
+                                                style="max-width: 40px; max-height: 40px;"
+                                                
+                                                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'">
+                                        </vs-td>
 
-                                    <!-- % de votación -->
-                                    <vs-td>
-                                        <vs-input v-model="partido.porcentaje_votacion" type="text" placeholder="0.00" />
-                                    </vs-td>
+                                        <!-- % de votación -->
+                                        <vs-td>
+                                            <vs-input v-model="partido.porcentaje_votacion" type="text" placeholder="0.00" />
+                                        </vs-td>
 
-                                    <!-- A. Monto igualitario -->
-                                    <vs-td>
-                                        {{ formatoMoneda(calcularMontoIgualitario30()) }}
-                                    </vs-td>
+                                        <!-- A. Monto igualitario -->
+                                        <vs-td>
+                                            {{ formatoMoneda(calcularMontoIgualitario30()) }}
+                                        </vs-td>
 
-                                    <!-- B. Monto proporcional -->
-                                    <vs-td>
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <span>{{ formatoMoneda(calcularMontoProporcionalB(partido.porcentaje_votacion)) }}</span>
+                                        <!-- B. Monto proporcional -->
+                                        <vs-td>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span>{{ formatoMoneda(calcularMontoProporcionalB(partido.porcentaje_votacion)) }}</span>
 
-                                        <div class="d-flex gap-1">
-                                        <vs-button icon small flat @click="ajustarDecimal(partido, 'restar')" color="danger" icon-pack="feather" icon-name="minus" />
-                                        <vs-button icon small flat @click="ajustarDecimal(partido, 'sumar')" color="success" icon-pack="feather" icon-name="plus" />
+                                            <div class="d-flex gap-1">
+                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'restar')" color="danger" icon-pack="feather" icon-name="minus" />
+                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'sumar')" color="success" icon-pack="feather" icon-name="plus" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    </vs-td>
+                                        </vs-td>
 
-                                    <!-- ajuste de b. 70% -->
-                                    <vs-td>
-                                    <span :class="{ 'text-success': partido.ajuste > 0, 'text-danger': partido.ajuste < 0 }">
-                                        {{ formatoMoneda(calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)) }}
-                                    </span>
-                                    </vs-td>
+                                        <!-- ajuste de b. 70% -->
+                                        <vs-td>
+                                        <span :class="{ 'text-success': partido.ajuste > 0, 'text-danger': partido.ajuste < 0 }">
+                                            {{ formatoMoneda(calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)) }}
+                                        </span>
+                                        </vs-td>
 
-                                    <vs-td>
-                                        {{ formatoMoneda(
-                                        calcularMontoIgualitario30() + calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)
-                                        ) }}
-                                    </vs-td>
+                                        <vs-td>
+                                            {{ formatoMoneda(
+                                            calcularMontoIgualitario30() + calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)
+                                            ) }}
+                                        </vs-td>
 
-                                    <!-- D. Obtención del voto -->
-                                    <vs-td v-if="distribucion.includes(2)">
-                                        <!-- {{ formatoMoneda(
-                                        (calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)) * 0.5
-                                        ) }} -->
-                                    </vs-td>
+                                        <!-- D. Obtención del voto -->
+                                        <vs-td v-if="distribucion.includes(2)">
+                                            <!-- {{ formatoMoneda(
+                                            (calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)) * factorCalculo
+                                            ) }} -->
+                                        </vs-td>
                                     </vs-tr>
-                                    <!-- Fila de subtotal
-                                    <vs-tr class="font-weight-bold">
+                                    <!-- Fila de subtotal -->
+                                    <!-- <vs-tr class="font-weight-bold">
                                         <vs-td colspan="2" class="text-right">Subtotal:</vs-td>
-                                        <vs-td>{{ calcularTotalPorcentajeVotacion() }}%</vs-td>
+                                        <vs-td>{{ formatoPorcentaje(calcularTotalPorcentajeVotacion())}}</vs-td>
                                         <vs-td>{{ formatoMoneda(calcularMontoIgualitario30() * Partidos_Con_Representacion.length) }}</vs-td>
                                         <vs-td>{{ formatoMoneda(calcularTotalProporcionalB()) }}</vs-td>
                                         <vs-td>{{ formatoMoneda(calcularTotalBConAjuste()) }}</vs-td>
@@ -250,7 +260,30 @@
                                         <!-- C. monto 2% -->
                                         <vs-td>{{ formatoMoneda(partido.monto_2_por_ciento)}}</vs-td>
                                         <!-- ( D = C * 0.5) -->
-                                        <vs-td v-if="distribucion.includes(2)">{{ formatoMoneda(partido.monto_2_por_ciento * 0.5) }}</vs-td>
+                                        <vs-td v-if="distribucion.includes(2)">{{ formatoMoneda(partido.monto_2_por_ciento * factorCalculo) }}</vs-td>
+                                    </vs-tr>
+                                    <vs-tr>
+                                        <vs-td :colspan="6">
+                                            Subtotal
+                                        </vs-td>
+                                        <vs-td :colspan="1">
+                                            {{formatoMoneda(subtotalMonto2PorCiento)}}
+                                        </vs-td>
+                                        <vs-td :colspan="1" v-if="distribucion.includes(2)">
+                                            {{formatoMoneda(subtotalMonto2PorCientoD)}}
+                                        </vs-td>
+                                    </vs-tr>
+                                    <vs-tr >
+                                        <vs-td :colspan="3">
+                                            Candidaturas independientes
+                                        </vs-td>
+                                        <vs-td :colspan="3">
+                                            2% del financiamiento público para actividades tendientes a la obtención del voto.
+                                        </vs-td>
+                                        <!-- Subtotales *0.02-->
+                                        <vs-td :colspan="1">
+                                            <!-- {{formatoMoneda((subTotal_pp_sin_repr_D+subTotal_pp_con_repr_D)*0.02)}} -->
+                                        </vs-td>
                                     </vs-tr>
                                 </template>
                             </vs-table>
@@ -281,6 +314,9 @@ export default {
             Partidos_Con_Representacion: [], // partido con representación de un cálculo
             NewlistCalculos: [], // lista de cálculos en la base de datos
 
+            seleccionados: [], // Para guardar los partidos seleccionados para el ajuste de decimales
+            opcionSelecionadaPorcentaje: null, // Opción selleccionada para el porcentaje 50% Gubernatura o 30% Intermedia
+
             // Variables para la paginacion
             search: '', // Para la busqueda
             page: 1, // Para la paginacion
@@ -298,8 +334,8 @@ export default {
             monto70: '',
             suma: '',
 
-            input_monto_30_por_ciento: '',
-            input_monto_70_por_ciento: '',
+            //input_monto_30_por_ciento: '',
+            //input_monto_70_por_ciento: '',
             
             colors: [
                 {
@@ -325,7 +361,9 @@ export default {
         EventBus.$off('darkMode');
     },
     async mounted() {
-        //Está declarado en la importación de 'methods' - personalizada
+
+        this.opcionSelecionadaPorcentaje = 'gubernatura'; // o 'intermedia'
+
         //const loading = this.$vs.loading();
         this.getCalculos();
         await this.getAnio();
@@ -488,7 +526,7 @@ export default {
                 });
         },
         calcularMontoIgualitario30() {
-            const monto = parseFloat(this.monto30);
+            const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
             const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
             return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
         },
@@ -513,10 +551,46 @@ export default {
             partido.ajuste -= ajusteUnitario;
             }
         },
+        //Ajustar decimal para 70%
+        ajustarDecimal_70porCiento(partido, operacion) {
+            if (this.seleccionados.length !== 2) {
+                this.$vs.notification({
+                    title: 'Aviso',
+                    text: 'Debes seleccionar exactamente 2 partidos para ajustar',
+                    color: 'warning'
+                });
+                return;
+            }
+
+            if (!this.seleccionados.includes(partido.id_partido)) {
+                this.$vs.notification({
+                    title: 'Aviso',
+                    text: 'Solo puedes ajustar partidos seleccionados',
+                    color: 'warning'
+                });
+                return;
+            }
+
+            const ajusteUnitario = 0.01;
+            if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+
+            if (operacion === 'sumar') {
+                partido.ajuste += ajusteUnitario;
+                // Aplicar el ajuste inverso al otro partido seleccionado
+                const otroPartido = this.Partidos_Con_Representacion.find(p => 
+                    p.id_partido !== partido.id_partido && 
+                    this.seleccionados.includes(p.id_partido)
+                );
+                if (otroPartido) {
+                    if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
+                    otroPartido.ajuste -= ajusteUnitario;
+                }
+            }
+        },
         calcularMontoProporcionalB(porcentajePartido) {
-            const porcentaje = parseFloat(porcentajePartido);
+            const porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
             const totalPorcentajes = this.sumaTotalPorcentajes;
-            const monto = parseFloat(this.monto70);
+            const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
             return (monto * porcentaje) / totalPorcentajes;
@@ -527,6 +601,8 @@ export default {
             return base + (ajuste || 0);
         },
 
+
+        // Formatea a moneda
         formatoMoneda(valor) {
             return new Intl.NumberFormat('es-MX', {
             style: 'currency',
@@ -536,6 +612,9 @@ export default {
         }
     },
     computed:{
+        /*
+        *Retorna la suma total de los porcentajes de votación de los partidos con representación en el Congreso
+        */
         sumaTotalPorcentajes() {
             return this.Partidos_Con_Representacion.reduce((total, partido) => {
             // Convierte a número y evita NaN si el input está vacío
@@ -545,10 +624,46 @@ export default {
         },
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
+        },
+        /*
+        *Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
+        *Partidos sin representación en el Congreso
+        */
+        subtotalMonto2PorCiento() {
+            if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+                return 0;
+            }
+            return this.Partidos_Sin_Representacion.reduce((total, partido) => {
+                return total + (parseFloat(partido.monto_2_por_ciento) || 0);
+            }, 0);
+        },
+        /*
+        *Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
+        *Partidos sin representación en el Congreso
+        */
+        subtotalMonto2PorCientoD() {
+            if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+                return 0;
+            }
+            return this.Partidos_Sin_Representacion.reduce((total, partido) => {
+                return total + (parseFloat(partido.monto_2_por_ciento * 0.5) || 0);
+            }, 0);
+        },
+        /*
+        * cambia el factor de cálculo para Financiamiento público para actividades tendientes a la obtención del voto
+        * 0.50 (OPCIÓN A. 50% GUBERNATURA)
+        * 0.30 (OPCIÓN B. 30 % INTERMEDIA)
+        */
+        factorCalculo() {
+            if (this.opcionSelecionadaPorcentaje === 'gubernatura') {
+                return 0.5;  // 50%
+            } else if (this.opcionSelecionadaPorcentaje === 'intermedia') {
+                return 0.3;  // 30%
+            }
+            return 0;  // Valor por defecto
         }
     }
 }
-
 </script>
 
 <style>
@@ -613,5 +728,9 @@ export default {
     /* o un valor fijo como 800px */
     max-width: 1000px;
     padding: 20px;
+}
+/* Seleccion de filas Ajuste de decimales*/
+.vs-table--tbody-table tr.vs-table--tr-selected {
+    background-color: rgba(var(--vs-primary), 0.1);
 }
 </style>

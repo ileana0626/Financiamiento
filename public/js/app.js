@@ -11343,6 +11343,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       NewlistCalculos: [],
       // lista de cálculos en la base de datos
 
+      seleccionados: [],
+      // Para guardar los partidos seleccionados para el ajuste de decimales
+      opcionSelecionadaPorcentaje: null,
+      // Opción selleccionada para el porcentaje 50% Gubernatura o 30% Intermedia
+
       // Variables para la paginacion
       search: '',
       // Para la busqueda
@@ -11362,8 +11367,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       monto30: '',
       monto70: '',
       suma: '',
-      input_monto_30_por_ciento: '',
-      input_monto_70_por_ciento: '',
+      //input_monto_30_por_ciento: '',
+      //input_monto_70_por_ciento: '',
+
       colors: [{
         color: 'warn'
       }],
@@ -11395,15 +11401,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            //Está declarado en la importación de 'methods' - personalizada
+            _this2.opcionSelecionadaPorcentaje = 'gubernatura'; // o 'intermedia'
+
             //const loading = this.$vs.loading();
             _this2.getCalculos();
-            _context.next = 3;
+            _context.next = 4;
             return _this2.getAnio();
-          case 3:
-            _context.next = 5;
+          case 4:
+            _context.next = 6;
             return _this2.obtenerDatos(11);
-          case 5:
+          case 6:
           case "end":
             return _context.stop();
         }
@@ -11597,7 +11604,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
-      var monto = parseFloat(this.monto30);
+      var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
       var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
       return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
     },
@@ -11620,10 +11627,44 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.ajuste -= ajusteUnitario;
       }
     },
+    //Ajustar decimal para 70%
+    ajustarDecimal_70porCiento: function ajustarDecimal_70porCiento(partido, operacion) {
+      var _this8 = this;
+      if (this.seleccionados.length !== 2) {
+        this.$vs.notification({
+          title: 'Aviso',
+          text: 'Debes seleccionar exactamente 2 partidos para ajustar',
+          color: 'warning'
+        });
+        return;
+      }
+      if (!this.seleccionados.includes(partido.id_partido)) {
+        this.$vs.notification({
+          title: 'Aviso',
+          text: 'Solo puedes ajustar partidos seleccionados',
+          color: 'warning'
+        });
+        return;
+      }
+      var ajusteUnitario = 0.01;
+      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (operacion === 'sumar') {
+        partido.ajuste += ajusteUnitario;
+        // Aplicar el ajuste inverso al otro partido seleccionado
+        var otroPartido = this.Partidos_Con_Representacion.find(function (p) {
+          return p.id_partido !== partido.id_partido && _this8.seleccionados.includes(p.id_partido);
+        });
+        if (otroPartido) {
+          if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
+          otroPartido.ajuste -= ajusteUnitario;
+        }
+      }
+    },
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
-      var porcentaje = parseFloat(porcentajePartido);
+      var porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
       var totalPorcentajes = this.sumaTotalPorcentajes;
-      var monto = parseFloat(this.monto70);
+      var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
+
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
       return monto * porcentaje / totalPorcentajes;
     },
@@ -11631,6 +11672,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var base = this.calcularMontoProporcionalB(porcentajePartido);
       return base + (ajuste || 0);
     },
+    // Formatea a moneda
     formatoMoneda: function formatoMoneda(valor) {
       return new Intl.NumberFormat('es-MX', {
         style: 'currency',
@@ -11640,6 +11682,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     }
   },
   computed: {
+    /*
+    *Retorna la suma total de los porcentajes de votación de los partidos con representación en el Congreso
+    */
     sumaTotalPorcentajes: function sumaTotalPorcentajes() {
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
         // Convierte a número y evita NaN si el input está vacío
@@ -11651,6 +11696,44 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
         return sum + (p.ajuste || 0);
       }, 0);
+    },
+    /*
+    *Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
+    *Partidos sin representación en el Congreso
+    */
+    subtotalMonto2PorCiento: function subtotalMonto2PorCiento() {
+      if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+        return 0;
+      }
+      return this.Partidos_Sin_Representacion.reduce(function (total, partido) {
+        return total + (parseFloat(partido.monto_2_por_ciento) || 0);
+      }, 0);
+    },
+    /*
+    *Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
+    *Partidos sin representación en el Congreso
+    */
+    subtotalMonto2PorCientoD: function subtotalMonto2PorCientoD() {
+      if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+        return 0;
+      }
+      return this.Partidos_Sin_Representacion.reduce(function (total, partido) {
+        return total + (parseFloat(partido.monto_2_por_ciento * 0.5) || 0);
+      }, 0);
+    },
+    /*
+    * cambia el factor de cálculo para Financiamiento público para actividades tendientes a la obtención del voto
+    * 0.50 (OPCIÓN A. 50% GUBERNATURA)
+    * 0.30 (OPCIÓN B. 30 % INTERMEDIA)
+    */
+    factorCalculo: function factorCalculo() {
+      if (this.opcionSelecionadaPorcentaje === 'gubernatura') {
+        return 0.5; // 50%
+      } else if (this.opcionSelecionadaPorcentaje === 'intermedia') {
+        return 0.3; // 30%
+      }
+
+      return 0; // Valor por defecto
     }
   }
 });
@@ -26498,27 +26581,27 @@ var render = function render() {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  Año fiscal\n                              ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                Año fiscal\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  Fecha de Publicación de la UMA\n                              ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                Fecha de Publicación de la UMA\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  UMA\n                              ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                UMA\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  Partidos sin representación en el Congreso\n                              ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                Partidos sin representación en el Congreso\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  Partidos con representación en el Congreso\n                              ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                Partidos con representación en el Congreso\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                  Calcular\n                              ")])], 1)];
+        }, [_vm._v("\n                                Calcular\n                            ")])], 1)];
       },
       proxy: true
     }, {
@@ -26535,15 +26618,15 @@ var render = function render() {
             }
           }, [_c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                  " + _vm._s(tr.anioFiscal) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(tr.anioFiscal) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                  " + _vm._s(tr.fecha_pub) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(tr.fecha_pub) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                  " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                  " + _vm._s(tr.pp_sin_repr_siglas) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(tr.pp_sin_repr_siglas) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                  " + _vm._s(tr.pp_con_repr_siglas) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(tr.pp_con_repr_siglas) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight text-center"
           }, [_c("div", {
             staticStyle: {
@@ -26576,7 +26659,7 @@ var render = function render() {
           staticStyle: {
             "background-color": "var(--iee-white) !important"
           }
-        }, [_vm._v("\n                              Sin resultados...\n                          ")])];
+        }, [_vm._v("\n                            Sin resultados...\n                        ")])];
       },
       proxy: true
     }, {
@@ -26656,7 +26739,7 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n                          " + _vm._s(item.anio) + "\n                      ")]);
+    }, [_vm._v("\n                        " + _vm._s(item.anio) + "\n                    ")]);
   })], 2) : _vm._e(), _vm._v(" "), _c("label", {
     staticClass: "col-form-label mt-4"
   }, [_vm._v("Tipo de distribución de Financiamiento:")]), _vm._v(" "), _vm.cat_tipo_distribucion.length > 0 ? _c("vs-select", {
@@ -26697,7 +26780,7 @@ var render = function render() {
           $event.stopPropagation();
         }
       }
-    }, [_vm._v("\n                          " + _vm._s(item.nombre) + "\n                      ")]);
+    }, [_vm._v("\n                        " + _vm._s(item.nombre) + "\n                    ")]);
   })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", [_c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
@@ -26732,7 +26815,32 @@ var render = function render() {
       },
       expression: "monto70"
     }
-  })], 1)]), _vm._v(" "), _c("vs-table", {
+  })], 1), _vm._v(" "), _vm.distribucion.includes(2) ? _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("vs-select", {
+    staticClass: "mb-4",
+    staticStyle: {
+      "max-width": "300px"
+    },
+    attrs: {
+      placeholder: "Seleccione una opción"
+    },
+    model: {
+      value: _vm.opcionSelecionadaPorcentaje,
+      callback: function callback($$v) {
+        _vm.opcionSelecionadaPorcentaje = $$v;
+      },
+      expression: "opcionSelecionadaPorcentaje"
+    }
+  }, [_c("vs-option", {
+    attrs: {
+      value: "gubernatura"
+    }
+  }, [_vm._v("A. 50% Gubernatura")]), _vm._v(" "), _c("vs-option", {
+    attrs: {
+      value: "intermedia"
+    }
+  }, [_vm._v("B. 30% Intermedia")])], 1)], 1) : _vm._e()]), _vm._v(" "), _c("vs-table", {
     staticClass: "tabla-ajustada mt-4",
     scopedSlots: _vm._u([{
       key: "thead",
@@ -26789,7 +26897,18 @@ var render = function render() {
             attrs: {
               data: partido
             }
-          }, [_c("vs-td", [_vm._v(_vm._s(partido.siglas))]), _vm._v(" "), _c("vs-td", [_c("img", {
+          }, [_c("vs-td", [_c("vs-checkbox", {
+            attrs: {
+              val: partido.id_partido
+            },
+            model: {
+              value: _vm.seleccionados,
+              callback: function callback($$v) {
+                _vm.seleccionados = $$v;
+              },
+              expression: "seleccionados"
+            }
+          }), _vm._v("\n                                        " + _vm._s(partido.siglas) + "\n                                    ")], 1), _vm._v(" "), _c("vs-td", [_c("img", {
             staticClass: "img-fluid rounded",
             staticStyle: {
               "max-width": "40px",
@@ -26812,7 +26931,7 @@ var render = function render() {
               },
               expression: "partido.porcentaje_votacion"
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                  ")]), _vm._v(" "), _c("vs-td", [_c("div", {
+          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center justify-content-between"
           }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
             staticClass: "d-flex gap-1"
@@ -26849,7 +26968,7 @@ var render = function render() {
               "text-success": partido.ajuste > 0,
               "text-danger": partido.ajuste < 0
             }
-          }, [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                  ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                  ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td") : _vm._e()], 1);
+          }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td") : _vm._e()], 1);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
           return _c("vs-tr", {
             key: "partido_con_repr-" + i,
@@ -26872,16 +26991,40 @@ var render = function render() {
             attrs: {
               colspan: "4"
             }
-          }, [_vm._v("2% del monto de financiamiento público para actividades ordinarias permanentes del año \n                                          "), _c("span", {
+          }, [_vm._v("2% del monto de financiamiento público para actividades ordinarias permanentes del año \n                                        "), _c("span", {
             staticStyle: {
               color: "red !important",
               "font-weight": "bold !important"
             }
-          }, [_vm._v(_vm._s(_vm.selectedCalculo.anioFiscal))]), _vm._v(", para partidos políticos locales que habiendo conservado el registro, no cuentan con representación en el Congreso Local\t\t\n                                      ")]), _vm._v(" "), _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento)))]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento * 0.5)))]) : _vm._e()], 1);
-        })];
+          }, [_vm._v(_vm._s(_vm.selectedCalculo.anioFiscal))]), _vm._v(", para partidos políticos locales que habiendo conservado el registro, no cuentan con representación en el Congreso Local\t\t\n                                    ")]), _vm._v(" "), _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento)))]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento * _vm.factorCalculo)))]) : _vm._e()], 1);
+        }), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+          attrs: {
+            colspan: 6
+          }
+        }, [_vm._v("\n                                        Subtotal\n                                    ")]), _vm._v(" "), _c("vs-td", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.subtotalMonto2PorCiento)) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.subtotalMonto2PorCientoD)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+          attrs: {
+            colspan: 3
+          }
+        }, [_vm._v("\n                                        Candidaturas independientes\n                                    ")]), _vm._v(" "), _c("vs-td", {
+          attrs: {
+            colspan: 3
+          }
+        }, [_vm._v("\n                                        2% del financiamiento público para actividades tendientes a la obtención del voto.\n                                    ")]), _vm._v(" "), _c("vs-td", {
+          attrs: {
+            colspan: 1
+          }
+        })], 1)];
       },
       proxy: true
-    }], null, false, 360801612)
+    }], null, false, 3150853560)
   })], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
@@ -41707,7 +41850,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n", ""]);
 
 // exports
 
