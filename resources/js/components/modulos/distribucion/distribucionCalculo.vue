@@ -124,6 +124,14 @@
                                 </div>
                             </div>
                         </div>
+                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="col-form-label text-muted"> 70 %Monto total efectivo</label>
+                                    <p class="font-semibold">{{ selectedCalculo.monto_70_por_ciento ? formatCurrency(selectedCalculo.monto_70_por_ciento) : 'No disponible' }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div> -->
                     <div>
                         <div>
@@ -158,8 +166,37 @@
                                 </vs-option>
                             </vs-select>
                         </div>
-
-
+                        <!-- Variables extras para esribir manualmente-->
+                         <div v-if="distribucion.includes(1)" name="Campos extras">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="col-form-label">Monto Total Efectivo (30%)”</label>
+                                    <vs-input type="text"
+                                        v-model="input_monto_30_por_ciento"
+                                        placeholder="$0.00"
+                                        @blur="formatear_Dist_30_por_ciento">
+                                    </vs-input>
+                                    <div class="danger-message">
+                                        <template v-if="error_dist_30_por_ciento.length > 0">
+                                            {{ error_dist_30_por_ciento }}
+                                        </template>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="col-form-label">Monto Total Efectivo (70%)”</label>
+                                    <vs-input type="text"
+                                        v-model="input_monto_70_por_ciento"
+                                        placeholder="$0.00"
+                                        @blur="formatear_Dist_70_por_ciento">
+                                    </vs-input>
+                                    <div class="danger-message">
+                                        <template v-if="error_dist_70_por_ciento.length > 0">
+                                            {{ error_dist_70_por_ciento }}
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
 
                         <!-- formularios extras -->
                         <div v-if="distribucion.includes(1)" class="row px-4">
@@ -168,6 +205,7 @@
                             <vs-table class="tabla-ajustada">
                                 <template #thead>
                                     <vs-tr>
+                                        <!-- 1 -->
                                         <vs-th style="background-color: var(--iee-white);">
                                             Siglas
                                         </vs-th>
@@ -187,6 +225,7 @@
                                         <vs-th style="background-color: var(--iee-white);">
                                             Monto Total Efectivo (70%)
                                         </vs-th>
+                                        <!-- 7 -->
                                         <vs-th style="background-color: var(--iee-white);">
                                             B. 70% conforme al % de votación
                                         </vs-th>
@@ -202,10 +241,11 @@
                                     </vs-tr>
                                 </template>
                                 <template #tbody>
-                                    <!-- Partidos sin representación -->
+                                    <!-- Partidos con representación -->
                                     <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" 
-                                        :key="'sin-rep-'+i"
+                                        :key="'con-rep-'+i"
                                         :data="partido">
+                                        <!-- 1 -->
                                         <vs-td>
                                             {{ partido.siglas }}
                                         </vs-td>
@@ -232,7 +272,10 @@
                                         </vs-td> 
                                         <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
                                         <vs-td>
-                                            {{ (partido.monto30/selectedCalculo.num_pp_con_repr ) || 'N/A' }}
+                                            <!-- En base al Cálculo -->
+                                            {{ (selectedCalculo.monto_30_por_ciento/selectedCalculo.num_pp_con_repr ) || 'N/A' }}
+                                            <!-- En base a monto escrito -->
+                                            <!-- {{ (partido.monto30/selectedCalculo.num_pp_con_repr ) || 'N/A' }} -->
                                         </vs-td>
 
                                         <vs-td>
@@ -243,8 +286,12 @@
                                             </vs-input>
                                         </vs-td> 
                                         <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
+                                        <!-- 7 -->
                                         <vs-td>
-                                            {{ ((partido.monto70*partido.porcentaje_votacion)/suma ) || 'N/A' }}
+                                            <!-- En base a Cálculo -->
+                                            {{ ((selectedCalculo.monto_70_por_ciento*partido.porcentaje_votacion)/100) || 'N/A' }}
+                                            <!-- En base a monto escrito -->
+                                            <!-- {{ ((partido.monto70*partido.porcentaje_votacion)/suma ) || 'N/A' }} -->
                                         </vs-td>
                                     </vs-tr>
                                 </template>
@@ -274,32 +321,50 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             // Variables para listar
-            selectedCalculo: {},
-            Partidos_Sin_Representacion: [],
-            Partidos_Con_Representacion: [],
-            NewlistCalculos: [],
+            selectedCalculo: {}, // objeto para almacenar el cálculo seleccionado de la tabla
+            // selectedCalculo: this.selectedCalculo.map(item => ({ ...item,
+            //     dist_monto_30_por_ciento: '',
+            //     dist_monto_70_por_ciento: '',
+            //  })),
+            Partidos_Sin_Representacion: [], // partido sin representación de un cálculo
+            Partidos_Con_Representacion: [], // partido con representación de un cálculo
+            NewlistCalculos: [], // lista de cálculos en la base de datos
+
             // Variables para la paginacion
             search: '', // Para la busqueda
             page: 1, // Para la paginacion
             max: 10, // Para la paginacion
             active: false, // para el modal
+            // Variables para actualizar Cálculo Financiamiento
+            dist_30_por_ciento: '',
+
             input1: '',
             input2: '',
             checkbox1: false,
+            // Variables para actualizar Distribución Financiamiento
             anio: '',
-            catAnio: [],
-            errorAnio: '',
             monto30: '',
             monto70: '',
             suma: '',
+            input_monto_30_por_ciento: '',
+            input_monto_70_por_ciento: '',
+            
             colors: [
                 {
                     color: 'warn'
                 }
             ],
+            // Catálogos
+            catAnio: [],
             distribucion: [],
             cat_tipo_distribucion: [],
+
+            // Mensajes de error y validación
+            error = false, // Para validar los campos al momento de guardar
+            errorAnio: '',
             errorDistribucion: '',
+            error_dist_30_por_ciento: '',
+            error_dist_70_por_ciento: '',
         }
     },
     created() {
@@ -464,7 +529,58 @@ export default {
                 }).catch(() => {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
+        },
+        /**
+         * Valida los campos del formulario
+         * @returns {void}
+         */
+         validarCampos() {
+            this.error = false;
+            if (!this.anio) {
+                this.errorAnio = 'El año fiscal es obligatorio';
+                this.error = true;
+            }
+            if (this.input_monto_30_por_ciento === '') {
+                this.error_dist_30_por_ciento = 'Ingrese una cantidad válida. Ejemplo: 0.00';
+                this.error = true;
+            }
+            if (this.input_monto_70_por_ciento === '') {
+                this.error_dist_70_por_ciento = 'Ingrese una cantidad válida. Ejemplo: 0.00';
+                this.error = true;
+            }
+        },
+
+        /**
+         * Limpia todos los mensajes de error
+         * @returns {void}
+         */
+        limpiarErrores() {
+            this.error = false;
+            this.errorAnio = '';
+            this.errorDistribucion = '';
+            this.error_dist_30_por_ciento = '';
+            this.error_dist_70_por_ciento = '';
+        },
+        /* Método genérico para formatear a moneda */
+        formatearMoneda(valor) {
+        if (isNaN(parseFloat(valor))) return '$0.00';
+        const numero = parseFloat(valor);
+        return numero.toLocaleString('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+    },
+    computed: {
+        formatear_Dist_30_por_ciento() {
+            this.selectedCalculo.dist_monto_30_por_ciento = this.formatearMoneda(this.input_monto_30_por_ciento);
+        },
+        formatear_Dist_70_por_ciento() {
+            this.selectedCalculo.dist_monto_70_por_ciento = this.formatearMoneda(this.input_monto_70_por_ciento);
         }
+        
     }
 }
 

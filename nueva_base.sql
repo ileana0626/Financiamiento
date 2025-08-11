@@ -14036,9 +14036,6 @@ CREATE TABLE calculo_partido_sin_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
     monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
-    
-    dist_
-    
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -14050,10 +14047,7 @@ DROP TABLE IF EXISTS calculo_partido_con_repr;
 CREATE TABLE calculo_partido_con_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
-    
-    dist_monto_30_por_ciento  DECIMAL(30,15) NOT NULL COMMENT' 30% del monto total efectovo dividido entre cada partido político con representación',
-    
-    
+    monto_30_por_ciento  DECIMAL(30,15) NOT NULL COMMENT' 30% del monto total efectovo dividido entre cada partido político con representación',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
