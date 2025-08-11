@@ -186,14 +186,26 @@ class SolicitudController extends Controller
         try{
             DB::enableQueryLog();
             $id = $request->input('id', null); // Valor por defecto null
-            $rpta = DB::select('call sp_get_Partidos_Calculo_porId(?)', [$id]);
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
             // Obtener y loguear la consulta
             $queryLog = DB::getQueryLog();
             Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
             return response()->json([
                 'success' => true,
-                'partidosSinRep' => $rpta,
-                'partidosConRep' => $rpta,
+                'partidosSinRep' => $partidosSinRep,
+                'partidosConRep' => $partidosConRep,
                 'message' => 'Datos de los partidos obtenidos correctamente'
             ]);
         }

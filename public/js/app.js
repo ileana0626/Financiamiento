@@ -11369,8 +11369,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }],
       // Catálogos
       catAnio: [],
-      distribucion: [],
       cat_tipo_distribucion: [],
+      distribucion: [],
+      // Maneja el tipo de distribución seleccionada
+      // Variables de error
+      errorAnio: '',
       errorDistribucion: '',
       error_dist_30_por_ciento: '',
       error_dist_70_por_ciento: ''
@@ -11467,10 +11470,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
-      var url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
+
+      //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
+      var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
       this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
       this.datosCalculoSeleccionado = {};
-      //this.Partidos_Sin_Representacion = {};
+      this.Partidos_Sin_Representacion = {};
       this.Partidos_Con_Representacion = {};
       //console.log(calculo_tr.id);
       this.active = true; // activa el modal
@@ -11482,9 +11487,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }
       }).then(function (response) {
         var _response$data3;
+        //console.log('Respuesta completa del servidor:', response);
+        //console.log('Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
-          //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
+          _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
           _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
             return _objectSpread(_objectSpread({}, p), {}, {
               ajuste: 0
@@ -26691,7 +26698,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("\n                          " + _vm._s(item.nombre) + "\n                      ")]);
-  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", {
+  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", [_c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
     staticClass: "col-12"
@@ -26725,20 +26732,57 @@ var render = function render() {
       },
       expression: "monto70"
     }
-  })], 1)]) : _vm._e(), _vm._v(" "), _c("vs-table", {
+  })], 1)]), _vm._v(" "), _c("vs-table", {
     staticClass: "tabla-ajustada mt-4",
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
-        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", [_vm._v("% de votación")]), _vm._v(" "), _c("vs-th", [_vm._v("A. 30% igualitaria")]), _vm._v(" "), _c("vs-th", [_vm._v("B. 70% conforme % votación")]), _vm._v(" "), _c("vs-th", [_vm._v("Total de B. después del ajuste")]), _vm._v(" "), _c("vs-th", [_vm._v("C. Financiamiento público para actividades ordinarias permanentes (A+B)")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", [_vm._v("D. Obtención del voto")]) : _vm._e()], 1)];
+        return [_c("vs-tr", [_c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("% de votación")]), _vm._v(" "), _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("A. 30% igualitaria")]), _vm._v(" "), _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("B. 70% conforme % votación")]), _vm._v(" "), _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("Total de B. después del ajuste")]), _vm._v(" "), _c("vs-th", {
+          staticStyle: {
+            "max-width": "200px",
+            "white-space": "normal",
+            "word-break": "break-word"
+          },
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("C. Financiamiento público para actividades ordinarias permanentes (C = A + B)")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("D. Obtención del voto ( D = C * 0.5)")]) : _vm._e()], 1)];
       },
       proxy: true
     }, {
       key: "tbody",
       fn: function fn() {
-        return _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+        return [_vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-tr", {
-            key: "partido-" + i,
+            key: "partido_sin_repr-" + i,
             "class": {
               "bg-warning-light": partido.ajuste !== 0
             },
@@ -26768,7 +26812,7 @@ var render = function render() {
               },
               expression: "partido.porcentaje_votacion"
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                          ")]), _vm._v(" "), _c("vs-td", [_c("div", {
+          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                  ")]), _vm._v(" "), _c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center justify-content-between"
           }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
             staticClass: "d-flex gap-1"
@@ -26805,12 +26849,40 @@ var render = function render() {
               "text-success": partido.ajuste > 0,
               "text-danger": partido.ajuste < 0
             }
-          }, [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])], 1);
-        });
+          }, [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                  ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                      " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                  ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td") : _vm._e()], 1);
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
+          return _c("vs-tr", {
+            key: "partido_con_repr-" + i,
+            attrs: {
+              data: partido
+            }
+          }, [_c("vs-td", [_vm._v(_vm._s(partido.siglas))]), _vm._v(" "), _c("vs-td", [_c("img", {
+            staticClass: "img-fluid rounded",
+            staticStyle: {
+              "max-width": "100%",
+              "max-height": "100%",
+              "object-fit": "contain"
+            },
+            attrs: {
+              src: "/img/logos/" + partido.logo,
+              alt: partido.siglas,
+              onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+            }
+          })]), _vm._v(" "), _c("vs-td", {
+            attrs: {
+              colspan: "4"
+            }
+          }, [_vm._v("2% del monto de financiamiento público para actividades ordinarias permanentes del año \n                                          "), _c("span", {
+            staticStyle: {
+              color: "red !important",
+              "font-weight": "bold !important"
+            }
+          }, [_vm._v(_vm._s(_vm.selectedCalculo.anioFiscal))]), _vm._v(", para partidos políticos locales que habiendo conservado el registro, no cuentan con representación en el Congreso Local\t\t\n                                      ")]), _vm._v(" "), _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento)))]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v(_vm._s(_vm.formatoMoneda(partido.monto_2_por_ciento * 0.5)))]) : _vm._e()], 1);
+        })];
       },
       proxy: true
-    }])
-  })], 1)])], 1)]], 2);
+    }], null, false, 360801612)
+  })], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -41635,7 +41707,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n", ""]);
 
 // exports
 
