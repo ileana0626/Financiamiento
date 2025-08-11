@@ -103,162 +103,113 @@
         <template>
             <div class="center">
                 <vs-dialog v-model="active" overflow-hidden width="90%">
-                    <!-- HEADER -->
+  <!-- HEADER -->
                     <template #header>
-                        <h4 class="not-margin">
-                            Distribución del cálculo
-                        </h4>
+                        <h4 class="not-margin">Distribución del cálculo</h4>
                     </template>
-                    <!--<div name="Informacion_Calculo" class="p-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="col-form-label text-muted">Año fiscal</label>
-                                    <p class="font-semibold">{{ selectedCalculo.anioFiscal || 'No disponible' }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="col-form-label text-muted"> 30 %Monto total efectivo</label>
-                                    <p class="font-semibold">{{ selectedCalculo.monto_30_por_ciento ? formatCurrency(selectedCalculo.monto_30_por_ciento) : 'No disponible' }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div>
-                        <div>
-                            <label class="col-form-label">Selecciona un año fiscal: </label>
-                            <vs-select placeholder="Seleccione una opción" v-model="anio" v-if="catAnio.length > 0"
+
+                    <div class="px-4">
+                        <!-- Año fiscal -->
+                        <label class="col-form-label">Selecciona un año fiscal:</label>
+                        <vs-select v-model="anio" placeholder="Seleccione una opción" v-if="catAnio.length > 0"
                                 filter :color="colors[0].color" autocomplete="off">
-                                <template #message-danger v-if="errorAnio.length > 0">
-                                    {{ errorAnio }}
-                                </template>
-                                <vs-option v-for="(item, index) in catAnio" :key="index" :label="item.anio"
-                                    :value="item.anio">
-                                    {{ item.anio }}
-                                </vs-option>
-                            </vs-select>
-                        </div>
-                        <!-- <div>
-                            <vs-button color="primary" @click="">Generar tabla de distribución</vs-button>
-                        </div> -->
+                        <template #message-danger v-if="errorAnio.length > 0">{{ errorAnio }}</template>
+                        <vs-option v-for="(item, index) in catAnio" :key="index" :label="item.anio" :value="item.anio">
+                            {{ item.anio }}
+                        </vs-option>
+                        </vs-select>
 
-                        <div>
-                            <label class="col-form-label">Tipo de distribución de Financiamiento</label>
-                            <vs-select multiple filter
+                        <!-- Tipo de distribución -->
+                        <label class="col-form-label mt-4">Tipo de distribución de Financiamiento:</label>
+                        <vs-select multiple filter
                                 :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                v-model="distribucion" v-if="cat_tipo_distribucion.length > 0" autocomplete="off"
+                                v-model="distribucion" v-if="cat_tipo_distribucion.length > 0"
                                 :color="colors[0].color" @click.native.stop>
-                                <template #message-danger v-if="errorDistribucion.length > 0">
-                                    {{ errorDistribucion }}
-                                </template>
-                                <vs-option v-for="(item, index) in cat_tipo_distribucion" :key="index" :label="item.nombre"
-                                    :value="item.id_tipo" @click.native.stop>
-                                    {{ item.nombre }}
-                                </vs-option>
-                            </vs-select>
+                        <template #message-danger v-if="errorDistribucion.length > 0">{{ errorDistribucion }}</template>
+                        <vs-option v-for="(item, index) in cat_tipo_distribucion" :key="index"
+                                    :label="item.nombre" :value="item.id_tipo" @click.native.stop>
+                            {{ item.nombre }}
+                        </vs-option>
+                        </vs-select>
+
+                        <!-- Formulario principal -->
+                        <div v-if="distribucion.includes(1)" class="row mt-4">
+                        <div class="col-12">
+                            <h5>Financiamiento público para actividades ordinarias permanentes</h5>
                         </div>
 
+                        <!-- Montos globales -->
+                        <div class="col-md-6">
+                            <label>Monto Total Efectivo (30%)</label>
+                            <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Monto Total Efectivo (70%)</label>
+                            <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
+                        </div>
+                        </div>
 
+                        <!-- Tabla de distribución -->
+                        <vs-table class="tabla-ajustada mt-4">
+                        <template #thead>
+                            <vs-tr>
+                            <vs-th>Siglas</vs-th>
+                            <vs-th>Emblema</vs-th>
+                            <vs-th>% de votación</vs-th>
+                            <vs-th>A. 30% igualitaria</vs-th>
+                            <vs-th>B. 70% conforme % votación</vs-th>
+                            <vs-th>C. Financiamiento público para actividades ordinarias permanentes (A+B)</vs-th>
+                            <vs-th v-if="distribucion.includes(2)">D. Obtención del voto</vs-th>
+                            </vs-tr>
+                        </template>
 
-                        <!-- formularios extras -->
-                        <div v-if="distribucion.includes(1)" class="row px-4">
-                            <h5 class="mt-4">Financiamiento público para actividades ordinarias permanentes</h5>
-                            <h5 v-if="distribucion.includes(2)">Financiamiento público para actividades tendientes a la obtención del voto</h5>
-                            <vs-table class="tabla-ajustada">
-                                <template #thead>
-                                    <vs-tr>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            Siglas
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            Emblema Partido Político
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            % de votación de partido político en elección inmediata anterior de
-                                            diputaciones
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            Monto Total Efectivo (30%)” 
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            A. 30% en forma igualitaria
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            Monto Total Efectivo (70%)
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            B. 70% conforme al % de votación
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            Total de B. después del ajuste
-                                        </vs-th>
-                                        <vs-th style="background-color: var(--iee-white);">
-                                            C. Financiamiento público para actividades ordinarias permanentes (A+B)
-                                        </vs-th>
-                                        <vs-th v-if="distribucion.includes(2)" style="background-color: var(--iee-white);">
-                                            D. Financiamiento público para actividades tendientes a la obtención del voto
-                                        </vs-th>
-                                    </vs-tr>
-                                </template>
-                                <template #tbody>
-                                    <!-- Partidos sin representación -->
-                                    <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" 
-                                        :key="'sin-rep-'+i"
-                                        :data="partido">
-                                        <vs-td>
-                                            {{ partido.siglas }}
-                                        </vs-td>
-                                        <vs-td>
-                                            <img :src="'/img/logos/' + partido.logo" :alt="partido.siglas" 
-                                            class="img-fluid rounded"
-                                            style="max-width: 40px; max-height: 40px; width: auto; height: auto;"
-                                            onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-                                        >
-                                        </vs-td>
-                                        <vs-td>
-                                            <vs-input type="text"
-                                                v-model="partido.porcentaje_votacion"
-                                                placeholder="0.00"
-                                            >
-                                            </vs-input>
-                                        </vs-td> 
-                                        <vs-td>
-                                            <vs-input type="text"
-                                                v-model="partido.monto30"
-                                                placeholder="0.00"
-                                            >
-                                            </vs-input>
-                                        </vs-td> 
-                                        <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
-                                        <vs-td>
-                                            {{ (partido.monto30/selectedCalculo.num_pp_con_repr ) || 'N/A' }}
-                                        </vs-td>
+                        <template #tbody>
+                            <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" :key="'partido-' + i" :data="partido">
+                            <!-- Siglas -->
+                            <vs-td>{{ partido.siglas }}</vs-td>
 
-                                        <vs-td>
-                                            <vs-input type="text"
-                                                v-model="partido.monto70"
-                                                placeholder="0.00"
-                                            >
-                                            </vs-input>
-                                        </vs-td> 
-                                        <!-- <vs-td>{{ partido.porcentaje_votacion || 'N/A'}}</vs-td> -->
-                                        <vs-td>
-                                            {{ ((partido.monto70*partido.porcentaje_votacion)/suma ) || 'N/A' }}
-                                        </vs-td>
-                                    </vs-tr>
-                                </template>
-                            </vs-table>
-                     </div>
-                     <!--
-                        <div v-if="distribucion.includes(2)" class="row px-4">
-                            <h5>Financiamiento público para actividades tendientes a la obtención del voto</h5>
-                            <v-table>
+                            <!-- Logo -->
+                            <vs-td>
+                                <img :src="'/img/logos/' + partido.logo"
+                                    :alt="partido.siglas"
+                                    class="img-fluid rounded"
+                                    style="max-width: 40px; max-height: 40px;"
+                                    onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'">
+                            </vs-td>
 
-                            </v-table>
-                        </div> -->
+                            <!-- % de votación -->
+                            <vs-td>
+                                <vs-input v-model="partido.porcentaje_votacion" type="text" placeholder="0.00" />
+                            </vs-td>
+
+                            <!-- A. Monto igualitario -->
+                            <vs-td>
+                                {{ formatoMoneda(calcularMontoIgualitario30()) }}
+                            </vs-td>
+
+                            <!-- B. Monto proporcional -->
+                            <vs-td>
+                                {{ formatoMoneda(calcularMontoPorcentual70(partido.porcentaje_votacion)) }}
+                            </vs-td>
+
+                            <!-- C. Total (A + B) -->
+                            <vs-td>
+                                {{ formatoMoneda(
+                                calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)
+                                ) }}
+                            </vs-td>
+
+                            <!-- D. Obtención del voto -->
+                            <!-- <vs-td v-if="distribucion.includes(2)">
+                                {{ formatoMoneda(
+                                (calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)) * 0.5
+                                ) }}
+                            </vs-td> -->
+                            </vs-tr>
+                        </template>
+                        </vs-table>
                     </div>
-                </vs-dialog>
+                    </vs-dialog>
             </div>
         </template>
 
@@ -464,6 +415,40 @@ export default {
                 }).catch(() => {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
+        },
+        calcularMontoIgualitario30() {
+            const monto = parseFloat(this.monto30);
+            const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
+            return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
+        },
+
+        calcularMontoPorcentual70(porcentajePartido) {
+            const porcentaje = parseFloat(porcentajePartido);
+            const totalPorcentajes = this.sumaTotalPorcentajes;
+            const monto = parseFloat(this.monto70);
+
+            if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+            return (monto * porcentaje) / totalPorcentajes;
+        },
+
+        formatoMoneda(valor) {
+            return new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 2
+            }).format(valor);
+        },
+    },
+    computed:{
+        sumaTotalPorcentajes() {
+            return this.Partidos_Con_Representacion.reduce((total, partido) => {
+            // Convierte a número y evita NaN si el input está vacío
+            const valor = parseFloat(partido.porcentaje_votacion);
+            return total + (isNaN(valor) ? 0 : valor);
+            }, 0).toFixed(2);
+
+            return 
+
         }
     }
 }
