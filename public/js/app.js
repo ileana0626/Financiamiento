@@ -11300,9 +11300,353 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=script&lang=js ***!
   \**************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\laragon\\www\\25_IEE\\Financiamiento\\resources\\js\\components\\modulos\\distribucion\\distribucionCalculo.vue: Invalid shorthand property initializer. (49:18)\n\n\u001b[0m \u001b[90m 47 |\u001b[39m\n \u001b[90m 48 |\u001b[39m             \u001b[90m// Mensajes de error y validación\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 49 |\u001b[39m             error \u001b[33m=\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m,\u001b[39m \u001b[90m// Para validar los campos al momento de guardar\u001b[39m\n \u001b[90m    |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 50 |\u001b[39m             errorAnio\u001b[33m:\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 51 |\u001b[39m             errorDistribucion\u001b[33m:\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 52 |\u001b[39m             error_dist_30_por_ciento\u001b[33m:\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\u001b[0m\n    at constructor (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:367:19)\n    at Parser.raise (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:6627:19)\n    at Parser.checkExpressionErrors (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:6996:12)\n    at Parser.parseMaybeAssign (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10859:12)\n    at Parser.parseExpressionBase (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10779:23)\n    at C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10775:39\n    at Parser.allowInAnd (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12422:16)\n    at Parser.parseExpression (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10775:17)\n    at Parser.parseReturnStatement (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13142:28)\n    at Parser.parseStatementContent (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12798:21)\n    at Parser.parseStatementLike (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12767:17)\n    at Parser.parseStatementListItem (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12747:17)\n    at Parser.parseBlockOrModuleBlockBody (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13316:61)\n    at Parser.parseBlockBody (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13309:10)\n    at Parser.parseBlock (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13297:10)\n    at Parser.parseFunctionBody (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12101:24)\n    at Parser.parseFunctionBodyAndFinish (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12087:10)\n    at Parser.parseMethod (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12045:31)\n    at Parser.parseObjectMethod (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11945:19)\n    at Parser.parseObjPropValue (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11979:23)\n    at Parser.parsePropertyDefinition (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11916:17)\n    at Parser.parseObjectLike (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11831:21)\n    at Parser.parseExprAtom (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11334:23)\n    at Parser.parseExprSubscripts (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11076:23)\n    at Parser.parseUpdate (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11061:21)\n    at Parser.parseMaybeUnary (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11041:23)\n    at Parser.parseMaybeUnaryOrPrivate (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10894:61)\n    at Parser.parseExprOps (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10899:23)\n    at Parser.parseMaybeConditional (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10876:23)\n    at Parser.parseMaybeAssign (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10826:21)\n    at C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:39\n    at Parser.allowInAnd (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12422:16)\n    at Parser.parseMaybeAssignAllowIn (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:17)\n    at Parser.parseExportDefaultExpression (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13925:22)\n    at Parser.parseExport (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13828:25)\n    at Parser.parseStatementContent (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12878:27)\n    at Parser.parseStatementLike (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12767:17)\n    at Parser.parseModuleItem (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12744:17)\n    at Parser.parseBlockOrModuleBlockBody (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13316:36)\n    at Parser.parseBlockBody (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13309:10)\n    at Parser.parseProgram (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12625:10)\n    at Parser.parseTopLevel (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12615:25)\n    at Parser.parse (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:14492:10)\n    at parse (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:14526:38)\n    at parser (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\core\\lib\\parser\\index.js:41:34)\n    at parser.next (<anonymous>)\n    at normalizeFile (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\core\\lib\\transformation\\normalize-file.js:64:37)\n    at normalizeFile.next (<anonymous>)\n    at run (C:\\laragon\\www\\25_IEE\\Financiamiento\\node_modules\\@babel\\core\\lib\\transformation\\index.js:21:50)\n    at run.next (<anonymous>)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
+function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
+function _regeneratorAsync(n, e, r, t, o) { var a = _regeneratorAsyncGen(n, e, r, t, o); return a.next().then(function (n) { return n.done ? n.value : a.next(); }); }
+function _regeneratorAsyncGen(r, e, t, o, n) { return new _regeneratorAsyncIterator(_regenerator().w(r, e, t, o), n || Promise); }
+function _regeneratorAsyncIterator(t, e) { function n(r, o, i, f) { try { var c = t[r](o), u = c.value; return u instanceof _OverloadYield ? e.resolve(u.v).then(function (t) { n("next", t, i, f); }, function (t) { n("throw", t, i, f); }) : e.resolve(u).then(function (t) { c.value = t, i(c); }, function (t) { return n("throw", t, i, f); }); } catch (t) { f(t); } } var r; this.next || (_regeneratorDefine2(_regeneratorAsyncIterator.prototype), _regeneratorDefine2(_regeneratorAsyncIterator.prototype, "function" == typeof Symbol && Symbol.asyncIterator || "@asyncIterator", function () { return this; })), _regeneratorDefine2(this, "_invoke", function (t, o, i) { function f() { return new e(function (e, r) { n(t, i, e, r); }); } return r = r ? r.then(f, f) : f(); }, !0); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { if (r) i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n;else { var o = function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); }; o("next", 0), o("throw", 1), o("return", 2); } }, _regeneratorDefine2(e, r, n, t); }
+function _OverloadYield(e, d) { this.v = e, this.k = d; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      darkMode: localStorage.getItem('theme') == 'dark',
+      // Variables para listar
+      selectedCalculo: {},
+      // objeto para almacenar el cálculo seleccionado de la tabla
+      // selectedCalculo: this.selectedCalculo.map(item => ({ ...item,
+      //     dist_monto_30_por_ciento: '',
+      //     dist_monto_70_por_ciento: '',
+      //  })),
+      Partidos_Sin_Representacion: [],
+      // partido sin representación de un cálculo
+      Partidos_Con_Representacion: [],
+      // partido con representación de un cálculo
+      NewlistCalculos: [],
+      // lista de cálculos en la base de datos
+
+      // Variables para la paginacion
+      search: '',
+      // Para la busqueda
+      page: 1,
+      // Para la paginacion
+      max: 10,
+      // Para la paginacion
+      active: false,
+      // para el modal
+      // Variables para actualizar Cálculo Financiamiento
+      dist_30_por_ciento: '',
+      input1: '',
+      input2: '',
+      checkbox1: false,
+      // Variables para actualizar Distribución Financiamiento
+      anio: '',
+      monto30: '',
+      monto70: '',
+      suma: '',
+      input_monto_30_por_ciento: '',
+      input_monto_70_por_ciento: '',
+      colors: [{
+        color: 'warn'
+      }],
+      // Catálogos
+      catAnio: [],
+      distribucion: [],
+      cat_tipo_distribucion: [],
+      errorDistribucion: '',
+      error_dist_30_por_ciento: '',
+      error_dist_70_por_ciento: ''
+    };
+  },
+  created: function created() {
+    var _this = this;
+    EventBus.$on('darkMode', function (data) {
+      _this.darkMode = data;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    // Limpiar el event listener
+    EventBus.$off('darkMode');
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            //Está declarado en la importación de 'methods' - personalizada
+            //const loading = this.$vs.loading();
+            _this2.getCalculos();
+            _context.next = 3;
+            return _this2.getAnio();
+          case 3:
+            _context.next = 5;
+            return _this2.obtenerDatos(11);
+          case 5:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
+  },
+  methods: {
+    getAnio: function getAnio() {
+      var _this3 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _this3.catAnio = [];
+              url = '/administracion/usuario/getAnioFiscal';
+              _context2.next = 4;
+              return axios.get(url).then(function (response) {
+                _this3.catAnio = response.data;
+              })["catch"](function (error) {
+                console.log(error);
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
+              });
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      }))();
+    },
+    formatCurrency: function formatCurrency(value) {
+      return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    },
+    getCalculos: function getCalculos() {
+      var _this4 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Cargando datos...';
+      var url = '/administracion/solicitud/getCalculosFinanciamiento';
+      this.NewlistCalculos = [];
+      axios.get(url).then(function (response) {
+        var _response$data;
+        if ((_response$data = response.data) !== null && _response$data !== void 0 && _response$data.success) {
+          _this4.NewlistCalculos = response.data.calculos || [];
+        } else {
+          var _response$data2;
+          // success: false
+          var errorMessage = ((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || 'Error en la respuesta del servidor';
+          throw new Error(errorMessage);
+        }
+      })["catch"](function (error) {
+        console.error('Error al cargar cálculos:', error);
+        _this4.$vs.notification({
+          title: 'Error',
+          text: 'Error al cargar los cálculos',
+          color: 'danger'
+        });
+        var nombreMetodo = url.split('/');
+        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
+      })["finally"](function () {
+        loader.close();
+      });
+    },
+    abrirDialog: function abrirDialog(calculo_tr) {
+      var _this5 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
+      this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+      this.datosCalculoSeleccionado = {};
+      //this.Partidos_Sin_Representacion = {};
+      this.Partidos_Con_Representacion = {};
+      //console.log(calculo_tr.id);
+      this.active = true; // activa el modal
+      loader.text = 'Cargando datos...';
+      //Obtener los datos principales del Cálculo Financiero
+      axios.get(url, {
+        params: {
+          'id': calculo_tr.id
+        }
+      }).then(function (response) {
+        var _response$data3;
+        if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
+          //Obtenemos los datos de los partidos politicos
+          //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
+          _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
+            return _objectSpread(_objectSpread({}, p), {}, {
+              ajuste: 0
+            });
+          });
+          _this5.monto30 = '';
+          _this5.monto70 = '';
+        } else {
+          var _response$data4;
+          // success: false
+          var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
+          throw new Error(errorMessage);
+        }
+        response.data;
+      })["catch"](function (error) {
+        console.error('Error al cargar detalles del cálculo', error);
+        _this5.$vs.notification({
+          title: 'Error',
+          text: 'Error al cargar los detalles del cálculo',
+          color: 'danger'
+        });
+        var nombreMetodo = url.split('/');
+        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
+      })["finally"](function () {
+        loader.close();
+      });
+    },
+    obtenerDatos: function obtenerDatos(tipo) {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              url = '/administracion/usuario/obtenerDatos';
+              _context3.next = 3;
+              return axios.get(url, {
+                params: {
+                  'tipo': tipo,
+                  'consulta': 1
+                }
+              }).then(function (response) {
+                switch (tipo) {
+                  case 1:
+                    _this6.catCargos = response.data;
+                    break;
+                  case 2:
+                    _this6.catRemitente = response.data;
+                    break;
+                  case 3:
+                    _this6.catTermino = response.data;
+                    break;
+                  case 4:
+                    _this6.cat_diasTermino = response.data;
+                    break;
+                  case 5:
+                    _this6.cat_seguimiento = response.data;
+                    break;
+                  case 6:
+                    _this6.cat_departamentos = response.data;
+                    break;
+                  case 7:
+                    _this6.cat_tipo = response.data;
+                    break;
+                  case 8:
+                    _this6.cat_estutus = response.data;
+                    break;
+                  case 9:
+                    _this6.cat_partido = response.data;
+                    break;
+                  case 11:
+                    _this6.cat_tipo_distribucion = response.data;
+                    break;
+                  default:
+                    break;
+                }
+              })["catch"](function (error) {
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+              });
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
+    },
+    guardarEdicion: function guardarEdicion() {
+      var _this7 = this;
+      // Lógica para guardar edición (llamada axios)
+      axios.put("/api/calculos/".concat(this.selectedCalculo.id), this.selectedCalculo).then(function () {
+        _this7.$vs.notification({
+          color: 'success',
+          text: 'Cálculo actualizado'
+        });
+        _this7.dialog = false;
+        _this7.getCalculos(); // refrescar lista
+      })["catch"](function () {
+        _this7.$vs.notification({
+          color: 'danger',
+          text: 'Error al guardar'
+        });
+      });
+    },
+    calcularMontoIgualitario30: function calcularMontoIgualitario30() {
+      var monto = parseFloat(this.monto30);
+      var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
+      return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
+    },
+    ajustarDecimal: function ajustarDecimal(partido, operacion) {
+      var ajusteUnitario = 0.01;
+
+      // Asegurar que el campo ajuste exista y sea reactivo
+      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (operacion === 'sumar') {
+        if (this.totalAjusteDecimales < 0) {
+          partido.ajuste += ajusteUnitario;
+        } else {
+          this.$vs.notify({
+            title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'warning'
+          });
+        }
+      } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+      }
+    },
+    calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
+      var porcentaje = parseFloat(porcentajePartido);
+      var totalPorcentajes = this.sumaTotalPorcentajes;
+      var monto = parseFloat(this.monto70);
+      if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+      return monto * porcentaje / totalPorcentajes;
+    },
+    calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
+      var base = this.calcularMontoProporcionalB(porcentajePartido);
+      return base + (ajuste || 0);
+    },
+    formatoMoneda: function formatoMoneda(valor) {
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+      }).format(valor);
+    }
+  },
+  computed: {
+    sumaTotalPorcentajes: function sumaTotalPorcentajes() {
+      return this.Partidos_Con_Representacion.reduce(function (total, partido) {
+        // Convierte a número y evita NaN si el input está vacío
+        var valor = parseFloat(partido.porcentaje_votacion);
+        return total + (isNaN(valor) ? 0 : valor);
+      }, 0).toFixed(2);
+    },
+    totalAjusteDecimales: function totalAjusteDecimales() {
+      return this.Partidos_Con_Representacion.reduce(function (sum, p) {
+        return sum + (p.ajuste || 0);
+      }, 0);
+    }
+  }
+});
 
 /***/ }),
 
@@ -26147,27 +26491,27 @@ var render = function render() {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                Año fiscal\n                            ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                  Año fiscal\n                              ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                Fecha de Publicación de la UMA\n                            ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                  Fecha de Publicación de la UMA\n                              ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                UMA\n                            ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                  UMA\n                              ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                Partidos sin representación en el Congreso\n                            ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                  Partidos sin representación en el Congreso\n                              ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                Partidos con representación en el Congreso\n                            ")]), _vm._v(" "), _c("vs-th", {
+        }, [_vm._v("\n                                  Partidos con representación en el Congreso\n                              ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
             "background-color": "var(--iee-white)"
           }
-        }, [_vm._v("\n                                Calcular\n                            ")])], 1)];
+        }, [_vm._v("\n                                  Calcular\n                              ")])], 1)];
       },
       proxy: true
     }, {
@@ -26184,15 +26528,15 @@ var render = function render() {
             }
           }, [_c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(tr.anioFiscal) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                  " + _vm._s(tr.anioFiscal) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(tr.fecha_pub) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                  " + _vm._s(tr.fecha_pub) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                  " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(tr.pp_sin_repr_siglas) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                  " + _vm._s(tr.pp_sin_repr_siglas) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(tr.pp_con_repr_siglas) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                  " + _vm._s(tr.pp_con_repr_siglas) + "\n                              ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight text-center"
           }, [_c("div", {
             staticStyle: {
@@ -26225,7 +26569,7 @@ var render = function render() {
           staticStyle: {
             "background-color": "var(--iee-white) !important"
           }
-        }, [_vm._v("\n                            Sin resultados...\n                        ")])];
+        }, [_vm._v("\n                              Sin resultados...\n                          ")])];
       },
       proxy: true
     }, {
@@ -26262,7 +26606,7 @@ var render = function render() {
       fn: function fn() {
         return [_c("h4", {
           staticClass: "not-margin"
-        }, [_vm._v("\n                        Distribución del cálculo\n                    ")])];
+        }, [_vm._v("Distribución del cálculo")])];
       },
       proxy: true
     }]),
@@ -26273,9 +26617,11 @@ var render = function render() {
       },
       expression: "active"
     }
-  }, [_vm._v(" "), _c("div", [_c("div", [_c("label", {
+  }, [_vm._v(" "), _c("div", {
+    staticClass: "px-4"
+  }, [_c("label", {
     staticClass: "col-form-label"
-  }, [_vm._v("Selecciona un año fiscal: ")]), _vm._v(" "), _vm.catAnio.length > 0 ? _c("vs-select", {
+  }, [_vm._v("Selecciona un año fiscal:")]), _vm._v(" "), _vm.catAnio.length > 0 ? _c("vs-select", {
     attrs: {
       placeholder: "Seleccione una opción",
       filter: "",
@@ -26285,7 +26631,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                " + _vm._s(_vm.errorAnio) + "\n                            ")];
+        return [_vm._v(_vm._s(_vm.errorAnio))];
       },
       proxy: true
     } : null], null, true),
@@ -26303,15 +26649,14 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n                                " + _vm._s(item.anio) + "\n                            ")]);
-  })], 2) : _vm._e()], 1), _vm._v(" "), _c("div", [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Tipo de distribución de Financiamiento")]), _vm._v(" "), _vm.cat_tipo_distribucion.length > 0 ? _c("vs-select", {
+    }, [_vm._v("\n                          " + _vm._s(item.anio) + "\n                      ")]);
+  })], 2) : _vm._e(), _vm._v(" "), _c("label", {
+    staticClass: "col-form-label mt-4"
+  }, [_vm._v("Tipo de distribución de Financiamiento:")]), _vm._v(" "), _vm.cat_tipo_distribucion.length > 0 ? _c("vs-select", {
     attrs: {
       multiple: "",
       filter: "",
       placeholder: _vm.distribucion.length > 0 ? "" : "Seleccione una o más opciones",
-      autocomplete: "off",
       color: _vm.colors[0].color
     },
     nativeOn: {
@@ -26322,7 +26667,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorDistribucion.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                " + _vm._s(_vm.errorDistribucion) + "\n                            ")];
+        return [_vm._v(_vm._s(_vm.errorDistribucion))];
       },
       proxy: true
     } : null], null, true),
@@ -26345,105 +26690,47 @@ var render = function render() {
           $event.stopPropagation();
         }
       }
-    }, [_vm._v("\n                                " + _vm._s(item.nombre) + "\n                            ")]);
-  })], 2) : _vm._e()], 1), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", {
-    attrs: {
-      name: "Campos extras"
-    }
+    }, [_vm._v("\n                          " + _vm._s(item.nombre) + "\n                      ")]);
+  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", {
+    staticClass: "row mt-4"
   }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
+    staticClass: "col-12"
+  }, [_c("h5", [_vm._v("Financiamiento público para actividades ordinarias permanentes")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Monto Total Efectivo (30%)”")]), _vm._v(" "), _c("vs-input", {
+  }, [_c("label", [_vm._v("Monto Total Efectivo (30%)")]), _vm._v(" "), _c("vs-input", {
     attrs: {
       type: "text",
-      placeholder: "$0.00"
-    },
-    on: {
-      blur: _vm.formatear_Dist_30_por_ciento
+      placeholder: "0.00",
+      step: "0.01"
     },
     model: {
-      value: _vm.input_monto_30_por_ciento,
+      value: _vm.monto30,
       callback: function callback($$v) {
-        _vm.input_monto_30_por_ciento = $$v;
+        _vm.monto30 = $$v;
       },
-      expression: "input_monto_30_por_ciento"
+      expression: "monto30"
     }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "danger-message"
-  }, [_vm.error_dist_30_por_ciento.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.error_dist_30_por_ciento) + "\n                                    ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Monto Total Efectivo (70%)”")]), _vm._v(" "), _c("vs-input", {
+  }, [_c("label", [_vm._v("Monto Total Efectivo (70%)")]), _vm._v(" "), _c("vs-input", {
     attrs: {
       type: "text",
-      placeholder: "$0.00"
-    },
-    on: {
-      blur: _vm.formatear_Dist_70_por_ciento
+      placeholder: "0.00",
+      step: "0.01"
     },
     model: {
-      value: _vm.input_monto_70_por_ciento,
+      value: _vm.monto70,
       callback: function callback($$v) {
-        _vm.input_monto_70_por_ciento = $$v;
+        _vm.monto70 = $$v;
       },
-      expression: "input_monto_70_por_ciento"
+      expression: "monto70"
     }
-  }), _vm._v(" "), _c("div", {
-    staticClass: "danger-message"
-  }, [_vm.error_dist_70_por_ciento.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.error_dist_70_por_ciento) + "\n                                    ")] : _vm._e()], 2)], 1)])]) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", {
-    staticClass: "row px-4"
-  }, [_c("h5", {
-    staticClass: "mt-4"
-  }, [_vm._v("Financiamiento público para actividades ordinarias permanentes")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("h5", [_vm._v("Financiamiento público para actividades tendientes a la obtención del voto")]) : _vm._e(), _vm._v(" "), _c("vs-table", {
-    staticClass: "tabla-ajustada",
+  })], 1)]) : _vm._e(), _vm._v(" "), _c("vs-table", {
+    staticClass: "tabla-ajustada mt-4",
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
-        return [_c("vs-tr", [_c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        Siglas\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        Emblema Partido Político\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        % de votación de partido político en elección inmediata anterior de\n                                        diputaciones\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        Monto Total Efectivo (30%)” \n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        A. 30% en forma igualitaria\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        Monto Total Efectivo (70%)\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        B. 70% conforme al % de votación\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        Total de B. después del ajuste\n                                    ")]), _vm._v(" "), _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        C. Financiamiento público para actividades ordinarias permanentes (A+B)\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", {
-          staticStyle: {
-            "background-color": "var(--iee-white)"
-          }
-        }, [_vm._v("\n                                        D. Financiamiento público para actividades tendientes a la obtención del voto\n                                    ")]) : _vm._e()], 1)];
+        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", [_vm._v("% de votación")]), _vm._v(" "), _c("vs-th", [_vm._v("A. 30% igualitaria")]), _vm._v(" "), _c("vs-th", [_vm._v("B. 70% conforme % votación")]), _vm._v(" "), _c("vs-th", [_vm._v("Total de B. después del ajuste")]), _vm._v(" "), _c("vs-th", [_vm._v("C. Financiamiento público para actividades ordinarias permanentes (A+B)")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", [_vm._v("D. Obtención del voto")]) : _vm._e()], 1)];
       },
       proxy: true
     }, {
@@ -26451,17 +26738,18 @@ var render = function render() {
       fn: function fn() {
         return _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-tr", {
-            key: "con-rep-" + i,
+            key: "partido-" + i,
+            "class": {
+              "bg-warning-light": partido.ajuste !== 0
+            },
             attrs: {
               data: partido
             }
-          }, [_c("vs-td", [_vm._v("\n                                        " + _vm._s(partido.siglas) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("img", {
+          }, [_c("vs-td", [_vm._v(_vm._s(partido.siglas))]), _vm._v(" "), _c("vs-td", [_c("img", {
             staticClass: "img-fluid rounded",
             staticStyle: {
               "max-width": "40px",
-              "max-height": "40px",
-              width: "auto",
-              height: "auto"
+              "max-height": "40px"
             },
             attrs: {
               src: "/img/logos/" + partido.logo,
@@ -26480,36 +26768,49 @@ var render = function render() {
               },
               expression: "partido.porcentaje_votacion"
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_c("vs-input", {
+          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                          ")]), _vm._v(" "), _c("vs-td", [_c("div", {
+            staticClass: "d-flex align-items-center justify-content-between"
+          }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
+            staticClass: "d-flex gap-1"
+          }, [_c("vs-button", {
             attrs: {
-              type: "text",
-              placeholder: "0.00"
+              icon: "",
+              small: "",
+              flat: "",
+              color: "danger",
+              "icon-pack": "feather",
+              "icon-name": "minus"
             },
-            model: {
-              value: partido.monto30,
-              callback: function callback($$v) {
-                _vm.$set(partido, "monto30", $$v);
-              },
-              expression: "partido.monto30"
+            on: {
+              click: function click($event) {
+                return _vm.ajustarDecimal(partido, "restar");
+              }
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.selectedCalculo.monto_30_por_ciento / _vm.selectedCalculo.num_pp_con_repr || "N/A") + "\n                                        ")]), _vm._v(" "), _c("vs-td", [_c("vs-input", {
+          }), _vm._v(" "), _c("vs-button", {
             attrs: {
-              type: "text",
-              placeholder: "0.00"
+              icon: "",
+              small: "",
+              flat: "",
+              color: "success",
+              "icon-pack": "feather",
+              "icon-name": "plus"
             },
-            model: {
-              value: partido.monto70,
-              callback: function callback($$v) {
-                _vm.$set(partido, "monto70", $$v);
-              },
-              expression: "partido.monto70"
+            on: {
+              click: function click($event) {
+                return _vm.ajustarDecimal(partido, "sumar");
+              }
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.selectedCalculo.monto_70_por_ciento * partido.porcentaje_votacion / 100 || "N/A") + "\n                                        ")])], 1);
+          })], 1)])]), _vm._v(" "), _c("vs-td", [_c("span", {
+            "class": {
+              "text-success": partido.ajuste > 0,
+              "text-danger": partido.ajuste < 0
+            }
+          }, [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])], 1);
         });
       },
       proxy: true
-    }], null, false, 803568749)
-  })], 1) : _vm._e()])])], 1)]], 2);
+    }])
+  })], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,
