@@ -158,13 +158,15 @@
                             <vs-th>% de votación</vs-th>
                             <vs-th>A. 30% igualitaria</vs-th>
                             <vs-th>B. 70% conforme % votación</vs-th>
+                            <vs-th>Total de B. después del ajuste</vs-th>
                             <vs-th>C. Financiamiento público para actividades ordinarias permanentes (A+B)</vs-th>
                             <vs-th v-if="distribucion.includes(2)">D. Obtención del voto</vs-th>
                             </vs-tr>
                         </template>
 
                         <template #tbody>
-                            <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" :key="'partido-' + i" :data="partido">
+                            <vs-tr v-for="(partido, i) in Partidos_Con_Representacion" :key="'partido-' + i" :data="partido" 
+                            :class="{ 'bg-warning-light': partido.ajuste !== 0 }">
                             <!-- Siglas -->
                             <vs-td>{{ partido.siglas }}</vs-td>
 
@@ -189,13 +191,26 @@
 
                             <!-- B. Monto proporcional -->
                             <vs-td>
-                                {{ formatoMoneda(calcularMontoPorcentual70(partido.porcentaje_votacion)) }}
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span>{{ formatoMoneda(calcularMontoProporcionalB(partido.porcentaje_votacion)) }}</span>
+
+                                <div class="d-flex gap-1">
+                                <vs-button icon small flat @click="ajustarDecimal(partido, 'restar')" color="danger" icon-pack="feather" icon-name="minus" />
+                                <vs-button icon small flat @click="ajustarDecimal(partido, 'sumar')" color="success" icon-pack="feather" icon-name="plus" />
+                                </div>
+                            </div>
                             </vs-td>
 
-                            <!-- C. Total (A + B) -->
+                            <!-- ajuste de b. 70% -->
+                            <vs-td>
+                            <span :class="{ 'text-success': partido.ajuste > 0, 'text-danger': partido.ajuste < 0 }">
+                                {{ formatoMoneda(calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)) }}
+                            </span>
+                            </vs-td>
+
                             <vs-td>
                                 {{ formatoMoneda(
-                                calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)
+                                calcularMontoIgualitario30() + calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)
                                 ) }}
                             </vs-td>
 
@@ -331,7 +346,10 @@ export default {
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
                     //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
-                    this.Partidos_Con_Representacion = response.data.partidosConRep;
+                    this.Partidos_Con_Representacion = response.data.partidosConRep.map(p => ({
+                        ...p,
+                        ajuste: 0
+                    }));
                     this.monto30 = '';
                     this.monto70 = '';
                 } else {
@@ -340,7 +358,6 @@ export default {
                     throw new Error(errorMessage);
                 }
                 response.data
-                console.log('Estructura de Partidos_Con_Representacion:', JSON.parse(JSON.stringify(this.Partidos_Con_Representacion)));
             }).catch((error) => {
                 console.error('Error al cargar detalles del cálculo', error);
                 this.$vs.notification({
@@ -422,22 +439,47 @@ export default {
             return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
         },
 
-        calcularMontoPorcentual70(porcentajePartido) {
-            const porcentaje = parseFloat(porcentajePartido);
-            const totalPorcentajes = this.sumaTotalPorcentajes;
-            const monto = parseFloat(this.monto70);
+        ajustarDecimal(partido, operacion) {
+        const ajusteUnitario = 0.01;
 
-            if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            return (monto * porcentaje) / totalPorcentajes;
-        },
+        // Asegurar que el campo ajuste exista y sea reactivo
+        if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
 
-        formatoMoneda(valor) {
-            return new Intl.NumberFormat('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2
-            }).format(valor);
-        },
+        if (operacion === 'sumar') {
+        if (this.totalAjusteDecimales < 0) {
+            partido.ajuste += ajusteUnitario;
+        } else {
+            this.$vs.notify({
+            title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'warning'
+            });
+        }
+        } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+        }
+    },
+    calcularMontoProporcionalB(porcentajePartido) {
+        const porcentaje = parseFloat(porcentajePartido);
+        const totalPorcentajes = this.sumaTotalPorcentajes;
+        const monto = parseFloat(this.monto70);
+
+        if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+        return (monto * porcentaje) / totalPorcentajes;
+    },
+
+    calcularMontoBConAjuste(porcentajePartido, ajuste) {
+        const base = this.calcularMontoProporcionalB(porcentajePartido);
+        return base + (ajuste || 0);
+    },
+
+    formatoMoneda(valor) {
+        return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+        }).format(valor);
+    }
     },
     computed:{
         sumaTotalPorcentajes() {
@@ -446,9 +488,9 @@ export default {
             const valor = parseFloat(partido.porcentaje_votacion);
             return total + (isNaN(valor) ? 0 : valor);
             }, 0).toFixed(2);
-
-            return 
-
+        },
+        totalAjusteDecimales() {
+            return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
         }
     }
 }

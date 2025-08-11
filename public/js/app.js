@@ -11307,6 +11307,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
 function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
@@ -11464,7 +11469,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
           //this.Partidos_Sin_Representacion = [response.data.partidos[0]];
-          _this5.Partidos_Con_Representacion = response.data.partidosConRep;
+          _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
+            return _objectSpread(_objectSpread({}, p), {}, {
+              ajuste: 0
+            });
+          });
           _this5.monto30 = '';
           _this5.monto70 = '';
         } else {
@@ -11474,7 +11483,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           throw new Error(errorMessage);
         }
         response.data;
-        console.log('Estructura de Partidos_Con_Representacion:', JSON.parse(JSON.stringify(_this5.Partidos_Con_Representacion)));
       })["catch"](function (error) {
         console.error('Error al cargar detalles del cálculo', error);
         _this5.$vs.notification({
@@ -11570,12 +11578,35 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
       return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
     },
-    calcularMontoPorcentual70: function calcularMontoPorcentual70(porcentajePartido) {
+    ajustarDecimal: function ajustarDecimal(partido, operacion) {
+      var ajusteUnitario = 0.01;
+
+      // Asegurar que el campo ajuste exista y sea reactivo
+      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (operacion === 'sumar') {
+        if (this.totalAjusteDecimales < 0) {
+          partido.ajuste += ajusteUnitario;
+        } else {
+          this.$vs.notify({
+            title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'warning'
+          });
+        }
+      } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+      }
+    },
+    calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
       var porcentaje = parseFloat(porcentajePartido);
       var totalPorcentajes = this.sumaTotalPorcentajes;
       var monto = parseFloat(this.monto70);
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
       return monto * porcentaje / totalPorcentajes;
+    },
+    calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
+      var base = this.calcularMontoProporcionalB(porcentajePartido);
+      return base + (ajuste || 0);
     },
     formatoMoneda: function formatoMoneda(valor) {
       return new Intl.NumberFormat('es-MX', {
@@ -11592,7 +11623,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         var valor = parseFloat(partido.porcentaje_votacion);
         return total + (isNaN(valor) ? 0 : valor);
       }, 0).toFixed(2);
-      return;
+    },
+    totalAjusteDecimales: function totalAjusteDecimales() {
+      return this.Partidos_Con_Representacion.reduce(function (sum, p) {
+        return sum + (p.ajuste || 0);
+      }, 0);
     }
   }
 });
@@ -26679,7 +26714,7 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
-        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", [_vm._v("% de votación")]), _vm._v(" "), _c("vs-th", [_vm._v("A. 30% igualitaria")]), _vm._v(" "), _c("vs-th", [_vm._v("B. 70% conforme % votación")]), _vm._v(" "), _c("vs-th", [_vm._v("C. Financiamiento público para actividades ordinarias permanentes (A+B)")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", [_vm._v("D. Obtención del voto")]) : _vm._e()], 1)];
+        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", [_vm._v("% de votación")]), _vm._v(" "), _c("vs-th", [_vm._v("A. 30% igualitaria")]), _vm._v(" "), _c("vs-th", [_vm._v("B. 70% conforme % votación")]), _vm._v(" "), _c("vs-th", [_vm._v("Total de B. después del ajuste")]), _vm._v(" "), _c("vs-th", [_vm._v("C. Financiamiento público para actividades ordinarias permanentes (A+B)")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-th", [_vm._v("D. Obtención del voto")]) : _vm._e()], 1)];
       },
       proxy: true
     }, {
@@ -26688,6 +26723,9 @@ var render = function render() {
         return _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-tr", {
             key: "partido-" + i,
+            "class": {
+              "bg-warning-light": partido.ajuste !== 0
+            },
             attrs: {
               data: partido
             }
@@ -26714,7 +26752,44 @@ var render = function render() {
               },
               expression: "partido.porcentaje_votacion"
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                          ")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoPorcentual70(partido.porcentaje_votacion))) + "\n                          ")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoPorcentual70(partido.porcentaje_votacion))) + "\n                          ")])], 1);
+          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                          ")]), _vm._v(" "), _c("vs-td", [_c("div", {
+            staticClass: "d-flex align-items-center justify-content-between"
+          }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
+            staticClass: "d-flex gap-1"
+          }, [_c("vs-button", {
+            attrs: {
+              icon: "",
+              small: "",
+              flat: "",
+              color: "danger",
+              "icon-pack": "feather",
+              "icon-name": "minus"
+            },
+            on: {
+              click: function click($event) {
+                return _vm.ajustarDecimal(partido, "restar");
+              }
+            }
+          }), _vm._v(" "), _c("vs-button", {
+            attrs: {
+              icon: "",
+              small: "",
+              flat: "",
+              color: "success",
+              "icon-pack": "feather",
+              "icon-name": "plus"
+            },
+            on: {
+              click: function click($event) {
+                return _vm.ajustarDecimal(partido, "sumar");
+              }
+            }
+          })], 1)])]), _vm._v(" "), _c("vs-td", [_c("span", {
+            "class": {
+              "text-success": partido.ajuste > 0,
+              "text-danger": partido.ajuste < 0
+            }
+          }, [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                              " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                          ")])], 1);
         });
       },
       proxy: true
