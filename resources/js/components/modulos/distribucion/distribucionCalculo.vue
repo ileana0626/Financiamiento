@@ -147,16 +147,18 @@
                                     <label>Monto Total Efectivo (70%)</label>
                                     <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
                                 </div>
-                                <!-- Tipo de operación para: Financiamiento público para actividades tendientes a la obtención del voto -->
-                                <div v-if="distribucion.includes(2)" class="col-md-6">
+                            </div>
+                            <div class="row mt-4">
+                                 <!-- Tipo de operación para: Financiamiento público para actividades tendientes a la obtención del voto -->
+                                 <div v-if="distribucion.includes(2)" class="col-md-6">
+                                    <label class="col-form-label">Seleccione el tipo de operación:</label>
                                     <vs-select v-model="opcionSelecionadaPorcentaje" placeholder="Seleccione una opción"
                                         class="mb-4" style="max-width: 300px;">
-                                        <vs-option value="gubernatura">A. 50% Gubernatura</vs-option>
-                                        <vs-option value="intermedia">B. 30% Intermedia</vs-option>
-                                    </vs-select>  
+                                        <vs-option value="1" label="A. 50% Gubernatura" :selected="true">A. 50% Gubernatura</vs-option>
+                                        <vs-option value="2" label="B. 30% Intermedia">B. 30% Intermedia</vs-option>
+                                    </vs-select>
                                 </div>
                             </div>
-
                             <!-- Tabla de distribución -->
                             <vs-table class="tabla-ajustada mt-4">
                                 <template #thead>
@@ -177,8 +179,11 @@
                                     :class="{ 'bg-warning-light': partido.ajuste !== 0 }">
                                         <!-- Siglas -->
                                         <vs-td>
-                                            <vs-checkbox v-model="seleccionados" :val="partido.id_partido" />
-                                            {{ partido.siglas }}
+                                            <div class="d-flex align-items-center">
+                                                <vs-checkbox class="mr-2"  
+                                                    v-model="partido.seleccionado" :val="partido.id_partido" @change="actualizarSeleccionados(partido)"/>
+                                                <span>{{ partido.siglas }}</span>
+                                            </div>
                                         </vs-td>
 
                                         <!-- Logo -->
@@ -221,27 +226,35 @@
                                         </vs-td>
 
                                         <vs-td>
-                                            {{ formatoMoneda(
-                                            calcularMontoIgualitario30() + calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste)
-                                            ) }}
+                                            <!-- calcularMontoIgualitario30() + calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste) -->
+                                            {{ formatoMoneda(calcularMontoC(partido))}}
                                         </vs-td>
 
                                         <!-- D. Obtención del voto -->
                                         <vs-td v-if="distribucion.includes(2)">
-                                            <!-- {{ formatoMoneda(
-                                            (calcularMontoIgualitario30() + calcularMontoPorcentual70(partido.porcentaje_votacion)) * factorCalculo
-                                            ) }} -->
+                                            {{ formatoMoneda(calcularMontoC(partido) * factorCalculo)}}
                                         </vs-td>
                                     </vs-tr>
                                     <!-- Fila de subtotal -->
-                                    <!-- <vs-tr class="font-weight-bold">
-                                        <vs-td colspan="2" class="text-right">Subtotal:</vs-td>
-                                        <vs-td>{{ formatoPorcentaje(calcularTotalPorcentajeVotacion())}}</vs-td>
-                                        <vs-td>{{ formatoMoneda(calcularMontoIgualitario30() * Partidos_Con_Representacion.length) }}</vs-td>
-                                        <vs-td>{{ formatoMoneda(calcularTotalProporcionalB()) }}</vs-td>
-                                        <vs-td>{{ formatoMoneda(calcularTotalBConAjuste()) }}</vs-td>
-                                        <vs-td>{{ formatoMoneda(calcularTotalGeneral()) }}</vs-td>
-                                    </vs-tr> -->
+                                    <vs-tr class="font-weight-bold color:#FFEA99">
+                                        <vs-td>
+                                            Subtotal
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                        <vs-td>
+                                        </vs-td>
+                                    </vs-tr>
                                     <vs-tr v-for="(partido, i) in Partidos_Sin_Representacion" :key="'partido_con_repr-' + i" :data="partido">
                                         <!-- Siglas -->
                                         <vs-td>{{ partido.siglas }}</vs-td>
@@ -314,7 +327,7 @@ export default {
             Partidos_Con_Representacion: [], // partido con representación de un cálculo
             NewlistCalculos: [], // lista de cálculos en la base de datos
 
-            seleccionados: [], // Para guardar los partidos seleccionados para el ajuste de decimales
+            cb_ppSeleccionados: [], // Para guardar los partidos seleccionados para el ajuste de decimales
             opcionSelecionadaPorcentaje: null, // Opción selleccionada para el porcentaje 50% Gubernatura o 30% Intermedia
 
             // Variables para la paginacion
@@ -362,9 +375,7 @@ export default {
     },
     async mounted() {
 
-        this.opcionSelecionadaPorcentaje = 'gubernatura'; // o 'intermedia'
-
-        //const loading = this.$vs.loading();
+        this.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
         this.getCalculos();
         await this.getAnio();
         await this.obtenerDatos(11);
@@ -551,9 +562,11 @@ export default {
             partido.ajuste -= ajusteUnitario;
             }
         },
-        //Ajustar decimal para 70%
+        /*
+        * Ajustar decimal para 70%
+        */
         ajustarDecimal_70porCiento(partido, operacion) {
-            if (this.seleccionados.length !== 2) {
+            if (this.cb_ppSeleccionados.length !== 2) {
                 this.$vs.notification({
                     title: 'Aviso',
                     text: 'Debes seleccionar exactamente 2 partidos para ajustar',
@@ -562,7 +575,7 @@ export default {
                 return;
             }
 
-            if (!this.seleccionados.includes(partido.id_partido)) {
+            if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
                 this.$vs.notification({
                     title: 'Aviso',
                     text: 'Solo puedes ajustar partidos seleccionados',
@@ -579,7 +592,7 @@ export default {
                 // Aplicar el ajuste inverso al otro partido seleccionado
                 const otroPartido = this.Partidos_Con_Representacion.find(p => 
                     p.id_partido !== partido.id_partido && 
-                    this.seleccionados.includes(p.id_partido)
+                    this.cb_ppSeleccionados.includes(p.id_partido)
                 );
                 if (otroPartido) {
                     if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
@@ -587,6 +600,10 @@ export default {
                 }
             }
         },
+        /*
+        * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
+        * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+         */
         calcularMontoProporcionalB(porcentajePartido) {
             const porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
             const totalPorcentajes = this.sumaTotalPorcentajes;
@@ -595,13 +612,32 @@ export default {
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
             return (monto * porcentaje) / totalPorcentajes;
         },
-
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
             return base + (ajuste || 0);
         },
-
-
+        calcularMontoC(partido) {
+            const montoA = parseFloat(this.calcularMontoIgualitario30());
+            const montoB = parseFloat(this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste));
+            
+            // Verificar si los valores son números válidos
+            if (isNaN(montoA) || isNaN(montoB)) {
+                console.error('Valores inválidos:', { 
+                    montoA, 
+                    montoB,
+                    porcentaje: partido.porcentaje_votacion,
+                    ajuste: partido.ajuste
+                });
+                return 0; // O algún valor por defecto
+            }
+            
+            return montoA + montoB;
+        },
+        calcularMontoD(partido) {
+            return this.formatoMoneda(
+                this.calcularMontoC(partido) * this.factorCalculo
+            );
+        },
         // Formatea a moneda
         formatoMoneda(valor) {
             return new Intl.NumberFormat('es-MX', {
@@ -609,11 +645,25 @@ export default {
             currency: 'MXN',
             minimumFractionDigits: 2
             }).format(valor);
+        },
+        /*
+        * Actualiza la lista de partidos seleccionados para Ajuste de Decimales
+        */
+        actualizarSeleccionados(partido) {
+            if (partido.seleccionado) {
+                // Si se selecciona, agregar a la lista
+                if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
+                    this.cb_ppSeleccionados.push(partido.id_partido);
+                }
+            } else {
+                // Si se deselecciona, remover de la lista
+                this.cb_ppSeleccionados = this.cb_ppSeleccionados.filter(id => id !== partido.id_partido);
+            }
         }
     },
     computed:{
         /*
-        *Retorna la suma total de los porcentajes de votación de los partidos con representación en el Congreso
+        * Retorna la Sumatoria de los porcentajes de votación de los partidos con representación en el Congreso
         */
         sumaTotalPorcentajes() {
             return this.Partidos_Con_Representacion.reduce((total, partido) => {
@@ -626,8 +676,8 @@ export default {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
         },
         /*
-        *Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
-        *Partidos sin representación en el Congreso
+        * Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
+        * Partidos sin representación en el Congreso
         */
         subtotalMonto2PorCiento() {
             if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
@@ -638,8 +688,8 @@ export default {
             }, 0);
         },
         /*
-        *Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
-        *Partidos sin representación en el Congreso
+        * Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
+        * Partidos sin representación en el Congreso
         */
         subtotalMonto2PorCientoD() {
             if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
@@ -655,10 +705,10 @@ export default {
         * 0.30 (OPCIÓN B. 30 % INTERMEDIA)
         */
         factorCalculo() {
-            if (this.opcionSelecionadaPorcentaje === 'gubernatura') {
-                return 0.5;  // 50%
-            } else if (this.opcionSelecionadaPorcentaje === 'intermedia') {
-                return 0.3;  // 30%
+            if (this.opcionSelecionadaPorcentaje === '1') {
+                return 0.5;  // 50% Gubernatura
+            } else if (this.opcionSelecionadaPorcentaje === '2') {
+                return 0.3;  // 30% Intermedia
             }
             return 0;  // Valor por defecto
         }
@@ -732,5 +782,23 @@ export default {
 /* Seleccion de filas Ajuste de decimales*/
 .vs-table--tbody-table tr.vs-table--tr-selected {
     background-color: rgba(var(--vs-primary), 0.1);
+}
+
+
+/* Estilo para el borde del checkbox cuando NO está marcado */
+.vs-checkbox .vs-checkbox__check {
+    border: 2px solid #000 !important;
+    background: transparent !important;
+}
+
+/* Estilo para el checkbox cuando ESTÁ marcado */
+.vs-checkbox--checked .vs-checkbox__check {
+    background-color: #1E90FF !important;
+    border-color: #1E90FF !important;
+}
+
+/* Asegurar que el borde sea visible en el hover */
+.vs-checkbox:hover .vs-checkbox__check {
+    border-color: #1E90FF !important;
 }
 </style>

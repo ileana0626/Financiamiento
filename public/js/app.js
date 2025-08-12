@@ -11343,7 +11343,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       NewlistCalculos: [],
       // lista de cálculos en la base de datos
 
-      seleccionados: [],
+      cb_ppSeleccionados: [],
       // Para guardar los partidos seleccionados para el ajuste de decimales
       opcionSelecionadaPorcentaje: null,
       // Opción selleccionada para el porcentaje 50% Gubernatura o 30% Intermedia
@@ -11401,9 +11401,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _this2.opcionSelecionadaPorcentaje = 'gubernatura'; // o 'intermedia'
-
-            //const loading = this.$vs.loading();
+            _this2.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
             _this2.getCalculos();
             _context.next = 4;
             return _this2.getAnio();
@@ -11627,10 +11625,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.ajuste -= ajusteUnitario;
       }
     },
-    //Ajustar decimal para 70%
+    /*
+    * Ajustar decimal para 70%
+    */
     ajustarDecimal_70porCiento: function ajustarDecimal_70porCiento(partido, operacion) {
       var _this8 = this;
-      if (this.seleccionados.length !== 2) {
+      if (this.cb_ppSeleccionados.length !== 2) {
         this.$vs.notification({
           title: 'Aviso',
           text: 'Debes seleccionar exactamente 2 partidos para ajustar',
@@ -11638,7 +11638,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
         return;
       }
-      if (!this.seleccionados.includes(partido.id_partido)) {
+      if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
         this.$vs.notification({
           title: 'Aviso',
           text: 'Solo puedes ajustar partidos seleccionados',
@@ -11652,7 +11652,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.ajuste += ajusteUnitario;
         // Aplicar el ajuste inverso al otro partido seleccionado
         var otroPartido = this.Partidos_Con_Representacion.find(function (p) {
-          return p.id_partido !== partido.id_partido && _this8.seleccionados.includes(p.id_partido);
+          return p.id_partido !== partido.id_partido && _this8.cb_ppSeleccionados.includes(p.id_partido);
         });
         if (otroPartido) {
           if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
@@ -11660,6 +11660,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }
       }
     },
+    /*
+    * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
+    * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+     */
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
       var porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
       var totalPorcentajes = this.sumaTotalPorcentajes;
@@ -11672,6 +11676,26 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var base = this.calcularMontoProporcionalB(porcentajePartido);
       return base + (ajuste || 0);
     },
+    calcularMontoC: function calcularMontoC(partido) {
+      var montoA = parseFloat(this.calcularMontoIgualitario30());
+      var montoB = parseFloat(this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste));
+
+      // Verificar si los valores son números válidos
+      if (isNaN(montoA) || isNaN(montoB)) {
+        console.error('Valores inválidos:', {
+          montoA: montoA,
+          montoB: montoB,
+          porcentaje: partido.porcentaje_votacion,
+          ajuste: partido.ajuste
+        });
+        return 0; // O algún valor por defecto
+      }
+
+      return montoA + montoB;
+    },
+    calcularMontoD: function calcularMontoD(partido) {
+      return this.formatoMoneda(this.calcularMontoC(partido) * this.factorCalculo);
+    },
     // Formatea a moneda
     formatoMoneda: function formatoMoneda(valor) {
       return new Intl.NumberFormat('es-MX', {
@@ -11679,11 +11703,27 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         currency: 'MXN',
         minimumFractionDigits: 2
       }).format(valor);
+    },
+    /*
+    * Actualiza la lista de partidos seleccionados para Ajuste de Decimales
+    */
+    actualizarSeleccionados: function actualizarSeleccionados(partido) {
+      if (partido.seleccionado) {
+        // Si se selecciona, agregar a la lista
+        if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
+          this.cb_ppSeleccionados.push(partido.id_partido);
+        }
+      } else {
+        // Si se deselecciona, remover de la lista
+        this.cb_ppSeleccionados = this.cb_ppSeleccionados.filter(function (id) {
+          return id !== partido.id_partido;
+        });
+      }
     }
   },
   computed: {
     /*
-    *Retorna la suma total de los porcentajes de votación de los partidos con representación en el Congreso
+    * Retorna la Sumatoria de los porcentajes de votación de los partidos con representación en el Congreso
     */
     sumaTotalPorcentajes: function sumaTotalPorcentajes() {
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
@@ -11698,8 +11738,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }, 0);
     },
     /*
-    *Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
-    *Partidos sin representación en el Congreso
+    * Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
+    * Partidos sin representación en el Congreso
     */
     subtotalMonto2PorCiento: function subtotalMonto2PorCiento() {
       if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
@@ -11710,8 +11750,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }, 0);
     },
     /*
-    *Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
-    *Partidos sin representación en el Congreso
+    * Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
+    * Partidos sin representación en el Congreso
     */
     subtotalMonto2PorCientoD: function subtotalMonto2PorCientoD() {
       if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
@@ -11727,10 +11767,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * 0.30 (OPCIÓN B. 30 % INTERMEDIA)
     */
     factorCalculo: function factorCalculo() {
-      if (this.opcionSelecionadaPorcentaje === 'gubernatura') {
-        return 0.5; // 50%
-      } else if (this.opcionSelecionadaPorcentaje === 'intermedia') {
-        return 0.3; // 30%
+      if (this.opcionSelecionadaPorcentaje === '1') {
+        return 0.5; // 50% Gubernatura
+      } else if (this.opcionSelecionadaPorcentaje === '2') {
+        return 0.3; // 30% Intermedia
       }
 
       return 0; // Valor por defecto
@@ -26815,9 +26855,13 @@ var render = function render() {
       },
       expression: "monto70"
     }
-  })], 1), _vm._v(" "), _vm.distribucion.includes(2) ? _c("div", {
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "row mt-4"
+  }, [_vm.distribucion.includes(2) ? _c("div", {
     staticClass: "col-md-6"
-  }, [_c("vs-select", {
+  }, [_c("label", {
+    staticClass: "col-form-label"
+  }, [_vm._v("Seleccione el tipo de operación:")]), _vm._v(" "), _c("vs-select", {
     staticClass: "mb-4",
     staticStyle: {
       "max-width": "300px"
@@ -26834,11 +26878,14 @@ var render = function render() {
     }
   }, [_c("vs-option", {
     attrs: {
-      value: "gubernatura"
+      value: "1",
+      label: "A. 50% Gubernatura",
+      selected: true
     }
   }, [_vm._v("A. 50% Gubernatura")]), _vm._v(" "), _c("vs-option", {
     attrs: {
-      value: "intermedia"
+      value: "2",
+      label: "B. 30% Intermedia"
     }
   }, [_vm._v("B. 30% Intermedia")])], 1)], 1) : _vm._e()]), _vm._v(" "), _c("vs-table", {
     staticClass: "tabla-ajustada mt-4",
@@ -26897,18 +26944,26 @@ var render = function render() {
             attrs: {
               data: partido
             }
-          }, [_c("vs-td", [_c("vs-checkbox", {
+          }, [_c("vs-td", [_c("div", {
+            staticClass: "d-flex align-items-center"
+          }, [_c("vs-checkbox", {
+            staticClass: "mr-2",
             attrs: {
               val: partido.id_partido
             },
+            on: {
+              change: function change($event) {
+                return _vm.actualizarSeleccionados(partido);
+              }
+            },
             model: {
-              value: _vm.seleccionados,
+              value: partido.seleccionado,
               callback: function callback($$v) {
-                _vm.seleccionados = $$v;
+                _vm.$set(partido, "seleccionado", $$v);
               },
-              expression: "seleccionados"
+              expression: "partido.seleccionado"
             }
-          }), _vm._v("\n                                        " + _vm._s(partido.siglas) + "\n                                    ")], 1), _vm._v(" "), _c("vs-td", [_c("img", {
+          }), _vm._v(" "), _c("span", [_vm._v(_vm._s(partido.siglas))])], 1)]), _vm._v(" "), _c("vs-td", [_c("img", {
             staticClass: "img-fluid rounded",
             staticStyle: {
               "max-width": "40px",
@@ -26968,8 +27023,10 @@ var render = function render() {
               "text-success": partido.ajuste > 0,
               "text-danger": partido.ajuste < 0
             }
-          }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30() + _vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td") : _vm._e()], 1);
-        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
+          }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoC(partido))) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoC(partido) * _vm.factorCalculo)) + "\n                                    ")]) : _vm._e()], 1);
+        }), _vm._v(" "), _c("vs-tr", {
+          staticClass: "font-weight-bold color:#FFEA99"
+        }, [_c("vs-td", [_vm._v("\n                                        Subtotal\n                                    ")]), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td")], 1), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
           return _c("vs-tr", {
             key: "partido_con_repr-" + i,
             attrs: {
@@ -27024,7 +27081,7 @@ var render = function render() {
         })], 1)];
       },
       proxy: true
-    }], null, false, 3150853560)
+    }], null, false, 2830587694)
   })], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
@@ -41850,7 +41907,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
 
 // exports
 
