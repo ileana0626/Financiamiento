@@ -103,4 +103,33 @@ if (!function_exists('formato_fecha_es')) {
             return $fecha; // Devuelve la fecha original si hay error
         }
     }
+
+    /**
+     * Formatea un valor numérico como porcentaje
+     * 
+     * @param mixed $valor Valor a formatear
+     * @param int $decimales Número de decimales (opcional, por defecto 5)
+     * @return string
+     * 
+     * @example
+     * formato_porcentaje(25.5); // '25.50000 %'
+     * formato_porcentaje('10.5', 2); // '10.50 %'
+     * formato_porcentaje(null); // '0.00000 %'
+     */
+    function formato_porcentaje($valor, $decimales = 5) {
+        if ($valor === null || $valor === '') {
+            return '0.' . str_repeat('0', $decimales) . ' %';
+        }
+
+        // Asegurar que sea numérico
+        $numero = is_numeric($valor) ? $valor : 0;
+        
+        // Limitar entre 0 y 100
+        $numero = max(0, min(100, (float) $numero));
+        
+        // Formatear con el número de decimales especificado
+        return number_format($numero, $decimales, '.', '') . ' %';
+    }
+
+
 }

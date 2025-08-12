@@ -11504,6 +11504,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           });
           _this5.monto30 = '';
           _this5.monto70 = '';
+          console.log('Partidos_Con_Representacion: ', _this5.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
@@ -11696,13 +11697,33 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     calcularMontoD: function calcularMontoD(partido) {
       return this.formatoMoneda(this.calcularMontoC(partido) * this.factorCalculo);
     },
-    // Formatea a moneda
+    /*
+    * Formatea a moneda
+    */
     formatoMoneda: function formatoMoneda(valor) {
       return new Intl.NumberFormat('es-MX', {
         style: 'currency',
         currency: 'MXN',
         minimumFractionDigits: 2
       }).format(valor);
+    },
+    /*
+    * Formatea el porcentaje
+    */
+    formatearPorcentaje: function formatearPorcentaje(valor) {
+      if (!valor) {
+        return '0.00000 %';
+      }
+
+      // Remover todo lo que no sea número o punto
+      var valorLimpio = valor.toString().replace(/[^0-9.]/g, '');
+      var numero = parseFloat(valorLimpio);
+      if (!isNaN(numero)) {
+        // Limitar entre 0 y 100 y formatear a 5 decimales
+        var valorFinal = Math.min(Math.max(numero, 0), 100);
+        return valorFinal.toFixed(5) + ' %';
+      }
+      return '0.00000 %';
     },
     /*
     * Actualiza la lista de partidos seleccionados para Ajuste de Decimales
@@ -26929,7 +26950,7 @@ var render = function render() {
           attrs: {
             colspan: 1
           }
-        }, [_vm._v("D. Obtención del voto ( D = C * 0.5)")]) : _vm._e()], 1)];
+        }, [_vm._v("D. Obtención del voto ( D = C * " + _vm._s(_vm.factorCalculo) + ")")]) : _vm._e()], 1)];
       },
       proxy: true
     }, {
@@ -26946,24 +26967,7 @@ var render = function render() {
             }
           }, [_c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center"
-          }, [_c("vs-checkbox", {
-            staticClass: "mr-2",
-            attrs: {
-              val: partido.id_partido
-            },
-            on: {
-              change: function change($event) {
-                return _vm.actualizarSeleccionados(partido);
-              }
-            },
-            model: {
-              value: partido.seleccionado,
-              callback: function callback($$v) {
-                _vm.$set(partido, "seleccionado", $$v);
-              },
-              expression: "partido.seleccionado"
-            }
-          }), _vm._v(" "), _c("span", [_vm._v(_vm._s(partido.siglas))])], 1)]), _vm._v(" "), _c("vs-td", [_c("img", {
+          }, [_c("span", [_vm._v(_vm._s(partido.siglas))])])]), _vm._v(" "), _c("vs-td", [_c("img", {
             staticClass: "img-fluid rounded",
             staticStyle: {
               "max-width": "40px",
@@ -26977,7 +26981,12 @@ var render = function render() {
           })]), _vm._v(" "), _c("vs-td", [_c("vs-input", {
             attrs: {
               type: "text",
-              placeholder: "0.00"
+              placeholder: "0.00000 %"
+            },
+            on: {
+              blur: function blur($event) {
+                return _vm.formatearPorcentaje(partido.porcentaje_votacion);
+              }
             },
             model: {
               value: partido.porcentaje_votacion,
@@ -27025,7 +27034,10 @@ var render = function render() {
             }
           }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoC(partido))) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoC(partido) * _vm.factorCalculo)) + "\n                                    ")]) : _vm._e()], 1);
         }), _vm._v(" "), _c("vs-tr", {
-          staticClass: "font-weight-bold color:#FFEA99"
+          staticClass: "font-weight-bold",
+          staticStyle: {
+            "background-color": "#FFFFC5"
+          }
         }, [_c("vs-td", [_vm._v("\n                                        Subtotal\n                                    ")]), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td")], 1), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
           return _c("vs-tr", {
             key: "partido_con_repr-" + i,
@@ -27081,8 +27093,43 @@ var render = function render() {
         })], 1)];
       },
       proxy: true
-    }], null, false, 2830587694)
-  })], 1) : _vm._e()], 1)])], 1)]], 2);
+    }], null, false, 3186433135)
+  }), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("vs-button", {
+    attrs: {
+      color: "primary"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.guardarDistribucion();
+      }
+    }
+  }, [_vm._v("Guardar")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("vs-button", {
+    attrs: {
+      color: "primary"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.limpiarDistribucion();
+      }
+    }
+  }, [_vm._v("Limpiar")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("vs-button", {
+    attrs: {
+      color: "danger"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.descargarDistribucion();
+      }
+    }
+  }, [_vm._v("Descargar Excel")])], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,

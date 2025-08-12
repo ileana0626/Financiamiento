@@ -170,7 +170,7 @@
                                         <vs-th :colspan="1">B. 70% conforme % votación</vs-th>
                                         <vs-th :colspan="1">Total de B. después del ajuste</vs-th>
                                         <vs-th :colspan="1" style="max-width: 200px; white-space: normal; word-break: break-word;">C. Financiamiento público para actividades ordinarias permanentes (C = A + B)</vs-th>
-                                        <vs-th v-if="distribucion.includes(2)" :colspan="1">D. Obtención del voto ( D = C * 0.5)</vs-th>
+                                        <vs-th v-if="distribucion.includes(2)" :colspan="1">D. Obtención del voto ( D = C * {{ factorCalculo }})</vs-th>
                                     </vs-tr>
                                 </template>
 
@@ -180,8 +180,8 @@
                                         <!-- Siglas -->
                                         <vs-td>
                                             <div class="d-flex align-items-center">
-                                                <vs-checkbox class="mr-2"  
-                                                    v-model="partido.seleccionado" :val="partido.id_partido" @change="actualizarSeleccionados(partido)"/>
+                                                <!-- <vs-checkbox class="mr-2"  
+                                                    v-model="partido.seleccionado" :val="partido.id_partido" @change="actualizarSeleccionados(partido)"/> -->
                                                 <span>{{ partido.siglas }}</span>
                                             </div>
                                         </vs-td>
@@ -198,7 +198,7 @@
 
                                         <!-- % de votación -->
                                         <vs-td>
-                                            <vs-input v-model="partido.porcentaje_votacion" type="text" placeholder="0.00" />
+                                            <vs-input v-model="partido.porcentaje_votacion" @blur="formatearPorcentaje(partido.porcentaje_votacion)" type="text" placeholder="0.00000 %" />
                                         </vs-td>
 
                                         <!-- A. Monto igualitario -->
@@ -236,7 +236,7 @@
                                         </vs-td>
                                     </vs-tr>
                                     <!-- Fila de subtotal -->
-                                    <vs-tr class="font-weight-bold color:#FFEA99">
+                                    <vs-tr class="font-weight-bold" style="background-color:#FFFFC5">
                                         <vs-td>
                                             Subtotal
                                         </vs-td>
@@ -300,6 +300,17 @@
                                     </vs-tr>
                                 </template>
                             </vs-table>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <vs-button color="primary" @click="guardarDistribucion()">Guardar</vs-button>
+                                </div>
+                                <div class="col-md-6">
+                                    <vs-button color="primary" @click="limpiarDistribucion()">Limpiar</vs-button>
+                                </div>
+                                <div class="col-md-6">
+                                    <vs-button color="danger" @click="descargarDistribucion()">Descargar Excel</vs-button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </vs-dialog>
@@ -454,6 +465,7 @@ export default {
                     }));
                     this.monto30 = '';
                     this.monto70 = '';
+                    console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
@@ -638,7 +650,9 @@ export default {
                 this.calcularMontoC(partido) * this.factorCalculo
             );
         },
-        // Formatea a moneda
+        /*
+        * Formatea a moneda
+        */
         formatoMoneda(valor) {
             return new Intl.NumberFormat('es-MX', {
             style: 'currency',
@@ -646,6 +660,26 @@ export default {
             minimumFractionDigits: 2
             }).format(valor);
         },
+        /*
+        * Formatea el porcentaje
+        */
+        formatearPorcentaje(valor) {
+            if (!valor) {
+                return '0.00000 %';
+            }
+            
+            // Remover todo lo que no sea número o punto
+            const valorLimpio = valor.toString().replace(/[^0-9.]/g, '');
+            const numero = parseFloat(valorLimpio);
+            
+            if (!isNaN(numero)) {
+                // Limitar entre 0 y 100 y formatear a 5 decimales
+                const valorFinal = Math.min(Math.max(numero, 0), 100);
+                return valorFinal.toFixed(5) + ' %';
+            }
+            return '0.00000 %';
+        },
+
         /*
         * Actualiza la lista de partidos seleccionados para Ajuste de Decimales
         */
