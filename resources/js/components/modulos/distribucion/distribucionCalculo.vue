@@ -339,7 +339,6 @@ export default {
             page: 1, 
             max: 10,
             active: false, 
-            dist_30_por_ciento: '',
 
             input1: '',
             input2: '',
@@ -651,6 +650,15 @@ export default {
             currency: 'MXN',
             minimumFractionDigits: 2
             }).format(valor);
+        },
+        /**
+         * Limpia todos los campos del formulario
+         * @returns {void}
+         */
+         limpiarCampos() {
+            this.monto30 = '',
+            this.monto70 = '',
+            this.distribucion = []
         },
     },
     computed:{

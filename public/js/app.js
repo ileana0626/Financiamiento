@@ -11340,7 +11340,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       page: 1,
       max: 10,
       active: false,
-      dist_30_por_ciento: '',
       input1: '',
       input2: '',
       checkbox1: false,
@@ -11688,6 +11687,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         currency: 'MXN',
         minimumFractionDigits: 2
       }).format(valor);
+    },
+    /**
+     * Limpia todos los campos del formulario
+     * @returns {void}
+     */
+    limpiarCampos: function limpiarCampos() {
+      this.monto30 = '', this.monto70 = '', this.distribucion = [];
     }
   },
   computed: {
