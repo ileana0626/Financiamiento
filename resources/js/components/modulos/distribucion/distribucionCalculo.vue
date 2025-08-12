@@ -121,19 +121,33 @@
 
                         <!-- Tipo de distribución -->
                         <label class="col-form-label mt-4">Tipo de distribución de Financiamiento:</label>
-                        <vs-select multiple filter
-                                :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                v-model="distribucion" v-if="cat_tipo_distribucion.length > 0"
-                                :color="colors[0].color" @click.native.stop>
-                        <template #message-danger v-if="errorDistribucion.length > 0">{{ errorDistribucion }}</template>
-                        <vs-option v-for="(item, index) in cat_tipo_distribucion" :key="index"
-                                    :label="item.nombre" :value="item.id_tipo" @click.native.stop>
-                            {{ item.nombre }}
-                        </vs-option>
-                        </vs-select>
+                        <vs-select
+                            multiple
+                            filter
+                            :placeholder="(distribucion.length > 0) ? '' : 'Seleccione una o más opciones'"
+                            v-model="distribucion"
+                            v-if="cat_tipo_distribucion.length > 0"
+                            :color="colors[0].color"
+                            @change="onChangeDistribucion"
+                            @click.native.stop
+                            >
+                            <template #message-danger v-if="errorDistribucion.length > 0">
+                                {{ errorDistribucion }}
+                            </template>
+
+                            <vs-option
+                                v-for="(item, index) in cat_tipo_distribucion"
+                                :key="index"
+                                :label="item.nombre"
+                                :value="item.id_tipo"
+                                @click.native.stop
+                            >
+                                {{ item.nombre }}
+                            </vs-option>
+                            </vs-select>
 
                         <!-- Formulario principal -->
-                        <div v-if="distribucion.includes(1)">
+                        <div v-if="distribucion.includes(1) || distribucion.includes(2)">
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <h5>Financiamiento público para actividades ordinarias permanentes</h5>
@@ -180,8 +194,6 @@
                                         <!-- Siglas -->
                                         <vs-td>
                                             <div class="d-flex align-items-center">
-                                                <!-- <vs-checkbox class="mr-2"  
-                                                    v-model="partido.seleccionado" :val="partido.id_partido" @change="actualizarSeleccionados(partido)"/> -->
                                                 <span>{{ partido.siglas }}</span>
                                             </div>
                                         </vs-td>
@@ -235,25 +247,13 @@
                                             {{ formatoMoneda(calcularMontoC(partido) * factorCalculo)}}
                                         </vs-td>
                                     </vs-tr>
-                                    <!-- Fila de subtotal -->
-                                    <vs-tr class="font-weight-bold" style="background-color:#FFFFC5">
-                                        <vs-td>
-                                            Subtotal
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
-                                        <vs-td>
-                                        </vs-td>
+                                    <!-- Subtotal para partidos con representación -->
+                                    <vs-tr class="font-weight-bold bg-light">
+                                    <vs-td colspan="6" class="text-right">Subtotal partidos con representación:</vs-td>
+                                    <vs-td>{{ formatoMoneda(subtotalC_ConRepresentacion) }}</vs-td>
+                                    <vs-td v-if="distribucion.includes(2)">
+                                        {{ formatoMoneda(subtotalD_ConRepresentacion) }}
+                                    </vs-td>
                                     </vs-tr>
                                     <vs-tr v-for="(partido, i) in Partidos_Sin_Representacion" :key="'partido_con_repr-' + i" :data="partido">
                                         <!-- Siglas -->
@@ -291,7 +291,7 @@
                                             Candidaturas independientes
                                         </vs-td>
                                         <vs-td :colspan="3">
-                                            2% del financiamiento público para actividades tendientes a la obtención del voto.
+                                            {{formatoMoneda(candidatura)}}
                                         </vs-td>
                                         <!-- Subtotales *0.02-->
                                         <vs-td :colspan="1">
@@ -329,38 +329,25 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             // Variables para listar
-            selectedCalculo: {}, // objeto para almacenar el cálculo seleccionado de la tabla
-            // selectedCalculo: this.selectedCalculo.map(item => ({ ...item,
-            //     dist_monto_30_por_ciento: '',
-            //     dist_monto_70_por_ciento: '',
-            //  })),
-            Partidos_Sin_Representacion: [], // partido sin representación de un cálculo
-            Partidos_Con_Representacion: [], // partido con representación de un cálculo
-            NewlistCalculos: [], // lista de cálculos en la base de datos
-
-            cb_ppSeleccionados: [], // Para guardar los partidos seleccionados para el ajuste de decimales
-            opcionSelecionadaPorcentaje: null, // Opción selleccionada para el porcentaje 50% Gubernatura o 30% Intermedia
-
-            // Variables para la paginacion
-            search: '', // Para la busqueda
-            page: 1, // Para la paginacion
-            max: 10, // Para la paginacion
-            active: false, // para el modal
-            // Variables para actualizar Cálculo Financiamiento
+            selectedCalculo: {}, 
+            Partidos_Sin_Representacion: [],
+            Partidos_Con_Representacion: [], 
+            NewlistCalculos: [], 
+            cb_ppSeleccionados: [], 
+            opcionSelecionadaPorcentaje: null, 
+            search: '',
+            page: 1, 
+            max: 10,
+            active: false, 
             dist_30_por_ciento: '',
 
             input1: '',
             input2: '',
             checkbox1: false,
-            // Variables para actualizar Distribución Financiamiento
             anio: '',
             monto30: '',
             monto70: '',
             suma: '',
-
-            //input_monto_30_por_ciento: '',
-            //input_monto_70_por_ciento: '',
-            
             colors: [
                 {
                     color: 'warn'
@@ -369,8 +356,7 @@ export default {
             // Catálogos
             catAnio: [],
             cat_tipo_distribucion: [],
-            distribucion: [], // Maneja el tipo de distribución seleccionada
-            // Variables de error
+            distribucion: [], 
             errorAnio: '',
             errorDistribucion: '',
             error_dist_30_por_ciento: '',
@@ -488,6 +474,12 @@ export default {
             })
 
         
+        },
+        onChangeDistribucion(value) {
+            this.distribucion = value;
+            setTimeout(() => {
+            document.activeElement.blur();
+            }, 100);
         },
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
@@ -660,40 +652,6 @@ export default {
             minimumFractionDigits: 2
             }).format(valor);
         },
-        /*
-        * Formatea el porcentaje
-        */
-        formatearPorcentaje(valor) {
-            if (!valor) {
-                return '0.00000 %';
-            }
-            
-            // Remover todo lo que no sea número o punto
-            const valorLimpio = valor.toString().replace(/[^0-9.]/g, '');
-            const numero = parseFloat(valorLimpio);
-            
-            if (!isNaN(numero)) {
-                // Limitar entre 0 y 100 y formatear a 5 decimales
-                const valorFinal = Math.min(Math.max(numero, 0), 100);
-                return valorFinal.toFixed(5) + ' %';
-            }
-            return '0.00000 %';
-        },
-
-        /*
-        * Actualiza la lista de partidos seleccionados para Ajuste de Decimales
-        */
-        actualizarSeleccionados(partido) {
-            if (partido.seleccionado) {
-                // Si se selecciona, agregar a la lista
-                if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
-                    this.cb_ppSeleccionados.push(partido.id_partido);
-                }
-            } else {
-                // Si se deselecciona, remover de la lista
-                this.cb_ppSeleccionados = this.cb_ppSeleccionados.filter(id => id !== partido.id_partido);
-            }
-        }
     },
     computed:{
         /*
@@ -733,11 +691,6 @@ export default {
                 return total + (parseFloat(partido.monto_2_por_ciento * 0.5) || 0);
             }, 0);
         },
-        /*
-        * cambia el factor de cálculo para Financiamiento público para actividades tendientes a la obtención del voto
-        * 0.50 (OPCIÓN A. 50% GUBERNATURA)
-        * 0.30 (OPCIÓN B. 30 % INTERMEDIA)
-        */
         factorCalculo() {
             if (this.opcionSelecionadaPorcentaje === '1') {
                 return 0.5;  // 50% Gubernatura
@@ -745,6 +698,36 @@ export default {
                 return 0.3;  // 30% Intermedia
             }
             return 0;  // Valor por defecto
+        },
+         // Subtotal C para partidos con representación (C = A + B)
+        subtotalC_ConRepresentacion() {
+            return this.Partidos_Con_Representacion.reduce((total, partido) => {
+            return total + this.calcularMontoC(partido);
+            }, 0);
+        },
+
+        // Subtotal D para partidos con representación (D = C * factor)
+        subtotalD_ConRepresentacion() {
+            return this.Partidos_Con_Representacion.reduce((total, partido) => {
+            return total + (this.calcularMontoC(partido) * this.factorCalculo);
+            }, 0);
+        },
+
+        // Subtotal C para partidos sin representación (ya lo tienes)
+        subtotalC_SinRepresentacion() {
+            return this.subtotalMonto2PorCiento;
+        },
+
+        // Subtotal D para partidos sin representación (ya lo tienes)
+        subtotalD_SinRepresentacion() {
+            return this.subtotalMonto2PorCientoD;
+        }, 
+        candidatura(){
+            const subtotal1 = this.subtotalD_ConRepresentacion;
+            const subtotal2 = this.subtotalMonto2PorCientoD;
+            const resultado = (subtotal1 + subtotal2) * 0.02
+            console.log(resultado);
+            return resultado;
         }
     }
 }
