@@ -293,11 +293,27 @@
                                         <vs-td :colspan="3">
                                             {{formatoMoneda(candidatura)}}
                                         </vs-td>
-                                        <!-- Subtotales *0.02-->
+                                    </vs-tr>
+                                    <!--totales-->
+                                    <vs-tr >
+                                        <vs-td :colspan="6">
+                                            Totales
+                                        </vs-td>
                                         <vs-td :colspan="1">
-                                            <!-- {{formatoMoneda((subTotal_pp_sin_repr_D+subTotal_pp_con_repr_D)*0.02)}} -->
+                                            {{formatoMoneda(totalPermanentes)}}
+                                        </vs-td>
+                                        <vs-td :colspan="1" v-if="distribucion.includes(2)">
+                                            {{formatoMoneda(totalVotos)}}
                                         </vs-td>
                                     </vs-tr>
+                                    <!-- Gran Total -->
+                                        <vs-tr class="font-weight-bold bg-dark text-white">
+                                            <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
+                                            <vs-td colspan="7" v-else>Gran total:</vs-td>
+                                            <vs-td>
+                                                {{ formatoMoneda(granTotal) }}
+                                            </vs-td>
+                                        </vs-tr>
                                 </template>
                             </vs-table>
                         </div>
@@ -308,7 +324,6 @@
 
     </div>
 </template>
-.includes(2)" style="wid
 <script>
 
 import methods from '../../../methods';
@@ -712,8 +727,25 @@ export default {
             const subtotal1 = this.subtotalD_ConRepresentacion;
             const subtotal2 = this.subtotalMonto2PorCientoD;
             const resultado = (subtotal1 + subtotal2) * 0.02
-            console.log(resultado);
             return resultado;
+        },
+        totalPermanentes(){
+            const subtotal1 = this.subtotalC_ConRepresentacion;
+            const subtotal2 = this.subtotalMonto2PorCiento;
+            const resultado = subtotal1 + subtotal2
+            return resultado;
+        },
+        totalVotos(){
+            const subtotal1 = this.subtotalD_ConRepresentacion;
+            const subtotal2 = this.subtotalMonto2PorCientoD;
+            const resultado = subtotal1 + subtotal2
+            return resultado;
+        },
+        granTotal() {
+            if (this.distribucion.includes(2)) {
+            return this.totalPermanentes + this.totalVotos;
+            }
+            return this.totalPermanentes;
         }
     }
 }

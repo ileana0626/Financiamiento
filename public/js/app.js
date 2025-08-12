@@ -11762,8 +11762,25 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var subtotal1 = this.subtotalD_ConRepresentacion;
       var subtotal2 = this.subtotalMonto2PorCientoD;
       var resultado = (subtotal1 + subtotal2) * 0.02;
-      console.log(resultado);
       return resultado;
+    },
+    totalPermanentes: function totalPermanentes() {
+      var subtotal1 = this.subtotalC_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCiento;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    totalVotos: function totalVotos() {
+      var subtotal1 = this.subtotalD_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCientoD;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    granTotal: function granTotal() {
+      if (this.distribucion.includes(2)) {
+        return this.totalPermanentes + this.totalVotos;
+      }
+      return this.totalPermanentes;
     }
   }
 });
@@ -27055,14 +27072,32 @@ var render = function render() {
           attrs: {
             colspan: 3
           }
-        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.candidatura)) + "\n                                    ")]), _vm._v(" "), _c("vs-td", {
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.candidatura)) + "\n                                    ")])], 1), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+          attrs: {
+            colspan: 6
+          }
+        }, [_vm._v("\n                                        Totales\n                                    ")]), _vm._v(" "), _c("vs-td", {
           attrs: {
             colspan: 1
           }
-        })], 1)];
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.totalPermanentes)) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", {
+          attrs: {
+            colspan: 1
+          }
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.totalVotos)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _c("vs-tr", {
+          staticClass: "font-weight-bold bg-dark text-white"
+        }, [!_vm.distribucion.includes(2) ? _c("vs-td", {
+          attrs: {
+            colspan: "8"
+          }
+        }, [_vm._v("Gran total:")]) : _c("vs-td", {
+          attrs: {
+            colspan: "7"
+          }
+        }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                            " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                        ")])], 1)];
       },
       proxy: true
-    }], null, false, 3167897518)
+    }], null, false, 788803287)
   })], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
