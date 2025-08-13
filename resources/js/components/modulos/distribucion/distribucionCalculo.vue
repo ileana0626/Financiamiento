@@ -286,15 +286,18 @@
                                             {{formatoMoneda(subtotalMonto2PorCientoD)}}
                                         </vs-td>
                                     </vs-tr>
-                                    <vs-tr >
-                                        <vs-td :colspan="3">
+                                    <vs-tr v-if="distribucion.includes(2)">
+                                        <vs-td :colspan="1"></vs-td>
+                                        <vs-td :colspan="2">
                                             Candidaturas independientes
                                         </vs-td>
                                         <vs-td :colspan="3">
-                                            {{formatoMoneda(candidatura)}}
+                                            <span>2 % del financiamiento público para actividades tendientes a la obtención del voto.</span>
                                         </vs-td>
+                                        <vs-td :colspan="1"></vs-td>
                                         <!-- Subtotales *0.02-->
                                         <vs-td :colspan="1">
+                                            {{formatoMoneda(candidatura)}}
                                             <!-- {{formatoMoneda((subTotal_pp_sin_repr_D+subTotal_pp_con_repr_D)*0.02)}} -->
                                         </vs-td>
                                     </vs-tr>
@@ -309,7 +312,17 @@
                                             <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
                                         </div>
                                     </vs-button>
-                                </div>                            
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
+                                    @click.stop="guardarDistribucion" 
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Guardar
+                                        </div>
+                                    </vs-button>
+                                </div>                     
                             </div>
                         </div>
                     </div>
@@ -543,6 +556,43 @@ export default {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
         },
+        guardarDistribucion() {
+            const datos = {
+                partidos: this.Partidos_Con_Representacion,
+                monto30: this.monto30,
+                monto70: this.monto70,
+                id_calculo: this.selectedCalculo.id,
+            };
+
+            const url = '/administracion/solicitud/setDistribucionFinanciamiento';
+            
+            // Si es una actualización (tienes un ID)
+            if (this.distribucionId) {
+                return axios.put(`${url}/${this.distribucionId}`, datos)
+                    .then(response => {
+                        this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                        return response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error al actualizar:', error);
+                        this.$vs.notification({ color: 'danger', text: 'Error al actualizar' });
+                        throw error;
+                    });
+            }
+            // Si es un nuevo registro
+            else {
+                return axios.post(url, datos)
+                    .then(response => {
+                        this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                        return response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error al guardar:', error);
+                        this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
+                        throw error;
+                    });
+            }
+        },
         calcularMontoIgualitario30() {
             const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
             const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
@@ -685,6 +735,7 @@ export default {
          * @returns {void}
          */
          limpiarCampos() {
+            this.anio = '',
             this.monto30 = '',
             this.monto70 = '',
             this.distribucion = [];
