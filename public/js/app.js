@@ -11363,7 +11363,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       errorAnio: '',
       errorDistribucion: '',
       errorMonto30: '',
-      errorMonto70: ''
+      errorMonto70: '',
+      errorPartidosPoliticos_conRepr: '',
+      flag_descargar: true // true: disabled | false: enabled
     };
   },
   created: function created() {
@@ -11463,6 +11465,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = {};
       this.Partidos_Con_Representacion = {};
+      this.limpiarCampos();
       //console.log(calculo_tr.id);
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
@@ -11485,16 +11488,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               inputPorcentaje: _this5.formatearPorcentaje(p)
             });
           });
-          _this5.monto30 = '';
-          _this5.monto70 = '';
-          console.log('Partidos_Con_Representacion: ', _this5.Partidos_Con_Representacion);
+          //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
           var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
           throw new Error(errorMessage);
         }
-        response.data;
+        // Cargando datos de Distribución
+        //this.distribucion = JSON.parse(datos.p_tipo_distribucion);
       })["catch"](function (error) {
         console.error('Error al cargar detalles del cálculo', error);
         _this5.$vs.notification({
@@ -11593,10 +11595,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     guardarDistribucion: function guardarDistribucion() {
       var _this8 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var loader, urlDistribucion, urlPartidos, datos, response, _response, promesas, nombreMetodo;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var loader, urlDistribucion, urlPartidos, datos, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
             case 0:
               //⚠️
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(_this8.$vs);
@@ -11606,120 +11608,87 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               datos = {
                 p_comando: 'INSERT',
                 // INSERT, UPDATE
-                p_id_dist: _this8.distribucionId,
+                p_id_dist: _this8.selectedCalculo.id_dist,
                 id_calculo: _this8.selectedCalculo.id,
-                p_tipo_distribucion: _this8.distribucion,
                 p_anio_ejercicio: _this8.anio,
+                //valor manual
+                p_tipo_distribucion: JSON.stringify(_this8.distribucion),
+                //valor manual
                 p_monto_30_por_ciento: _this8.monto30,
+                //valor manual
                 p_monto_70_por_ciento: _this8.monto70,
-                p_tipoPorcentaje: _this8.tipoPorcentaje,
+                //valor manual
+                p_tipoPorcentaje: _this8.opcionSelecionadaPorcentaje,
+                //valor manual
                 p_suma_A_30_por_ciento: _this8.monto30,
                 p_suma_B_70_por_ciento: _this8.monto70,
                 p_suma_B_Ajuste_70_por_ciento: _this8.monto70,
                 p_suma_C_fpaop: _this8.monto70,
                 p_suma_D_fpatov: _this8.monto70
               };
-              _context5.prev = 5;
-              if (!_this8.distribucionId) {
-                _context5.next = 14;
-                break;
-              }
-              _context5.next = 9;
-              return axios.put("".concat(urlDistribucion, "/").concat(_this8.distribucionId), datos);
-            case 9:
-              response = _context5.sent;
-              _this8.$vs.notification({
-                color: 'success',
-                text: 'Distribución actualizada'
-              });
-              if (response.data && response.data.id) {
-                _this8.distribucionId = response.data.id;
-                console.log('Distribución actualizada con ID: ' + _this8.distribucionId);
-              }
-              _context5.next = 19;
-              break;
-            case 14:
-              _context5.next = 16;
-              return axios.post(urlDistribucion, datos);
-            case 16:
-              _response = _context5.sent;
-              _this8.$vs.notification({
-                color: 'success',
-                text: 'Distribución guardada'
-              });
-              // Si es un nuevo registro, actualizamos el ID
-              if (_response.data && _response.data.id) {
-                _this8.distribucionId = _response.data.id;
-                console.log('Distribución guardada con ID: ' + _response.data.id);
-              }
-            case 19:
-              // Actualizamos la tabla de partidos políticos
-              // Crear un array de promesas
-              promesas = _this8.Partidos_Con_Representacion.map( /*#__PURE__*/function () {
-                var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(partido) {
-                  var _response2;
-                  return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-                    while (1) switch (_context4.prev = _context4.next) {
-                      case 0:
-                        _context4.prev = 0;
-                        _context4.next = 3;
-                        return axios.put(urlPartidos, partido);
-                      case 3:
-                        _response2 = _context4.sent;
-                        if (_response2.data && _response2.data.ids) {
-                          console.log('Partido político actualizado: ' + _response2.data.ids);
-                        }
-                        _context4.next = 12;
-                        break;
-                      case 7:
-                        _context4.prev = 7;
-                        _context4.t0 = _context4["catch"](0);
-                        console.error('Error al actualizar partido: ' + partido.siglas, _context4.t0);
-                        _this8.$vs.notification({
-                          color: 'danger',
-                          text: "Error al actualizar ".concat(partido.siglas)
-                        });
-                        throw _context4.t0;
-                      case 12:
-                      case "end":
-                        return _context4.stop();
+              console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion);
+              try {
+                /*
+                // Actualizar distribución
+                if (this.distribucionId) {
+                    const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución actualizada con ID: ' + this.distribucionId);
                     }
-                  }, _callee4, null, [[0, 7]]);
-                }));
-                return function (_x) {
-                  return _ref.apply(this, arguments);
-                };
-              }()); // Esperar a que todas las peticiones terminen
-              _context5.next = 22;
-              return Promise.all(promesas);
-            case 22:
-              // Notificación de éxito
-              _this8.$vs.notification({
-                color: 'success',
-                text: 'Datos guardados correctamente'
-              });
-              _context5.next = 31;
-              break;
-            case 25:
-              _context5.prev = 25;
-              _context5.t0 = _context5["catch"](5);
-              console.error('Error al guardar:', _context5.t0);
-              _this8.$vs.notification({
-                title: 'Error',
-                color: 'danger',
-                text: 'Error al guardar'
-              });
-              nombreMetodo = url.split('/');
-              _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this8.$router);
-            case 31:
-              _context5.prev = 31;
-              loader.close();
-              return _context5.finish(31);
-            case 34:
+                } else { // Guardar distribución
+                    const response = await axios.post(urlDistribucion, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                    // Si es un nuevo registro, actualizamos el ID
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución guardada con ID: ' + response.data.id);
+                    }
+                }
+                // Actualizamos la tabla de partidos políticos
+                // Crear un array de promesas
+                const promesas = this.Partidos_Con_Representacion.map(async partido => {
+                    try {
+                    const response = await axios.put(urlPartidos, partido);
+                    if (response.data && response.data.ids) {
+                        console.log('Partido político actualizado: ' + response.data.ids);
+                    }
+                    } catch (error) {
+                        console.error('Error al actualizar partido: ' + partido.siglas, error);
+                        this.$vs.notification({ 
+                            color: 'danger', 
+                            text: `Error al actualizar ${partido.siglas}` 
+                        });
+                        throw error;
+                    }
+                });
+                // Esperar a que todas las peticiones terminen
+                await Promise.all(promesas);
+                
+                // Notificación de éxito
+                this.$vs.notification({ 
+                    color: 'success', 
+                    text: 'Datos guardados correctamente' 
+                });
+                */
+              } catch (error) {
+                console.error('Error al guardar:', error);
+                _this8.$vs.notification({
+                  title: 'Error',
+                  color: 'danger',
+                  text: 'Error al guardar'
+                });
+                nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this8.$router);
+              } finally {
+                loader.close();
+              }
+            case 7:
             case "end":
-              return _context5.stop();
+              return _context4.stop();
           }
-        }, _callee5, null, [[5, 25, 31, 34]]);
+        }, _callee4);
       }))();
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
@@ -11848,6 +11817,53 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.porcentaje_votacion = 0.00000;
         partido.inputPorcentaje = '0.00000 %';
       }
+    },
+    /**
+     * Valida si un valor es un número decimal válido
+     * @param {string|number} value - Valor a validar
+     * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
+     * @returns {boolean} - true si es válido, false si no
+     */
+    validarDecimal: function validarDecimal(value) {
+      var maxDecimals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+      if (value === '' || value === null || value === undefined) {
+        return false;
+      }
+
+      // Expresión regular para validar números decimales
+      var regex = new RegExp("^\\d+(\\.\\d{1,".concat(maxDecimals, "})?$"));
+      return regex.test(String(value).replace(',', '.'));
+    },
+    /**
+     * Validar campos
+     * @returns {boolean}
+     */
+    validarCampos: function validarCampos() {
+      this.limpiarErrores();
+      if (this.anio === '') {
+        this.errorAnio = 'El campo año es obligatorio';
+        this.error = true;
+      }
+      if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+        this.errorMonto30 = 'Ingrese un monto 30% válido (ej: 123.45)';
+        this.error = true;
+      }
+      if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+        this.errorMonto70 = 'Ingrese un monto 70% válido (ej: 123.45)';
+        this.error = true;
+      }
+      if (this.distribucion === '') {
+        this.errorDistribucion = 'El campo distribución es obligatorio';
+        this.error = true;
+      }
+      for (var i = 0; i < this.Partidos_Con_Representacion.length; i++) {
+        var partido = this.Partidos_Con_Representacion[i];
+        if (partido.porcentaje_votacion === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+          this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido (ej: 123.45678)';
+          this.error = true;
+        }
+      }
+      return this.error;
     },
     /**
      * Limpia todos los campos del formulario
@@ -27296,7 +27312,7 @@ var render = function render() {
   }), _vm._v("Limpiar\n                                    ")])])], 1), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("vs-button", {
-    key: "limpiar" + _vm.darkMode,
+    key: "guardar" + _vm.darkMode,
     staticStyle: {
       padding: "0.20rem",
       "font-size": "1rem"
@@ -27320,7 +27336,46 @@ var render = function render() {
     staticStyle: {
       "font-size": "0.8125rem !important"
     }
-  }), _vm._v("\n                                        Guardar\n                                    ")])])], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
+  }), _vm._v("\n                                        Guardar\n                                    ")])])], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("vs-tooltip", {
+    scopedSlots: _vm._u([{
+      key: "tooltip",
+      fn: function fn() {
+        return [_vm.flag_descargar ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
+      },
+      proxy: true
+    }], null, false, 446922455)
+  }, [_c("vs-button", {
+    key: "descargar" + _vm.darkMode,
+    staticStyle: {
+      padding: "0.20rem",
+      "font-size": "1rem"
+    },
+    attrs: {
+      color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
+      hover: "true",
+      disabled: _vm.flag_descargar
+    },
+    on: {
+      click: function click($event) {
+        $event.stopPropagation();
+        return _vm.descargarDistribucion.apply(null, arguments);
+      }
+    }
+  }, [_c("div", {
+    staticStyle: {
+      color: "var(--btn-txt-color)",
+      "font-weight": "700",
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-file-download pr-2",
+    staticStyle: {
+      "font-size": "0.8125rem !important"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v("Descargar")])])])], 1)], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,

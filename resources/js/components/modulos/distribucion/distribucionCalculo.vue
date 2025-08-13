@@ -314,7 +314,7 @@
                                     </vs-button>
                                 </div>
                                 <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'guardar'+darkMode" 
                                     @click.stop="guardarDistribucion" 
                                     style="padding: 0.20rem; font-size: 1rem;">
                                         <div style="color: var(--btn-txt-color); font-weight: 700;">
@@ -322,7 +322,27 @@
                                             Guardar
                                         </div>
                                     </vs-button>
-                                </div>                     
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-tooltip>
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
+                                    @click.stop="descargarDistribucion" hover="true"
+                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="flag_descargar">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
+                                            <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            <span>Descargar</span>
+                                        </div>
+                                    </vs-button>
+                                    <template #tooltip>
+                                        <div v-if="flag_descargar">
+                                            Debes guardar los cambios antes de descargar
+                                        </div>
+                                        <div v-else>
+                                            Descargar distribución
+                                        </div>
+                                    </template>
+                                    </vs-tooltip>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -376,6 +396,8 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
+            errorPartidosPoliticos_conRepr: '',
+            flag_descargar: true, // true: disabled | false: enabled
         }
     },
     created() {
@@ -446,6 +468,7 @@ export default {
             this.datosCalculoSeleccionado = {};
             this.Partidos_Sin_Representacion = {};
             this.Partidos_Con_Representacion = {};
+            this.limpiarCampos();
             //console.log(calculo_tr.id);
             this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
@@ -466,15 +489,14 @@ export default {
                         // valor temporal para el input
                         inputPorcentaje: this.formatearPorcentaje(p)
                     }));
-                    this.monto30 = '';
-                    this.monto70 = '';
-                    console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
+                    //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
                     throw new Error(errorMessage);
                 }
-                response.data
+                // Cargando datos de Distribución
+                //this.distribucion = JSON.parse(datos.p_tipo_distribucion);
             }).catch((error) => {
                 console.error('Error al cargar detalles del cálculo', error);
                 this.$vs.notification({
@@ -562,24 +584,25 @@ export default {
             loader.text = 'Guardando distribución...';
             const urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
             const urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-
+            
             const datos = {
                 p_comando: 'INSERT', // INSERT, UPDATE
-                p_id_dist: this.distribucionId,
+                p_id_dist: this.selectedCalculo.id_dist,
                 id_calculo: this.selectedCalculo.id,
-                p_tipo_distribucion: this.distribucion,
-                p_anio_ejercicio: this.anio,
-                p_monto_30_por_ciento: this.monto30,
-                p_monto_70_por_ciento: this.monto70,
-                p_tipoPorcentaje: this.tipoPorcentaje,
+                p_anio_ejercicio: this.anio, //valor manual
+                p_tipo_distribucion: JSON.stringify(this.distribucion), //valor manual
+                p_monto_30_por_ciento: this.monto30, //valor manual
+                p_monto_70_por_ciento: this.monto70, //valor manual
+                p_tipoPorcentaje: this.opcionSelecionadaPorcentaje, //valor manual
                 p_suma_A_30_por_ciento: this.monto30,
                 p_suma_B_70_por_ciento: this.monto70,
                 p_suma_B_Ajuste_70_por_ciento: this.monto70,
                 p_suma_C_fpaop: this.monto70,
                 p_suma_D_fpatov: this.monto70,
             };
-
+            console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion);
             try {
+                /*
                 // Actualizar distribución
                 if (this.distribucionId) {
                     const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
@@ -621,7 +644,8 @@ export default {
                 this.$vs.notification({ 
                     color: 'success', 
                     text: 'Datos guardados correctamente' 
-                });                
+                });
+                */           
             } catch (error) {
                 console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
@@ -768,6 +792,53 @@ export default {
                 partido.porcentaje_votacion = 0.00000;
                 partido.inputPorcentaje = '0.00000 %';
             }
+        },
+        /**
+         * Valida si un valor es un número decimal válido
+         * @param {string|number} value - Valor a validar
+         * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
+         * @returns {boolean} - true si es válido, false si no
+         */
+        validarDecimal(value, maxDecimals = 5) {
+            if (value === '' || value === null || value === undefined) {
+                return false;
+            }
+            
+            // Expresión regular para validar números decimales
+            const regex = new RegExp(`^\\d+(\\.\\d{1,${maxDecimals}})?$`);
+            return regex.test(String(value).replace(',', '.'));
+        },
+        /**
+         * Validar campos
+         * @returns {boolean}
+         */
+        validarCampos() {
+            this.limpiarErrores();
+            if (this.anio === '') {
+                this.errorAnio = 'El campo año es obligatorio';
+                this.error = true;
+            }
+            if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+                this.errorMonto30 = 'Ingrese un monto 30% válido (ej: 123.45)';
+                this.error = true;
+            }
+    
+            if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+                this.errorMonto70 = 'Ingrese un monto 70% válido (ej: 123.45)';
+                this.error = true;
+            }
+            if (this.distribucion === '') {
+                this.errorDistribucion = 'El campo distribución es obligatorio';
+                this.error = true;
+            }
+            for (let i = 0; i < this.Partidos_Con_Representacion.length; i++) {
+                const partido = this.Partidos_Con_Representacion[i];
+                if (partido.porcentaje_votacion === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+                    this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido (ej: 123.45678)';
+                    this.error = true;
+                }
+            }
+            return this.error;
         },
         /**
          * Limpia todos los campos del formulario
