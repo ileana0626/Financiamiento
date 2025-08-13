@@ -335,6 +335,7 @@
 .includes(2)" style="wid
 <script>
 
+import { forEach } from 'lodash';
 import methods from '../../../methods';
 import { loading } from '../../../methods';
 export default {
@@ -370,11 +371,11 @@ export default {
             cat_tipo_distribucion: [],
             distribucion: [],
             // Validaciones
-            error: '',
+            error: false,
             errorAnio: '',
             errorDistribucion: '',
-            error_dist_30_por_ciento: '',
-            error_dist_70_por_ciento: '',
+            errorMonto30: '',
+            errorMonto70: '',
         }
     },
     created() {
@@ -557,40 +558,84 @@ export default {
                 });
         },
         guardarDistribucion() {
+            const loader = loading(this.$vs);
+            loader.text = 'Guardando distribución...';
             const datos = {
-                partidos: this.Partidos_Con_Representacion,
+                id_calculo: this.selectedCalculo.id,
+                anioFiscal: this.anio,
+                distribucion: this.distribucion,
+                tipoPorcentaje: this.tipoPorcentaje,
                 monto30: this.monto30,
                 monto70: this.monto70,
-                id_calculo: this.selectedCalculo.id,
             };
 
             const url = '/administracion/solicitud/setDistribucionFinanciamiento';
-            
-            // Si es una actualización (tienes un ID)
-            if (this.distribucionId) {
-                return axios.put(`${url}/${this.distribucionId}`, datos)
-                    .then(response => {
-                        this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
-                        return response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error al actualizar:', error);
-                        this.$vs.notification({ color: 'danger', text: 'Error al actualizar' });
-                        throw error;
+            try {
+                // Si es una actualización (tienes un ID)
+                if (this.distribucionId) {
+                    axios.put(`${url}/${this.distribucionId}`, datos)
+                        .then(response => {
+                            this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                        })
+                        .catch(error => {
+                            console.error('Error al actualizar distribución:', error);
+                            this.$vs.notification({ color: 'danger', text: 'Error al actualizar' });
+                            throw error;
                     });
-            }
-            // Si es un nuevo registro
-            else {
-                return axios.post(url, datos)
-                    .then(response => {
-                        this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
-                        return response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error al guardar:', error);
-                        this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
-                        throw error;
+                }
+                // Si es un nuevo registro
+                else {
+                    axios.post(url, datos)
+                        .then(response => {
+                            this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                        })
+                        .catch(error => {
+                            console.error('Error al guardar distribución:', error);
+                            this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
+                            throw error;
+                        });
+                }
+                // Actualizamos la tabla de partidos políticos
+                try {
+                    url = '/administracion/solicitud/setPartidoFinanciamiento';
+                    // Crear un array de promesas
+                    const promesas = this.Partidos_Con_Representacion.map(partido => 
+                        this.$axios.put(`${url}/${partido.id_partido}`, partido)
+                        .then(response => {
+                            console.log('Partido político actualizado: ' + partido.siglas);
+                        })
+                        .catch(error => {
+                            console.error('Error al actualizar partido: ' + partido.siglas, error);
+                            this.$vs.notification({ 
+                            color: 'danger', 
+                            text: `Error al actualizar ${partido.siglas}` 
+                            });
+                            throw error;
+                        })
+                    );
+                    
+                    // Esperar a que todas las peticiones terminen
+                    await Promise.all(promesas);
+                    
+                    // Notificación de éxito
+                    this.$vs.notification({ 
+                        color: 'success', 
+                        text: 'Datos guardados correctamente' 
                     });
+                    
+                } catch (error) {
+                    console.error('Error al actualizar partidos: ', error);
+                    throw error;
+                }
+                
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
+
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            } finally {
+                loader.close();
             }
         },
         calcularMontoIgualitario30() {
@@ -754,7 +799,7 @@ export default {
          * @returns {void}
          */
         limpiarErrores() {
-            this.error = '';
+            this.error = false;
             this.errorAnio = '';
             this.errorMonto30 = '',
             this.errorMonto70 = '',

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use PDO;
 use PDF;
+use Illuminate\Support\Facades\Validator;
 
 class SolicitudController extends Controller
 {
@@ -137,7 +138,7 @@ class SolicitudController extends Controller
             throw $e;
         }
     }
-    /** -- Puede no ser útil
+    /** -- DEPRECATED
      * Obtiene los partidos políticos de un cálculo de financiamiento
      * @param Id del cálculo
      * @return tablas con los partidos políticos de
@@ -174,8 +175,8 @@ class SolicitudController extends Controller
     }
 
 
-    /** -- Puede no ser útil
-     * Obtiene los partidos políticos de un cálculo de financiamiento
+    /**
+     * Obtiene los partidos políticos de una Distribución de Financiamiento
      * @param Id del cálculo
      * @return tablas con los partidos políticos de
      * 1. Partidos políticos sin representación
@@ -221,6 +222,67 @@ class SolicitudController extends Controller
                 'message' => 'Error al obtener los partidos políticos'
             ]);
             throw $e;
+        }
+    }
+    /**
+     * Actualiza los partidos políticos con representación
+     * @param partido del partido político con representación
+     * @return json con los partidos políticos actualizados
+     */
+    public function Update_Partidos_Con_Representacion(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+             // Obtener el objeto partido completo
+            $partido = $request->all();
+            // Validar los campos requeridos
+            $validator = Validator::make($partido, [
+                'id_partido' => 'required|integer',
+                'id_calculo' => 'required|integer',
+                'porcentaje' => 'required|numeric|min:0|max:100',
+                // Agrega más validaciones según necesites
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Llamar al procedimiento almacenado
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Con_Representacion(?, ?, ?, ?, ?)', [
+                $partido['id_calculo'],
+                $partido['id_partido'],
+                $partido['porcentaje'],
+                $partido['calculos'] ?? null,
+                self::$useTransaction, // bandera estática
+            ]);
+            Log::info('Consulta SQL ejecutada:', $result);
+            DB::commit();
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'message' => 'Partido con representación actualizados correctamente',
+                //'data' => $result[0] ?? null
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar partido', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el partido',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
         }
     }
     
