@@ -168,7 +168,7 @@
                                     <label class="col-form-label">Seleccione el tipo de operación:</label>
                                     <vs-select v-model="opcionSelecionadaPorcentaje" placeholder="Seleccione una opción"
                                         class="mb-4" style="max-width: 300px;">
-                                        <vs-option value="1" label="A. 50% Gubernatura" :selected="true">A. 50% Gubernatura</vs-option>
+                                        <vs-option value="1" label="A. 50% Gubernatura">A. 50% Gubernatura</vs-option>
                                         <vs-option value="2" label="B. 30% Intermedia">B. 30% Intermedia</vs-option>
                                     </vs-select>
                                 </div>
@@ -210,7 +210,7 @@
 
                                         <!-- % de votación -->
                                         <vs-td>
-                                            <vs-input v-model="partido.porcentaje_votacion" @blur="formatearPorcentaje(partido.porcentaje_votacion)" type="text" placeholder="0.00000 %" />
+                                            <vs-input v-model="partido.inputPorcentaje" @blur="formatearPorcentaje(partido)" type="text" placeholder="0.00 %" />
                                         </vs-td>
 
                                         <!-- A. Monto igualitario -->
@@ -300,16 +300,16 @@
                                     </vs-tr>
                                 </template>
                             </vs-table>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <vs-button color="primary" @click="guardarDistribucion()">Guardar</vs-button>
-                                </div>
-                                <div class="col-md-6">
-                                    <vs-button color="primary" @click="limpiarDistribucion()">Limpiar</vs-button>
-                                </div>
-                                <div class="col-md-6">
-                                    <vs-button color="danger" @click="descargarDistribucion()">Descargar Excel</vs-button>
-                                </div>
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
+                                    @click.stop="limpiarCampos"
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                                        </div>
+                                    </vs-button>
+                                </div>                            
                             </div>
                         </div>
                     </div>
@@ -333,8 +333,8 @@ export default {
             Partidos_Sin_Representacion: [],
             Partidos_Con_Representacion: [], 
             NewlistCalculos: [], 
-            cb_ppSeleccionados: [], 
-            opcionSelecionadaPorcentaje: null, 
+            cb_ppSeleccionados: [],
+            opcionSelecionadaPorcentaje: '1', //  Valor por defecto Gubernatura
             search: '',
             page: 1, 
             max: 10,
@@ -355,7 +355,9 @@ export default {
             // Catálogos
             catAnio: [],
             cat_tipo_distribucion: [],
-            distribucion: [], 
+            distribucion: [],
+            // Validaciones
+            error: '',
             errorAnio: '',
             errorDistribucion: '',
             error_dist_30_por_ciento: '',
@@ -446,7 +448,9 @@ export default {
                     this.Partidos_Sin_Representacion = response.data.partidosSinRep;
                     this.Partidos_Con_Representacion = response.data.partidosConRep.map(p => ({
                         ...p,
-                        ajuste: 0
+                        ajuste: 0,
+                        // valor temporal para el input
+                        inputPorcentaje: this.formatearPorcentaje(p)
                     }));
                     this.monto30 = '';
                     this.monto70 = '';
@@ -555,7 +559,7 @@ export default {
             if (this.totalAjusteDecimales < 0) {
                 partido.ajuste += ajusteUnitario;
             } else {
-                this.$vs.notify({
+                this.$vs.notification({
                 title: 'Aviso',
                 text: 'Primero debes restar a otro partido antes de sumar.',
                 color: 'warning'
@@ -608,15 +612,17 @@ export default {
         * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
          */
         calcularMontoProporcionalB(porcentajePartido) {
-            const porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
+            const porcentaje = parseFloat(porcentajePartido);
             const totalPorcentajes = this.sumaTotalPorcentajes;
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
-
+            
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+            //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
             return (monto * porcentaje) / totalPorcentajes;
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
+            //console.log('B. Monto con ajuste:', {base, ajuste});
             return base + (ajuste || 0);
         },
         calcularMontoC(partido) {
@@ -625,7 +631,7 @@ export default {
             
             // Verificar si los valores son números válidos
             if (isNaN(montoA) || isNaN(montoB)) {
-                console.error('Valores inválidos:', { 
+                console.error('C. Valores inválidos:', { 
                     montoA, 
                     montoB,
                     porcentaje: partido.porcentaje_votacion,
@@ -651,6 +657,29 @@ export default {
             minimumFractionDigits: 2
             }).format(valor);
         },
+
+        /*
+        * Formatea el porcentaje del partido
+        */
+        formatearPorcentaje(partido) {
+            if (!partido.inputPorcentaje) {
+                partido.inputPorcentaje = '0.00000 %';
+                partido.porcentaje_votacion = 0.00000;
+                return;
+            }
+            
+            const valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+            
+            if (!isNaN(valorNumerico)) {
+                //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
+                partido.porcentaje_votacion = valorNumerico.toFixed(5);
+                partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
+                
+            } else { // Si no es un número recetea valores
+                partido.porcentaje_votacion = 0.00000;
+                partido.inputPorcentaje = '0.00000 %';
+            }
+        },
         /**
          * Limpia todos los campos del formulario
          * @returns {void}
@@ -658,7 +687,27 @@ export default {
          limpiarCampos() {
             this.monto30 = '',
             this.monto70 = '',
-            this.distribucion = []
+            this.distribucion = [];
+            // Reiniciar valores de partidos a 0.0
+            this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(partido => ({
+                ...partido,
+                porcentaje_votacion: 0.00,
+                inputPorcentaje: '',
+                ajuste: 0.00,
+            }));
+            this.opcionSelecionadaPorcentaje= '1'; //  Valor por defecto
+            this.limpiarErrores();
+        },
+        /**
+         * Limpia todos los mensajes de error
+         * @returns {void}
+         */
+        limpiarErrores() {
+            this.error = '';
+            this.errorAnio = '';
+            this.errorMonto30 = '',
+            this.errorMonto70 = '',
+            this.errorDistribucion = '';
         },
     },
     computed:{
@@ -667,10 +716,10 @@ export default {
         */
         sumaTotalPorcentajes() {
             return this.Partidos_Con_Representacion.reduce((total, partido) => {
-            // Convierte a número y evita NaN si el input está vacío
-            const valor = parseFloat(partido.porcentaje_votacion);
-            return total + (isNaN(valor) ? 0 : valor);
-            }, 0).toFixed(2);
+                // Convierte a número y evita NaN si el input está vacío
+                const valor = parseFloat(partido.porcentaje_votacion);
+                return total + (isNaN(valor) ? 0 : valor);
+            }, 0);//.toFixed(2);
         },
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
@@ -734,7 +783,7 @@ export default {
             const subtotal1 = this.subtotalD_ConRepresentacion;
             const subtotal2 = this.subtotalMonto2PorCientoD;
             const resultado = (subtotal1 + subtotal2) * 0.02
-            console.log(resultado);
+            //console.log('Candidatura Ind.(2%): ', resultado);
             return resultado;
         }
     }

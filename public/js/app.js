@@ -11335,7 +11335,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       Partidos_Con_Representacion: [],
       NewlistCalculos: [],
       cb_ppSeleccionados: [],
-      opcionSelecionadaPorcentaje: null,
+      opcionSelecionadaPorcentaje: '1',
+      //  Valor por defecto Gubernatura
       search: '',
       page: 1,
       max: 10,
@@ -11354,6 +11355,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       catAnio: [],
       cat_tipo_distribucion: [],
       distribucion: [],
+      // Validaciones
+      error: '',
       errorAnio: '',
       errorDistribucion: '',
       error_dist_30_por_ciento: '',
@@ -11474,7 +11477,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
           _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
             return _objectSpread(_objectSpread({}, p), {}, {
-              ajuste: 0
+              ajuste: 0,
+              // valor temporal para el input
+              inputPorcentaje: _this5.formatearPorcentaje(p)
             });
           });
           _this5.monto30 = '';
@@ -11597,7 +11602,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (this.totalAjusteDecimales < 0) {
           partido.ajuste += ajusteUnitario;
         } else {
-          this.$vs.notify({
+          this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
             color: 'warning'
@@ -11647,15 +11652,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
      */
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
-      var porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
+      var porcentaje = parseFloat(porcentajePartido);
       var totalPorcentajes = this.sumaTotalPorcentajes;
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+      //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
       return monto * porcentaje / totalPorcentajes;
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);
+      //console.log('B. Monto con ajuste:', {base, ajuste});
       return base + (ajuste || 0);
     },
     calcularMontoC: function calcularMontoC(partido) {
@@ -11664,7 +11671,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
       // Verificar si los valores son números válidos
       if (isNaN(montoA) || isNaN(montoB)) {
-        console.error('Valores inválidos:', {
+        console.error('C. Valores inválidos:', {
           montoA: montoA,
           montoB: montoB,
           porcentaje: partido.porcentaje_votacion,
@@ -11688,12 +11695,51 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         minimumFractionDigits: 2
       }).format(valor);
     },
+    /*
+    * Formatea el porcentaje del partido
+    */
+    formatearPorcentaje: function formatearPorcentaje(partido) {
+      if (!partido.inputPorcentaje) {
+        partido.inputPorcentaje = '0.00000 %';
+        partido.porcentaje_votacion = 0.00000;
+        return;
+      }
+      var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+      if (!isNaN(valorNumerico)) {
+        //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
+        partido.porcentaje_votacion = valorNumerico.toFixed(5);
+        partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
+      } else {
+        // Si no es un número recetea valores
+        partido.porcentaje_votacion = 0.00000;
+        partido.inputPorcentaje = '0.00000 %';
+      }
+    },
     /**
      * Limpia todos los campos del formulario
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
       this.monto30 = '', this.monto70 = '', this.distribucion = [];
+      // Reiniciar valores de partidos a 0.0
+      this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
+        return _objectSpread(_objectSpread({}, partido), {}, {
+          porcentaje_votacion: 0.00,
+          inputPorcentaje: '',
+          ajuste: 0.00
+        });
+      });
+      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto
+      this.limpiarErrores();
+    },
+    /**
+     * Limpia todos los mensajes de error
+     * @returns {void}
+     */
+    limpiarErrores: function limpiarErrores() {
+      this.error = '';
+      this.errorAnio = '';
+      this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
     }
   },
   computed: {
@@ -11705,7 +11751,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         // Convierte a número y evita NaN si el input está vacío
         var valor = parseFloat(partido.porcentaje_votacion);
         return total + (isNaN(valor) ? 0 : valor);
-      }, 0).toFixed(2);
+      }, 0); //.toFixed(2);
     },
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
@@ -11771,7 +11817,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var subtotal1 = this.subtotalD_ConRepresentacion;
       var subtotal2 = this.subtotalMonto2PorCientoD;
       var resultado = (subtotal1 + subtotal2) * 0.02;
-      console.log(resultado);
+      //console.log('Candidatura Ind.(2%): ', resultado);
       return resultado;
     }
   }
@@ -26881,8 +26927,7 @@ var render = function render() {
   }, [_c("vs-option", {
     attrs: {
       value: "1",
-      label: "A. 50% Gubernatura",
-      selected: true
+      label: "A. 50% Gubernatura"
     }
   }, [_vm._v("A. 50% Gubernatura")]), _vm._v(" "), _c("vs-option", {
     attrs: {
@@ -26962,19 +27007,19 @@ var render = function render() {
           })]), _vm._v(" "), _c("vs-td", [_c("vs-input", {
             attrs: {
               type: "text",
-              placeholder: "0.00000 %"
+              placeholder: "0.00 %"
             },
             on: {
               blur: function blur($event) {
-                return _vm.formatearPorcentaje(partido.porcentaje_votacion);
+                return _vm.formatearPorcentaje(partido);
               }
             },
             model: {
-              value: partido.porcentaje_votacion,
+              value: partido.inputPorcentaje,
               callback: function callback($$v) {
-                _vm.$set(partido, "porcentaje_votacion", $$v);
+                _vm.$set(partido, "inputPorcentaje", $$v);
               },
-              expression: "partido.porcentaje_votacion"
+              expression: "partido.inputPorcentaje"
             }
           })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center justify-content-between"
@@ -27076,43 +27121,37 @@ var render = function render() {
         })], 1)];
       },
       proxy: true
-    }], null, false, 3978187481)
+    }], null, false, 1471803310)
   }), _vm._v(" "), _c("div", {
-    staticClass: "row"
+    staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {
-    staticClass: "col-md-6"
+    staticClass: "d-flex justify-content-center"
   }, [_c("vs-button", {
+    key: "limpiar" + _vm.darkMode,
+    staticStyle: {
+      padding: "0.20rem",
+      "font-size": "1rem"
+    },
     attrs: {
-      color: "primary"
+      color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a"
     },
     on: {
       click: function click($event) {
-        return _vm.guardarDistribucion();
+        $event.stopPropagation();
+        return _vm.limpiarCampos.apply(null, arguments);
       }
     }
-  }, [_vm._v("Guardar")])], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("vs-button", {
-    attrs: {
-      color: "primary"
-    },
-    on: {
-      click: function click($event) {
-        return _vm.limpiarDistribucion();
-      }
+  }, [_c("div", {
+    staticStyle: {
+      color: "var(--btn-txt-color)",
+      "font-weight": "700"
     }
-  }, [_vm._v("Limpiar")])], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("vs-button", {
-    attrs: {
-      color: "danger"
-    },
-    on: {
-      click: function click($event) {
-        return _vm.descargarDistribucion();
-      }
+  }, [_c("i", {
+    staticClass: "fas fa-eraser pr-2",
+    staticStyle: {
+      "font-size": "0.8125rem !important"
     }
-  }, [_vm._v("Descargar Excel")])], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
+  }), _vm._v("Limpiar\n                                    ")])])], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,

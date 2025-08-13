@@ -14122,7 +14122,7 @@ CREATE TABLE distribucion_dppp(
     anio_ejercicio YEAR NOT NULL COMMENT 'Año del ejercicio apartado de distribución',
     tipo_distribucion INT COMMENT 'id de tipo de distribución',
     monto_30_por_ciento DECIMAL(30,15) default 0.00 COMMENT '30% Monto manual',
-    monto_70_por_ciento DECIMAL(30,15) default 0.00 COMMENT '30% Monto manual',
+    monto_70_por_ciento DECIMAL(30,15) default 0.00 COMMENT '70% Monto manual',
 	tipoPorcentaje INT NULL DEFAULT 1 COMMENT '1 = A. 50% Gubernatura, 2 = B. 30% Intermedia',
     -- Sumatorias de los totales
     suma_A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT ' Sumatoria -> A. 30% en forma igualitaria',
