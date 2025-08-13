@@ -557,9 +557,12 @@ export default {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
         },
-        guardarDistribucion() {
+        async guardarDistribucion() { //⚠️
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
+            const urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+            const urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+
             const datos = {
                 p_comando: 'INSERT', // INSERT, UPDATE
                 p_id_dist: this.distribucionId,
@@ -576,65 +579,49 @@ export default {
                 p_suma_D_fpatov: this.monto70,
             };
 
-            const url = '/administracion/solicitud/setDistribucionFinanciamiento';
             try {
-                // Si es una actualización (tienes un ID)
+                // Actualizar distribución
                 if (this.distribucionId) {
-                    axios.put(`${url}/${this.distribucionId}`, datos)
-                        .then(response => {
-                            this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
-                        })
-                        .catch(error => {
-                            console.error('Error al actualizar distribución:', error);
-                            this.$vs.notification({ color: 'danger', text: 'Error al actualizar' });
-                            throw error;
-                    });
-                }
-                // Si es un nuevo registro
-                else {
-                    axios.post(url, datos)
-                        .then(response => {
-                            this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
-                        })
-                        .catch(error => {
-                            console.error('Error al guardar distribución:', error);
-                            this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
-                            throw error;
-                        });
+                    const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución actualizada con ID: ' + this.distribucionId);
+                    }
+                } else { // Guardar distribución
+                    const response = await axios.post(urlDistribucion, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                    // Si es un nuevo registro, actualizamos el ID
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución guardada con ID: ' + response.data.id);
+                    }
                 }
                 // Actualizamos la tabla de partidos políticos
-                try {
-                    url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-                    // Crear un array de promesas
-                    const promesas = this.Partidos_Con_Representacion.map(partido => 
-                        this.$axios.put(`${url}`, partido)
-                        .then(response => {
-                            console.log('Partido político actualizado: ' + partido.siglas);
-                        })
-                        .catch(error => {
-                            console.error('Error al actualizar partido: ' + partido.siglas, error);
-                            this.$vs.notification({ 
+                // Crear un array de promesas
+                const promesas = this.Partidos_Con_Representacion.map(async partido => {
+                    try {
+                    const response = await axios.put(urlPartidos, partido);
+                    if (response.data && response.data.ids) {
+                        console.log('Partido político actualizado: ' + response.data.ids);
+                    }
+                    } catch (error) {
+                        console.error('Error al actualizar partido: ' + partido.siglas, error);
+                        this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
-                            });
-                            throw error;
-                        })
-                    );
-                    
-                    // Esperar a que todas las peticiones terminen
-                    await Promise.all(promesas);
-                    
-                    // Notificación de éxito
-                    this.$vs.notification({ 
-                        color: 'success', 
-                        text: 'Datos guardados correctamente' 
-                    });
-                    
-                } catch (error) {
-                    console.error('Error al actualizar partidos: ', error);
-                    throw error;
-                }
+                        });
+                        throw error;
+                    }
+                });
+                // Esperar a que todas las peticiones terminen
+                await Promise.all(promesas);
                 
+                // Notificación de éxito
+                this.$vs.notification({ 
+                    color: 'success', 
+                    text: 'Datos guardados correctamente' 
+                });                
             } catch (error) {
                 console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });

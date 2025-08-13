@@ -11304,8 +11304,10 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
-/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -11323,6 +11325,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function _OverloadYield(e, d) { this.v = e, this.k = d; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11356,11 +11359,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       cat_tipo_distribucion: [],
       distribucion: [],
       // Validaciones
-      error: '',
+      error: false,
       errorAnio: '',
       errorDistribucion: '',
-      error_dist_30_por_ciento: '',
-      error_dist_70_por_ciento: ''
+      errorMonto30: '',
+      errorMonto70: ''
     };
   },
   created: function created() {
@@ -11409,7 +11412,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               })["catch"](function (error) {
                 console.log(error);
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
               });
             case 4:
             case "end":
@@ -11423,7 +11426,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     getCalculos: function getCalculos() {
       var _this4 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(this.$vs);
       loader.text = 'Cargando datos...';
       var url = '/administracion/solicitud/getCalculosFinanciamiento';
       this.NewlistCalculos = [];
@@ -11445,14 +11448,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           color: 'danger'
         });
         var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
+        _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
       })["finally"](function () {
         loader.close();
       });
     },
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(this.$vs);
 
       //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
@@ -11500,7 +11503,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           color: 'danger'
         });
         var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
+        _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
       })["finally"](function () {
         loader.close();
       });
@@ -11562,7 +11565,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 }
               })["catch"](function (error) {
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
               });
             case 3:
             case "end":
@@ -11590,48 +11593,134 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     guardarDistribucion: function guardarDistribucion() {
       var _this8 = this;
-      var datos = {
-        partidos: this.Partidos_Con_Representacion,
-        monto30: this.monto30,
-        monto70: this.monto70,
-        id_calculo: this.selectedCalculo.id
-      };
-      var url = '/administracion/solicitud/setDistribucionFinanciamiento';
-
-      // Si es una actualización (tienes un ID)
-      if (this.distribucionId) {
-        return axios.put("".concat(url, "/").concat(this.distribucionId), datos).then(function (response) {
-          _this8.$vs.notification({
-            color: 'success',
-            text: 'Distribución actualizada'
-          });
-          return response.data;
-        })["catch"](function (error) {
-          console.error('Error al actualizar:', error);
-          _this8.$vs.notification({
-            color: 'danger',
-            text: 'Error al actualizar'
-          });
-          throw error;
-        });
-      }
-      // Si es un nuevo registro
-      else {
-        return axios.post(url, datos).then(function (response) {
-          _this8.$vs.notification({
-            color: 'success',
-            text: 'Distribución guardada'
-          });
-          return response.data;
-        })["catch"](function (error) {
-          console.error('Error al guardar:', error);
-          _this8.$vs.notification({
-            color: 'danger',
-            text: 'Error al guardar'
-          });
-          throw error;
-        });
-      }
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var loader, urlDistribucion, urlPartidos, datos, response, _response, promesas, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              //⚠️
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(_this8.$vs);
+              loader.text = 'Guardando distribución...';
+              urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+              datos = {
+                p_comando: 'INSERT',
+                // INSERT, UPDATE
+                p_id_dist: _this8.distribucionId,
+                id_calculo: _this8.selectedCalculo.id,
+                p_tipo_distribucion: _this8.distribucion,
+                p_anio_ejercicio: _this8.anio,
+                p_monto_30_por_ciento: _this8.monto30,
+                p_monto_70_por_ciento: _this8.monto70,
+                p_tipoPorcentaje: _this8.tipoPorcentaje,
+                p_suma_A_30_por_ciento: _this8.monto30,
+                p_suma_B_70_por_ciento: _this8.monto70,
+                p_suma_B_Ajuste_70_por_ciento: _this8.monto70,
+                p_suma_C_fpaop: _this8.monto70,
+                p_suma_D_fpatov: _this8.monto70
+              };
+              _context5.prev = 5;
+              if (!_this8.distribucionId) {
+                _context5.next = 14;
+                break;
+              }
+              _context5.next = 9;
+              return axios.put("".concat(urlDistribucion, "/").concat(_this8.distribucionId), datos);
+            case 9:
+              response = _context5.sent;
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Distribución actualizada'
+              });
+              if (response.data && response.data.id) {
+                _this8.distribucionId = response.data.id;
+                console.log('Distribución actualizada con ID: ' + _this8.distribucionId);
+              }
+              _context5.next = 19;
+              break;
+            case 14:
+              _context5.next = 16;
+              return axios.post(urlDistribucion, datos);
+            case 16:
+              _response = _context5.sent;
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Distribución guardada'
+              });
+              // Si es un nuevo registro, actualizamos el ID
+              if (_response.data && _response.data.id) {
+                _this8.distribucionId = _response.data.id;
+                console.log('Distribución guardada con ID: ' + _response.data.id);
+              }
+            case 19:
+              // Actualizamos la tabla de partidos políticos
+              // Crear un array de promesas
+              promesas = _this8.Partidos_Con_Representacion.map( /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(partido) {
+                  var _response2;
+                  return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+                    while (1) switch (_context4.prev = _context4.next) {
+                      case 0:
+                        _context4.prev = 0;
+                        _context4.next = 3;
+                        return axios.put(urlPartidos, partido);
+                      case 3:
+                        _response2 = _context4.sent;
+                        if (_response2.data && _response2.data.ids) {
+                          console.log('Partido político actualizado: ' + _response2.data.ids);
+                        }
+                        _context4.next = 12;
+                        break;
+                      case 7:
+                        _context4.prev = 7;
+                        _context4.t0 = _context4["catch"](0);
+                        console.error('Error al actualizar partido: ' + partido.siglas, _context4.t0);
+                        _this8.$vs.notification({
+                          color: 'danger',
+                          text: "Error al actualizar ".concat(partido.siglas)
+                        });
+                        throw _context4.t0;
+                      case 12:
+                      case "end":
+                        return _context4.stop();
+                    }
+                  }, _callee4, null, [[0, 7]]);
+                }));
+                return function (_x) {
+                  return _ref.apply(this, arguments);
+                };
+              }()); // Esperar a que todas las peticiones terminen
+              _context5.next = 22;
+              return Promise.all(promesas);
+            case 22:
+              // Notificación de éxito
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Datos guardados correctamente'
+              });
+              _context5.next = 31;
+              break;
+            case 25:
+              _context5.prev = 25;
+              _context5.t0 = _context5["catch"](5);
+              console.error('Error al guardar:', _context5.t0);
+              _this8.$vs.notification({
+                title: 'Error',
+                color: 'danger',
+                text: 'Error al guardar'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this8.$router);
+            case 31:
+              _context5.prev = 31;
+              loader.close();
+              return _context5.finish(31);
+            case 34:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5, null, [[5, 25, 31, 34]]);
+      }))();
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
       var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
@@ -11782,7 +11871,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
      * @returns {void}
      */
     limpiarErrores: function limpiarErrores() {
-      this.error = '';
+      this.error = false;
       this.errorAnio = '';
       this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
     }
@@ -230355,14 +230444,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************************************!*\
   !*** ./resources/js/components/modulos/distribucion/distribucionCalculo.vue ***!
   \******************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _distribucionCalculo_vue_vue_type_template_id_80482e5e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=template&id=80482e5e */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=template&id=80482e5e");
 /* harmony import */ var _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=script&lang=js */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=script&lang=js");
-/* empty/unused harmony star reexport *//* harmony import */ var _distribucionCalculo_vue_vue_type_style_index_0_id_80482e5e_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _distribucionCalculo_vue_vue_type_style_index_0_id_80482e5e_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -230394,7 +230484,7 @@ component.options.__file = "resources/js/components/modulos/distribucion/distrib
 /*!******************************************************************************************************!*\
   !*** ./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=script&lang=js ***!
   \******************************************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

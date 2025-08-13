@@ -47,8 +47,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/administracion/solicitud/exportarCalculosFinanciamientoExcel/{id}', 'Administracion\SolicitudController@exportarCalculosFinanciamientoExcel');
     //Route::get('/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion', 'Administracion\SolicitudController@Distribucion_get_Partidos_Con_Representacion');
     Route::get('/administracion/solicitud/get_Partidos_Calculo_porId', 'Administracion\SolicitudController@get_Partidos_Calculo_porId');
+    Route::post('/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp', 'Administracion\SolicitudController@Distr_Get_Insert_Update_distribucion_dppp');
     Route::post('/administracion/solicitud/Update_Partidos_Con_Representacion', 'Administracion\SolicitudController@Update_Partidos_Con_Representacion');
-
 
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');

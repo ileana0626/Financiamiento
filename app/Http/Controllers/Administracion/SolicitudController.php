@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 use PDO;
 use PDF;
 use Illuminate\Support\Facades\Validator;
@@ -264,15 +265,22 @@ class SolicitudController extends Controller
                 $partido['ajuste'] ?? null,
                 $partido['B_Ajuste_70_por_ciento'] ?? null,
                 $partido['C_fpaop'] ?? null,
-                $partido['D_fpatov'] ?? null
+                $partido['D_fpatov'] ?? null,
+                //Arr::get($partido, 'C_fpaop'),
+                //Arr::get($partido, 'D_fpatov')
             ]);
             Log::info('Consulta SQL ejecutada:', $result);
             DB::commit();
+            
+            // Obtener el ID del primer resultado
+            $ids = !empty($result) ? $result[0]->ids : null; // String desde el sp_
+
             // Obtener y loguear la consulta
             $queryLog = DB::getQueryLog();
             Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
             return response()->json([
                 'success' => true,
+                'ids' => $ids,
                 'message' => 'Partido con representación actualizados correctamente',
                 //'data' => $result[0] ?? null
             ]);
@@ -313,11 +321,16 @@ class SolicitudController extends Controller
                 $request->input('p_suma_C_fpaop', null),
                 $request->input('p_suma_D_fpatov', null)
             ]);
+            DB::commit();
+            // Obtener el ID del primer resultado
+            $id = !empty($rpta) ? $rpta[0]->id : null;
+
             // Obtener y loguear la consulta
             $queryLog = DB::getQueryLog();
             Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
             return response()->json([
                 'success' => true,
+                'id' => $id,
                 'distribucion' => $rpta,
                 'message' => 'Datos de la distribución obtenidos correctamente'
             ]);
