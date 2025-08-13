@@ -237,6 +237,7 @@ class SolicitudController extends Controller
             DB::enableQueryLog();
              // Obtener el objeto partido completo
             $partido = $request->all();
+            /*
             // Validar los campos requeridos
             $validator = Validator::make($partido, [
                 'id_partido' => 'required|integer',
@@ -250,15 +251,20 @@ class SolicitudController extends Controller
                     'success' => false,
                     'errors' => $validator->errors()
                 ], 422);
-            }
+            }*/
 
             // Llamar al procedimiento almacenado
-            $result = DB::select('CALL sp_Distr_Update_Partidos_Con_Representacion(?, ?, ?, ?, ?)', [
-                $partido['id_calculo'],
-                $partido['id_partido'],
-                $partido['porcentaje'],
-                $partido['calculos'] ?? null,
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Con_Representacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
                 self::$useTransaction, // bandera estática
+                $partido['id_calculo'] ?? null,
+                $partido['id_partido'] ?? null,
+                $partido['porcentaje_votacion'] ?? null,
+                $partido['A_30_por_ciento'] ?? null,
+                $partido['B_70_por_ciento'] ?? null,
+                $partido['ajuste'] ?? null,
+                $partido['B_Ajuste_70_por_ciento'] ?? null,
+                $partido['C_fpaop'] ?? null,
+                $partido['D_fpatov'] ?? null
             ]);
             Log::info('Consulta SQL ejecutada:', $result);
             DB::commit();
@@ -275,14 +281,59 @@ class SolicitudController extends Controller
             DB::rollBack();
             Log::error('Error al actualizar partido', [
                 'error' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
                 'trace' => $e->getTraceAsString()
             ]);
-
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el partido',
                 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
             ], 500);
+        }
+    }
+    public function Distr_Get_Insert_Update_distribucion_dppp(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $request->input('p_comando', null),
+                $request->input('p_id_dist', null),
+                $request->input('id_calculo', null),
+                $request->input('p_tipo_distribucion', null),
+                $request->input('p_anio_ejercicio', null),
+                $request->input('p_monto_30_por_ciento', null),
+                $request->input('p_monto_70_por_ciento', null),
+                $request->input('p_tipoPorcentaje', null),
+                $request->input('p_suma_A_30_por_ciento', null),
+                $request->input('p_suma_B_70_por_ciento', null),
+                $request->input('p_suma_B_Ajuste_70_por_ciento', null),
+                $request->input('p_suma_C_fpaop', null),
+                $request->input('p_suma_D_fpatov', null)
+            ]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'distribucion' => $rpta,
+                'message' => 'Datos de la distribución obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en sp_Distr_Get_Insert_Update_distribucion_dppp', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la distribución'
+            ]);
+            throw $e;
         }
     }
     

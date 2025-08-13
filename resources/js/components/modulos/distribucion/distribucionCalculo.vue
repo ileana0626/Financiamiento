@@ -561,12 +561,19 @@ export default {
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
             const datos = {
+                p_comando: 'INSERT', // INSERT, UPDATE
+                p_id_dist: this.distribucionId,
                 id_calculo: this.selectedCalculo.id,
-                anioFiscal: this.anio,
-                distribucion: this.distribucion,
-                tipoPorcentaje: this.tipoPorcentaje,
-                monto30: this.monto30,
-                monto70: this.monto70,
+                p_tipo_distribucion: this.distribucion,
+                p_anio_ejercicio: this.anio,
+                p_monto_30_por_ciento: this.monto30,
+                p_monto_70_por_ciento: this.monto70,
+                p_tipoPorcentaje: this.tipoPorcentaje,
+                p_suma_A_30_por_ciento: this.monto30,
+                p_suma_B_70_por_ciento: this.monto70,
+                p_suma_B_Ajuste_70_por_ciento: this.monto70,
+                p_suma_C_fpaop: this.monto70,
+                p_suma_D_fpatov: this.monto70,
             };
 
             const url = '/administracion/solicitud/setDistribucionFinanciamiento';
@@ -597,10 +604,10 @@ export default {
                 }
                 // Actualizamos la tabla de partidos políticos
                 try {
-                    url = '/administracion/solicitud/setPartidoFinanciamiento';
+                    url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
                     // Crear un array de promesas
                     const promesas = this.Partidos_Con_Representacion.map(partido => 
-                        this.$axios.put(`${url}/${partido.id_partido}`, partido)
+                        this.$axios.put(`${url}`, partido)
                         .then(response => {
                             console.log('Partido político actualizado: ' + partido.siglas);
                         })
