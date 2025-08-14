@@ -11600,29 +11600,32 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     guardarDistribucion: function guardarDistribucion() {
       var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var loader, urlDistribucion, urlPartidos, datos, nombreMetodo;
+        var loader, url, datos, response, _response$data5, errorMsg, _response, _response$data6, _errorMsg, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
               if (!_this8.validarCampos()) {
-                _context4.next = 2;
+                _context4.next = 3;
                 break;
               }
+              _this8.$vs.notification({
+                color: 'danger',
+                text: 'Verifique los datos e inténtelo de nuevo.'
+              });
               return _context4.abrupt("return");
-            case 2:
+            case 3:
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this8.$vs);
               loader.text = 'Guardando distribución...';
-              urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-              urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
                 p_comando: 'INSERT',
                 // INSERT, UPDATE
-                p_id_dist: _this8.selectedCalculo.id_dist,
                 id_calculo: _this8.selectedCalculo.id,
                 p_anio_ejercicio: _this8.anio,
                 //valor manual
-                p_tipo_distribucion: JSON.stringify(_this8.distribucion),
-                //valor manual
+                p_tipo_distribucion: _this8.distribucion.join(','),
+                // "1,2,3" - valor manual
+                // this.distribucion = tiposDelBackend.split(',').map(Number);
                 p_monto_30_por_ciento: _this8.monto30,
                 //valor manual
                 p_monto_70_por_ciento: _this8.monto70,
@@ -11640,68 +11643,130 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               };
               _this8.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
               console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion, _this8.Partidos_Sin_Representacion);
-              try {
-                /*
-                // Actualizar distribución
-                if (this.distribucionId) {
-                    const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
-                    this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
-                    if (response.data && response.data.id) {
-                        this.distribucionId = response.data.id;
-                        console.log('Distribución actualizada con ID: ' + this.distribucionId);
-                    }
-                } else { // Guardar distribución
-                    const response = await axios.post(urlDistribucion, datos);
-                    this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
-                    // Si es un nuevo registro, actualizamos el ID
-                    if (response.data && response.data.id) {
-                        this.distribucionId = response.data.id;
-                        console.log('Distribución guardada con ID: ' + response.data.id);
-                    }
-                }
-                // Actualizamos la tabla de partidos políticos
-                // Crear un array de promesas
-                const promesas = this.Partidos_Con_Representacion.map(async partido => {
-                    try {
-                    const response = await axios.put(urlPartidos, partido);
-                    if (response.data && response.data.ids) {
-                        console.log('Partido político actualizado: ' + response.data.ids);
-                    }
-                    } catch (error) {
-                        console.error('Error al actualizar partido: ' + partido.siglas, error);
-                        this.$vs.notification({ 
-                            color: 'danger', 
-                            text: `Error al actualizar ${partido.siglas}` 
-                        });
-                        throw error;
-                    }
-                });
-                // Esperar a que todas las peticiones terminen
-                await Promise.all(promesas);
-                
-                // Notificación de éxito
-                this.$vs.notification({ 
-                    color: 'success', 
-                    text: 'Datos guardados correctamente' 
-                });
-                */
-              } catch (error) {
-                console.error('Error al guardar:', error);
-                _this8.$vs.notification({
-                  title: 'Error',
-                  color: 'danger',
-                  text: 'Error al guardar'
-                });
-                nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this8.$router);
-              } finally {
-                loader.close();
+              _context4.prev = 9;
+              if (!_this8.distribucionId) {
+                _context4.next = 25;
+                break;
               }
-            case 10:
+              _context4.next = 13;
+              return axios.post(url, datos);
+            case 13:
+              response = _context4.sent;
+              console.log('Respuesta del servidor (actualizar):', response.data);
+              if (!(response.data && response.data.id)) {
+                _context4.next = 21;
+                break;
+              }
+              _this8.distribucionId = response.data.id;
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Distribución actualizada'
+              });
+              console.log('Distribución actualizada con ID: ' + _this8.distribucionId);
+              _context4.next = 23;
+              break;
+            case 21:
+              // Mostrar mensaje de error del servidor si existe
+              errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
+              throw new Error(errorMsg);
+            case 23:
+              _context4.next = 37;
+              break;
+            case 25:
+              _context4.next = 27;
+              return axios.post(url, datos);
+            case 27:
+              _response = _context4.sent;
+              console.log('Respuesta del servidor (guardar):', _response.data);
+              // Si es un nuevo registro, actualizamos el ID
+              if (!(_response.data && _response.data.id)) {
+                _context4.next = 35;
+                break;
+              }
+              _this8.distribucionId = _response.data.id;
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Distribución guardada'
+              });
+              console.log('Distribución guardada con ID: ' + _response.data.id);
+              _context4.next = 37;
+              break;
+            case 35:
+              // Mostrar mensaje de error del servidor si existe
+              _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
+              throw new Error(_errorMsg);
+            case 37:
+              url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+              /*
+              // Actualizamos la tabla de partidos políticos con representación
+              // Crear un array de promesas
+              //const promesas = this.Partidos_Con_Representacion.map(async partido => {
+              for (const partido of this.Partidos_Con_Representacion) {
+                  try {
+                  const response = await axios.post(urlPartidosConRep, partido);
+                  if (response.data && response.data.ids) {
+                      console.log('PPCR actualizado: ' + response.data.ids);
+                  }
+                  } catch (error) {
+                      console.error('Error al actualizar partido PPCR: ' + partido.siglas, error);
+                      this.$vs.notification({ 
+                          color: 'danger', 
+                          text: `Error al actualizar ${partido.siglas}` 
+                      });
+                      throw error;
+                  }
+              }
+              url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
+              // Esperar a que todas las peticiones terminen
+              //await Promise.all(promesas);
+              // Actualizamos la tabla de partidos políticos sin representación   
+              //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
+              for (const partido of this.Partidos_Sin_Representacion) {
+                  try {
+                  const response = await axios.put(urlPartidosSinRep, partido);
+                  if (response.data && response.data.ids) {
+                      console.log('PPSR actualizado: ' + response.data.ids);
+                  }
+                  } catch (error) {
+                      console.error('Error al actualizar partido PPSR: ' + partido.siglas, error);
+                      this.$vs.notification({ 
+                          color: 'danger', 
+                          text: `Error al actualizar ${partido.siglas}` 
+                      });
+                      throw error;
+                  }
+              }
+                  */
+              // Esperar a que todas las peticiones terminen
+              //await Promise.all(promesasSinRep);
+
+              // Notificación de éxito
+              _this8.$vs.notification({
+                color: 'success',
+                text: 'Datos guardados correctamente'
+              });
+              _context4.next = 47;
+              break;
+            case 41:
+              _context4.prev = 41;
+              _context4.t0 = _context4["catch"](9);
+              console.error('Error al guardar:', _context4.t0);
+              _this8.$vs.notification({
+                title: 'Error',
+                color: 'danger',
+                text: 'Error al guardar'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
+            case 47:
+              _context4.prev = 47;
+              loader.close();
+              return _context4.finish(47);
+            case 50:
             case "end":
               return _context4.stop();
           }
-        }, _callee4);
+        }, _callee4, null, [[9, 41, 47, 50]]);
       }))();
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
@@ -11802,7 +11867,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.calcularMontoC(partido) * this.factorCalculo;
     },
     calcularMontoD_ppsr: function calcularMontoD_ppsr(partido) {
-      return this.partido.monto_2_por_ciento * this.factorCalculo;
+      return partido.monto_2_por_ciento * this.factorCalculo;
     },
     /*
     * Almacena temporalmente en los Objetos de los partidos,

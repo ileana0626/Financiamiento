@@ -623,19 +623,19 @@ export default {
 
             if(this.validarCampos())
             {
+                this.$vs.notification({ color: 'danger', text: 'Verifique los datos e inténtelo de nuevo.' });
                 return;
             }
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
-            const urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-            const urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-            
+            let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+
             const datos = {
                 p_comando: 'INSERT', // INSERT, UPDATE
-                p_id_dist: this.selectedCalculo.id_dist,
                 id_calculo: this.selectedCalculo.id,
                 p_anio_ejercicio: this.anio, //valor manual
-                p_tipo_distribucion: JSON.stringify(this.distribucion), //valor manual
+                p_tipo_distribucion: this.distribucion.join(','), // "1,2,3" - valor manual
+                // this.distribucion = tiposDelBackend.split(',').map(Number);
                 p_monto_30_por_ciento: this.monto30, //valor manual
                 p_monto_70_por_ciento: this.monto70, //valor manual
                 p_tipoPorcentaje: this.opcionSelecionadaPorcentaje, //valor manual
@@ -651,50 +651,85 @@ export default {
             this.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
             console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion, this.Partidos_Sin_Representacion);
             try {
-                /*
                 // Actualizar distribución
                 if (this.distribucionId) {
-                    const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
-                    this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                    const response = await axios.post(url, datos);
+                    
+                    console.log('Respuesta del servidor (actualizar):', response.data);
                     if (response.data && response.data.id) {
                         this.distribucionId = response.data.id;
+                        this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
                         console.log('Distribución actualizada con ID: ' + this.distribucionId);
                     }
+                    else{
+                        // Mostrar mensaje de error del servidor si existe
+                        const errorMsg = response.data?.message || 'Error al actualizar la distribución';
+                        throw new Error(errorMsg);
+                    }
                 } else { // Guardar distribución
-                    const response = await axios.post(urlDistribucion, datos);
-                    this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                    const response = await axios.post(url, datos);
+                    console.log('Respuesta del servidor (guardar):', response.data);
                     // Si es un nuevo registro, actualizamos el ID
                     if (response.data && response.data.id) {
                         this.distribucionId = response.data.id;
+                        this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
                         console.log('Distribución guardada con ID: ' + response.data.id);
                     }
+                    else{
+                        // Mostrar mensaje de error del servidor si existe
+                        const errorMsg = response.data?.message || 'Error al guardar la distribución';
+                        throw new Error(errorMsg);
+                    }
                 }
-                // Actualizamos la tabla de partidos políticos
+               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+                /*
+                // Actualizamos la tabla de partidos políticos con representación
                 // Crear un array de promesas
-                const promesas = this.Partidos_Con_Representacion.map(async partido => {
+                //const promesas = this.Partidos_Con_Representacion.map(async partido => {
+                for (const partido of this.Partidos_Con_Representacion) {
                     try {
-                    const response = await axios.put(urlPartidos, partido);
+                    const response = await axios.post(urlPartidosConRep, partido);
                     if (response.data && response.data.ids) {
-                        console.log('Partido político actualizado: ' + response.data.ids);
+                        console.log('PPCR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
-                        console.error('Error al actualizar partido: ' + partido.siglas, error);
+                        console.error('Error al actualizar partido PPCR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
                         });
                         throw error;
                     }
-                });
+                }
+                url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
                 // Esperar a que todas las peticiones terminen
-                await Promise.all(promesas);
-                
+                //await Promise.all(promesas);
+                // Actualizamos la tabla de partidos políticos sin representación   
+                //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
+                for (const partido of this.Partidos_Sin_Representacion) {
+                    try {
+                    const response = await axios.put(urlPartidosSinRep, partido);
+                    if (response.data && response.data.ids) {
+                        console.log('PPSR actualizado: ' + response.data.ids);
+                    }
+                    } catch (error) {
+                        console.error('Error al actualizar partido PPSR: ' + partido.siglas, error);
+                        this.$vs.notification({ 
+                            color: 'danger', 
+                            text: `Error al actualizar ${partido.siglas}` 
+                        });
+                        throw error;
+                    }
+                }
+                    */
+                // Esperar a que todas las peticiones terminen
+                //await Promise.all(promesasSinRep);
+
                 // Notificación de éxito
                 this.$vs.notification({ 
                     color: 'success', 
                     text: 'Datos guardados correctamente' 
-                });
-                */           
+                });       
             } catch (error) {
                 console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
@@ -808,7 +843,7 @@ export default {
             return this.calcularMontoC(partido) * this.factorCalculo;
         },
         calcularMontoD_ppsr(partido) {
-            return this.partido.monto_2_por_ciento * this.factorCalculo;
+            return partido.monto_2_por_ciento * this.factorCalculo;
         },
         /*
         * Almacena temporalmente en los Objetos de los partidos,
