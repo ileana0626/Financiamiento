@@ -156,10 +156,20 @@
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
                                     <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" />
+                                    <div class="danger-message">
+                                        <template v-if="errorMonto30.length > 0">
+                                            {{ errorMonto30 }}
+                                        </template>
+                                </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (70%)</label>
                                     <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
+                                    <div class="danger-message">
+                                        <template v-if="errorMonto70.length > 0">
+                                            {{ errorMonto70 }}
+                                        </template>
+                                </div>
                                 </div>
                             </div>
                             <div class="row mt-4">
@@ -210,7 +220,14 @@
 
                                         <!-- % de votación -->
                                         <vs-td>
+                                            <div>
                                             <vs-input v-model="partido.inputPorcentaje" @blur="formatearPorcentaje(partido)" type="text" placeholder="0.00 %" />
+                                                <div class="danger-message">
+                                                    <template v-if="errorPorcentajeVotacion.length > 0">
+                                                        {{ errorPorcentajeVotacion }}
+                                                    </template>
+                                                </div>
+                                            </div>
                                         </vs-td>
 
                                         <!-- A. Monto igualitario -->
@@ -294,13 +311,27 @@
                                         <vs-td :colspan="3">
                                             <span>2 % del financiamiento público para actividades tendientes a la obtención del voto.</span>
                                         </vs-td>
-                                        <vs-td :colspan="1"></vs-td>
-                                        <!-- Subtotales *0.02-->
+                                    </vs-tr>
+                                    <!--totales-->
+                                    <vs-tr >
+                                        <vs-td :colspan="6">
+                                            Totales
+                                        </vs-td>
                                         <vs-td :colspan="1">
-                                            {{formatoMoneda(candidatura)}}
-                                            <!-- {{formatoMoneda((subTotal_pp_sin_repr_D+subTotal_pp_con_repr_D)*0.02)}} -->
+                                            {{formatoMoneda(totalPermanentes)}}
+                                        </vs-td>
+                                        <vs-td :colspan="1" v-if="distribucion.includes(2)">
+                                            {{formatoMoneda(totalVotos)}}
                                         </vs-td>
                                     </vs-tr>
+                                    <!-- Gran Total -->
+                                        <vs-tr class="font-weight-bold bg-dark text-white">
+                                            <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
+                                            <vs-td colspan="7" v-else>Gran total:</vs-td>
+                                            <vs-td>
+                                                {{ formatoMoneda(granTotal) }}
+                                            </vs-td>
+                                        </vs-tr>
                                 </template>
                             </vs-table>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
@@ -352,7 +383,6 @@
 
     </div>
 </template>
-.includes(2)" style="wid
 <script>
 
 import { forEach } from 'lodash';
@@ -397,6 +427,7 @@ export default {
             errorMonto30: '',
             errorMonto70: '',
             errorPartidosPoliticos_conRepr: '',
+            errorPorcentajeVotacion: '',
             flag_descargar: true, // true: disabled | false: enabled
         }
     },
@@ -512,6 +543,7 @@ export default {
             })
             .finally(() => {
                 loader.close();
+                this.limpiarCampos();
             })
 
         
@@ -582,6 +614,8 @@ export default {
                 });
         },
         async guardarDistribucion() { //⚠️
+
+            this.validarCampos();
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
             const urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
@@ -844,24 +878,21 @@ export default {
                 this.error = true;
             }
             if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
-                this.errorMonto30 = 'Ingrese un monto 30% válido (ej: 123.45)';
+                this.errorMonto30 = 'Ingrese un monto 30% válido';
                 this.error = true;
             }
     
             if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
-                this.errorMonto70 = 'Ingrese un monto 70% válido (ej: 123.45)';
+                this.errorMonto70 = 'Ingrese un monto 70% válido';
                 this.error = true;
             }
             if (this.distribucion === '') {
                 this.errorDistribucion = 'El campo distribución es obligatorio';
                 this.error = true;
             }
-            for (let i = 0; i < this.Partidos_Con_Representacion.length; i++) {
-                const partido = this.Partidos_Con_Representacion[i];
-                if (partido.porcentaje_votacion === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
-                    this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido (ej: 123.45678)';
+                if (this.porcentaje_votacion === '' || !this.validarDecimal(this.porcentaje_votacion, 5)) {
+                    this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
                     this.error = true;
-                }
             }
             return this.error;
         },
@@ -881,6 +912,7 @@ export default {
                 inputPorcentaje: '',
                 ajuste: 0.00,
             }));
+            /* this.porcentaje_votacion= "0.00", */
             this.opcionSelecionadaPorcentaje= '1'; //  Valor por defecto
             this.limpiarErrores();
         },
@@ -894,6 +926,7 @@ export default {
             this.errorMonto30 = '',
             this.errorMonto70 = '',
             this.errorDistribucion = '';
+            this.errorPorcentajeVotacion = '';
         },
     },
     computed:{
@@ -969,8 +1002,25 @@ export default {
             const subtotal1 = this.subtotalD_ConRepresentacion;
             const subtotal2 = this.subtotalMonto2PorCientoD;
             const resultado = (subtotal1 + subtotal2) * 0.02
-            //console.log('Candidatura Ind.(2%): ', resultado);
             return resultado;
+        },
+        totalPermanentes(){
+            const subtotal1 = this.subtotalC_ConRepresentacion;
+            const subtotal2 = this.subtotalMonto2PorCiento;
+            const resultado = subtotal1 + subtotal2
+            return resultado;
+        },
+        totalVotos(){
+            const subtotal1 = this.subtotalD_ConRepresentacion;
+            const subtotal2 = this.subtotalMonto2PorCientoD;
+            const resultado = subtotal1 + subtotal2
+            return resultado;
+        },
+        granTotal() {
+            if (this.distribucion.includes(2)) {
+            return this.totalPermanentes + this.totalVotos;
+            }
+            return this.totalPermanentes;
         }
     }
 }

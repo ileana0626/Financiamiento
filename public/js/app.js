@@ -11365,6 +11365,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       errorMonto30: '',
       errorMonto70: '',
       errorPartidosPoliticos_conRepr: '',
+      errorPorcentajeVotacion: '',
       flag_descargar: true // true: disabled | false: enabled
     };
   },
@@ -11509,6 +11510,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
       })["finally"](function () {
         loader.close();
+        _this5.limpiarCampos();
       });
     },
     onChangeDistribucion: function onChangeDistribucion(value) {
@@ -11602,6 +11604,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
               //⚠️
+
+              _this8.validarCampos();
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(_this8.$vs);
               loader.text = 'Guardando distribución...';
               urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
@@ -11688,7 +11692,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               } finally {
                 loader.close();
               }
-            case 7:
+            case 8:
             case "end":
               return _context4.stop();
           }
@@ -11870,23 +11874,20 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         this.error = true;
       }
       if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
-        this.errorMonto30 = 'Ingrese un monto 30% válido (ej: 123.45)';
+        this.errorMonto30 = 'Ingrese un monto 30% válido';
         this.error = true;
       }
       if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
-        this.errorMonto70 = 'Ingrese un monto 70% válido (ej: 123.45)';
+        this.errorMonto70 = 'Ingrese un monto 70% válido';
         this.error = true;
       }
       if (this.distribucion === '') {
         this.errorDistribucion = 'El campo distribución es obligatorio';
         this.error = true;
       }
-      for (var i = 0; i < this.Partidos_Con_Representacion.length; i++) {
-        var partido = this.Partidos_Con_Representacion[i];
-        if (partido.porcentaje_votacion === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
-          this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido (ej: 123.45678)';
-          this.error = true;
-        }
+      if (this.porcentaje_votacion === '' || !this.validarDecimal(this.porcentaje_votacion, 5)) {
+        this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
+        this.error = true;
       }
       return this.error;
     },
@@ -11904,6 +11905,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           ajuste: 0.00
         });
       });
+      /* this.porcentaje_votacion= "0.00", */
       this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto
       this.limpiarErrores();
     },
@@ -11915,6 +11917,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.error = false;
       this.errorAnio = '';
       this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
+      this.errorPorcentajeVotacion = '';
     }
   },
   computed: {
@@ -11992,8 +11995,25 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var subtotal1 = this.subtotalD_ConRepresentacion;
       var subtotal2 = this.subtotalMonto2PorCientoD;
       var resultado = (subtotal1 + subtotal2) * 0.02;
-      //console.log('Candidatura Ind.(2%): ', resultado);
       return resultado;
+    },
+    totalPermanentes: function totalPermanentes() {
+      var subtotal1 = this.subtotalC_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCiento;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    totalVotos: function totalVotos() {
+      var subtotal1 = this.subtotalD_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCientoD;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    granTotal: function granTotal() {
+      if (this.distribucion.includes(2)) {
+        return this.totalPermanentes + this.totalVotos;
+      }
+      return this.totalPermanentes;
     }
   }
 });
@@ -27063,7 +27083,9 @@ var render = function render() {
       },
       expression: "monto30"
     }
-  })], 1), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
+    staticClass: "danger-message"
+  }, [_vm.errorMonto30.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.errorMonto30) + "\n                                    ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("label", [_vm._v("Monto Total Efectivo (70%)")]), _vm._v(" "), _c("vs-input", {
     attrs: {
@@ -27078,7 +27100,9 @@ var render = function render() {
       },
       expression: "monto70"
     }
-  })], 1)]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
+    staticClass: "danger-message"
+  }, [_vm.errorMonto70.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.errorMonto70) + "\n                                    ")] : _vm._e()], 2)], 1)]), _vm._v(" "), _c("div", {
     staticClass: "row mt-4"
   }, [_vm.distribucion.includes(2) ? _c("div", {
     staticClass: "col-md-6"
@@ -27179,7 +27203,7 @@ var render = function render() {
               alt: partido.siglas,
               onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
             }
-          })]), _vm._v(" "), _c("vs-td", [_c("vs-input", {
+          })]), _vm._v(" "), _c("vs-td", [_c("div", [_c("vs-input", {
             attrs: {
               type: "text",
               placeholder: "0.00 %"
@@ -27196,7 +27220,9 @@ var render = function render() {
               },
               expression: "partido.inputPorcentaje"
             }
-          })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("div", {
+          }), _vm._v(" "), _c("div", {
+            staticClass: "danger-message"
+          }, [_vm.errorPorcentajeVotacion.length > 0 ? [_vm._v("\n                                                    " + _vm._s(_vm.errorPorcentajeVotacion) + "\n                                                ")] : _vm._e()], 2)], 1)]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center justify-content-between"
           }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
             staticClass: "d-flex gap-1"
@@ -27293,18 +27319,32 @@ var render = function render() {
           attrs: {
             colspan: 3
           }
-        }, [_c("span", [_vm._v("2 % del financiamiento público para actividades tendientes a la obtención del voto.")])]), _vm._v(" "), _c("vs-td", {
+        }, [_c("span", [_vm._v("2 % del financiamiento público para actividades tendientes a la obtención del voto.")])])], 1) : _vm._e(), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+          attrs: {
+            colspan: 6
+          }
+        }, [_vm._v("\n                                        Totales\n                                    ")]), _vm._v(" "), _c("vs-td", {
           attrs: {
             colspan: 1
           }
-        }), _vm._v(" "), _c("vs-td", {
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.totalPermanentes)) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", {
           attrs: {
             colspan: 1
           }
-        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.candidatura)) + "\n                                        ")])], 1) : _vm._e()];
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.totalVotos)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _c("vs-tr", {
+          staticClass: "font-weight-bold bg-dark text-white"
+        }, [!_vm.distribucion.includes(2) ? _c("vs-td", {
+          attrs: {
+            colspan: "8"
+          }
+        }, [_vm._v("Gran total:")]) : _c("vs-td", {
+          attrs: {
+            colspan: "7"
+          }
+        }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                            " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                        ")])], 1)];
       },
       proxy: true
-    }], null, false, 3905150490)
+    }], null, false, 4291310762)
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {
@@ -232928,7 +232968,7 @@ function _userValidToEdit() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\25_IEE\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
