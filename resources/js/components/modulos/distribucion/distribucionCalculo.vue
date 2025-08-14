@@ -468,7 +468,9 @@ export default {
             this.datosCalculoSeleccionado = {};
             this.Partidos_Sin_Representacion = {};
             this.Partidos_Con_Representacion = {};
-            this.limpiarCampos();
+            this.monto30 = '',
+            this.monto70 = '',
+            //this.limpiarCampos();
             //console.log(calculo_tr.id);
             this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
@@ -597,8 +599,10 @@ export default {
                 p_suma_A_30_por_ciento: this.monto30,
                 p_suma_B_70_por_ciento: this.monto70,
                 p_suma_B_Ajuste_70_por_ciento: this.monto70,
-                p_suma_C_fpaop: this.monto70,
-                p_suma_D_fpatov: this.monto70,
+                p_suma_C_fpaop: this.subtotalC_ConRepresentacion,
+                p_suma_D_fpatov: this.subtotalD_ConRepresentacion,
+                //p_suma_D_2PorCiento: this.subtotalMonto2PorCientoD, -- 2% de pp_sin_repr
+                //p_suma_D_candidatura: this.candidatura, -- candidatura Ind.(2%)
             };
             console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion);
             try {

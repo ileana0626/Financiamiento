@@ -11465,7 +11465,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = {};
       this.Partidos_Con_Representacion = {};
-      this.limpiarCampos();
+      this.monto30 = '', this.monto70 = '',
+      //this.limpiarCampos();
       //console.log(calculo_tr.id);
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
@@ -11623,9 +11624,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 p_suma_A_30_por_ciento: _this8.monto30,
                 p_suma_B_70_por_ciento: _this8.monto70,
                 p_suma_B_Ajuste_70_por_ciento: _this8.monto70,
-                p_suma_C_fpaop: _this8.monto70,
-                p_suma_D_fpatov: _this8.monto70
+                p_suma_C_fpaop: _this8.subtotalC_ConRepresentacion,
+                p_suma_D_fpatov: _this8.subtotalD_ConRepresentacion
+                //p_suma_D_2PorCiento: this.subtotalMonto2PorCientoD, -- 2% de pp_sin_repr
+                //p_suma_D_candidatura: this.candidatura, -- candidatura Ind.(2%)
               };
+
               console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion);
               try {
                 /*
@@ -230499,15 +230503,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************************************!*\
   !*** ./resources/js/components/modulos/distribucion/distribucionCalculo.vue ***!
   \******************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _distribucionCalculo_vue_vue_type_template_id_80482e5e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=template&id=80482e5e */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=template&id=80482e5e");
 /* harmony import */ var _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=script&lang=js */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=script&lang=js");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _distribucionCalculo_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _distribucionCalculo_vue_vue_type_style_index_0_id_80482e5e_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css");
+/* empty/unused harmony star reexport *//* harmony import */ var _distribucionCalculo_vue_vue_type_style_index_0_id_80482e5e_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css */ "./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -230539,7 +230542,7 @@ component.options.__file = "resources/js/components/modulos/distribucion/distrib
 /*!******************************************************************************************************!*\
   !*** ./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=script&lang=js ***!
   \******************************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
