@@ -223,8 +223,8 @@
                                             <div>
                                             <vs-input v-model="partido.inputPorcentaje" @blur="formatearPorcentaje(partido)" type="text" placeholder="0.00 %" />
                                                 <div class="danger-message">
-                                                    <template v-if="errorPorcentajeVotacion.length > 0">
-                                                        {{ errorPorcentajeVotacion }}
+                                                    <template v-if="partido.errorPorcentajeVotacion.length > 0">
+                                                        {{ partido.errorPorcentajeVotacion }}
                                                     </template>
                                                 </div>
                                             </div>
@@ -261,7 +261,7 @@
 
                                         <!-- D. Obtención del voto -->
                                         <vs-td v-if="distribucion.includes(2)">
-                                            {{ formatoMoneda(calcularMontoC(partido) * factorCalculo)}}
+                                            {{ formatoMoneda(calcularMontoD(partido))}}
                                         </vs-td>
                                     </vs-tr>
                                     <!-- Subtotal para partidos con representación -->
@@ -290,7 +290,7 @@
                                         <!-- C. monto 2% -->
                                         <vs-td>{{ formatoMoneda(partido.monto_2_por_ciento)}}</vs-td>
                                         <!-- ( D = C * 0.5) -->
-                                        <vs-td v-if="distribucion.includes(2)">{{ formatoMoneda(partido.monto_2_por_ciento * factorCalculo) }}</vs-td>
+                                        <vs-td v-if="distribucion.includes(2)">{{ formatoMoneda(calcularMontoD_ppsr(partido)) }}</vs-td>
                                     </vs-tr>
                                     <vs-tr>
                                         <vs-td :colspan="6">
@@ -311,6 +311,10 @@
                                         <vs-td :colspan="3">
                                             <span>2 % del financiamiento público para actividades tendientes a la obtención del voto.</span>
                                         </vs-td>
+                                        <vs-td :colspan="1"></vs-td>
+                                        <vs-td :colspan="1">
+                                            {{formatoMoneda(candidatura)}}
+                                        </vs-td>
                                     </vs-tr>
                                     <!--totales-->
                                     <vs-tr >
@@ -325,13 +329,13 @@
                                         </vs-td>
                                     </vs-tr>
                                     <!-- Gran Total -->
-                                        <vs-tr class="font-weight-bold bg-dark text-white">
-                                            <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
-                                            <vs-td colspan="7" v-else>Gran total:</vs-td>
-                                            <vs-td>
-                                                {{ formatoMoneda(granTotal) }}
-                                            </vs-td>
-                                        </vs-tr>
+                                    <vs-tr class="font-weight-bold bg-dark text-white">
+                                        <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
+                                        <vs-td colspan="7" v-else>Gran total:</vs-td>
+                                        <vs-td>
+                                            {{ formatoMoneda(granTotal) }}
+                                        </vs-td>
+                                    </vs-tr>
                                 </template>
                             </vs-table>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
@@ -385,7 +389,7 @@
 </template>
 <script>
 
-import { forEach } from 'lodash';
+//import { forEach } from 'lodash';
 import methods from '../../../methods';
 import { loading } from '../../../methods';
 export default {
@@ -393,16 +397,17 @@ export default {
         return {
             darkMode: localStorage.getItem('theme') == 'dark',
             // Variables para listar
-            selectedCalculo: {}, 
-            Partidos_Sin_Representacion: [],
-            Partidos_Con_Representacion: [], 
+            selectedCalculo: {},
+            Partidos_Sin_Representacion: null,
+            Partidos_Con_Representacion: null,
             NewlistCalculos: [], 
             cb_ppSeleccionados: [],
             opcionSelecionadaPorcentaje: '1', //  Valor por defecto Gubernatura
             search: '',
             page: 1, 
             max: 10,
-            active: false, 
+            // Dialog
+            active: false,
 
             input1: '',
             input2: '',
@@ -426,8 +431,8 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
-            errorPartidosPoliticos_conRepr: '',
-            errorPorcentajeVotacion: '',
+            //errorPartidosPoliticos_conRepr: '',
+            //errorPorcentajeVotacion: '',
             flag_descargar: true, // true: disabled | false: enabled
         }
     },
@@ -497,10 +502,10 @@ export default {
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
             this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
             this.datosCalculoSeleccionado = {};
-            this.Partidos_Sin_Representacion = {};
-            this.Partidos_Con_Representacion = {};
-            this.monto30 = '',
-            this.monto70 = '',
+            this.Partidos_Sin_Representacion = [];
+            this.Partidos_Con_Representacion = [];
+            this.monto30 = '';
+            this.monto70 = '';
             //this.limpiarCampos();
             //console.log(calculo_tr.id);
             this.active = true; // activa el modal
@@ -520,7 +525,8 @@ export default {
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
-                        inputPorcentaje: this.formatearPorcentaje(p)
+                        inputPorcentaje: this.formatearPorcentaje(p),
+                        errorPorcentajeVotacion: '' // Inicializar el error
                     }));
                     //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
@@ -615,7 +621,10 @@ export default {
         },
         async guardarDistribucion() { //⚠️
 
-            this.validarCampos();
+            if(this.validarCampos())
+            {
+                return;
+            }
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
             const urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
@@ -639,7 +648,8 @@ export default {
                 p_subtotal_D_2_por_ciento_ppsr: this.subtotalMonto2PorCientoD,
                 p_subtotal_D_candidatura: this.candidatura,
             };
-            console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion);
+            this.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
+            console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion, this.Partidos_Sin_Representacion);
             try {
                 /*
                 // Actualizar distribución
@@ -795,28 +805,25 @@ export default {
             return montoA + montoB;
         },
         calcularMontoD(partido) {
-            return this.formatoMoneda(
-                this.calcularMontoC(partido) * this.factorCalculo
-            );
+            return this.calcularMontoC(partido) * this.factorCalculo;
+        },
+        calcularMontoD_ppsr(partido) {
+            return this.partido.monto_2_por_ciento * this.factorCalculo;
         },
         /*
         * Almacena temporalmente en los Objetos de los partidos,
-        * los cálculos aplicados a las columnas antes de guardar
+        * los cálculos aplicados a las columnas antes de Guardar
         */
         AlmacenarCalculos_Partidos() {
             this.Partidos_Con_Representacion.forEach(partido => {
-                partido.monto_30_por_ciento = this.calcularMontoIgualitario30();
-                partido.monto_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
-                partido.monto_70_por_ciento_con_ajuste = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-                partido.monto_c = this.calcularMontoC(partido);
-                partido.monto_d = this.calcularMontoD(partido);
-            }); // CHECAR SOLO ES MAQUETADO
+                partido.A_30_por_ciento = this.calcularMontoIgualitario30();
+                partido.B_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
+                partido.B_Ajuste_70_por_ciento = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+                partido.C_fpaop = this.calcularMontoC(partido);
+                partido.D_fpatov = this.calcularMontoD(partido);
+            });
             this.Partidos_Sin_Representacion.forEach(partido => {
-                partido.monto_30_por_ciento = this.calcularMontoIgualitario30();
-                partido.monto_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
-                partido.monto_70_por_ciento_con_ajuste = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-                partido.monto_c = this.calcularMontoC(partido);
-                partido.monto_d = this.calcularMontoD(partido);
+                partido.D_monto_2_por_ciento = this.calcularMontoD_ppsr(partido);
             });
         },
         /*
@@ -844,7 +851,7 @@ export default {
             
             if (!isNaN(valorNumerico)) {
                 //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
-                partido.porcentaje_votacion = valorNumerico.toFixed(5);
+                partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
                 partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
                 
             } else { // Si no es un número recetea valores
@@ -889,11 +896,23 @@ export default {
             if (this.distribucion === '') {
                 this.errorDistribucion = 'El campo distribución es obligatorio';
                 this.error = true;
-            }
-                if (this.porcentaje_votacion === '' || !this.validarDecimal(this.porcentaje_votacion, 5)) {
-                    this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
+            } 
+            // Validar que llenen todos los campos
+            this.Partidos_Con_Representacion.forEach(partido => {
+                /*
+                console.log('Validating:', {
+                    siglas: partido.siglas,
+                    input: partido.inputPorcentaje,
+                    type: typeof partido.inputPorcentaje,
+                    isEmpty: partido.inputPorcentaje === '',
+                    isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
+                });
+                */
+                if (partido.inputPorcentaje === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+                    partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
                     this.error = true;
-            }
+                }
+            });
             return this.error;
         },
         /**
@@ -910,6 +929,7 @@ export default {
                 ...partido,
                 porcentaje_votacion: 0.00,
                 inputPorcentaje: '',
+                errorPorcentajeVotacion: '',
                 ajuste: 0.00,
             }));
             /* this.porcentaje_votacion= "0.00", */
@@ -926,7 +946,9 @@ export default {
             this.errorMonto30 = '',
             this.errorMonto70 = '',
             this.errorDistribucion = '';
-            this.errorPorcentajeVotacion = '';
+            this.Partidos_Con_Representacion.forEach(partido => {
+                partido.errorPorcentajeVotacion = '';
+            });
         },
     },
     computed:{
@@ -946,6 +968,7 @@ export default {
         /*
         * Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
         * Partidos sin representación en el Congreso
+        * monto_2_por_ciento * factorCalculo
         */
         subtotalMonto2PorCiento() {
             if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
@@ -958,13 +981,14 @@ export default {
         /*
         * Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
         * Partidos sin representación en el Congreso
+        * SUMA(monto_2_por_ciento * factorCalculo)
         */
         subtotalMonto2PorCientoD() {
             if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
                 return 0;
             }
             return this.Partidos_Sin_Representacion.reduce((total, partido) => {
-                return total + (parseFloat(partido.monto_2_por_ciento * 0.5) || 0);
+                return total + (parseFloat(partido.monto_2_por_ciento * this.factorCalculo) || 0);
             }, 0);
         },
         factorCalculo() {

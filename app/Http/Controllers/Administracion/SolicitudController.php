@@ -315,11 +315,14 @@ class SolicitudController extends Controller
                 $request->input('p_monto_30_por_ciento', null),
                 $request->input('p_monto_70_por_ciento', null),
                 $request->input('p_tipoPorcentaje', null),
-                $request->input('p_suma_A_30_por_ciento', null),
-                $request->input('p_suma_B_70_por_ciento', null),
-                $request->input('p_suma_B_Ajuste_70_por_ciento', null),
-                $request->input('p_suma_C_fpaop', null),
-                $request->input('p_suma_D_fpatov', null)
+                $request->input('p_subtotal_A_30_por_ciento', null),
+                $request->input('p_subtotal_B_70_por_ciento', null),
+                $request->input('p_subtotal_B_Ajuste_70_por_ciento', null),
+                $request->input('p_subtotal_C_fpaop', null),
+                $request->input('p_subtotal_D_fpatov', null),
+                $request->input('p_subtotal_2_por_ciento_fpaop_ppsr', null),
+                $request->input('p_subtotal_D_2_por_ciento_ppsr', null),
+                $request->input('p_subtotal_D_candidatura', null)
             ]);
             DB::commit();
             // Obtener el ID del primer resultado
