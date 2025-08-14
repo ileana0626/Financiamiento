@@ -13,8 +13,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 use PDO;
 use PDF;
+use Illuminate\Support\Facades\Validator;
 
 class SolicitudController extends Controller
 {
@@ -137,7 +139,7 @@ class SolicitudController extends Controller
             throw $e;
         }
     }
-    /** -- Puede no ser útil
+    /** -- DEPRECATED
      * Obtiene los partidos políticos de un cálculo de financiamiento
      * @param Id del cálculo
      * @return tablas con los partidos políticos de
@@ -174,8 +176,8 @@ class SolicitudController extends Controller
     }
 
 
-    /** -- Puede no ser útil
-     * Obtiene los partidos políticos de un cálculo de financiamiento
+    /**
+     * Obtiene los partidos políticos de una Distribución de Financiamiento
      * @param Id del cálculo
      * @return tablas con los partidos políticos de
      * 1. Partidos políticos sin representación
@@ -219,6 +221,130 @@ class SolicitudController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los partidos políticos'
+            ]);
+            throw $e;
+        }
+    }
+    /**
+     * Actualiza los partidos políticos con representación
+     * @param partido del partido político con representación
+     * @return json con los partidos políticos actualizados
+     */
+    public function Update_Partidos_Con_Representacion(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+             // Obtener el objeto partido completo
+            $partido = $request->all();
+            /*
+            // Validar los campos requeridos
+            $validator = Validator::make($partido, [
+                'id_partido' => 'required|integer',
+                'id_calculo' => 'required|integer',
+                'porcentaje' => 'required|numeric|min:0|max:100',
+                // Agrega más validaciones según necesites
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }*/
+
+            // Llamar al procedimiento almacenado
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Con_Representacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $partido['id_calculo'] ?? null,
+                $partido['id_partido'] ?? null,
+                $partido['porcentaje_votacion'] ?? null,
+                $partido['A_30_por_ciento'] ?? null,
+                $partido['B_70_por_ciento'] ?? null,
+                $partido['ajuste'] ?? null,
+                $partido['B_Ajuste_70_por_ciento'] ?? null,
+                $partido['C_fpaop'] ?? null,
+                $partido['D_fpatov'] ?? null,
+                //Arr::get($partido, 'C_fpaop'),
+                //Arr::get($partido, 'D_fpatov')
+            ]);
+            Log::info('Consulta SQL ejecutada:', $result);
+            DB::commit();
+            
+            // Obtener el ID del primer resultado
+            $ids = !empty($result) ? $result[0]->ids : null; // String desde el sp_
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'ids' => $ids,
+                'message' => 'Partido con representación actualizados correctamente',
+                //'data' => $result[0] ?? null
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar partido', [
+                'error' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el partido',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+    public function Distr_Get_Insert_Update_distribucion_dppp(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $request->input('p_comando', null),
+                $request->input('p_id_dist', null),
+                $request->input('id_calculo', null),
+                $request->input('p_anio_ejercicio', null),
+                $request->input('p_tipo_distribucion', null),
+                $request->input('p_monto_30_por_ciento', null),
+                $request->input('p_monto_70_por_ciento', null),
+                $request->input('p_tipoPorcentaje', null),
+                $request->input('p_suma_A_30_por_ciento', null),
+                $request->input('p_suma_B_70_por_ciento', null),
+                $request->input('p_suma_B_Ajuste_70_por_ciento', null),
+                $request->input('p_suma_C_fpaop', null),
+                $request->input('p_suma_D_fpatov', null)
+            ]);
+            DB::commit();
+            // Obtener el ID del primer resultado
+            $id = !empty($rpta) ? $rpta[0]->id : null;
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'id' => $id,
+                'distribucion' => $rpta,
+                'message' => 'Datos de la distribución obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en sp_Distr_Get_Insert_Update_distribucion_dppp', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la distribución'
             ]);
             throw $e;
         }

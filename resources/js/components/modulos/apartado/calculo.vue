@@ -195,7 +195,7 @@
                                     </div>
                                 </div>
                            </div>
-                             <!-- seccion checkbox para los partidos politicos copn representacion-->
+                             <!-- seccion checkbox para los partidos politicos con representacion-->
                                 <div class="row px-4">
                                     <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
                                         <label class="col-form-label">Partidos con representación en el Congreso </label>

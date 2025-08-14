@@ -11304,8 +11304,10 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
-/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -11325,6 +11327,7 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -11335,12 +11338,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       Partidos_Con_Representacion: [],
       NewlistCalculos: [],
       cb_ppSeleccionados: [],
-      opcionSelecionadaPorcentaje: null,
+      opcionSelecionadaPorcentaje: '1',
+      //  Valor por defecto Gubernatura
       search: '',
       page: 1,
       max: 10,
       active: false,
-      dist_30_por_ciento: '',
       input1: '',
       input2: '',
       checkbox1: false,
@@ -11355,10 +11358,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       catAnio: [],
       cat_tipo_distribucion: [],
       distribucion: [],
+      // Validaciones
+      error: false,
       errorAnio: '',
       errorDistribucion: '',
-      error_dist_30_por_ciento: '',
-      error_dist_70_por_ciento: ''
+      errorMonto30: '',
+      errorMonto70: '',
+      errorPartidosPoliticos_conRepr: '',
+      flag_descargar: true // true: disabled | false: enabled
     };
   },
   created: function created() {
@@ -11407,7 +11414,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               })["catch"](function (error) {
                 console.log(error);
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
               });
             case 4:
             case "end":
@@ -11421,7 +11428,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     getCalculos: function getCalculos() {
       var _this4 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(this.$vs);
       loader.text = 'Cargando datos...';
       var url = '/administracion/solicitud/getCalculosFinanciamiento';
       this.NewlistCalculos = [];
@@ -11443,14 +11450,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           color: 'danger'
         });
         var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
+        _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
       })["finally"](function () {
         loader.close();
       });
     },
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(this.$vs);
 
       //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
@@ -11458,6 +11465,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = {};
       this.Partidos_Con_Representacion = {};
+      this.monto30 = '', this.monto70 = '',
+      //this.limpiarCampos();
       //console.log(calculo_tr.id);
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
@@ -11475,18 +11484,20 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
           _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
             return _objectSpread(_objectSpread({}, p), {}, {
-              ajuste: 0
+              ajuste: 0,
+              // valor temporal para el input
+              inputPorcentaje: _this5.formatearPorcentaje(p)
             });
           });
-          _this5.monto30 = '';
-          _this5.monto70 = '';
+          //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
           var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
           throw new Error(errorMessage);
         }
-        response.data;
+        // Cargando datos de Distribución
+        //this.distribucion = JSON.parse(datos.p_tipo_distribucion);
       })["catch"](function (error) {
         console.error('Error al cargar detalles del cálculo', error);
         _this5.$vs.notification({
@@ -11495,7 +11506,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           color: 'danger'
         });
         var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
+        _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
       })["finally"](function () {
         loader.close();
       });
@@ -11557,7 +11568,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 }
               })["catch"](function (error) {
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
               });
             case 3:
             case "end":
@@ -11583,6 +11594,107 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
       });
     },
+    guardarDistribucion: function guardarDistribucion() {
+      var _this8 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var loader, urlDistribucion, urlPartidos, datos, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              //⚠️
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_1__["loading"])(_this8.$vs);
+              loader.text = 'Guardando distribución...';
+              urlDistribucion = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              urlPartidos = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+              datos = {
+                p_comando: 'INSERT',
+                // INSERT, UPDATE
+                p_id_dist: _this8.selectedCalculo.id_dist,
+                id_calculo: _this8.selectedCalculo.id,
+                p_anio_ejercicio: _this8.anio,
+                //valor manual
+                p_tipo_distribucion: JSON.stringify(_this8.distribucion),
+                //valor manual
+                p_monto_30_por_ciento: _this8.monto30,
+                //valor manual
+                p_monto_70_por_ciento: _this8.monto70,
+                //valor manual
+                p_tipoPorcentaje: _this8.opcionSelecionadaPorcentaje,
+                //valor manual
+                p_suma_A_30_por_ciento: _this8.monto30,
+                p_suma_B_70_por_ciento: _this8.monto70,
+                p_suma_B_Ajuste_70_por_ciento: _this8.monto70,
+                p_suma_C_fpaop: _this8.subtotalC_ConRepresentacion,
+                p_suma_D_fpatov: _this8.subtotalD_ConRepresentacion
+                //p_suma_D_2PorCiento: this.subtotalMonto2PorCientoD, -- 2% de pp_sin_repr
+                //p_suma_D_candidatura: this.candidatura, -- candidatura Ind.(2%)
+              };
+
+              console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion);
+              try {
+                /*
+                // Actualizar distribución
+                if (this.distribucionId) {
+                    const response = await axios.put(`${urlDistribucion}/${this.distribucionId}`, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución actualizada con ID: ' + this.distribucionId);
+                    }
+                } else { // Guardar distribución
+                    const response = await axios.post(urlDistribucion, datos);
+                    this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
+                    // Si es un nuevo registro, actualizamos el ID
+                    if (response.data && response.data.id) {
+                        this.distribucionId = response.data.id;
+                        console.log('Distribución guardada con ID: ' + response.data.id);
+                    }
+                }
+                // Actualizamos la tabla de partidos políticos
+                // Crear un array de promesas
+                const promesas = this.Partidos_Con_Representacion.map(async partido => {
+                    try {
+                    const response = await axios.put(urlPartidos, partido);
+                    if (response.data && response.data.ids) {
+                        console.log('Partido político actualizado: ' + response.data.ids);
+                    }
+                    } catch (error) {
+                        console.error('Error al actualizar partido: ' + partido.siglas, error);
+                        this.$vs.notification({ 
+                            color: 'danger', 
+                            text: `Error al actualizar ${partido.siglas}` 
+                        });
+                        throw error;
+                    }
+                });
+                // Esperar a que todas las peticiones terminen
+                await Promise.all(promesas);
+                
+                // Notificación de éxito
+                this.$vs.notification({ 
+                    color: 'success', 
+                    text: 'Datos guardados correctamente' 
+                });
+                */
+              } catch (error) {
+                console.error('Error al guardar:', error);
+                _this8.$vs.notification({
+                  title: 'Error',
+                  color: 'danger',
+                  text: 'Error al guardar'
+                });
+                nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_1___default.a.catchHandler(error, nombreMetodo[3], _this8.$router);
+              } finally {
+                loader.close();
+              }
+            case 7:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4);
+      }))();
+    },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
       var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
       var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
@@ -11597,7 +11709,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (this.totalAjusteDecimales < 0) {
           partido.ajuste += ajusteUnitario;
         } else {
-          this.$vs.notify({
+          this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
             color: 'warning'
@@ -11611,7 +11723,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * Ajustar decimal para 70%
     */
     ajustarDecimal_70porCiento: function ajustarDecimal_70porCiento(partido, operacion) {
-      var _this8 = this;
+      var _this9 = this;
       if (this.cb_ppSeleccionados.length !== 2) {
         this.$vs.notification({
           title: 'Aviso',
@@ -11634,7 +11746,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.ajuste += ajusteUnitario;
         // Aplicar el ajuste inverso al otro partido seleccionado
         var otroPartido = this.Partidos_Con_Representacion.find(function (p) {
-          return p.id_partido !== partido.id_partido && _this8.cb_ppSeleccionados.includes(p.id_partido);
+          return p.id_partido !== partido.id_partido && _this9.cb_ppSeleccionados.includes(p.id_partido);
         });
         if (otroPartido) {
           if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
@@ -11647,15 +11759,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
      */
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
-      var porcentaje = parseFloat(porcentajePartido); // parcea el valor del input a decimal
+      var porcentaje = parseFloat(porcentajePartido);
       var totalPorcentajes = this.sumaTotalPorcentajes;
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+      //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
       return monto * porcentaje / totalPorcentajes;
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);
+      //console.log('B. Monto con ajuste:', {base, ajuste});
       return base + (ajuste || 0);
     },
     calcularMontoC: function calcularMontoC(partido) {
@@ -11664,7 +11778,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
       // Verificar si los valores son números válidos
       if (isNaN(montoA) || isNaN(montoB)) {
-        console.error('Valores inválidos:', {
+        console.error('C. Valores inválidos:', {
           montoA: montoA,
           montoB: montoB,
           porcentaje: partido.porcentaje_votacion,
@@ -11678,13 +11792,108 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     calcularMontoD: function calcularMontoD(partido) {
       return this.formatoMoneda(this.calcularMontoC(partido) * this.factorCalculo);
     },
-    // Formatea a moneda
+    /*
+    * Formatea a moneda
+    */
     formatoMoneda: function formatoMoneda(valor) {
       return new Intl.NumberFormat('es-MX', {
         style: 'currency',
         currency: 'MXN',
         minimumFractionDigits: 2
       }).format(valor);
+    },
+    /*
+    * Formatea el porcentaje del partido
+    */
+    formatearPorcentaje: function formatearPorcentaje(partido) {
+      if (!partido.inputPorcentaje) {
+        partido.inputPorcentaje = '0.00000 %';
+        partido.porcentaje_votacion = 0.00000;
+        return;
+      }
+      var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+      if (!isNaN(valorNumerico)) {
+        //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
+        partido.porcentaje_votacion = valorNumerico.toFixed(5);
+        partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
+      } else {
+        // Si no es un número recetea valores
+        partido.porcentaje_votacion = 0.00000;
+        partido.inputPorcentaje = '0.00000 %';
+      }
+    },
+    /**
+     * Valida si un valor es un número decimal válido
+     * @param {string|number} value - Valor a validar
+     * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
+     * @returns {boolean} - true si es válido, false si no
+     */
+    validarDecimal: function validarDecimal(value) {
+      var maxDecimals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+      if (value === '' || value === null || value === undefined) {
+        return false;
+      }
+
+      // Expresión regular para validar números decimales
+      var regex = new RegExp("^\\d+(\\.\\d{1,".concat(maxDecimals, "})?$"));
+      return regex.test(String(value).replace(',', '.'));
+    },
+    /**
+     * Validar campos
+     * @returns {boolean}
+     */
+    validarCampos: function validarCampos() {
+      this.limpiarErrores();
+      if (this.anio === '') {
+        this.errorAnio = 'El campo año es obligatorio';
+        this.error = true;
+      }
+      if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+        this.errorMonto30 = 'Ingrese un monto 30% válido (ej: 123.45)';
+        this.error = true;
+      }
+      if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+        this.errorMonto70 = 'Ingrese un monto 70% válido (ej: 123.45)';
+        this.error = true;
+      }
+      if (this.distribucion === '') {
+        this.errorDistribucion = 'El campo distribución es obligatorio';
+        this.error = true;
+      }
+      for (var i = 0; i < this.Partidos_Con_Representacion.length; i++) {
+        var partido = this.Partidos_Con_Representacion[i];
+        if (partido.porcentaje_votacion === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+          this.errorPorcentajeVotacion = 'Ingrese un porcentaje válido (ej: 123.45678)';
+          this.error = true;
+        }
+      }
+      return this.error;
+    },
+    /**
+     * Limpia todos los campos del formulario
+     * @returns {void}
+     */
+    limpiarCampos: function limpiarCampos() {
+      this.anio = '', this.monto30 = '', this.monto70 = '', this.distribucion = [];
+      // Reiniciar valores de partidos a 0.0
+      this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
+        return _objectSpread(_objectSpread({}, partido), {}, {
+          porcentaje_votacion: 0.00,
+          inputPorcentaje: '',
+          ajuste: 0.00
+        });
+      });
+      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto
+      this.limpiarErrores();
+    },
+    /**
+     * Limpia todos los mensajes de error
+     * @returns {void}
+     */
+    limpiarErrores: function limpiarErrores() {
+      this.error = false;
+      this.errorAnio = '';
+      this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
     }
   },
   computed: {
@@ -11696,7 +11905,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         // Convierte a número y evita NaN si el input está vacío
         var valor = parseFloat(partido.porcentaje_votacion);
         return total + (isNaN(valor) ? 0 : valor);
-      }, 0).toFixed(2);
+      }, 0); //.toFixed(2);
     },
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
@@ -11738,16 +11947,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     // Subtotal C para partidos con representación (C = A + B)
     subtotalC_ConRepresentacion: function subtotalC_ConRepresentacion() {
-      var _this9 = this;
+      var _this10 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this9.calcularMontoC(partido);
+        return total + _this10.calcularMontoC(partido);
       }, 0);
     },
     // Subtotal D para partidos con representación (D = C * factor)
     subtotalD_ConRepresentacion: function subtotalD_ConRepresentacion() {
-      var _this10 = this;
+      var _this11 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this10.calcularMontoC(partido) * _this10.factorCalculo;
+        return total + _this11.calcularMontoC(partido) * _this11.factorCalculo;
       }, 0);
     },
     // Subtotal C para partidos sin representación (ya lo tienes)
@@ -26889,8 +27098,7 @@ var render = function render() {
   }, [_c("vs-option", {
     attrs: {
       value: "1",
-      label: "A. 50% Gubernatura",
-      selected: true
+      label: "A. 50% Gubernatura"
     }
   }, [_vm._v("A. 50% Gubernatura")]), _vm._v(" "), _c("vs-option", {
     attrs: {
@@ -26939,7 +27147,7 @@ var render = function render() {
           attrs: {
             colspan: 1
           }
-        }, [_vm._v("D. Obtención del voto ( D = C * 0.5)")]) : _vm._e()], 1)];
+        }, [_vm._v("D. Obtención del voto ( D = C * " + _vm._s(_vm.factorCalculo) + ")")]) : _vm._e()], 1)];
       },
       proxy: true
     }, {
@@ -26970,14 +27178,19 @@ var render = function render() {
           })]), _vm._v(" "), _c("vs-td", [_c("vs-input", {
             attrs: {
               type: "text",
-              placeholder: "0.00"
+              placeholder: "0.00 %"
+            },
+            on: {
+              blur: function blur($event) {
+                return _vm.formatearPorcentaje(partido);
+              }
             },
             model: {
-              value: partido.porcentaje_votacion,
+              value: partido.inputPorcentaje,
               callback: function callback($$v) {
-                _vm.$set(partido, "porcentaje_votacion", $$v);
+                _vm.$set(partido, "inputPorcentaje", $$v);
               },
-              expression: "partido.porcentaje_votacion"
+              expression: "partido.inputPorcentaje"
             }
           })], 1), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoIgualitario30())) + "\n                                    ")]), _vm._v(" "), _c("vs-td", [_c("div", {
             staticClass: "d-flex align-items-center justify-content-between"
@@ -27064,9 +27277,13 @@ var render = function render() {
           attrs: {
             colspan: 1
           }
-        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.subtotalMonto2PorCientoD)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+        }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.subtotalMonto2PorCientoD)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-tr", [_c("vs-td", {
           attrs: {
-            colspan: 3
+            colspan: 1
+          }
+        }), _vm._v(" "), _c("vs-td", {
+          attrs: {
+            colspan: 2
           }
         }, [_vm._v("\n                                        Candidaturas independientes\n                                    ")]), _vm._v(" "), _c("vs-td", {
           attrs: {
