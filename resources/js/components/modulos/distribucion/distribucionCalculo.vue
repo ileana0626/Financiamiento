@@ -596,13 +596,14 @@ export default {
                 p_monto_30_por_ciento: this.monto30, //valor manual
                 p_monto_70_por_ciento: this.monto70, //valor manual
                 p_tipoPorcentaje: this.opcionSelecionadaPorcentaje, //valor manual
-                p_suma_A_30_por_ciento: this.monto30,
-                p_suma_B_70_por_ciento: this.monto70,
-                p_suma_B_Ajuste_70_por_ciento: this.monto70,
-                p_suma_C_fpaop: this.subtotalC_ConRepresentacion,
-                p_suma_D_fpatov: this.subtotalD_ConRepresentacion,
-                //p_suma_D_2PorCiento: this.subtotalMonto2PorCientoD, -- 2% de pp_sin_repr
-                //p_suma_D_candidatura: this.candidatura, -- candidatura Ind.(2%)
+                p_subtotal_A_30_por_ciento: 0,
+                p_subtotal_B_70_por_ciento: 0,
+                p_subtotal_B_Ajuste_70_por_ciento: 0,
+                p_subtotal_C_fpaop: this.subtotalC_ConRepresentacion,
+                p_subtotal_D_fpatov: this.subtotalD_ConRepresentacion,
+                p_subtotal_2_por_ciento_fpaop_ppsr: this.subtotalMonto2PorCiento,
+                p_subtotal_D_2_por_ciento_ppsr: this.subtotalMonto2PorCientoD,
+                p_subtotal_D_candidatura: this.candidatura,
             };
             console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion);
             try {
@@ -763,6 +764,26 @@ export default {
             return this.formatoMoneda(
                 this.calcularMontoC(partido) * this.factorCalculo
             );
+        },
+        /*
+        * Almacena temporalmente en los Objetos de los partidos,
+        * los cálculos aplicados a las columnas antes de guardar
+        */
+        AlmacenarCalculos_Partidos() {
+            this.Partidos_Con_Representacion.forEach(partido => {
+                partido.monto_30_por_ciento = this.calcularMontoIgualitario30();
+                partido.monto_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
+                partido.monto_70_por_ciento_con_ajuste = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+                partido.monto_c = this.calcularMontoC(partido);
+                partido.monto_d = this.calcularMontoD(partido);
+            }); // CHECAR SOLO ES MAQUETADO
+            this.Partidos_Sin_Representacion.forEach(partido => {
+                partido.monto_30_por_ciento = this.calcularMontoIgualitario30();
+                partido.monto_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
+                partido.monto_70_por_ciento_con_ajuste = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+                partido.monto_c = this.calcularMontoC(partido);
+                partido.monto_d = this.calcularMontoD(partido);
+            });
         },
         /*
         * Formatea a moneda

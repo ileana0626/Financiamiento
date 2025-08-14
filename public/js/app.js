@@ -11621,15 +11621,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 //valor manual
                 p_tipoPorcentaje: _this8.opcionSelecionadaPorcentaje,
                 //valor manual
-                p_suma_A_30_por_ciento: _this8.monto30,
-                p_suma_B_70_por_ciento: _this8.monto70,
-                p_suma_B_Ajuste_70_por_ciento: _this8.monto70,
-                p_suma_C_fpaop: _this8.subtotalC_ConRepresentacion,
-                p_suma_D_fpatov: _this8.subtotalD_ConRepresentacion
-                //p_suma_D_2PorCiento: this.subtotalMonto2PorCientoD, -- 2% de pp_sin_repr
-                //p_suma_D_candidatura: this.candidatura, -- candidatura Ind.(2%)
+                p_subtotal_A_30_por_ciento: 0,
+                p_subtotal_B_70_por_ciento: 0,
+                p_subtotal_B_Ajuste_70_por_ciento: 0,
+                p_subtotal_C_fpaop: _this8.subtotalC_ConRepresentacion,
+                p_subtotal_D_fpatov: _this8.subtotalD_ConRepresentacion,
+                p_subtotal_2_por_ciento_fpaop_ppsr: _this8.subtotalMonto2PorCiento,
+                p_subtotal_D_2_por_ciento_ppsr: _this8.subtotalMonto2PorCientoD,
+                p_subtotal_D_candidatura: _this8.candidatura
               };
-
               console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion);
               try {
                 /*
@@ -11793,6 +11793,27 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.formatoMoneda(this.calcularMontoC(partido) * this.factorCalculo);
     },
     /*
+    * Almacena temporalmente en los Objetos de los partidos,
+    * los cálculos aplicados a las columnas antes de guardar
+    */
+    AlmacenarCalculos_Partidos: function AlmacenarCalculos_Partidos() {
+      var _this10 = this;
+      this.Partidos_Con_Representacion.forEach(function (partido) {
+        partido.monto_30_por_ciento = _this10.calcularMontoIgualitario30();
+        partido.monto_70_por_ciento = _this10.calcularMontoProporcionalB(partido.porcentaje_votacion);
+        partido.monto_70_por_ciento_con_ajuste = _this10.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+        partido.monto_c = _this10.calcularMontoC(partido);
+        partido.monto_d = _this10.calcularMontoD(partido);
+      }); // CHECAR SOLO ES MAQUETADO
+      this.Partidos_Sin_Representacion.forEach(function (partido) {
+        partido.monto_30_por_ciento = _this10.calcularMontoIgualitario30();
+        partido.monto_70_por_ciento = _this10.calcularMontoProporcionalB(partido.porcentaje_votacion);
+        partido.monto_70_por_ciento_con_ajuste = _this10.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+        partido.monto_c = _this10.calcularMontoC(partido);
+        partido.monto_d = _this10.calcularMontoD(partido);
+      });
+    },
+    /*
     * Formatea a moneda
     */
     formatoMoneda: function formatoMoneda(valor) {
@@ -11947,16 +11968,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     // Subtotal C para partidos con representación (C = A + B)
     subtotalC_ConRepresentacion: function subtotalC_ConRepresentacion() {
-      var _this10 = this;
+      var _this11 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this10.calcularMontoC(partido);
+        return total + _this11.calcularMontoC(partido);
       }, 0);
     },
     // Subtotal D para partidos con representación (D = C * factor)
     subtotalD_ConRepresentacion: function subtotalD_ConRepresentacion() {
-      var _this11 = this;
+      var _this12 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this11.calcularMontoC(partido) * _this11.factorCalculo;
+        return total + _this12.calcularMontoC(partido) * _this12.factorCalculo;
       }, 0);
     },
     // Subtotal C para partidos sin representación (ya lo tienes)
