@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp', 'Administracion\SolicitudController@Distr_Get_Insert_Update_distribucion_dppp');
     Route::post('/administracion/solicitud/Update_Partidos_Con_Representacion', 'Administracion\SolicitudController@Update_Partidos_Con_Representacion');
     Route::post('/administracion/solicitud/Update_Partidos_Sin_Representacion', 'Administracion\SolicitudController@Update_Partidos_Sin_Representacion');
+    Route::get('/administracion/solicitud/exportarFinanciamientoDistribucionExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoDistribucionExcel');
 
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');

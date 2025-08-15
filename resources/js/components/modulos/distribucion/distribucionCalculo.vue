@@ -155,7 +155,7 @@
                                 <!-- Montos globales -->
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
-                                    <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" />
+                                    <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" @click.native.stop/>
                                     <div class="danger-message">
                                         <template v-if="errorMonto30.length > 0">
                                             {{ errorMonto30 }}
@@ -362,14 +362,14 @@
                                     <vs-tooltip>
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
                                     @click.stop="descargarDistribucion" hover="true"
-                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="flag_descargar">
+                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
                                         <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
                                             <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
-                                            <span>Descargar</span>
+                                            Descargar
                                         </div>
                                     </vs-button>
                                     <template #tooltip>
-                                        <div v-if="flag_descargar">
+                                        <div v-if="descargar_disabled">
                                             Debes guardar los cambios antes de descargar
                                         </div>
                                         <div v-else>
@@ -392,6 +392,17 @@
 //import { forEach } from 'lodash';
 import methods from '../../../methods';
 import { loading } from '../../../methods';
+/**
+ * 🐛 Función para depuración development
+ * @param {...any} args - Uno o más mensajes a mostrar en consola
+ * @example
+ * debug('Mensaje de prueba', {data: 123});
+ */
+const debug = (...args) => {
+    if (process.env.NODE_ENV === 'development') {
+        console.log(...args);
+    }
+};
 export default {
     data() {
         return {
@@ -400,7 +411,8 @@ export default {
             selectedCalculo: {},
             Partidos_Sin_Representacion: null,
             Partidos_Con_Representacion: null,
-            NewlistCalculos: [], 
+            NewlistCalculos: [],
+            distribucionId: null, // Para saber si ya se ha guardado un registro
             cb_ppSeleccionados: [],
             opcionSelecionadaPorcentaje: '1', //  Valor por defecto Gubernatura
             search: '',
@@ -409,13 +421,13 @@ export default {
             // Dialog
             active: false,
 
-            input1: '',
-            input2: '',
-            checkbox1: false,
+            //input1: '',
+            //input2: '',
+            //checkbox1: false,
             anio: '',
             monto30: '',
             monto70: '',
-            suma: '',
+            //suma: '',
             colors: [
                 {
                     color: 'warn'
@@ -433,7 +445,7 @@ export default {
             errorMonto70: '',
             //errorPartidosPoliticos_conRepr: '',
             //errorPorcentajeVotacion: '',
-            flag_descargar: true, // true: disabled | false: enabled
+            descargar_disabled: true, // true: disabled | false: enabled
         }
     },
     created() {
@@ -504,9 +516,10 @@ export default {
             this.datosCalculoSeleccionado = {};
             this.Partidos_Sin_Representacion = [];
             this.Partidos_Con_Representacion = [];
-            this.monto30 = '';
-            this.monto70 = '';
-            //this.limpiarCampos();
+            this.distribucionId = null; // resetea cada que se abra el Dialog
+            //this.monto30 = '';
+            //this.monto70 = '';
+            this.limpiarCampos(); // 🧹
             //console.log(calculo_tr.id);
             this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
@@ -517,7 +530,7 @@ export default {
                 }
             }).then(response => {
                 //console.log('Respuesta completa del servidor:', response);
-                //console.log('Datos recibidos:', response.data);
+                debug('🐛 Datos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
                     this.Partidos_Sin_Representacion = response.data.partidosSinRep;
@@ -525,8 +538,8 @@ export default {
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
-                        inputPorcentaje: this.formatearPorcentaje(p),
-                        errorPorcentajeVotacion: '' // Inicializar el error
+                        inputPorcentaje: this.formatearPorcentaje(p), // Variable temporarl en el Front
+                        errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
                     //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
@@ -535,7 +548,7 @@ export default {
                     throw new Error(errorMessage);
                 }
                 // Cargando datos de Distribución
-                //this.distribucion = JSON.parse(datos.p_tipo_distribucion);
+                this.cargarDistribucion();
             }).catch((error) => {
                 console.error('Error al cargar detalles del cálculo', error);
                 this.$vs.notification({
@@ -551,8 +564,6 @@ export default {
                 loader.close();
                 this.limpiarCampos();
             })
-
-        
         },
         onChangeDistribucion(value) {
             this.distribucion = value;
@@ -619,15 +630,55 @@ export default {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
         },
-        async cargarDistribucion() { //⚠️
+        /**
+         * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
+         */
+        async cargarDistribucion() { // ✅
             const loader = loading(this.$vs);
             loader.text = 'Cargando distribución...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+            let datos = {
+                p_comando: 'GET',
+                p_id_calculo: this.selectedCalculo.id
+            }
             try{
-                const response = await axios.get(url, { params: { id: this.selectedCalculo.id } });
-                this.distribucion = response.data.distribucion;
-                this.anio = response.data.anio;
-                this.distribucionId = response.data.id;
+                const response = await axios.post(url, datos); // Se manda post aunque sea GET por el controlador
+                debug('🐛 response.data:', response.data); 
+                // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
+                if( response.data && response.data.success && response.data.distribucion.length > 0){
+                    this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+                    /*console.log('DataDistribucion: ', this.DataDistribucion);
+                    console.log('DataDistribucion type:', typeof this.DataDistribucion);
+                    console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
+                    */
+                    this.distribucionId = this.DataDistribucion.id_calculo;
+                    // Empieza a cargar los datos guardados
+                    this.anio = this.DataDistribucion.anio_ejercicio;
+                    if (this.DataDistribucion?.tipo_distribucion) {
+                        this.distribucion = this.DataDistribucion.tipo_distribucion
+                            .split(',')
+                            .map(Number)
+                            .filter(item => !isNaN(item));
+                        //console.log('Distribution array:', this.distribucion);
+                    }
+                    this.monto30 = this.DataDistribucion.monto_30_por_ciento;
+                    //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
+                    //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
+                    this.monto70 = this.DataDistribucion.monto_70_por_ciento;
+                    this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
+                    this.$nextTick(() => {
+                        debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
+                    });
+                    //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
+                    // ⚐ Habilita descargar archivo
+                    if((this.distribucionId ?? null) !== null){
+                        this.descargar_disabled = false;
+                    }
+                    debug('✅ Distribución cargada.');
+                }else{
+                    debug('❌ No se encontro distribución, ➜ continua normalmente...');
+                    return;
+                }
             }catch(error){
                 console.error('Error al cargar distribución', error);
                 this.$vs.notification({
@@ -654,12 +705,11 @@ export default {
             loader.text = 'Guardando distribución...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
 
-            const datos = {
+            let datos = {
                 p_comando: 'INSERT', // INSERT, UPDATE
-                id_calculo: this.selectedCalculo.id,
+                p_id_calculo: this.selectedCalculo.id,
                 p_anio_ejercicio: this.anio, //valor manual
                 p_tipo_distribucion: this.distribucion.join(','), // "1,2,3" - valor manual
-                // this.distribucion = tiposDelBackend.split(',').map(Number);
                 p_monto_30_por_ciento: this.monto30, //valor manual
                 p_monto_70_por_ciento: this.monto70, //valor manual
                 p_tipoPorcentaje: this.opcionSelecionadaPorcentaje, //valor manual
@@ -751,7 +801,9 @@ export default {
                 this.$vs.notification({ 
                     color: 'success', 
                     text: 'Datos guardados correctamente' 
-                });       
+                });
+                // HAbilita descargar archivo
+                this.descargar_disabled = true;
             } catch (error) {
                 console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
@@ -932,7 +984,7 @@ export default {
             return regex.test(String(value).replace(',', '.'));
         },
         /**
-         * Validar campos
+         * ✔ Validar campos
          * @returns {boolean}
          */
         validarCampos() {
@@ -973,7 +1025,7 @@ export default {
             return this.error;
         },
         /**
-         * Limpia todos los campos del formulario
+         * 🧹 Limpia todos los campos del formulario
          * @returns {void}
          */
          limpiarCampos() {
@@ -981,16 +1033,29 @@ export default {
             this.monto30 = '',
             this.monto70 = '',
             this.distribucion = [];
-            // Reiniciar valores de partidos a 0.0
-            this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(partido => ({
-                ...partido,
-                porcentaje_votacion: 0.00,
-                inputPorcentaje: '',
-                errorPorcentajeVotacion: '',
-                ajuste: 0.00,
-            }));
-            /* this.porcentaje_votacion= "0.00", */
-            this.opcionSelecionadaPorcentaje= '1'; //  Valor por defecto
+            this.opcionSelecionadaPorcentaje= '1'; //  Valor por defecto factorCalculo()
+            this.descargar_disabled = true; // Deshabilita el botón de descargar
+
+            // Reiniciar valores de partidos a 0.0 si existen
+            if(this.Partidos_Con_Representacion){
+                this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(partido => ({
+                    ...partido,
+                    porcentaje_votacion: 0.00,
+                    inputPorcentaje: '',
+                    errorPorcentajeVotacion: '',
+                    ajuste: 0.00,
+                }));
+            }else {
+                this.Partidos_Con_Representacion = [];
+            }
+            if(this.Partidos_Sin_Representacion){
+                this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(partido => ({
+                    ...partido,
+                    D_monto_2_por_ciento: 0.00,
+                }));
+            }else {
+                this.Partidos_Sin_Representacion = [];
+            }
             this.limpiarErrores();
         },
         /**
@@ -1049,6 +1114,7 @@ export default {
             }, 0);
         },
         factorCalculo() {
+            //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
             if (this.opcionSelecionadaPorcentaje === '1') {
                 return 0.5;  // 50% Gubernatura
             } else if (this.opcionSelecionadaPorcentaje === '2') {

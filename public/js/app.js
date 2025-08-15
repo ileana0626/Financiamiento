@@ -11306,10 +11306,10 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -11329,6 +11329,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 //import { forEach } from 'lodash';
 
 
+/**
+ * 🐛 Función para depuración development
+ * @param {...any} args - Uno o más mensajes a mostrar en consola
+ * @example
+ * debug('Mensaje de prueba', {data: 123});
+ */
+var debug = function debug() {
+  if (true) {
+    var _console;
+    (_console = console).log.apply(_console, arguments);
+  }
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -11338,6 +11350,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       Partidos_Sin_Representacion: null,
       Partidos_Con_Representacion: null,
       NewlistCalculos: [],
+      distribucionId: null,
+      // Para saber si ya se ha guardado un registro
       cb_ppSeleccionados: [],
       opcionSelecionadaPorcentaje: '1',
       //  Valor por defecto Gubernatura
@@ -11346,13 +11360,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       max: 10,
       // Dialog
       active: false,
-      input1: '',
-      input2: '',
-      checkbox1: false,
+      //input1: '',
+      //input2: '',
+      //checkbox1: false,
       anio: '',
       monto30: '',
       monto70: '',
-      suma: '',
+      //suma: '',
       colors: [{
         color: 'warn'
       }],
@@ -11368,7 +11382,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       errorMonto70: '',
       //errorPartidosPoliticos_conRepr: '',
       //errorPorcentajeVotacion: '',
-      flag_descargar: true // true: disabled | false: enabled
+      descargar_disabled: true // true: disabled | false: enabled
     };
   },
   created: function created() {
@@ -11468,9 +11482,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = [];
       this.Partidos_Con_Representacion = [];
-      this.monto30 = '';
-      this.monto70 = '';
-      //this.limpiarCampos();
+      this.distribucionId = null; // resetea cada que se abra el Dialog
+      //this.monto30 = '';
+      //this.monto70 = '';
+      this.limpiarCampos(); // 🧹
       //console.log(calculo_tr.id);
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
@@ -11482,7 +11497,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }).then(function (response) {
         var _response$data3;
         //console.log('Respuesta completa del servidor:', response);
-        //console.log('Datos recibidos:', response.data);
+        debug('🐛 Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
           _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
@@ -11491,7 +11506,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               ajuste: 0,
               // valor temporal para el input
               inputPorcentaje: _this5.formatearPorcentaje(p),
-              errorPorcentajeVotacion: '' // Inicializar el error
+              // Variable temporarl en el Front
+              errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
           });
           //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
@@ -11502,7 +11518,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           throw new Error(errorMessage);
         }
         // Cargando datos de Distribución
-        //this.distribucion = JSON.parse(datos.p_tipo_distribucion);
+        _this5.cargarDistribucion();
       })["catch"](function (error) {
         console.error('Error al cargar detalles del cálculo', error);
         _this5.$vs.notification({
@@ -11600,34 +11616,76 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
       });
     },
+    /**
+     * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
+     */
     cargarDistribucion: function cargarDistribucion() {
       var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var loader, url, response, nombreMetodo;
+        var loader, url, datos, response, _this8$DataDistribuci, _this8$distribucionId, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              //⚠️
+              // ✅
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this8.$vs);
               loader.text = 'Cargando distribución...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-              _context4.prev = 3;
-              _context4.next = 6;
-              return axios.get(url, {
-                params: {
-                  id: _this8.selectedCalculo.id
-                }
-              });
-            case 6:
+              datos = {
+                p_comando: 'GET',
+                p_id_calculo: _this8.selectedCalculo.id
+              };
+              _context4.prev = 4;
+              _context4.next = 7;
+              return axios.post(url, datos);
+            case 7:
               response = _context4.sent;
-              _this8.distribucion = response.data.distribucion;
-              _this8.anio = response.data.anio;
-              _this8.distribucionId = response.data.id;
-              _context4.next = 18;
+              // Se manda post aunque sea GET por el controlador
+              debug('🐛 response.data:', response.data);
+              // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
+              if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
+                _context4.next = 22;
+                break;
+              }
+              _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+              /*console.log('DataDistribucion: ', this.DataDistribucion);
+              console.log('DataDistribucion type:', typeof this.DataDistribucion);
+              console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
+              */
+              _this8.distribucionId = _this8.DataDistribucion.id_calculo;
+              // Empieza a cargar los datos guardados
+              _this8.anio = _this8.DataDistribucion.anio_ejercicio;
+              if ((_this8$DataDistribuci = _this8.DataDistribucion) !== null && _this8$DataDistribuci !== void 0 && _this8$DataDistribuci.tipo_distribucion) {
+                _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
+                  return !isNaN(item);
+                });
+                //console.log('Distribution array:', this.distribucion);
+              }
+
+              _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
+              //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
+              //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
+              _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
+              _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']);
+              _this8.$nextTick(function () {
+                debug('🐛 Factor de porcentaje: ', _this8.factorCalculo, 'Opción seleccionada: ', _this8.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this8.opcionSelecionadaPorcentaje));
+              });
+              //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
+              // ⚐ Habilita descargar archivo
+              if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
+                _this8.descargar_disabled = false;
+              }
+              debug('✅ Distribución cargada.');
+              _context4.next = 24;
               break;
-            case 12:
-              _context4.prev = 12;
-              _context4.t0 = _context4["catch"](3);
+            case 22:
+              debug('❌ No se encontro distribución, ➜ continua normalmente...');
+              return _context4.abrupt("return");
+            case 24:
+              _context4.next = 32;
+              break;
+            case 26:
+              _context4.prev = 26;
+              _context4.t0 = _context4["catch"](4);
               console.error('Error al cargar distribución', _context4.t0);
               _this8.$vs.notification({
                 title: 'Error',
@@ -11636,15 +11694,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 18:
-              _context4.prev = 18;
+            case 32:
+              _context4.prev = 32;
               loader.close();
-              return _context4.finish(18);
-            case 21:
+              return _context4.finish(32);
+            case 35:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[3, 12, 18, 21]]);
+        }, _callee4, null, [[4, 26, 32, 35]]);
       }))();
     },
     guardarDistribucion: function guardarDistribucion() {
@@ -11670,12 +11728,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               datos = {
                 p_comando: 'INSERT',
                 // INSERT, UPDATE
-                id_calculo: _this9.selectedCalculo.id,
+                p_id_calculo: _this9.selectedCalculo.id,
                 p_anio_ejercicio: _this9.anio,
                 //valor manual
                 p_tipo_distribucion: _this9.distribucion.join(','),
                 // "1,2,3" - valor manual
-                // this.distribucion = tiposDelBackend.split(',').map(Number);
                 p_monto_30_por_ciento: _this9.monto30,
                 //valor manual
                 p_monto_70_por_ciento: _this9.monto70,
@@ -11849,10 +11906,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 color: 'success',
                 text: 'Datos guardados correctamente'
               });
-              _context5.next = 102;
+              // HAbilita descargar archivo
+              _this9.descargar_disabled = true;
+              _context5.next = 103;
               break;
-            case 96:
-              _context5.prev = 96;
+            case 97:
+              _context5.prev = 97;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11862,15 +11921,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 102:
-              _context5.prev = 102;
+            case 103:
+              _context5.prev = 103;
               loader.close();
-              return _context5.finish(102);
-            case 105:
+              return _context5.finish(103);
+            case 106:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 96, 102, 105], [39, 59, 62, 65], [43, 50], [67, 87, 90, 93], [71, 78]]);
+        }, _callee5, null, [[9, 97, 103, 106], [39, 59, 62, 65], [43, 50], [67, 87, 90, 93], [71, 78]]);
       }))();
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
@@ -12037,7 +12096,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return regex.test(String(value).replace(',', '.'));
     },
     /**
-     * Validar campos
+     * ✔ Validar campos
      * @returns {boolean}
      */
     validarCampos: function validarCampos() {
@@ -12078,22 +12137,36 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.error;
     },
     /**
-     * Limpia todos los campos del formulario
+     * 🧹 Limpia todos los campos del formulario
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
       this.anio = '', this.monto30 = '', this.monto70 = '', this.distribucion = [];
-      // Reiniciar valores de partidos a 0.0
-      this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
-        return _objectSpread(_objectSpread({}, partido), {}, {
-          porcentaje_votacion: 0.00,
-          inputPorcentaje: '',
-          errorPorcentajeVotacion: '',
-          ajuste: 0.00
+      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
+      this.descargar_disabled = true; // Deshabilita el botón de descargar
+
+      // Reiniciar valores de partidos a 0.0 si existen
+      if (this.Partidos_Con_Representacion) {
+        this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
+          return _objectSpread(_objectSpread({}, partido), {}, {
+            porcentaje_votacion: 0.00,
+            inputPorcentaje: '',
+            errorPorcentajeVotacion: '',
+            ajuste: 0.00
+          });
         });
-      });
-      /* this.porcentaje_votacion= "0.00", */
-      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto
+      } else {
+        this.Partidos_Con_Representacion = [];
+      }
+      if (this.Partidos_Sin_Representacion) {
+        this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(function (partido) {
+          return _objectSpread(_objectSpread({}, partido), {}, {
+            D_monto_2_por_ciento: 0.00
+          });
+        });
+      } else {
+        this.Partidos_Sin_Representacion = [];
+      }
       this.limpiarErrores();
     },
     /**
@@ -12153,6 +12226,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }, 0);
     },
     factorCalculo: function factorCalculo() {
+      //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
       if (this.opcionSelecionadaPorcentaje === '1') {
         return 0.5; // 50% Gubernatura
       } else if (this.opcionSelecionadaPorcentaje === '2') {
@@ -27268,6 +27342,11 @@ var render = function render() {
       placeholder: "0.00",
       step: "0.01"
     },
+    nativeOn: {
+      click: function click($event) {
+        $event.stopPropagation();
+      }
+    },
     model: {
       value: _vm.monto30,
       callback: function callback($$v) {
@@ -27607,10 +27686,10 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "tooltip",
       fn: function fn() {
-        return [_vm.flag_descargar ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
+        return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
       },
       proxy: true
-    }], null, false, 446922455)
+    }], null, false, 1113041099)
   }, [_c("vs-button", {
     key: "descargar" + _vm.darkMode,
     staticStyle: {
@@ -27620,7 +27699,7 @@ var render = function render() {
     attrs: {
       color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
       hover: "true",
-      disabled: _vm.flag_descargar
+      disabled: _vm.descargar_disabled
     },
     on: {
       click: function click($event) {
@@ -27640,7 +27719,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "0.8125rem !important"
     }
-  }), _vm._v(" "), _c("span", [_vm._v("Descargar")])])])], 1)], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
+  }), _vm._v("\n                                        Descargar\n                                    ")])])], 1)], 1)])], 1) : _vm._e()], 1)])], 1)]], 2);
 };
 var staticRenderFns = [function () {
   var _vm = this,

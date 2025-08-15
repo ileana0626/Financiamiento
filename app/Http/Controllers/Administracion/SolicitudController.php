@@ -348,20 +348,24 @@ class SolicitudController extends Controller
             DB::beginTransaction();
             DB::enableQueryLog();
 
-            // Verificar si ya existe un registro para este cálculo
-            $existe = DB::table('distribucion_dppp')
-                    ->where('id_calculo', $request->input('id_calculo'))
-                    ->exists();
+            $comando = $request->input('p_comando', null);
+            if ($comando === 'UPDATE' || $comando === 'INSERT') {
+                 // Verificar si ya existe un registro para este cálculo
+                 $existe = DB::table('distribucion_dppp')
+                 ->where('id_calculo', $request->input('id_calculo'))
+                 ->exists();
 
-            // Si ya existe, cambiamos el comando a UPDATE
-            $comando = $existe ? 'UPDATE' : 'INSERT';
+                 // Si ya existe, cambiamos el comando INSERT a UPDATE
+                 $comando = $existe ? 'UPDATE' : 'INSERT';
+            } // else -> el comando es 'GET', rellena los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
 
-            $id = $request->input('id', null); // Valor por defecto null
+
+            //$id = $request->input('id', null); // Valor por defecto null
             $response = DB::select('call sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
                 self::$useTransaction, // bandera estática
                 //$request->input('p_comando', null),
                 $comando,
-                $request->input('id_calculo', null),
+                $request->input('p_id_calculo', null),
                 $request->input('p_anio_ejercicio', null),
                 $request->input('p_tipo_distribucion', null),
                 $request->input('p_monto_30_por_ciento', null),
@@ -378,7 +382,11 @@ class SolicitudController extends Controller
             ]);
             DB::commit();
             // Obtener el ID del primer resultado
-            $id = !empty($response) ? $response[0]->id : null;
+            $id = null;
+            // en 'GET' no se obtiene el ID
+            if($comando === 'UPDATE' || $comando === 'INSERT'){
+                $id = !empty($response) ? $response[0]->id : null;
+            }
 
             // Obtener y loguear la consulta
             $queryLog = DB::getQueryLog();
@@ -391,8 +399,8 @@ class SolicitudController extends Controller
 
             return response()->json([
                 'success' => true,
-                'id' => $id,
-                'distribucion' => $response,
+                'id' => $id, // Solo con INSERT y UPDATE
+                'distribucion' => $response, // Solo con GET
                 'message' => 'Datos de la distribución obtenidos correctamente'
             ]);
         }
@@ -401,7 +409,9 @@ class SolicitudController extends Controller
             Log::error('Error en sp_Distr_Get_Insert_Update_distribucion_dppp', [
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
-                'trace' => $e->getTraceAsString()
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                //'trace' => $e->getTraceAsString()
             ]);
             return response()->json([
                 'success' => false,
@@ -460,7 +470,6 @@ class SolicitudController extends Controller
             //Log::info('Partidos sin representación:', $partidosSinRep);
             //Log::info('Partidos con representación:', $partidosConRep);
 
-
             $data = [
                 'calculo' => $calculoData,
                 'partidos_sin_rep' => $partidosSinRep,
@@ -476,6 +485,116 @@ class SolicitudController extends Controller
             $filename = date('Y-m-d') . '_calculos_financiamiento' . '.xlsx';
                  // Retornamos la vista sin datos
             return (new \App\Exports\CalculosFinanciamientoExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Exporta el reporte de Anexo 2. Distribución de Financiamiento a Excel
+     *
+     * @param $id Id del cálculo 
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarFinanciamientoDistribucionExcel(Request $request, $id = null)
+    {
+        try {
+            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+
+            $operacion = 'GET';
+            // Obtener los datos de la distribución
+            $distribucion = DB::select('CALL admin.sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?,
+	            null,null,null,
+	            null,null,null,null,null,null,null,null,null,null);', [
+                    self::$useTransaction, // bandera estática,
+                    $operacion,
+                    $id,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null
+            ]);
+            Log::info('Datos de la distribución obtenidos:', ['distribucion' => $distribucion]);
+            if (empty($distribucion)) {
+                Log::error('No se encontró la distribución con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró la distribución solicitada'
+                ], 404);
+            }
+
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+            $distribucionData = !empty($distribucion) ? (array)$distribucion[0] : [];
+
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            //Log::info('Partidos sin representación:', $partidosSinRep);
+            //Log::info('Partidos con representación:', $partidosConRep);
+
+            $data = [
+                'calculo' => $calculoData,
+                'distribucion' => $distribucionData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+
+             Log::info('Datos preparados para la exportación:', $data);
+            
+            // Usar la clase FinanciamientoExport para generar el Excel
+            // return (new \App\Exports\CalculosFinanciamientoExport($data))
+            //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
+            
+            $filename = date('Y-m-d') . '_Anexo_2_Distribucion' . '.xlsx';
+                 // Retornamos la vista sin datos
+            return (new \App\Exports\FinanciamientoDistribucionExport($data))
             ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
