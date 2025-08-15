@@ -274,8 +274,8 @@ class SolicitudController extends Controller
             DB::rollBack();
             Log::error('Error al actualizar partido', [
                 'error' => $e->getMessage(),
-                'errorCode' => $e->getCode(),
-                'trace' => $e->getTraceAsString()
+                'errorCode' => $e->getCode()
+                //'trace' => $e->getTraceAsString()
             ]);
             return response()->json([
                 'success' => false,
@@ -300,7 +300,7 @@ class SolicitudController extends Controller
             $partido = $request->all();
 
             // Llamar al procedimiento almacenado
-            $result = DB::select('CALL sp_Distr_Update_Partidos_Sin_Representacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Sin_Representacion(?, ?, ?, ?)', [
                 self::$useTransaction, // bandera estática
                 $partido['id_calculo'] ?? null,
                 $partido['id_partido'] ?? null,
@@ -326,8 +326,8 @@ class SolicitudController extends Controller
             DB::rollBack();
             Log::error('Error al actualizar partido', [
                 'error' => $e->getMessage(),
-                'errorCode' => $e->getCode(),
-                'trace' => $e->getTraceAsString()
+                'errorCode' => $e->getCode()
+                //'trace' => $e->getTraceAsString()
             ]);
             return response()->json([
                 'success' => false,

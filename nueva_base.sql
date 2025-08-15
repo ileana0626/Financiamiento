@@ -14035,6 +14035,7 @@ CREATE TABLE calculo_partido_sin_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
     monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
+    D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -14047,13 +14048,13 @@ CREATE TABLE calculo_partido_con_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
     -- Nuevos campos para distribución
-    porcentaje_votacion DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT '% de votación por cada partido político en elección inmediata anterior de diputaciones',
-    A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'A. 30% en forma igualitaria',
-    B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'B. 70% conforme al % de votación',
-	ajuste DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Ajuste decimas de centavos',
-    B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Total de B. 70% conforme al % de votación después del ajuste',
-    C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Financiamiento público para actividades ordinarias permanentes (A+B)',
-    D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Financiamiento público para actividades tendientes a la obtención del voto',
+    porcentaje_votacion DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> % de votación por cada partido político en elección inmediata anterior de diputaciones',
+    A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> A. 30% en forma igualitaria',
+    B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> B. 70% conforme al % de votación',
+	ajuste DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Distribución -> Ajuste decimas de centavos',
+    B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Total de B. 70% conforme al % de votación después del ajuste',
+    C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades ordinarias permanentes (A+B)',
+    D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades tendientes a la obtención del voto (D=C*Factor%)',
     
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
@@ -14088,10 +14089,10 @@ CREATE TABLE calculo_dppp (
     -- Calculos que pueden ser NULL, ya que se van agregar durante la inserción
     total_fp_sin_repr DECIMAL(30,15) NOT NULL default 0.00 COMMENT'%2 del FPAOP para cada partido sin representación en el congreso 
      -> SUM((financiamiento_aop)  * 0.02) // Se calculará al guardar y recorrer cada partido_sin_repr',
-    monto_total_efectivo DECIMAL(30,15) NOT NULL default 0.00 COMMENT 'Monto total efectivo -> financiamiento_aop - total_fp_sin_repr',
-    monto_30_por_ciento DECIMAL(30,15) NOT NULL default 0.00 COMMENT '30% Monto total efectivo -> monto_total_efectivo * 0.3',
-    monto_70_por_ciento DECIMAL(30,15) NOT NULL default 0.00 COMMENT '70% Monto total efectivo -> monto_total_efectivo * 0.7',
-    comprobacion_monto DECIMAL(30,15) NOT NULL default 0.00 COMMENT 'Comprobación del monto total de financiamiento público para AOP',
+    monto_total_efectivo DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Monto total efectivo -> financiamiento_aop - total_fp_sin_repr',
+    monto_30_por_ciento DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT '30% Monto total efectivo -> monto_total_efectivo * 0.3',
+    monto_70_por_ciento DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT '70% Monto total efectivo -> monto_total_efectivo * 0.7',
+    comprobacion_monto DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Comprobación del monto total de financiamiento público para AOP',
     -- -> monto_30_por_ciento * monto_70_por_ciento + monto_total_efectivo
 	created_at TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -14117,22 +14118,28 @@ DROP TABlE IF EXISTS distribucion_dppp;
 * @description Personal de la DPPP
 */
 CREATE TABLE distribucion_dppp(
-	id_dist INT PRIMARY KEY AUTO_INCREMENT,
-    id_calculo INT NOT NULL COMMENT '',
+	-- id_dist INT PRIMARY KEY COMMENT 'Será el mismo que cálculo', -- AUTO_INCREMENT,
+    id_calculo INT NOT NULL COMMENT 'Id ligado a un cálculo',
     anio_ejercicio YEAR NOT NULL COMMENT 'Año del ejercicio apartado de distribución',
-    tipo_distribucion INT COMMENT 'id de tipo de distribución',
+    tipo_distribucion VARCHAR(25) COMMENT 'id de tipo de distribución 1 | 2',
     monto_30_por_ciento DECIMAL(30,15) default 0.00 COMMENT '30% Monto manual',
     monto_70_por_ciento DECIMAL(30,15) default 0.00 COMMENT '70% Monto manual',
-	tipoPorcentaje INT NULL DEFAULT 1 COMMENT '1 = A. 50% Gubernatura, 2 = B. 30% Intermedia',
+	tipoPorcentaje INT NULL DEFAULT 1 COMMENT '1 = A. 50% Gubernatura, 2 = B. 30% Intermedia, -> Factor de cálculo',
     -- Sumatorias de los totales
-    suma_A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT ' Sumatoria -> A. 30% en forma igualitaria',
-    suma_B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> B. 70% conforme al % de votación',
-    suma_B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Total de B. 70% conforme al % de votación después del ajuste',
-    suma_C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'SUmatoria -> Financiamiento público para actividades ordinarias permanentes (A+B)',
-    suma_D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Financiamiento público para actividades tendientes a la obtención del voto',
-    
+    subtotal_A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT ' Sumatoria -> A. 30% en forma igualitaria',
+    subtotal_B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> B. 70% conforme al % de votación',
+    subtotal_B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Total de B. 70% conforme al % de votación después del ajuste',
+    subtotal_C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Financiamiento público para actividades ordinarias permanentes (A+B)',
+    subtotal_D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Financiamiento público para actividades tendientes a la obtención del voto SUBTOTAL->(D=C*FactorCalculo)',
+    subtotal_2_por_ciento_fpaop_ppsr DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> 2% del monto de financiamiento público para actividades ordinarias permanentes Partidos Políticos Sin Representación en el Congreso',
+    subtotal_D_2_por_ciento_ppsr DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Sumatoria -> Financiamiento público para actividades tendientes a la obtención del voto -> (2_por_ciento_ppsr) * FactorCalculo)',
+	subtotal_D_candidatura DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT '(subtotal_D_fpatov + subtotal_D_2_por_ciento_ppsr) * 0.02',
 	created_at TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY (id_calculo),
+	FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT
 );
 
 -- FIN DE CREACION DE TABLAS
@@ -14430,7 +14437,8 @@ CREATE PROCEDURE sp_get_Partidos_Calculo_porId(IN p_id_calculo INT UNSIGNED)
 BEGIN
 	-- Retornamos los partidos sin representación
 	SELECT cat_psr.siglas, cat_psr.nombre, cat_psr.logo, 
-		psr.id_calculo, psr.id_partido, psr.monto_2_por_ciento
+		psr.id_calculo, psr.id_partido, psr.monto_2_por_ciento,
+        psr.D_monto_2_por_ciento
 		FROM calculo_partido_sin_repr psr 
         INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
         WHERE psr.id_calculo = p_id_calculo;
@@ -14445,30 +14453,176 @@ BEGIN
 END;
 //DELIMITER ;
 
+-- ***** DEPRECATED *****
 DROP PROCEDURE IF EXISTS sp_Distribucion_get_Partidos_Con_Representacion;
--- DEPRECATED
-DELIMiTER //
+
+
+DROP PROCEDURE IF EXISTS sp_Distr_Get_Insert_Update_distribucion_dppp;
+DELIMITER //
 /*
-* @name Procedimiento para obtener Partidos Políticos Con Representación en el Congreso
-* @description Obtiene los partidos con representación en el Congreso a partir de un Id cálculo
-* @param id_calculo
-* @example
-* CALL sp_Distribucion_get_Partidos_Con_Representacion(2);
+* @name Obtener los datos del apartado de Distribución
+* @description Retorna los datos de distribución, es decir los campos llenados y las sumas de totales realizados
+* 	que esten ligados a un id_calculo, tanto para llenar los campos previamente llenados como para los reportes
+* @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
+* @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
+* @param p_id_dist
 */
-CREATE PROCEDURE sp_Distribucion_get_Partidos_Con_Representacion(IN id_calculo INT UNSIGNED)
+CREATE PROCEDURE sp_Distr_Get_Insert_Update_distribucion_dppp(
+	IN p_use_transaction BOOLEAN,
+    IN p_comando VARCHAR(6),
+	IN p_id_calculo INT UNSIGNED, -- Primary key
+    IN p_anio_ejercicio YEAR, -- dato manual
+    IN p_tipo_distribucion varchar(25), -- dato manual
+    IN p_monto_30_por_ciento DECIMAL(30,15), -- dato manual
+    IN p_monto_70_por_ciento DECIMAL(30,15), -- dato manual
+    IN p_tipoPorcentaje INT UNSIGNED, -- dato manual
+    IN p_subtotal_A_30_por_ciento DECIMAL(30,15), -- cálculo
+    IN p_subtotal_B_70_por_ciento DECIMAL(30,15), -- cálculo
+    IN p_subtotal_B_Ajuste_70_por_ciento DECIMAL(30,15), -- cálculo
+    IN p_subtotal_C_fpaop DECIMAL(30,15), -- cálculo
+    IN p_subtotal_D_fpatov DECIMAL(30,15), -- cálculo
+    IN p_subtotal_2_por_ciento_fpaop_ppsr DECIMAL(30,15), -- cálculo
+    IN p_subtotal_D_2_por_ciento_ppsr DECIMAL(30,15), -- cálculo 
+    IN p_subtotal_D_candidatura DECIMAL(30,15) -- cálculo 
+)
 BEGIN
-	-- Retornamos los partidos con representación
-    
-	SELECT
-		ROW_NUMBER() OVER (ORDER BY cat_pcr.siglas) AS num_fila,
-        pcr.id_calculo as 'id_calculo',
-		cat_pcr.siglas, cat_pcr.nombre, cat_pcr.logo
-		FROM calculo_partido_con_repr pcr
-		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id
-		WHERE pcr.id_calculo = id_calculo;
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+    -- Inicia transacción si está habilitado
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+    IF p_comando = 'INSERT' OR p_comando = 'UPDATE' THEN
+		-- Verificar si ya existe un registro con el ID: p_id_calculo
+		SET @record_count = (SELECT COUNT(*) FROM distribucion_dppp WHERE id_calculo = p_id_calculo);
+		IF @record_count = 0 THEN -- Si No existe 'INSERT'
+			INSERT INTO distribucion_dppp (id_calculo, anio_ejercicio, tipo_distribucion, monto_30_por_ciento, monto_70_por_ciento, tipoPorcentaje,
+				subtotal_A_30_por_ciento, subtotal_B_70_por_ciento, subtotal_B_Ajuste_70_por_ciento, subtotal_C_fpaop, subtotal_D_fpatov,
+                subtotal_2_por_ciento_fpaop_ppsr, subtotal_D_2_por_ciento_ppsr, subtotal_D_candidatura) VALUES 
+				(p_id_calculo, p_anio_ejercicio, p_tipo_distribucion, p_monto_30_por_ciento, p_monto_70_por_ciento, p_tipoPorcentaje,
+                p_subtotal_A_30_por_ciento, p_subtotal_B_70_por_ciento, p_subtotal_B_Ajuste_70_por_ciento, p_subtotal_C_fpaop, p_subtotal_D_fpatov,
+                p_subtotal_2_por_ciento_fpaop_ppsr, p_subtotal_D_2_por_ciento_ppsr, p_subtotal_D_candidatura);
+			SELECT LAST_INSERT_ID() AS id; -- Solo funciona con columnas AUTO_INCREMENT.
+            SELECT p_id_calculo AS id;
+		ELSE -- Si existe 'UPDATE'
+			UPDATE distribucion_dppp
+				SET anio_ejercicio = p_anio_ejercicio, tipo_distribucion = p_tipo_distribucion, 
+				monto_30_por_ciento = p_monto_30_por_ciento, monto_70_por_ciento = p_monto_70_por_ciento, tipoPorcentaje = p_tipoPorcentaje, 
+				subtotal_A_30_por_ciento = p_subtotal_A_30_por_ciento, subtotal_B_70_por_ciento = p_subtotal_B_70_por_ciento,
+				subtotal_B_Ajuste_70_por_ciento = p_subtotal_B_Ajuste_70_por_ciento, subtotal_C_fpaop = p_subtotal_C_fpaop,
+				subtotal_D_fpatov = p_subtotal_D_fpatov,
+                subtotal_2_por_ciento_fpaop_ppsr = p_subtotal_2_por_ciento_fpaop_ppsr, subtotal_D_2_por_ciento_ppsr = p_subtotal_D_2_por_ciento_ppsr,
+                subtotal_D_candidatura = p_subtotal_D_candidatura
+				-- created_at = p_created_at: CURRENT_TIMESTAMP, updated_at = p_updated_at: CURRENT_TIMESTAMP
+				WHERE id_calculo = p_id_calculo;
+			SELECT p_id_calculo AS id;
+		END IF;
+    ELSEIF p_comando = 'GET' THEN
+		SELECT id_calculo, anio_ejercicio, tipo_distribucion, monto_30_por_ciento, monto_70_por_ciento, tipoPorcentaje,
+			subtotal_A_30_por_ciento, subtotal_B_70_por_ciento, subtotal_B_Ajuste_70_por_ciento, subtotal_C_fpaop, subtotal_D_fpatov,
+            subtotal_2_por_ciento_fpaop_ppsr, subtotal_D_2_por_ciento_ppsr,
+            subtotal_D_candidatura
+			FROM distribucion_dppp WHERE id_calculo = p_id_calculo;
+	END IF;
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
 END;
 //DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS sp_Distr_Update_Partidos_Con_Representacion;
+DELIMiTER //
+/*
+* @name Actualizar datos de distribución para Partidos Politicos Con Representación en el Congreso
+* @description Actualiza una tabla creada previamente por sp_insert_partidos_con_repr al insertar un nuevo Cálculo
+* @example
+*/
+CREATE PROCEDURE sp_Distr_Update_Partidos_Con_Representacion(
+    IN p_use_transaction BOOLEAN,
+	IN p_id_calculo INT UNSIGNED,
+    IN p_id_partido INT UNSIGNED,
+    IN p_porcentaje_votacion DECIMAL (30,15),
+	IN p_A_30_por_ciento DECIMAL (30,15),
+    IN p_B_70_por_ciento DECIMAL (30,15),
+    IN p_ajuste DECIMAL (30,15),
+    IN p_B_Ajuste_70_por_ciento DECIMAL (30,15),
+    IN p_C_fpaop DECIMAL (30,15),
+    IN p_D_fpatov DECIMAL (30,15)
+)
+BEGIN
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+    -- Inicia transacción si está habilitado
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+    
+    -- Empieza la sentencia para actualizar
+	UPDATE calculo_partido_con_repr SET porcentaje_votacion = p_porcentaje_votacion,
+		A_30_por_ciento = p_A_30_por_ciento, B_70_por_ciento = p_B_70_por_ciento,
+        ajuste = p_ajuste, B_Ajuste_70_por_ciento = p_B_Ajuste_70_por_ciento,
+        C_fpaop = p_C_fpaop, D_fpatov = p_D_fpatov
+		WHERE id_calculo = p_id_calculo AND id_partido = p_id_partido;
+	SELECT concat('C:', p_id_calculo,'_P:', p_id_partido) AS 'ids';
+    
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;
+//DELIMiTER ;
+
+
+DROP PROCEDURE IF EXISTS sp_Distr_Update_Partidos_Sin_Representacion;
+DELIMiTER //
+/*
+* @name Actualizar datos de distribución para Partidos Politicos Sin Representación en el Congreso
+* @description Actualiza una tabla creada previamente por sp_insert_partidos_sin_repr al insertar un nuevo Cálculo
+* @example
+*/
+CREATE PROCEDURE sp_Distr_Update_Partidos_Sin_Representacion(
+    IN p_use_transaction BOOLEAN,
+	IN p_id_calculo INT UNSIGNED,
+    IN p_id_partido INT UNSIGNED,
+    IN p_D_monto_2_por_ciento DECIMAL(30,15)
+)
+BEGIN
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+    
+    -- Inicia transacción si está habilitado
+    UPDATE calculo_partido_sin_repr SET D_monto_2_por_ciento =  p_D_monto_2_por_ciento;
+    SELECT concat('C:', p_id_calculo,'_P:', p_id_partido) AS 'ids';
+    
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;
+//DELIMiTER ;
 -- FIN DE STORE PROCEDURES
 
 
@@ -14487,6 +14641,8 @@ ALTER TABLE calculo_partido_con_repr ADD COLUMN ajuste DECIMAL(30,15) NOT NULL D
 ALTER TABLE calculo_partido_con_repr ADD COLUMN B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Total de B. 70% conforme al % de votación después del ajuste';
 ALTER TABLE calculo_partido_con_repr ADD COLUMN C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Financiamiento público para actividades ordinarias permanentes (A+B)';
 ALTER TABLE calculo_partido_con_repr ADD COLUMN D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Financiamiento público para actividades tendientes a la obtención del voto';
+
+ALTER TABLE calculo_partido_sin_repr ADD COLUMN D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo';
 
 */
 

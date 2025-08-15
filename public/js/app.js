@@ -11307,6 +11307,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -11597,99 +11600,146 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
       });
     },
-    guardarDistribucion: function guardarDistribucion() {
+    cargarDistribucion: function cargarDistribucion() {
       var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var loader, url, datos, response, _response$data5, errorMsg, _response, _response$data6, _errorMsg, nombreMetodo;
+        var loader, url, response, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!_this8.validarCampos()) {
-                _context4.next = 3;
+              //⚠️
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this8.$vs);
+              loader.text = 'Cargando distribución...';
+              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              _context4.prev = 3;
+              _context4.next = 6;
+              return axios.get(url, {
+                params: {
+                  id: _this8.selectedCalculo.id
+                }
+              });
+            case 6:
+              response = _context4.sent;
+              _this8.distribucion = response.data.distribucion;
+              _this8.anio = response.data.anio;
+              _this8.distribucionId = response.data.id;
+              _context4.next = 18;
+              break;
+            case 12:
+              _context4.prev = 12;
+              _context4.t0 = _context4["catch"](3);
+              console.error('Error al cargar distribución', _context4.t0);
+              _this8.$vs.notification({
+                title: 'Error',
+                text: 'Error al cargar la distribución',
+                color: 'danger'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
+            case 18:
+              _context4.prev = 18;
+              loader.close();
+              return _context4.finish(18);
+            case 21:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, null, [[3, 12, 18, 21]]);
+      }))();
+    },
+    guardarDistribucion: function guardarDistribucion() {
+      var _this9 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var loader, url, datos, response, _response$data5, errorMsg, _response, _response$data6, _errorMsg, _iterator, _step, partido, _response2, _iterator2, _step2, _partido, _response3, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              if (!_this9.validarCampos()) {
+                _context5.next = 3;
                 break;
               }
-              _this8.$vs.notification({
+              _this9.$vs.notification({
                 color: 'danger',
                 text: 'Verifique los datos e inténtelo de nuevo.'
               });
-              return _context4.abrupt("return");
+              return _context5.abrupt("return");
             case 3:
-              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this8.$vs);
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this9.$vs);
               loader.text = 'Guardando distribución...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
                 p_comando: 'INSERT',
                 // INSERT, UPDATE
-                id_calculo: _this8.selectedCalculo.id,
-                p_anio_ejercicio: _this8.anio,
+                id_calculo: _this9.selectedCalculo.id,
+                p_anio_ejercicio: _this9.anio,
                 //valor manual
-                p_tipo_distribucion: _this8.distribucion.join(','),
+                p_tipo_distribucion: _this9.distribucion.join(','),
                 // "1,2,3" - valor manual
                 // this.distribucion = tiposDelBackend.split(',').map(Number);
-                p_monto_30_por_ciento: _this8.monto30,
+                p_monto_30_por_ciento: _this9.monto30,
                 //valor manual
-                p_monto_70_por_ciento: _this8.monto70,
+                p_monto_70_por_ciento: _this9.monto70,
                 //valor manual
-                p_tipoPorcentaje: _this8.opcionSelecionadaPorcentaje,
+                p_tipoPorcentaje: _this9.opcionSelecionadaPorcentaje,
                 //valor manual
                 p_subtotal_A_30_por_ciento: 0,
                 p_subtotal_B_70_por_ciento: 0,
                 p_subtotal_B_Ajuste_70_por_ciento: 0,
-                p_subtotal_C_fpaop: _this8.subtotalC_ConRepresentacion,
-                p_subtotal_D_fpatov: _this8.subtotalD_ConRepresentacion,
-                p_subtotal_2_por_ciento_fpaop_ppsr: _this8.subtotalMonto2PorCiento,
-                p_subtotal_D_2_por_ciento_ppsr: _this8.subtotalMonto2PorCientoD,
-                p_subtotal_D_candidatura: _this8.candidatura
+                p_subtotal_C_fpaop: _this9.subtotalC_ConRepresentacion,
+                p_subtotal_D_fpatov: _this9.subtotalD_ConRepresentacion,
+                p_subtotal_2_por_ciento_fpaop_ppsr: _this9.subtotalMonto2PorCiento,
+                p_subtotal_D_2_por_ciento_ppsr: _this9.subtotalMonto2PorCientoD,
+                p_subtotal_D_candidatura: _this9.candidatura
               };
-              _this8.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
-              console.log('Datos a guardar: ', datos, _this8.Partidos_Con_Representacion, _this8.Partidos_Sin_Representacion);
-              _context4.prev = 9;
-              if (!_this8.distribucionId) {
-                _context4.next = 25;
+              _this9.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
+              console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
+              _context5.prev = 9;
+              if (!_this9.distribucionId) {
+                _context5.next = 25;
                 break;
               }
-              _context4.next = 13;
+              _context5.next = 13;
               return axios.post(url, datos);
             case 13:
-              response = _context4.sent;
+              response = _context5.sent;
               console.log('Respuesta del servidor (actualizar):', response.data);
               if (!(response.data && response.data.id)) {
-                _context4.next = 21;
+                _context5.next = 21;
                 break;
               }
-              _this8.distribucionId = response.data.id;
-              _this8.$vs.notification({
+              _this9.distribucionId = response.data.id;
+              _this9.$vs.notification({
                 color: 'success',
                 text: 'Distribución actualizada'
               });
-              console.log('Distribución actualizada con ID: ' + _this8.distribucionId);
-              _context4.next = 23;
+              console.log('Distribución actualizada con ID: ' + _this9.distribucionId);
+              _context5.next = 23;
               break;
             case 21:
               // Mostrar mensaje de error del servidor si existe
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
             case 23:
-              _context4.next = 37;
+              _context5.next = 37;
               break;
             case 25:
-              _context4.next = 27;
+              _context5.next = 27;
               return axios.post(url, datos);
             case 27:
-              _response = _context4.sent;
+              _response = _context5.sent;
               console.log('Respuesta del servidor (guardar):', _response.data);
               // Si es un nuevo registro, actualizamos el ID
               if (!(_response.data && _response.data.id)) {
-                _context4.next = 35;
+                _context5.next = 35;
                 break;
               }
-              _this8.distribucionId = _response.data.id;
-              _this8.$vs.notification({
+              _this9.distribucionId = _response.data.id;
+              _this9.$vs.notification({
                 color: 'success',
                 text: 'Distribución guardada'
               });
               console.log('Distribución guardada con ID: ' + _response.data.id);
-              _context4.next = 37;
+              _context5.next = 37;
               break;
             case 35:
               // Mostrar mensaje de error del servidor si existe
@@ -11697,76 +11747,130 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               throw new Error(_errorMsg);
             case 37:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-              /*
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
-              for (const partido of this.Partidos_Con_Representacion) {
-                  try {
-                  const response = await axios.post(urlPartidosConRep, partido);
-                  if (response.data && response.data.ids) {
-                      console.log('PPCR actualizado: ' + response.data.ids);
-                  }
-                  } catch (error) {
-                      console.error('Error al actualizar partido PPCR: ' + partido.siglas, error);
-                      this.$vs.notification({ 
-                          color: 'danger', 
-                          text: `Error al actualizar ${partido.siglas}` 
-                      });
-                      throw error;
-                  }
+              _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
+              _context5.prev = 39;
+              _iterator.s();
+            case 41:
+              if ((_step = _iterator.n()).done) {
+                _context5.next = 57;
+                break;
               }
+              partido = _step.value;
+              _context5.prev = 43;
+              _context5.next = 46;
+              return axios.post(url, partido);
+            case 46:
+              _response2 = _context5.sent;
+              if (_response2.data && _response2.data.ids) {
+                console.log('PPCR actualizado: ' + _response2.data.ids);
+              }
+              _context5.next = 55;
+              break;
+            case 50:
+              _context5.prev = 50;
+              _context5.t0 = _context5["catch"](43);
+              console.error('Error al actualizar partido PPCR: ' + partido.siglas, _context5.t0);
+              _this9.$vs.notification({
+                color: 'danger',
+                text: "Error al actualizar ".concat(partido.siglas)
+              });
+              throw _context5.t0;
+            case 55:
+              _context5.next = 41;
+              break;
+            case 57:
+              _context5.next = 62;
+              break;
+            case 59:
+              _context5.prev = 59;
+              _context5.t1 = _context5["catch"](39);
+              _iterator.e(_context5.t1);
+            case 62:
+              _context5.prev = 62;
+              _iterator.f();
+              return _context5.finish(62);
+            case 65:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesas);
               // Actualizamos la tabla de partidos políticos sin representación   
               //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
-              for (const partido of this.Partidos_Sin_Representacion) {
-                  try {
-                  const response = await axios.put(urlPartidosSinRep, partido);
-                  if (response.data && response.data.ids) {
-                      console.log('PPSR actualizado: ' + response.data.ids);
-                  }
-                  } catch (error) {
-                      console.error('Error al actualizar partido PPSR: ' + partido.siglas, error);
-                      this.$vs.notification({ 
-                          color: 'danger', 
-                          text: `Error al actualizar ${partido.siglas}` 
-                      });
-                      throw error;
-                  }
+              _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
+              _context5.prev = 67;
+              _iterator2.s();
+            case 69:
+              if ((_step2 = _iterator2.n()).done) {
+                _context5.next = 85;
+                break;
               }
-                  */
+              _partido = _step2.value;
+              _context5.prev = 71;
+              _context5.next = 74;
+              return axios.post(url, _partido);
+            case 74:
+              _response3 = _context5.sent;
+              if (_response3.data && _response3.data.ids) {
+                console.log('PPSR actualizado: ' + _response3.data.ids);
+              }
+              _context5.next = 83;
+              break;
+            case 78:
+              _context5.prev = 78;
+              _context5.t2 = _context5["catch"](71);
+              console.error('Error al actualizar partido PPSR: ' + _partido.siglas, _context5.t2);
+              _this9.$vs.notification({
+                color: 'danger',
+                text: "Error al actualizar ".concat(_partido.siglas)
+              });
+              throw _context5.t2;
+            case 83:
+              _context5.next = 69;
+              break;
+            case 85:
+              _context5.next = 90;
+              break;
+            case 87:
+              _context5.prev = 87;
+              _context5.t3 = _context5["catch"](67);
+              _iterator2.e(_context5.t3);
+            case 90:
+              _context5.prev = 90;
+              _iterator2.f();
+              return _context5.finish(90);
+            case 93:
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesasSinRep);
 
               // Notificación de éxito
-              _this8.$vs.notification({
+              _this9.$vs.notification({
                 color: 'success',
                 text: 'Datos guardados correctamente'
               });
-              _context4.next = 47;
+              _context5.next = 102;
               break;
-            case 41:
-              _context4.prev = 41;
-              _context4.t0 = _context4["catch"](9);
-              console.error('Error al guardar:', _context4.t0);
-              _this8.$vs.notification({
+            case 96:
+              _context5.prev = 96;
+              _context5.t4 = _context5["catch"](9);
+              console.error('Error al guardar:', _context5.t4);
+              _this9.$vs.notification({
                 title: 'Error',
                 color: 'danger',
                 text: 'Error al guardar'
               });
               nombreMetodo = url.split('/');
-              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 47:
-              _context4.prev = 47;
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
+            case 102:
+              _context5.prev = 102;
               loader.close();
-              return _context4.finish(47);
-            case 50:
+              return _context5.finish(102);
+            case 105:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
-        }, _callee4, null, [[9, 41, 47, 50]]);
+        }, _callee5, null, [[9, 96, 102, 105], [39, 59, 62, 65], [43, 50], [67, 87, 90, 93], [71, 78]]);
       }))();
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
@@ -11797,7 +11901,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * Ajustar decimal para 70%
     */
     ajustarDecimal_70porCiento: function ajustarDecimal_70porCiento(partido, operacion) {
-      var _this9 = this;
+      var _this10 = this;
       if (this.cb_ppSeleccionados.length !== 2) {
         this.$vs.notification({
           title: 'Aviso',
@@ -11820,7 +11924,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         partido.ajuste += ajusteUnitario;
         // Aplicar el ajuste inverso al otro partido seleccionado
         var otroPartido = this.Partidos_Con_Representacion.find(function (p) {
-          return p.id_partido !== partido.id_partido && _this9.cb_ppSeleccionados.includes(p.id_partido);
+          return p.id_partido !== partido.id_partido && _this10.cb_ppSeleccionados.includes(p.id_partido);
         });
         if (otroPartido) {
           if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
@@ -11874,16 +11978,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * los cálculos aplicados a las columnas antes de Guardar
     */
     AlmacenarCalculos_Partidos: function AlmacenarCalculos_Partidos() {
-      var _this10 = this;
+      var _this11 = this;
       this.Partidos_Con_Representacion.forEach(function (partido) {
-        partido.A_30_por_ciento = _this10.calcularMontoIgualitario30();
-        partido.B_70_por_ciento = _this10.calcularMontoProporcionalB(partido.porcentaje_votacion);
-        partido.B_Ajuste_70_por_ciento = _this10.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-        partido.C_fpaop = _this10.calcularMontoC(partido);
-        partido.D_fpatov = _this10.calcularMontoD(partido);
+        partido.A_30_por_ciento = _this11.calcularMontoIgualitario30();
+        partido.B_70_por_ciento = _this11.calcularMontoProporcionalB(partido.porcentaje_votacion);
+        partido.B_Ajuste_70_por_ciento = _this11.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+        partido.C_fpaop = _this11.calcularMontoC(partido);
+        partido.D_fpatov = _this11.calcularMontoD(partido);
       });
       this.Partidos_Sin_Representacion.forEach(function (partido) {
-        partido.D_monto_2_por_ciento = _this10.calcularMontoD_ppsr(partido);
+        partido.D_monto_2_por_ciento = _this11.calcularMontoD_ppsr(partido);
       });
     },
     /*
@@ -11937,7 +12041,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
      * @returns {boolean}
      */
     validarCampos: function validarCampos() {
-      var _this11 = this;
+      var _this12 = this;
       this.limpiarErrores();
       if (this.anio === '') {
         this.errorAnio = 'El campo año es obligatorio';
@@ -11966,9 +12070,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
         });
         */
-        if (partido.inputPorcentaje === '' || !_this11.validarDecimal(partido.porcentaje_votacion, 5)) {
+        if (partido.inputPorcentaje === '' || !_this12.validarDecimal(partido.porcentaje_votacion, 5)) {
           partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-          _this11.error = true;
+          _this12.error = true;
         }
       });
       return this.error;
@@ -12040,12 +12144,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     * SUMA(monto_2_por_ciento * factorCalculo)
     */
     subtotalMonto2PorCientoD: function subtotalMonto2PorCientoD() {
-      var _this12 = this;
+      var _this13 = this;
       if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
         return 0;
       }
       return this.Partidos_Sin_Representacion.reduce(function (total, partido) {
-        return total + (parseFloat(partido.monto_2_por_ciento * _this12.factorCalculo) || 0);
+        return total + (parseFloat(partido.monto_2_por_ciento * _this13.factorCalculo) || 0);
       }, 0);
     },
     factorCalculo: function factorCalculo() {
@@ -12059,16 +12163,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     },
     // Subtotal C para partidos con representación (C = A + B)
     subtotalC_ConRepresentacion: function subtotalC_ConRepresentacion() {
-      var _this13 = this;
+      var _this14 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this13.calcularMontoC(partido);
+        return total + _this14.calcularMontoC(partido);
       }, 0);
     },
     // Subtotal D para partidos con representación (D = C * factor)
     subtotalD_ConRepresentacion: function subtotalD_ConRepresentacion() {
-      var _this14 = this;
+      var _this15 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
-        return total + _this14.calcularMontoC(partido) * _this14.factorCalculo;
+        return total + _this15.calcularMontoC(partido) * _this15.factorCalculo;
       }, 0);
     },
     // Subtotal C para partidos sin representación (ya lo tienes)

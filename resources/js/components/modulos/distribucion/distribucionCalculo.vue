@@ -619,7 +619,31 @@ export default {
                     this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
                 });
         },
-        async guardarDistribucion() { //⚠️
+        async cargarDistribucion() { //⚠️
+            const loader = loading(this.$vs);
+            loader.text = 'Cargando distribución...';
+            let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+            try{
+                const response = await axios.get(url, { params: { id: this.selectedCalculo.id } });
+                this.distribucion = response.data.distribucion;
+                this.anio = response.data.anio;
+                this.distribucionId = response.data.id;
+            }catch(error){
+                console.error('Error al cargar distribución', error);
+                this.$vs.notification({
+                    title: 'Error',
+                    text: 'Error al cargar la distribución',
+                    color: 'danger'
+                });
+                
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            }
+            finally{
+                loader.close();
+            }
+        },
+        async guardarDistribucion() { //✅
 
             if(this.validarCampos())
             {
@@ -682,13 +706,12 @@ export default {
                     }
                 }
                url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-                /*
                 // Actualizamos la tabla de partidos políticos con representación
                 // Crear un array de promesas
                 //const promesas = this.Partidos_Con_Representacion.map(async partido => {
                 for (const partido of this.Partidos_Con_Representacion) {
                     try {
-                    const response = await axios.post(urlPartidosConRep, partido);
+                    const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
                         console.log('PPCR actualizado: ' + response.data.ids);
                     }
@@ -708,7 +731,7 @@ export default {
                 //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
                 for (const partido of this.Partidos_Sin_Representacion) {
                     try {
-                    const response = await axios.put(urlPartidosSinRep, partido);
+                    const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
                         console.log('PPSR actualizado: ' + response.data.ids);
                     }
@@ -721,7 +744,6 @@ export default {
                         throw error;
                     }
                 }
-                    */
                 // Esperar a que todas las peticiones terminen
                 //await Promise.all(promesasSinRep);
 
