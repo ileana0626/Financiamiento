@@ -221,7 +221,7 @@
                                         <!-- % de votación -->
                                         <vs-td>
                                             <div>
-                                            <vs-input v-model="partido.inputPorcentaje" @blur="formatearPorcentaje(partido)" type="text" placeholder="0.00 %" />
+                                            <vs-input v-model="partido.inputPorcentaje" @blur="onBlurPorcentaje(partido)" type="text" placeholder="0.00 %" />
                                                 <div class="danger-message">
                                                     <template v-if="partido.errorPorcentajeVotacion.length > 0">
                                                         {{ partido.errorPorcentajeVotacion }}
@@ -538,9 +538,11 @@ export default {
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
-                        inputPorcentaje: this.formatearPorcentaje(p), // Variable temporarl en el Front
+                        inputPorcentaje: this.formatearPorcentaje(p.porcentaje_votacion),
+                        // Variable temporarl en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
+                    //debug('🐛 Partidos_Con_Representacion:', this.Partidos_Con_Representacion);
                     //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
@@ -562,7 +564,7 @@ export default {
             })
             .finally(() => {
                 loader.close();
-                this.limpiarCampos();
+                //debug('🐛 Finalizado !');
             })
         },
         onChangeDistribucion(value) {
@@ -661,10 +663,10 @@ export default {
                             .filter(item => !isNaN(item));
                         //console.log('Distribution array:', this.distribucion);
                     }
-                    this.monto30 = this.DataDistribucion.monto_30_por_ciento;
+                    this.monto30 = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
                     //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
                     //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
-                    this.monto70 = this.DataDistribucion.monto_70_por_ciento;
+                    this.monto70 = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
                     this.$nextTick(() => {
                         debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
@@ -814,6 +816,7 @@ export default {
                 loader.close();
             }
         },
+
         calcularMontoIgualitario30() {
             const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
             const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
@@ -937,6 +940,8 @@ export default {
         },
         /*
         * Formatea a moneda
+        * @param {number} valor - El valor a formatear
+        * @returns {string} - El valor formateado
         */
         formatoMoneda(valor) {
             return new Intl.NumberFormat('es-MX', {
@@ -945,11 +950,31 @@ export default {
             minimumFractionDigits: 2
             }).format(valor);
         },
-
+        /* Función para formatear el porcentaje (solo formatea)
+        * @param {number} valor - El valor a formatear
+        * @returns {string} - El valor formateado
+        */
+        formatearPorcentaje(valor) {
+            if (!valor) return '0.00000 %';
+            const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+            return isNaN(numero) ? '0.00000 %' : numero.toFixed(5) + ' %';
+        },
+        /*
+        * Formatea a decimal
+        * @param {number} valor - El valor a formatear
+        * @returns {string} - El valor formateado
+        */
+        formatearDecimal(valor) {
+            if (!valor) return '0.00';
+            const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+            return isNaN(numero) ? '0.00' : numero.toFixed(2);
+        },
         /*
         * Formatea el porcentaje del partido
+        * @param {Object} partido - El objeto del partido político
+        * @returns {void}
         */
-        formatearPorcentaje(partido) {
+        onBlurPorcentaje(partido) {
             if (!partido.inputPorcentaje) {
                 partido.inputPorcentaje = '0.00000 %';
                 partido.porcentaje_votacion = 0.00000;
@@ -957,7 +982,10 @@ export default {
             }
             
             const valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+            partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
+            partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
             
+            /*
             if (!isNaN(valorNumerico)) {
                 //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
                 partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
@@ -967,6 +995,7 @@ export default {
                 partido.porcentaje_votacion = 0.00000;
                 partido.inputPorcentaje = '0.00000 %';
             }
+            */
         },
         /**
          * Valida si un valor es un número decimal válido
