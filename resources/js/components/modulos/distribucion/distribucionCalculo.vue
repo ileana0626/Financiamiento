@@ -361,7 +361,7 @@
                                 <div class="d-flex justify-content-center">
                                     <vs-tooltip>
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
-                                    @click.stop="descargarDistribucion" hover="true"
+                                    @click.stop="descargarDistribucion(distribucionId)" hover="true"
                                     style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
                                         <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
                                             <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
@@ -816,7 +816,65 @@ export default {
                 loader.close();
             }
         },
+        /**
+         * Descarga el archivo Excel de la distribución
+         * @param DistribucionId // debe de existir un preguardado antes
+         */
+        descargarDistribucion(id) {
+            const loader = loading(this.$vs);
+            loader.text = 'Generando archivo Excel...';
+            const apiUrl = `/administracion/solicitud/exportarFinanciamientoDistribucionExcel/${id}`;
+            let downloadUrl = null;
+            let link = null;
 
+            axios.get(apiUrl, {
+                responseType: 'blob',
+                method: 'GET',
+            })
+            .then(response => {
+                downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+                link = document.createElement('a');
+                link.href = downloadUrl;
+                const filename = `Anexo 2. Distribución.xlsx`;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                this.$vs.notification({
+                    title: 'Éxito',
+                    text: 'El archivo Excel se está descargando',
+                    color: 'success'
+                });
+            })
+            .catch(error => {
+                debug('🐛 Error al descargar Excel:', error);
+                
+                let errorMessage = 'Error al descargar Excel';
+                if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                this.$vs.notification({
+                    title: 'Error',
+                    text: errorMessage,
+                    color: 'danger',
+                    time: 10000
+                });
+            })
+            .finally(() => {
+                loader.close();
+                try {
+                    if (link && link.parentNode) {
+                        link.parentNode.removeChild(link); // Elimina el elemento hijo
+                    }
+                    if (downloadUrl && typeof downloadUrl === 'string') {
+                        window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+                    }
+                } catch (e) {
+                    console.error('Error al limpiar recursos:', e);
+                }
+            });
+        },
         calcularMontoIgualitario30() {
             const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
             const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
@@ -841,44 +899,6 @@ export default {
             }
             } else if (operacion === 'restar') {
             partido.ajuste -= ajusteUnitario;
-            }
-        },
-        /*
-        * Ajustar decimal para 70%
-        */
-        ajustarDecimal_70porCiento(partido, operacion) {
-            if (this.cb_ppSeleccionados.length !== 2) {
-                this.$vs.notification({
-                    title: 'Aviso',
-                    text: 'Debes seleccionar exactamente 2 partidos para ajustar',
-                    color: 'warning'
-                });
-                return;
-            }
-
-            if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
-                this.$vs.notification({
-                    title: 'Aviso',
-                    text: 'Solo puedes ajustar partidos seleccionados',
-                    color: 'warning'
-                });
-                return;
-            }
-
-            const ajusteUnitario = 0.01;
-            if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
-
-            if (operacion === 'sumar') {
-                partido.ajuste += ajusteUnitario;
-                // Aplicar el ajuste inverso al otro partido seleccionado
-                const otroPartido = this.Partidos_Con_Representacion.find(p => 
-                    p.id_partido !== partido.id_partido && 
-                    this.cb_ppSeleccionados.includes(p.id_partido)
-                );
-                if (otroPartido) {
-                    if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
-                    otroPartido.ajuste -= ajusteUnitario;
-                }
             }
         },
         /*

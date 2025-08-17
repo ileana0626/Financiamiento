@@ -11933,6 +11933,63 @@ var debug = function debug() {
         }, _callee5, null, [[9, 97, 103, 106], [39, 59, 62, 65], [43, 50], [67, 87, 90, 93], [71, 78]]);
       }))();
     },
+    /**
+     * Descarga el archivo Excel de la distribución
+     * @param DistribucionId // debe de existir un preguardado antes
+     */
+    descargarDistribucion: function descargarDistribucion(id) {
+      var _this10 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Generando archivo Excel...';
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
+      var downloadUrl = null;
+      var link = null;
+      axios.get(apiUrl, {
+        responseType: 'blob',
+        method: 'GET'
+      }).then(function (response) {
+        downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+        link = document.createElement('a');
+        link.href = downloadUrl;
+        var filename = "Anexo 2. Distribuci\xF3n.xlsx";
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        _this10.$vs.notification({
+          title: 'Éxito',
+          text: 'El archivo Excel se está descargando',
+          color: 'success'
+        });
+      })["catch"](function (error) {
+        var _error$response;
+        debug('🐛 Error al descargar Excel:', error);
+        var errorMessage = 'Error al descargar Excel';
+        if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        _this10.$vs.notification({
+          title: 'Error',
+          text: errorMessage,
+          color: 'danger',
+          time: 10000
+        });
+      })["finally"](function () {
+        loader.close();
+        try {
+          if (link && link.parentNode) {
+            link.parentNode.removeChild(link); // Elimina el elemento hijo
+          }
+
+          if (downloadUrl && typeof downloadUrl === 'string') {
+            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+          }
+        } catch (e) {
+          console.error('Error al limpiar recursos:', e);
+        }
+      });
+    },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
       var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
       var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
@@ -11955,41 +12012,6 @@ var debug = function debug() {
         }
       } else if (operacion === 'restar') {
         partido.ajuste -= ajusteUnitario;
-      }
-    },
-    /*
-    * Ajustar decimal para 70%
-    */
-    ajustarDecimal_70porCiento: function ajustarDecimal_70porCiento(partido, operacion) {
-      var _this10 = this;
-      if (this.cb_ppSeleccionados.length !== 2) {
-        this.$vs.notification({
-          title: 'Aviso',
-          text: 'Debes seleccionar exactamente 2 partidos para ajustar',
-          color: 'warning'
-        });
-        return;
-      }
-      if (!this.cb_ppSeleccionados.includes(partido.id_partido)) {
-        this.$vs.notification({
-          title: 'Aviso',
-          text: 'Solo puedes ajustar partidos seleccionados',
-          color: 'warning'
-        });
-        return;
-      }
-      var ajusteUnitario = 0.01;
-      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
-      if (operacion === 'sumar') {
-        partido.ajuste += ajusteUnitario;
-        // Aplicar el ajuste inverso al otro partido seleccionado
-        var otroPartido = this.Partidos_Con_Representacion.find(function (p) {
-          return p.id_partido !== partido.id_partido && _this10.cb_ppSeleccionados.includes(p.id_partido);
-        });
-        if (otroPartido) {
-          if (otroPartido.ajuste === undefined) this.$set(otroPartido, 'ajuste', 0);
-          otroPartido.ajuste -= ajusteUnitario;
-        }
       }
     },
     /*
@@ -27733,7 +27755,7 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.stopPropagation();
-        return _vm.descargarDistribucion.apply(null, arguments);
+        return _vm.descargarDistribucion(_vm.distribucionId);
       }
     }
   }, [_c("div", {

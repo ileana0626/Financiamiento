@@ -511,7 +511,7 @@ class SolicitudController extends Controller
     /**
      * Exporta el reporte de Anexo 2. Distribución de Financiamiento a Excel
      *
-     * @param $id Id del cálculo 
+     * @param $id Id del cálculo o distribución
      * @return \Maatwebsite\Excel\BinaryFileResponse
      */
     public function exportarFinanciamientoDistribucionExcel(Request $request, $id = null)
@@ -538,6 +538,8 @@ class SolicitudController extends Controller
                     'message' => 'No se encontró el cálculo solicitado'
                 ], 404);
             }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
 
             $operacion = 'GET';
             // Obtener los datos de la distribución
@@ -549,6 +551,7 @@ class SolicitudController extends Controller
                     $id,
                     null, null, null, null, null, null, null, null, null, null, null, null, null
             ]);
+            
             Log::info('Datos de la distribución obtenidos:', ['distribucion' => $distribucion]);
             if (empty($distribucion)) {
                 Log::error('No se encontró la distribución con ID: ' . $id);
@@ -557,9 +560,6 @@ class SolicitudController extends Controller
                     'message' => 'No se encontró la distribución solicitada'
                 ], 404);
             }
-
-            // Procesar los datos correctamente
-            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
             $distribucionData = !empty($distribucion) ? (array)$distribucion[0] : [];
 
             // Obtener los partidos políticos (con y sin representación)
@@ -601,7 +601,7 @@ class SolicitudController extends Controller
         } catch (\Exception $e) {
             Log::error('Error al exportar el reporte de financiamiento', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                //'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
@@ -612,7 +612,7 @@ class SolicitudController extends Controller
                 'error_details' => [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString()
+                    //'trace' => $e->getTraceAsString()
                 ]
             ], 500);
         }
