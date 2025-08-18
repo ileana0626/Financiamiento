@@ -111,7 +111,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 $highestRow = $worksheet->getHighestRow();
                 $highestColumn = $worksheet->getHighestColumn();
                 
-                $this->ajustarTamañoLogos($sheet);            
+                $this->ajustarTamañoLogos($sheet, $worksheet);            
                 // Ajustar altura de filas automáticamente
                 $sheet->getDefaultRowDimension()->setRowHeight(-1);
                 
@@ -389,7 +389,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             }
         }
     }
-    public function ajustarTamañoLogos($sheet) {
+    public function ajustarTamañoLogos($sheet, $worksheet) {
         // Ajustar tamaño y centrar imágenes
         $cellWidth = $sheet->getDelegate()->getColumnDimension('C')->getWidth();
         $targetWidth = $cellWidth * 5; // Ancho objetivo basado en el ancho de la columna
@@ -407,15 +407,15 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             $col = $matches[1];
             $row = $matches[2];
             
-            Log::info(sprintf(
-                'Imagen %d: Celda %s (Fila: %d, Col: %s) - Tamaño actual: %dx%d',
-                $index + 1,
-                $coordinates,
-                $row,
-                $col,
-                $drawing->getWidth(),
-                $drawing->getHeight()
-            ));
+            // Log::info(sprintf(
+            //     'Imagen %d: Celda %s (Fila: %d, Col: %s) - Tamaño actual: %dx%d',
+            //     $index + 1,
+            //     $coordinates,
+            //     $row,
+            //     $col,
+            //     $drawing->getWidth(),
+            //     $drawing->getHeight()
+            // ));
             
             // Tamaño deseado para la imagen
             $imageWidth = 30; // Ancho fijo para la imagen
@@ -442,6 +442,9 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             // Aplicar offsets
             $drawing->setOffsetX((int)$offsetX);
             $drawing->setOffsetY((int)$offsetY);
+           
+            // Hacer que la imagen sea flotante
+            //$drawing->setWorksheet($worksheet);
             
             // Ajustar altura de la fila si es necesario
             $desiredRowHeight = max($imageHeight + 4, $cellHeight); // Mínimo 4px de padding
