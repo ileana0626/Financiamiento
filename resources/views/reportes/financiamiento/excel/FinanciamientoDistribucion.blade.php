@@ -6,82 +6,94 @@
 </head>
 <body>
     <div class="header">
-        
+        {{-- <img src="{{ public_path('img/LOGO_NUEVO.png') }}" alt="Logo" style="width: 100px; height: auto;"> --}}
     </div>
     <table>
-        <thead>
-            <tr>
-                <th></th>
-            </tr>
-        </thead>
+        <tr>
+            <td colspan="9" style="font-weight: bold; text-align: center; font-size: 12px !important;">
+                FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
         @php
-            // Contador de partidos
-            $contador = 0;
+            $contador = 1;
         @endphp
-        <tbody>
-            <tr>
-                <td>FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>No.</td>
-                <td>Sigla Partido</td>
-                <td>Partido Político</td>
-                <td>% de votación por partido político de elección de diputados</td>
-                <td>30% en forma igualitaria <br> ( a )</td>
-                <td>70% conforme al % d      
-            @foreach($datos->partidos_con_rep as $partido)
-            <tr>
-                <td>{{$contador++}}</td>
-                <td>{{$partido->siglas}}</td>
-            </tr>
-            <tr>
-                <td></td>
-            </tr>
-            @endforeach
-            <tr>
-                <td>SUBTOTAL</td>
-            </tr>
-            <tr></tr>
-            @foreach($datos->partidos_sin_rep as $partido)
-            <tr>
-                <td>{{$contador++}}</td>
-                <td></td>
-                <td></td>
-                <td>2% del monto de financiamiento público para actividades ordinarias permanentes del año 2024, para partidos políticos locales que habiendo conservado el registro, no cuentan con representación en el Congreso Local</td>
-                <td></td>
-                <td></td>
-            </tr>
-            @endforeach
-            <tr>
-                <td>SUBTOTAL</td>
-            </tr>
-            <tr></tr>
-            <tr>
-                <td>{{$contador++}}</td>
-                <td></td>
-                <td>Candidaturas Independientes</td>
-                <td>2% del financiamiento público para actividades tendientes a la obtención del voto.</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>TOTALES</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>GRAN TOTAL</td>
-                <td></td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td></td>
-            </tr>
-        </tfoot>
+        <tr>
+            <td style="font-weight: bold; text-align: center;">No.</td>
+            <td style="font-weight: bold; text-align: center;">Sigla Partido</td>
+            <td style="font-weight: bold; text-align: center;">Partido Político</td>
+            <td style="font-weight: bold; text-align: center;">% de votación por partido político de elección de diputados</td>
+            <td style="font-weight: bold; text-align: center;">30% en forma igualitaria <br>(a)</td>
+            <td style="font-weight: bold; text-align: center;">70% conforme al % de votación <br>(b)</td>
+            <td style="font-weight: bold; text-align: center;">70% conforme al % de votación <br>(b)</td>
+            <td style="font-weight: bold; text-align: center;">Financiamiento público para actividades ordinarias permanentes<br>(c = a + b)</td>
+            <td style="font-weight: bold; text-align: center;">Financiamiento público para actividades tendientes a la obtención del voto<br>(d = c * 0.5)</td>
+        </tr>
+        
+        @foreach($datos->partidos_con_rep as $partido)
+        <tr>
+            <td style="text-align: center;">{{$contador++}}</td>
+            <td style="text-align: center;">{{$partido->siglas}}</td>
+            <td style="text-align: center;">{{ $partido->nombre }}
+                {{-- @php
+                // Convertir el nombre del archivo a PNG
+                $logoFile = str_replace('.webp', '.png', $partido->logo);
+                $logoPath = 'img/logos/' . $logoFile;
+                @endphp
+                @if(file_exists(public_path($logoPath)))
+                    <img src="{{ asset($logoPath) }}" alt="{{ $partido->siglas }}" style="max-height: 10px; max-width: 10px;">
+                @else
+                    <!-- Mostrar texto alternativo si la imagen no existe -->
+                    {{ $partido->nombre }}
+                @endif --}}
+            </td>
+            {{-- <td style="text-align: center;"><img src="{{ asset('img/logos/'.$partido->logo) }}" alt="{{ $partido->siglas }}" style="max-height: 40px; max-width: 40px;"></td> --}}
+            <td style="text-align: right;">{{number_format($partido->porcentaje_votacion, 2)}}%</td>
+            <td style="text-align: right;">{{number_format($partido->A_30_por_ciento, 2)}}</td>
+            <td style="text-align: right;">{{number_format($partido->B_70_por_ciento, 2)}}</td>
+            <td style="text-align: right;">{{number_format($partido->B_Ajuste_70_por_ciento, 2)}}</td>
+            <td style="text-align: right;">{{number_format($partido->C_fpaop, 2)}}</td>
+            <td style="text-align: right;">{{number_format($partido->D_fpatov, 2)}}</td>
+        </tr>
+        @endforeach
+        <tr>
+            <td colspan="9"></td>
+        </tr>
+        @foreach($datos->partidos_sin_rep as $partido)
+        <tr>
+            <td>{{$contador++}}</td>
+            <td>{{$partido->siglas}}</td>
+            <td style="text-align: center;">{{ $partido->nombre }}
+                {{-- @php// Convertir el nombre del archivo a PNG
+                    $logoFile = str_replace('.webp', '.png', $partido->logo);
+                    $logoPath = 'img/logos/' . $logoFile;
+                @endphp
+                @if(file_exists(public_path($logoPath)))
+                    <img src="{{ asset($logoPath) }}" alt="{{ $partido->siglas }}" style="max-height: 10px; max-width: 10px;">
+                @else
+                    <!-- Mostrar texto alternativo si la imagen no existe -->
+                    {{ $partido->nombre }}
+                @endif --}}
+            </td>
+            <td colspan="4">2% del monto de financiamiento público para actividades ordinarias permanentes</td>
+            <td style="text-align: right;">{{number_format($partido->monto_2_por_ciento, 2)}}</td>
+            <td style="text-align: right;">{{number_format($partido->D_monto_2_por_ciento, 2)}}</td>
+        </tr>
+        @endforeach
+        <tr>
+            <td colspan="9"></td>
+        </tr>
+        <tr>
+            <td colspan="7" style="font-weight: bold; padding-top: 15px;">TOTALES</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="8" style="text-align: right; font-weight: bold;">GRAN TOTAL:</td>
+            <td style="text-align: right; font-weight: bold; border-top: 1px solid #000;">
+                {{number_format(collect($datos->partidos_con_rep)->sum('D_fpatov') + collect($datos->partidos_sin_rep)->sum('D_monto_2_por_ciento'), 2)}}
+            </td>
+        </tr>
     </table>
 </body>
 </html>

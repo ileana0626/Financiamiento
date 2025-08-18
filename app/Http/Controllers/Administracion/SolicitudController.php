@@ -543,7 +543,7 @@ class SolicitudController extends Controller
 
             $operacion = 'GET';
             // Obtener los datos de la distribución
-            $distribucion = DB::select('CALL admin.sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?,
+            $distribucion = DB::select('CALL sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?,
 	            null,null,null,
 	            null,null,null,null,null,null,null,null,null,null);', [
                     self::$useTransaction, // bandera estática,
