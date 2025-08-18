@@ -7,14 +7,8 @@
 </head>
 <body>
     <div class="header">
-        {{-- <img src="{{ public_path('img/LOGO_NUEVO.png') }}" alt="Logo" style="width: 100px; height: auto;"> --}}
     </div>
     <table style="width: 100%; border-collapse: collapse; ">
-        {{-- <colgroup>
-            <col style="width: 100px">
-            <col style="width: 800px">
-            <col style="width: 200px">
-        </colgroup> --}}
         <thead>
             <tr>
                 <th colspan="3"></th>
@@ -37,7 +31,13 @@
             </tr>
             <tr>
                 <td></td>
-                <td>Unidad de Medida y Actualización, publicada en el Diario Oficial de la Federación en fecha &nbsp; '<span style="color: #ff0000">{{ formato_fecha_es($datos->calculo->fecha_pub) }}'.</span></td>
+                <td>Unidad de Medida y Actualización, publicada en el Diario Oficial de la Federación en fecha &nbsp; <span style="color: #ff0000">
+                    {{
+                    \Carbon\Carbon::createFromFormat('d/m/Y', $datos->calculo->fecha_pub)
+                        ->locale('es')
+                        ->isoFormat('D [de] MMMM [de] YYYY')
+                    }}.
+                    </span></td>
                 <td style="color: #ff0000">{{formato_moneda($datos->calculo->uma)}}</td>
             </tr>
             <tr>
@@ -52,7 +52,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td>Número total de ciudadanos inscritos en el padrón electoral de la Entidad con corte al 31 de julio de '{{ \Carbon\Carbon::parse($datos->calculo->fecha_pub)->format('Y')}}'.</td>
+                <td>Número total de ciudadanos inscritos en el padrón electoral de la Entidad con corte al 31 de julio de &nbsp; <span style="color: #ff0000">{{ \Carbon\Carbon::createFromFormat('d/m/Y', $datos->calculo->fecha_pub)->format('Y') }}.</span></td>
                 <td style="color: #ff0000; border-bottom: 1px solid #000;">{{ number_format($datos->calculo->personas_padron) }}</td>
             </tr>
             <tr>

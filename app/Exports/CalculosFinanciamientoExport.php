@@ -72,10 +72,6 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
                 $sheet->getColumnDimension('C')->setAutoSize(false);
                 $sheet->getColumnDimension('C')->setWidth(20);
 
-                // Tamaño de fuente de todo el documento -- No aplica correctamente si se da estilo a -> td
-                //$sheet->getParent()->getDefaultStyle()->getFont()->setName('Arial');
-                //$sheet->getParent()->getDefaultStyle()->getFont()->setSize(14);
-
                  // Aplicar estilos específicos a celdas
                  $sheet->getStyle('A1:Z1000')->applyFromArray([
                     'font' => [
@@ -96,20 +92,6 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
 
                 // Para la columna C (montos)
                 $sheet->getStyle('C1:C1000')->getAlignment()->setHorizontal('right');
-                
-                /*
-                $sheet->getStyle('B3')->applyFromArray([
-                    'alignment' => [
-                        'wrapText' => true,
-                        'vertical' => 'top',
-                        'horizontal' => 'left'
-                    ]
-                ]);
-                $sheet->getRowDimension(3)->setRowHeight(-1); // -1 para autoajustar
-
-                // Si es necesario, forzar el recálculo
-                $sheet->calculateColumnWidths();
-                */
                 // Configuración general para la columna B
                 $sheet->getStyle('B4:B100')->applyFromArray([
                     'alignment' => [
@@ -119,14 +101,6 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
                     ]
                 ]);
 
-                // $sheet->getStyle('B3')->getAlignment()->applyFromArray([
-                //     'wrapText' => true,
-                //     'vertical' => 'top',  // Alinea el texto en la parte superior
-                // ]);
-
-
-                // Aplicar color rojo a montos específicos
-                //$sheet->getStyle('C8:C100')->getFont()->getColor()->setARGB('FF0000');
                 $richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
             
             // Agregar texto con diferentes estilos
