@@ -547,15 +547,16 @@ class SolicitudController extends Controller
             // Procesar los datos correctamente
             $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
 
-            $operacion = 'GET';
+            $operacion = (string) "GET"; // Nos aseguramos de que sea un string
             // Obtener los datos de la distribución
             $distribucion = DB::select('CALL sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?,
-	            null,null,null,
-	            null,null,null,null,null,null,null,null,null,null);', [
+	            ?, ?, ?,
+	            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
                     self::$useTransaction, // bandera estática,
                     $operacion,
                     $id,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null
+                    null, null, null,
+                    null, null, null, null, null, null, null, null, null, null
             ]);
             
             Log::info('Datos de la distribución obtenidos:', ['distribucion' => $distribucion]);

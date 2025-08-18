@@ -233294,12 +233294,13 @@ function _userValidToEdit() {
 /*!******************************************!*\
   !*** ./resources/js/utils/formatters.js ***!
   \******************************************/
-/*! exports provided: formatDateToDMY */
+/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMYWithMonthName", function() { return formatDateToDMYWithMonthName; });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -233386,6 +233387,53 @@ var isValidDate = function isValidDate(day, month, year) {
   // Ajustar mes (JavaScript cuenta meses desde 0-11)
   var date = new Date(year, month - 1, day);
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
+
+/**
+ * Convierte una fecha en formato YYYY-MM-DD a un formato legible con nombre de mes en español.
+ * 
+ * @example
+ * // returns "18/AGO/2025"
+ * formatDateToDMYWithMonthName("2025-08-18", 'mmm')
+ * 
+ * @example
+ * // returns "18/agosto/2025"
+ * formatDateToDMYWithMonthName("2025-08-18")
+ * 
+ * @param {string} dateString - La fecha a formatear en formato YYYY-MM-DD
+ * @param {string} [format='full'] - Formato del mes: 'full' para nombre completo, 'mmm' para primeras 3 letras en mayúsculas
+ * @returns {string} La fecha formateada como "DD/mes/YYYY" o "DD/MMM/YYYY" según el formato
+ * 
+ * @requires module:./getMonthName
+ */
+var formatDateToDMYWithMonthName = function formatDateToDMYWithMonthName(dateString) {
+  var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'full';
+  if (!dateString) return '';
+  try {
+    var _dateString$split$map5 = dateString.split('-').map(Number),
+      _dateString$split$map6 = _slicedToArray(_dateString$split$map5, 3),
+      year = _dateString$split$map6[0],
+      month = _dateString$split$map6[1],
+      day = _dateString$split$map6[2];
+    var date = new Date(year, month - 1, day);
+
+    // solo verifica si la fecha es un valor de fecha válido según JavaScript, 
+    // pero puede tener falsos positivos (ej: 31/02/2023 lo convierte a 03/03/2023).
+    if (isNaN(date.getTime())) {
+      console.error('Fecha no válida');
+      return '';
+    }
+    var monthName;
+    if (format.toLowerCase() === 'mmm') {
+      monthName = getMonthName(month).substring(0, 3).toUpperCase();
+    } else {
+      monthName = getMonthName(month);
+    }
+    return "".concat(day.toString().padStart(2, '0'), "/").concat(monthName, "/").concat(year);
+  } catch (error) {
+    console.error('Error al formatear la fecha:', error);
+    return '';
+  }
 };
 
 /***/ }),

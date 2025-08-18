@@ -72,3 +72,49 @@ const isValidDate = (day, month, year) => {
         date.getDate() === day
     );
 };
+
+
+/**
+ * Convierte una fecha en formato YYYY-MM-DD a un formato legible con nombre de mes en español.
+ * 
+ * @example
+ * // returns "18/AGO/2025"
+ * formatDateToDMYWithMonthName("2025-08-18", 'mmm')
+ * 
+ * @example
+ * // returns "18/agosto/2025"
+ * formatDateToDMYWithMonthName("2025-08-18")
+ * 
+ * @param {string} dateString - La fecha a formatear en formato YYYY-MM-DD
+ * @param {string} [format='full'] - Formato del mes: 'full' para nombre completo, 'mmm' para primeras 3 letras en mayúsculas
+ * @returns {string} La fecha formateada como "DD/mes/YYYY" o "DD/MMM/YYYY" según el formato
+ * 
+ * @requires module:./getMonthName
+ */
+export const formatDateToDMYWithMonthName = (dateString, format = 'full') => {
+    if (!dateString) return '';
+
+    try {
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        
+        // solo verifica si la fecha es un valor de fecha válido según JavaScript, 
+        // pero puede tener falsos positivos (ej: 31/02/2023 lo convierte a 03/03/2023).
+        if (isNaN(date.getTime())) {
+            console.error('Fecha no válida');
+            return '';
+        }
+
+        let monthName;
+        if (format.toLowerCase() === 'mmm') {
+            monthName = getMonthName(month).substring(0, 3).toUpperCase();
+        } else {
+            monthName = getMonthName(month);
+        }
+
+        return `${day.toString().padStart(2, '0')}/${monthName}/${year}`;
+    } catch (error) {
+        console.error('Error al formatear la fecha:', error);
+        return '';
+    }
+}
