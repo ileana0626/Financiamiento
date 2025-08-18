@@ -222,23 +222,21 @@ export default {
             })
         },
         formatoFecha(fechaStr) {
-            if (!fechaStr) return ''
+        if (!fechaStr) return ''
 
-            // Parsear fecha en formato DD/MM/YYYY
-            const partes = fechaStr.split('/')
-            if (partes.length !== 3) return fechaStr
+        // Parsear fecha en formato YYYY-MM-DD
+        const partes = fechaStr.split('-')
+        if (partes.length !== 3) return fechaStr
 
-            const dia = partes[0]
-            const mes = parseInt(partes[1], 10) - 1 // meses van de 0 a 11
-            const anio = partes[2]
+        const anio = partes[0]
+        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+        const dia = partes[2]
 
-            // Mapeo de meses abreviados en español
-            const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const mesAbreviado = meses[mes] || ''
 
-            const mesAbreviado = meses[mes] || ''
-
-            return `${dia} ${mesAbreviado} ${anio}`
-    },
+        return `${dia} ${mesAbreviado} ${anio}`
+        },
         exportToExcel(id) {
             // Crear un nuevo loader
             const loader = loading(this.$vs);
