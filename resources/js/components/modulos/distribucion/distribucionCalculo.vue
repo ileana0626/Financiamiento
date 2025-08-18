@@ -23,11 +23,7 @@
             </div>
             <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                 <div>
-                    <vs-table class="tabla-ajustada">
-                        <!-- <template #header>
-                        <vs-input v-model="search" border placeholder="Escribe un Nombre"
-                            class="inputSearchPreguntas" />
-                    </template> -->
+                    <vs-table v-if="NewlistCalculos && NewlistCalculos.length" class="tabla-ajustada">
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->
@@ -73,9 +69,7 @@
                                 </vs-td>
                                 <vs-td class="tableRowHeight text-center">
                                     <div style="width: 100%; display: flex; justify-content: center;">
-                                        <!-- <a :href="`/calculos/${tr.id}/descargar-excel`" target="_blank">
-                                        Descargar Excel
-                                    </a> -->
+                                
                                         <vs-button icon color="danger" size="small" @click="abrirDialog(tr)"
                                             title="Distribuir">
                                             <i class="fas fa-pencil-alt"></i>
@@ -85,9 +79,11 @@
                             </vs-tr>
                         </template>
                         <template #notFound>
-                            <div style="background-color: var(--iee-white) !important;">
-                                Sin resultados...
-                            </div>
+                            <div
+                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                                    <span class="noDataTitle">¡Sin Datos!</span>
+                                    </div>
                         </template>
                         <template #footer>
                             <vs-pagination v-model="page" color="dark"
@@ -225,7 +221,9 @@
                                         <!-- % de votación -->
                                         <vs-td>
                                             <div>
-                                            <vs-input v-model="partido.inputPorcentaje" @blur="onBlurPorcentaje(partido)" type="text" placeholder="0.00 %" />
+                                            <vs-input v-model="partido.inputPorcentaje" 
+                                            @blur="onBlurPorcentaje(partido)" type="text" 
+                                            placeholder="0.00 %" />
                                                 <div class="danger-message">
                                                     <template v-if="partido.errorPorcentajeVotacion.length > 0">
                                                         {{ partido.errorPorcentajeVotacion }}
@@ -424,10 +422,6 @@ export default {
             max: 10,
             // Dialog
             active: false,
-
-            //input1: '',
-            //input2: '',
-            //checkbox1: false,
             anio: '',
             monto30Input: '',
             monto30: '',
@@ -639,9 +633,8 @@ export default {
             let valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
 
             if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-            this.errorMonto30 = 'Ingrese un valor válido para UMA';
-            // this.errorMonto30 = true; // No es necesario por el mensaje
-            this.uma = null;
+
+            this.monto30 = null;
             this.monto30Input = '';
             } else {
             //this.errorMonto30 = false; // No es necesario
@@ -659,13 +652,10 @@ export default {
         formatear70() {
             let valorNumerico = parseFloat(this.monto70Input.toString().replace(/[^0-9.]/g, ''));
 
-            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-            this.errorMonto70 = 'Ingrese un valor válido para UMA';
-            // this.errorMonto70 = true; // No es necesario por el mensaje
+            if (isNaN(valorNumerico)) { 
             this.monto70 = null;
             this.monto70Input = '';
             } else {
-            //this.errorMonto70 = false; // No es necesario
             this.errorMonto70 = '';
             this.monto70 = valorNumerico;
 
@@ -714,8 +704,8 @@ export default {
                             .map(Number)
                             .filter(item => !isNaN(item));
                     }
-                    this.monto30 = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
-                    this.monto70 = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
+                    this.monto30Input = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
+                    this.monto70Input = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
                     this.$nextTick(() => {
                         debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
@@ -1051,32 +1041,6 @@ export default {
             partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
             partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
             
-            /*
-            if (!isNaN(valorNumerico)) {
-                //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
-                partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
-                partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
-                
-            } else { // Si no es un número recetea valores
-                partido.porcentaje_votacion = 0.00000;
-                partido.inputPorcentaje = '0.00000 %';
-            }
-            */
-        },
-        /**
-         * Valida si un valor es un número decimal válido
-         * @param {string|number} value - Valor a validar
-         * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
-         * @returns {boolean} - true si es válido, false si no
-         */
-        validarDecimal(value, maxDecimals = 5) {
-            if (value === '' || value === null || value === undefined) {
-                return false;
-            }
-            
-            // Expresión regular para validar números decimales
-            const regex = new RegExp(`^\\d+(\\.\\d{1,${maxDecimals}})?$`);
-            return regex.test(String(value).replace(',', '.'));
         },
         /**
          * ✔ Validar campos
@@ -1088,12 +1052,12 @@ export default {
                 this.errorAnio = 'El campo año es obligatorio';
                 this.error = true;
             }
-            if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+            if (this.monto30Input === '') {
                 this.errorMonto30 = 'Ingrese un monto 30% válido';
                 this.error = true;
             }
     
-            if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+            if (this.monto70Input === '') {
                 this.errorMonto70 = 'Ingrese un monto 70% válido';
                 this.error = true;
             }
@@ -1103,16 +1067,8 @@ export default {
             } 
             // Validar que llenen todos los campos
             this.Partidos_Con_Representacion.forEach(partido => {
-                /*
-                console.log('Validating:', {
-                    siglas: partido.siglas,
-                    input: partido.inputPorcentaje,
-                    type: typeof partido.inputPorcentaje,
-                    isEmpty: partido.inputPorcentaje === '',
-                    isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
-                });
-                */
-                if (partido.inputPorcentaje === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+              
+                if (partido.inputPorcentaje === '') {
                     partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
                     this.error = true;
                 }
