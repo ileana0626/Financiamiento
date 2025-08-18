@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Exportable;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, WithStyles, WithEvents
 {
@@ -61,7 +62,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             throw $e;
         }
     }
-
+    
     public function styles(Worksheet $sheet)
     {
         // Aplicar estilos a todas las celdas
@@ -110,7 +111,12 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 $highestRow = $worksheet->getHighestRow();
                 $highestColumn = $worksheet->getHighestColumn();
                 
+                $this->ajustarTamañoLogos($sheet);            
+                // Ajustar altura de filas automáticamente
+                $sheet->getDefaultRowDimension()->setRowHeight(-1);
                 
+                // Asegurar que la columna C tenga alineación centrada
+                $sheet->getStyle('C5:C' . $highestRow)->getAlignment()->setHorizontal('center');
                 
                 // Establecer zoom al 85%
                 $sheet->getDelegate()->getParent()->getActiveSheet()->getSheetView()->setZoomScale(85);
@@ -129,37 +135,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
 
                 // Aplicar bordes solo a celdas con contenido
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = $sheet->getHighestColumn();
                 
-                // Aplicar bordes a celdas con contenido
-                foreach ($sheet->getRowIterator(3, $highestRow) as $row) {
-                    $rowIndex = $row->getRowIndex();
-                    $hasContent = false;
-                    
-                    // Verificar si la fila tiene contenido
-                    foreach ($sheet->getColumnIterator('A', $highestColumn) as $cell) {
-                        if ($sheet->getCell($cell->getColumn() . $rowIndex)->getValue() !== null) {
-                            $hasContent = true;
-                            break;
-                        }
-                    }
-                    
-                    // Si la fila tiene contenido, aplicar bordes
-                    if ($hasContent) {
-                        $sheet->getStyle('A' . $rowIndex . ':' . $highestColumn . $rowIndex)->applyFromArray([
-                            'borders' => [
-                                'outline' => [
-                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                                    'color' => ['argb' => 'FF000000'],
-                                ],
-                                'inside' => [
-                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                                    'color' => ['argb' => 'FF000000'],
-                                ],
-                            ],
-                        ]);
-                    }
-                }
 
                 // Formato de números para columnas monetarias en rojo
                 $sheet->getStyle('E2:I' . $highestRow)->applyFromArray([
@@ -211,13 +187,24 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 // Formateando Anio en rojo Partidos sin representación
                 $this->getTextoConAnioRojo($sheet, $this->datos['distribucion']['anio_ejercicio']);
 
+                // Aplicar bordes a todas las celdas con contenidos menos el título
+                $this->aplicarBordes($sheet, $highestRow);
+                
+                //Aplicar estilos subtotal fondo dorado
+                $this->aplicarEstilosSubtotal($sheet);
+
+                //Insertar logos
+                //$this->insertarLogos($sheet);
+                // Redimensionar imágenes
+                             
+                // Ajustar altura de filas
+                $sheet->getDefaultRowDimension()->setRowHeight(-1);
+
                 //Finalmente agregamos filas para dar espacio
                 $sheet->insertNewRowBefore(1, 1); // Insert a new row at the beginning
                 $sheet->insertNewColumnBefore('A', 1); // Insert a new column at the beginning
-                
                 // Establecer ancho para la nueva columna
                 $sheet->getColumnDimension('A')->setWidth(4); // Ancho de 8 unidades para la nueva columna
-
 
                 // Ocultar columna J si tipo_distribucion no contiene '2' (por ejemplo: '1,2' o '2')
                 $tipoDistribucion = $this->datos['distribucion']['tipo_distribucion'];
@@ -311,4 +298,195 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             ]
         ]);
     }
+    public function aplicarBordes($sheet, $highestRow) {
+        // Aplicar bordes a celdas con contenido
+        foreach ($sheet->getRowIterator(4, $highestRow) as $row) {
+            $rowIndex = $row->getRowIndex();
+            $hasContent = false;
+            
+            // Verificar si la fila tiene contenido
+            foreach (range('A', 'J') as $col) {
+                if ($sheet->getCell($col . $rowIndex)->getValue() !== null) {
+                    $hasContent = true;
+                    break;
+                }
+            }
+            
+            // Si la fila tiene contenido, aplicar bordes solo hasta la columna I
+            if ($hasContent) {
+                // Primero, asegurarse de que no haya estilos aplicados más allá de I -> resetea bordes
+                $sheet->getStyle('I' . $rowIndex . ':' . $sheet->getHighestColumn() . $rowIndex)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE,
+                        ],
+                    ],
+                ]);
+                
+                // Luego aplicar bordes hasta I
+                $sheet->getStyle('A' . $rowIndex . ':I' . $rowIndex)->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['argb' => 'FFAE8700'],
+                        ],
+                        'inside' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['argb' => 'FFAE8700'],
+                        ],
+                    ],
+                ]);
+            }
+        }
+    }
+
+    public function aplicarEstilosSubtotal($sheet) {
+        // Buscar filas que contengan "SUBTOTAL", "TOTALES" o "GRAN TOTAL" en las columnas C a H
+        $highestRow = $sheet->getHighestRow();
+        $columnsToCheck = ['C', 'D', 'E', 'F', 'G', 'H'];
+        $targets = ['SUBTOTAL', 'TOTALES', 'GRAN TOTAL', 'GRANTOTAL'];
+        $foundCount = 0;
+        $targetCount = 4; // Número de coincidencias que necesitamos encontrar
+        
+        // Buscar desde la fila 4 hacia abajo (asumiendo que las filas 1-3 son encabezados)
+        for ($row = 4; $row <= $highestRow && $foundCount < $targetCount; $row++) {
+            foreach ($columnsToCheck as $col) {
+                $cell = $sheet->getCell("{$col}{$row}");
+                $cellValue = $cell ? strtoupper(trim($cell->getValue())) : '';
+                
+                // Depuración: Mostrar valores de celdas
+                if ($cellValue !=='') {
+                    Log::info("Celda {$col}{$row}: Count: {$foundCount}", ['valor' => $cellValue]);
+                }
+                
+                // Verificar si el valor de la celda contiene alguna de las palabras clave
+                foreach ($targets as $target) {
+                    if (str_contains($cellValue, $target)) {
+                        // Aplicar estilos a la fila donde se encontró el texto
+                        $sheet->getStyle($col.$row)->applyFromArray([
+                            'alignment' => [
+                                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                            ],
+                            'font' => [
+                                'bold' => true,
+                                'color' => ['argb' => 'FFFFFFFF'],
+                            ],
+                        ]);
+                        $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                            'fill' => [
+                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                                'startColor' => ['argb' => 'FFAE8700'],
+                            ],
+                            'font' => [
+                                'bold' => true,
+                            ],
+                        ]);
+                        $foundCount++;
+                        break 2; // Salir de ambos bucles (columnas y targets)
+                    }
+                }
+            }
+        }
+    }
+    public function ajustarTamañoLogos($sheet) {
+        // Ajustar tamaño y centrar imágenes
+        $cellWidth = $sheet->getDelegate()->getColumnDimension('C')->getWidth();
+        $targetWidth = $cellWidth * 5; // Ancho objetivo basado en el ancho de la columna
+        
+        // Obtener la colección de dibujos
+        $drawings = $sheet->getDrawingCollection();
+        Log::info('Total de imágenes encontradas: ' . $drawings->count());
+        
+        foreach ($drawings as $index => $drawing) {
+            // Obtener coordenadas de la celda donde está la imagen
+            $coordinates = $drawing->getCoordinates();
+            
+            // Obtener fila y columna
+            preg_match('/([A-Z]+)(\d+)/', $coordinates, $matches);
+            $col = $matches[1];
+            $row = $matches[2];
+            
+            Log::info(sprintf(
+                'Imagen %d: Celda %s (Fila: %d, Col: %s) - Tamaño actual: %dx%d',
+                $index + 1,
+                $coordinates,
+                $row,
+                $col,
+                $drawing->getWidth(),
+                $drawing->getHeight()
+            ));
+            
+            // Tamaño deseado para la imagen
+            $imageWidth = 30; // Ancho fijo para la imagen
+            $imageHeight = 30; // Alto fijo para la imagen
+            
+            // Configurar tamaño de la imagen
+            $drawing->setResizeProportional(true);
+            $drawing->setWidth($imageWidth);
+            //$drawing->setHeight($imageHeight);
+            
+            // Obtener dimensiones de la celda
+            $colDimension = $sheet->getColumnDimension($col);
+            $sheet->getRowDimension($row)->setRowHeight(30);
+            $rowDimension = $sheet->getRowDimension($row);
+            
+            // Calcular ancho de celda (si es automático, usar un valor por defecto)
+            $cellWidth = $colDimension->getWidth() * 7; // Aproximación de píxeles por carácter
+            $cellHeight = $rowDimension->getRowHeight() ?: 15;
+            
+            // Calcular offsets para centrar
+            $offsetX = max(0, ($cellWidth - $imageWidth) / 2);
+            $offsetY = max(0, ($cellHeight-$imageHeight)/2)+7;
+            
+            // Aplicar offsets
+            $drawing->setOffsetX((int)$offsetX);
+            $drawing->setOffsetY((int)$offsetY);
+            
+            // Ajustar altura de la fila si es necesario
+            $desiredRowHeight = max($imageHeight + 4, $cellHeight); // Mínimo 4px de padding
+            $sheet->getRowDimension($row)->setRowHeight($desiredRowHeight);
+        }
+    }
+
+    // public function insertarLogos($sheet) {
+    //     try {
+    //         // Get the underlying PhpSpreadsheet worksheet
+    //         $worksheet = $sheet->getDelegate();
+    //         $row = 5; // Starting row for data
+                    
+    //         if (isset($this->datos['partidos_con_rep'])) {
+    //             foreach ($this->datos['partidos_con_rep'] as $partido) {
+    //                 try {
+    //                     // Convert to PNG if needed
+    //                     $logoFile = str_replace('.webp', '.png', $partido->logo);
+    //                     $logoPath = public_path('img/logos/' . $logoFile);
+                        
+    //                     // Only try to add logo if file exists
+    //                     if (file_exists($logoPath)) {
+    //                         $drawing = new Drawing();
+    //                         $drawing->setName($partido->siglas);
+    //                         $drawing->setDescription('Logo de ' . $partido->nombre);
+    //                         $drawing->setPath($logoPath);
+    //                         $drawing->setHeight(15);
+    //                         $drawing->setCoordinates('C' . $row);
+    //                         $drawing->setOffsetX(5);
+    //                         $drawing->setWorksheet($worksheet);
+                            
+    //                         // Adjust row height to fit the logo
+    //                         $worksheet->getRowDimension($row)->setRowHeight(20);
+    //                     }
+    //                 } catch (\Exception $e) {
+    //                     Log::error('Error al insertar logo en Excel: ' . $e->getMessage());
+    //                 }
+    //                 $row++;
+    //             }
+    //         }
+            
+    //         // Apply other styles after adding images
+    //         $this->aplicarEstilosSubtotal($worksheet);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error en insertarLogos: ' . $e->getMessage());
+    //     }
+    // }   
 }
