@@ -1,4 +1,11 @@
 <?php
+/*
+* @description Archivo de ayuda para formatear datos de la base de datos 
+* y mostrar en platillas .blade.php, para exportar a Excel y PDF
+* @author Tony
+* @version 1.0.0
+* @date 04/08/2025
+*/
 use Carbon\Carbon;
 
 /**
@@ -53,7 +60,7 @@ if (!function_exists('formatear_fecha')) {
     /**
      * Formatea una fecha
      * 
-     * @param string $fecha Fecha a formatear
+     * @param string $fecha Fecha a formatear YYYY-MM-DD
      * @param string $formato Formato de fecha (por defecto es 'd/m/Y')
      * @return string
      * 
@@ -73,7 +80,7 @@ if (!function_exists('formato_fecha_es')) {
     /**
      * Formatea una fecha en español
      * 
-     * @param string|DateTime $fecha Fecha a formatear
+     * @param string|DateTime $fecha Fecha a formatear YYYY-MM-DD
      * @param string $formato Formato de salida (opcional)
      * @return string
      * 
@@ -94,7 +101,7 @@ if (!function_exists('formato_fecha_es')) {
             } elseif (preg_match('/^\d{2}-\d{2}-\d{4}$/', $fecha)) {
                 // Formato dd-mm-yyyy
                 $fechaCarbon = Carbon::createFromFormat('d-m-Y', $fecha);
-            } else {
+            } else { // Formato YYYY-MM-DD
                 $fechaCarbon = Carbon::parse($fecha);
             }
             

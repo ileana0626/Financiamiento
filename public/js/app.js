@@ -4875,6 +4875,8 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_formatters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/formatters */ "./resources/js/utils/formatters.js");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -4905,6 +4907,8 @@ __webpack_require__.r(__webpack_exports__);
     this.getCalculos();
   },
   methods: {
+    formatDateToDMY: _utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatDateToDMY"],
+    // Funciones importadas
     /*
     * Formatea un número con separadores de miles y decimales
     */
@@ -11753,7 +11757,7 @@ var debug = function debug() {
               console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
               _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 25;
+                _context5.next = 24;
                 break;
               }
               _context5.next = 13;
@@ -11761,144 +11765,139 @@ var debug = function debug() {
             case 13:
               response = _context5.sent;
               console.log('Respuesta del servidor (actualizar):', response.data);
-              if (!(response.data && response.data.id)) {
-                _context5.next = 21;
+              if (!(response.data && response.data.success)) {
+                _context5.next = 20;
                 break;
               }
-              _this9.distribucionId = response.data.id;
+              _this9.distribucionId = response.data.id || _this9.distribucionId;
               _this9.$vs.notification({
                 color: 'success',
-                text: 'Distribución actualizada'
+                text: response.data.message || 'Distribución actualizada exitosamente'
               });
-              console.log('Distribución actualizada con ID: ' + _this9.distribucionId);
-              _context5.next = 23;
+              _context5.next = 22;
               break;
-            case 21:
-              // Mostrar mensaje de error del servidor si existe
+            case 20:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 23:
-              _context5.next = 37;
+            case 22:
+              _context5.next = 35;
               break;
-            case 25:
-              _context5.next = 27;
+            case 24:
+              _context5.next = 26;
               return axios.post(url, datos);
-            case 27:
+            case 26:
               _response = _context5.sent;
               console.log('Respuesta del servidor (guardar):', _response.data);
-              // Si es un nuevo registro, actualizamos el ID
-              if (!(_response.data && _response.data.id)) {
-                _context5.next = 35;
+              if (!(_response.data && _response.data.success)) {
+                _context5.next = 33;
                 break;
               }
               _this9.distribucionId = _response.data.id;
               _this9.$vs.notification({
                 color: 'success',
-                text: 'Distribución guardada'
+                text: _response.data.message || 'Distribución guardada exitosamente'
               });
-              console.log('Distribución guardada con ID: ' + _response.data.id);
-              _context5.next = 37;
+              _context5.next = 35;
               break;
-            case 35:
-              // Mostrar mensaje de error del servidor si existe
+            case 33:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 37:
+            case 35:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 39;
+              _context5.prev = 37;
               _iterator.s();
-            case 41:
+            case 39:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 57;
+                _context5.next = 55;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 43;
-              _context5.next = 46;
+              _context5.prev = 41;
+              _context5.next = 44;
               return axios.post(url, partido);
-            case 46:
+            case 44:
               _response2 = _context5.sent;
               if (_response2.data && _response2.data.ids) {
                 console.log('PPCR actualizado: ' + _response2.data.ids);
               }
-              _context5.next = 55;
+              _context5.next = 53;
               break;
-            case 50:
-              _context5.prev = 50;
-              _context5.t0 = _context5["catch"](43);
+            case 48:
+              _context5.prev = 48;
+              _context5.t0 = _context5["catch"](41);
               console.error('Error al actualizar partido PPCR: ' + partido.siglas, _context5.t0);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
+            case 53:
+              _context5.next = 39;
+              break;
             case 55:
-              _context5.next = 41;
+              _context5.next = 60;
               break;
             case 57:
-              _context5.next = 62;
-              break;
-            case 59:
-              _context5.prev = 59;
-              _context5.t1 = _context5["catch"](39);
+              _context5.prev = 57;
+              _context5.t1 = _context5["catch"](37);
               _iterator.e(_context5.t1);
-            case 62:
-              _context5.prev = 62;
+            case 60:
+              _context5.prev = 60;
               _iterator.f();
-              return _context5.finish(62);
-            case 65:
+              return _context5.finish(60);
+            case 63:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesas);
               // Actualizamos la tabla de partidos políticos sin representación   
               //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 67;
+              _context5.prev = 65;
               _iterator2.s();
-            case 69:
+            case 67:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 85;
+                _context5.next = 83;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 71;
-              _context5.next = 74;
+              _context5.prev = 69;
+              _context5.next = 72;
               return axios.post(url, _partido);
-            case 74:
+            case 72:
               _response3 = _context5.sent;
               if (_response3.data && _response3.data.ids) {
                 console.log('PPSR actualizado: ' + _response3.data.ids);
               }
-              _context5.next = 83;
+              _context5.next = 81;
               break;
-            case 78:
-              _context5.prev = 78;
-              _context5.t2 = _context5["catch"](71);
+            case 76:
+              _context5.prev = 76;
+              _context5.t2 = _context5["catch"](69);
               console.error('Error al actualizar partido PPSR: ' + _partido.siglas, _context5.t2);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
+            case 81:
+              _context5.next = 67;
+              break;
             case 83:
-              _context5.next = 69;
+              _context5.next = 88;
               break;
             case 85:
-              _context5.next = 90;
-              break;
-            case 87:
-              _context5.prev = 87;
-              _context5.t3 = _context5["catch"](67);
+              _context5.prev = 85;
+              _context5.t3 = _context5["catch"](65);
               _iterator2.e(_context5.t3);
-            case 90:
-              _context5.prev = 90;
+            case 88:
+              _context5.prev = 88;
               _iterator2.f();
-              return _context5.finish(90);
-            case 93:
+              return _context5.finish(88);
+            case 91:
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesasSinRep);
 
@@ -11909,10 +11908,10 @@ var debug = function debug() {
               });
               // HAbilita descargar archivo
               _this9.descargar_disabled = true;
-              _context5.next = 103;
+              _context5.next = 101;
               break;
-            case 97:
-              _context5.prev = 97;
+            case 95:
+              _context5.prev = 95;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11922,15 +11921,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 103:
-              _context5.prev = 103;
+            case 101:
+              _context5.prev = 101;
               loader.close();
-              return _context5.finish(103);
-            case 106:
+              return _context5.finish(101);
+            case 104:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 97, 103, 106], [39, 59, 62, 65], [43, 50], [67, 87, 90, 93], [71, 78]]);
+        }, _callee5, null, [[9, 95, 101, 104], [37, 57, 60, 63], [41, 48], [65, 85, 88, 91], [69, 76]]);
       }))();
     },
     /**
@@ -19437,7 +19436,7 @@ var render = function render() {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(tr.anioFiscal) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                              " + _vm._s(tr.fecha_pub) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                              " + _vm._s(tr.fecha_pub ? _vm.formatDateToDMY(tr.fecha_pub) : "") + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
@@ -233291,6 +233290,106 @@ function _userValidToEdit() {
 
 /***/ }),
 
+/***/ "./resources/js/utils/formatters.js":
+/*!******************************************!*\
+  !*** ./resources/js/utils/formatters.js ***!
+  \******************************************/
+/*! exports provided: formatDateToDMY */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+/*
+* @description Archivo de ayuda para formatear datos de la base de datos 
+* y mostrar en vistas .vue
+* @author Tony
+* @version 1.0.0
+* @date 18/08/2025
+*/
+/**
+ * Formatea una fecha de entrada a un formato específico con el separador indicado.
+ * @param {String} dateString - Fecha en formato 'YYYY-MM-DD', 'DD/MM/YYYY' o 'DD-MM-YYYY'
+ * @param {String} separator - Separador de salida ('/' o '-')
+ * @returns {String} Fecha formateada o cadena vacía si no es válida
+ */
+var formatDateToDMY = function formatDateToDMY(dateString) {
+  var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '/';
+  // Si no se proporciona una fecha, devolver cadena vacía
+  if (!dateString) return '';
+
+  // Expresión regular para validar los formatos de fecha aceptados:
+  // - YYYY-MM-DD (ISO)
+  // - DD/MM/YYYY
+  // - DD-MM-YYYY
+  var dateRegex = /^(\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))|((0[1-9]|[12][0-9]|3[01])[\/-](0[1-9]|1[0-2])[\/-]\d{4})$/;
+
+  // Validar el formato de la fecha con la expresión regular
+  if (!dateRegex.test(dateString)) {
+    console.error('Formato de fecha inválido');
+    return '';
+  }
+  try {
+    var day, month, year;
+
+    // Determinar el formato de la fecha y extraer día, mes y año
+    if (dateString.includes('-') && dateString.match(/-/g).length === 2) {
+      // Formato YYYY-MM-DD
+      var _dateString$split$map = dateString.split('-').map(Number);
+      var _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3);
+      year = _dateString$split$map2[0];
+      month = _dateString$split$map2[1];
+      day = _dateString$split$map2[2];
+    } else {
+      // Formato DD/MM/YYYY o DD-MM-YYYY
+      var sep = dateString.includes('/') ? '/' : '-';
+      var _dateString$split$map3 = dateString.split(sep).map(Number);
+      var _dateString$split$map4 = _slicedToArray(_dateString$split$map3, 3);
+      day = _dateString$split$map4[0];
+      month = _dateString$split$map4[1];
+      year = _dateString$split$map4[2];
+    }
+
+    // Validar si la fecha es real (días en mes, años bisiestos, etc.)
+    if (!isValidDate(day, month, year)) {
+      console.error('Fecha no válida');
+      return '';
+    }
+    // Función auxiliar para agregar ceros a la izquierda si es necesario
+    var pad = function pad(n) {
+      return n < 10 ? "0".concat(n) : n;
+    };
+
+    // Devolver la fecha formateada con el separador especificado
+    return "".concat(pad(day)).concat(separator).concat(pad(month)).concat(separator).concat(year);
+  } catch (error) {
+    // Manejar cualquier error inesperado durante el procesamiento
+    console.error('Error al formatear la fecha:', error);
+    return '';
+  }
+};
+
+/**
+* Valida si una fecha es válida (incluyendo días en meses y años bisiestos)
+* @param {number} day - Día del mes
+* @param {number} month - Mes (1-12)
+* @param {number} year - Año (4 dígitos)
+* @returns {boolean} true si la fecha es válida
+*/
+var isValidDate = function isValidDate(day, month, year) {
+  // Ajustar mes (JavaScript cuenta meses desde 0-11)
+  var date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
+
+/***/ }),
+
 /***/ 0:
 /*!***********************************!*\
   !*** multi ./resources/js/app.js ***!
@@ -233298,7 +233397,7 @@ function _userValidToEdit() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\25_IEE\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
