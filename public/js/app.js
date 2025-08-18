@@ -11447,6 +11447,40 @@ var debug = function debug() {
     formatCurrency: function formatCurrency(value) {
       return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
+    formatearMonto: function formatearMonto() {
+      var valorNumerico = parseFloat(this.monto30.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        // Si no es un número recetea valores
+        this.errorMonto30 = 'Ingrese un valor válido para UMA';
+        this.monto30 = '';
+      } else {
+        //this.errorUMA = false; // No es necesario
+        this.errorMonto30 = '';
+        this.monto30 = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
+    formatearMonto70: function formatearMonto70() {
+      var valorNumerico = parseFloat(this.monto70.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        // Si no es un número recetea valores
+        this.errorMonto70 = 'Ingrese un valor válido para UMA';
+        this.monto70 = '';
+      } else {
+        //this.errorUMA = false; // No es necesario
+        this.errorMonto70 = '';
+        this.monto70 = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
     getCalculos: function getCalculos() {
       var _this4 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -12108,21 +12142,6 @@ var debug = function debug() {
       partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
     },
     /**
-     * Valida si un valor es un número decimal válido
-     * @param {string|number} value - Valor a validar
-     * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
-     * @returns {boolean} - true si es válido, false si no
-     */
-    validarDecimal: function validarDecimal(value) {
-      var maxDecimals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
-      if (value === '' || value === null || value === undefined) {
-        return false;
-      }
-
-      // Expresión regular para validar números decimales
-      var regex = new RegExp("^\\d+(\\.\\d{1,".concat(maxDecimals, "})?$"));
-      return regex.test(String(value).replace(',', '.'));
-    },
     /**
      * ✔ Validar campos
      * @returns {boolean}
@@ -12134,11 +12153,11 @@ var debug = function debug() {
         this.errorAnio = 'El campo año es obligatorio';
         this.error = true;
       }
-      if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+      if (this.monto30 === '') {
         this.errorMonto30 = 'Ingrese un monto 30% válido';
         this.error = true;
       }
-      if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+      if (this.monto70 === '') {
         this.errorMonto70 = 'Ingrese un monto 70% válido';
         this.error = true;
       }
@@ -12148,7 +12167,7 @@ var debug = function debug() {
       }
       // Validar que llenen todos los campos
       this.Partidos_Con_Representacion.forEach(function (partido) {
-        if (partido.inputPorcentaje === '' || !_this12.validarDecimal(partido.porcentaje_votacion, 5)) {
+        if (partido.inputPorcentaje === '') {
           partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
           _this12.error = true;
         }
@@ -27382,6 +27401,9 @@ var render = function render() {
       placeholder: "0.00",
       step: "0.01"
     },
+    on: {
+      blur: _vm.formatearMonto
+    },
     nativeOn: {
       click: function click($event) {
         $event.stopPropagation();
@@ -27403,6 +27425,9 @@ var render = function render() {
       type: "text",
       placeholder: "0.00",
       step: "0.01"
+    },
+    on: {
+      blur: _vm.formatearMonto70
     },
     model: {
       value: _vm.monto70,

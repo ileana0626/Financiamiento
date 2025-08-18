@@ -154,7 +154,10 @@
                                 <!-- Montos globales -->
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
-                                    <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" @click.native.stop/>
+                                    <vs-input v-model="monto30" 
+                                    @blur="formatearMonto"
+                                    type="text" placeholder="0.00" 
+                                    step="0.01" @click.native.stop/>
                                     <div class="danger-message">
                                         <template v-if="errorMonto30.length > 0">
                                             {{ errorMonto30 }}
@@ -163,7 +166,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (70%)</label>
-                                    <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
+                                    <vs-input v-model="monto70" 
+                                    @blur="formatearMonto70"
+                                    type="text" placeholder="0.00" step="0.01" />
                                     <div class="danger-message">
                                         <template v-if="errorMonto70.length > 0">
                                             {{ errorMonto70 }}
@@ -471,6 +476,42 @@ export default {
         },
         formatCurrency(value) {
             return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        },
+        formatearMonto() {
+            let valorNumerico = parseFloat(this.monto30.toString().replace(/[^0-9.]/g, ''));
+
+            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
+            this.errorMonto30 = 'Ingrese un valor válido para UMA';
+            this.monto30 = '';
+            } else {
+            //this.errorUMA = false; // No es necesario
+            this.errorMonto30 = '';
+
+            this.monto30 = valorNumerico.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            }
+        },
+        formatearMonto70() {
+            let valorNumerico = parseFloat(this.monto70.toString().replace(/[^0-9.]/g, ''));
+
+            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
+            this.errorMonto70 = 'Ingrese un valor válido para UMA';
+            this.monto70 = '';
+            } else {
+            //this.errorUMA = false; // No es necesario
+            this.errorMonto70 = '';
+
+            this.monto70 = valorNumerico.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            }
         },
         getCalculos() {
             const loader = loading(this.$vs);
@@ -992,20 +1033,6 @@ export default {
             
         },
         /**
-         * Valida si un valor es un número decimal válido
-         * @param {string|number} value - Valor a validar
-         * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
-         * @returns {boolean} - true si es válido, false si no
-         */
-        validarDecimal(value, maxDecimals = 5) {
-            if (value === '' || value === null || value === undefined) {
-                return false;
-            }
-            
-            // Expresión regular para validar números decimales
-            const regex = new RegExp(`^\\d+(\\.\\d{1,${maxDecimals}})?$`);
-            return regex.test(String(value).replace(',', '.'));
-        },
         /**
          * ✔ Validar campos
          * @returns {boolean}
@@ -1016,12 +1043,12 @@ export default {
                 this.errorAnio = 'El campo año es obligatorio';
                 this.error = true;
             }
-            if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
+            if (this.monto30 === '') {
                 this.errorMonto30 = 'Ingrese un monto 30% válido';
                 this.error = true;
             }
     
-            if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
+            if (this.monto70 === '') {
                 this.errorMonto70 = 'Ingrese un monto 70% válido';
                 this.error = true;
             }
@@ -1032,7 +1059,7 @@ export default {
             // Validar que llenen todos los campos
             this.Partidos_Con_Representacion.forEach(partido => {
               
-                if (partido.inputPorcentaje === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
+                if (partido.inputPorcentaje === '') {
                     partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
                     this.error = true;
                 }
