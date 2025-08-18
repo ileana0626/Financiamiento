@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 //use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Exportable;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, WithStyles, WithEvents
 {
@@ -109,6 +110,8 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 $highestRow = $worksheet->getHighestRow();
                 $highestColumn = $worksheet->getHighestColumn();
                 
+                
+                
                 // Establecer zoom al 85%
                 $sheet->getDelegate()->getParent()->getActiveSheet()->getSheetView()->setZoomScale(85);
                 
@@ -124,24 +127,48 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     'ancho_I' => $sheet->getDelegate()->getColumnDimension('I')->getWidth()
                 ]);
 
-                // // Aplicar bordes a todas las celdas con datos
-                // $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
-                //     'borders' => [
-                //         'allBorders' => [
-                //             'borderStyle' => Border::BORDER_THIN,
-                //             'color' => ['argb' => 'FFAE8700'],
-                //         ],
-                //     ],
-                // ]);
+                // Aplicar bordes solo a celdas con contenido
+                $highestRow = $sheet->getHighestRow();
+                $highestColumn = $sheet->getHighestColumn();
+                
+                // Aplicar bordes a celdas con contenido
+                foreach ($sheet->getRowIterator(3, $highestRow) as $row) {
+                    $rowIndex = $row->getRowIndex();
+                    $hasContent = false;
+                    
+                    // Verificar si la fila tiene contenido
+                    foreach ($sheet->getColumnIterator('A', $highestColumn) as $cell) {
+                        if ($sheet->getCell($cell->getColumn() . $rowIndex)->getValue() !== null) {
+                            $hasContent = true;
+                            break;
+                        }
+                    }
+                    
+                    // Si la fila tiene contenido, aplicar bordes
+                    if ($hasContent) {
+                        $sheet->getStyle('A' . $rowIndex . ':' . $highestColumn . $rowIndex)->applyFromArray([
+                            'borders' => [
+                                'outline' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                                    'color' => ['argb' => 'FF000000'],
+                                ],
+                                'inside' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                                    'color' => ['argb' => 'FF000000'],
+                                ],
+                            ],
+                        ]);
+                    }
+                }
 
                 // Formato de números para columnas monetarias en rojo
                 $sheet->getStyle('E2:I' . $highestRow)->applyFromArray([
                     'numberFormat' => [
                         'formatCode' => '[Red]\$#,##0.00_);[Red](\$#,##0.00)'
                     ],
-                    'font' => [
-                        'color' => ['argb' => 'FFFF0000']  // Rojo puro
-                    ]
+                    // 'font' => [
+                    //     'color' => ['argb' => 'FFFF0000']  // Rojo puro
+                    // ]
                 ]);
                 // Formato de porcentaje
                 $sheet->getStyle('D2:D' . $highestRow)->getNumberFormat()->setFormatCode('0.00%');
@@ -150,7 +177,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 $sheet->getStyle('A3:I3')->applyFromArray([
                     'font' => [
                         'bold' => true,
-                        'color' => ['argb' => 'FF000000']  // Negro puro
+                        'color' => ['argb' => 'FFFFFFFF']  // Letras blancas
                     ],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -159,7 +186,11 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                         ],
                     ],
                 ]);
-                
+                //Formateando Título
+                $tituloBase = 'FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO ';
+                $richText = $this->crearTituloConAnio($tituloBase, $this->datos['distribucion']['anio_ejercicio']);
+                $sheet->setCellValue('A1', $richText);
+
                 // Alinear texto al centro para encabezados
                 $sheet->getStyle('A1:' . $highestColumn . '1')->applyFromArray([
                     'alignment' => [
@@ -169,13 +200,16 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     ],
                     'font' => [
                         'bold' => true,
-                        'color' => ['argb' => 'FF000000'], // Letras negras
+                        //'color' => ['argb' => 'FF000000'], // Letras negras
                         'size' => 12,
                     ],
                 ]);
                 
-                // Ajustar altura de filas
+                // Ajustar altura de fila título
                 $sheet->getRowDimension(1)->setRowHeight(30);
+
+                // Formateando Anio en rojo Partidos sin representación
+                $this->getTextoConAnioRojo($sheet, $this->datos['distribucion']['anio_ejercicio']);
 
                 //Finalmente agregamos filas para dar espacio
                 $sheet->insertNewRowBefore(1, 1); // Insert a new row at the beginning
@@ -183,6 +217,14 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 
                 // Establecer ancho para la nueva columna
                 $sheet->getColumnDimension('A')->setWidth(4); // Ancho de 8 unidades para la nueva columna
+
+
+                // Ocultar columna J si tipo_distribucion no contiene '2' (por ejemplo: '1,2' o '2')
+                $tipoDistribucion = $this->datos['distribucion']['tipo_distribucion'];
+                if (strpos($tipoDistribucion, '2') == false) {
+                    $sheet->getColumnDimension('J')->setVisible(false);
+                }
+
             },
         ];
     }
@@ -199,4 +241,74 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         ];
     }
         */
+    
+    /**
+     * Crea un título formateado con el año en rojo
+     */
+    private function crearTituloConAnio($tituloBase, $anio)
+    {
+        $richText = new RichText();
+        $richText->createText($tituloBase);
+        
+        $yearRun = $richText->createTextRun($anio);
+        $yearFont = $yearRun->getFont();
+        $yearFont->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFF0000'));
+        $yearFont->setBold(true);
+        $yearFont->setSize(12);
+        
+        return $richText;
+    }
+
+    public function getTextoConAnioRojo($sheet, $anio) {
+        // Obtener la última fila con datos
+        $highestRow = $sheet->getHighestRow();
+        
+        // Aplicar a toda la columna D
+        for ($row = 1; $row <= $highestRow; $row++) {
+            $cell = $sheet->getCell('D' . $row);
+            $value = $cell->getValue();
+            
+            if (str_contains($value, (string)$anio)) {
+                $richText = new RichText();
+                
+                // Dividir el texto en partes
+                $partes = explode($anio, $value, 2);
+                
+                // Primera parte
+                $parte1 = $richText->createTextRun($partes[0]);
+                $parte1->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('000000'));
+                
+                // Año en rojo
+                $parteAnio = $richText->createTextRun($anio);
+                $parteAnio->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FF0000'));
+                $parteAnio->getFont()->setBold(true);
+                
+                // Segunda parte si existe
+                if (isset($partes[1])) {
+                    $parte2 = $richText->createTextRun($partes[1]);
+                    $parte2->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('000000'));
+                }
+                
+                $sheet->setCellValue('D' . $row, $richText);
+                $sheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
+            }
+        }
+    }
+
+    public function formatoTextoNegro($sheet, $highestColumn, $highestRow) {
+        // Aplicar formato a celdas con clase 'texto-negro'
+        $sheet->getStyle('A1:'.$highestColumn.$highestRow)->applyFromArray([
+            'font' => [
+                'color' => ['argb' => 'FF000000'] // Negro
+            ]
+        ]);
+        
+        // Aplicar formato a la fila de TOTALES
+        $sheet->getStyle('A'.$highestRow.':'.$highestColumn.($highestRow+1))->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FF000000'] // Negro
+            ]
+        ]);
+    }
 }
