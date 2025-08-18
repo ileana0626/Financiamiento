@@ -427,7 +427,6 @@ export default {
             monto30: '',
             monto70: '',
             monto70Input: '',
-            //suma: '',
             colors: [
                 {
                     color: 'warn'
@@ -443,8 +442,6 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
-            //errorPartidosPoliticos_conRepr: '',
-            //errorPorcentajeVotacion: '',
             descargar_disabled: true, // true: disabled | false: enabled
         }
     },
@@ -572,7 +569,6 @@ export default {
             })
             .finally(() => {
                 loader.close();
-                //debug('🐛 Finalizado !');
             })
         },
         onChangeDistribucion(value) {
@@ -637,7 +633,6 @@ export default {
             this.monto30 = null;
             this.monto30Input = '';
             } else {
-            //this.errorMonto30 = false; // No es necesario
             this.errorMonto30 = '';
             this.monto30 = valorNumerico;
 
@@ -767,7 +762,6 @@ export default {
                 // Actualizar distribución
                 if (this.distribucionId) {
                     const response = await axios.post(url, datos);
-                    console.log('Respuesta del servidor (actualizar):', response.data);
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id || this.distribucionId;
@@ -777,14 +771,10 @@ export default {
                     }
                 } else { // Guardar distribución
                     const response = await axios.post(url, datos);
-                    console.log('Respuesta del servidor (guardar):', response.data);
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
-                        this.$vs.notification({ 
-                            color: 'success', 
-                            text: response.data.message || 'Distribución guardada exitosamente' 
-                        });
+                        
                     } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
                         throw new Error(errorMsg);
@@ -798,10 +788,8 @@ export default {
                     try {
                     const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
-                        console.log('PPCR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
-                        console.error('Error al actualizar partido PPCR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -810,18 +798,12 @@ export default {
                     }
                 }
                 url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
-                // Esperar a que todas las peticiones terminen
-                //await Promise.all(promesas);
-                // Actualizamos la tabla de partidos políticos sin representación   
-                //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
                 for (const partido of this.Partidos_Sin_Representacion) {
                     try {
                     const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
-                        console.log('PPSR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
-                        console.error('Error al actualizar partido PPSR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -829,8 +811,6 @@ export default {
                         throw error;
                     }
                 }
-                // Esperar a que todas las peticiones terminen
-                //await Promise.all(promesasSinRep);
 
                 // Notificación de éxito
                 Swal.fire({
@@ -947,12 +927,10 @@ export default {
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
             
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
             return (monto * porcentaje) / totalPorcentajes;
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
-            //console.log('B. Monto con ajuste:', {base, ajuste});
             return base + (ajuste || 0);
         },
         calcularMontoC(partido) {
