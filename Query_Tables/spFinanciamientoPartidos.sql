@@ -266,13 +266,15 @@ DELIMITER //
 * CALL sp_get_calculo_completo(NULL);
 * -- Un registro específico
 * CALL sp_get_calculo_completo(2);
+* @note
+* DATE_FORMAT(fecha_publicacion, '%d/%m/%Y') AS 'fecha_pub' se cambia a '%Y-%m-%d'
 */
 CREATE PROCEDURE sp_get_calculo_completo(IN p_id_calculo INT UNSIGNED)
 BEGIN
 	-- Variables locales
 	DECLARE strQ2 VARCHAR(25);
 	-- Variable de usuario para la consulta
-    SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%d/%m/%Y') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, 
+    SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%Y-%m-%d') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, 
 		pp_sin_repr, pp_con_repr, pp_sin_repr_siglas, pp_con_repr_siglas, num_pp_sin_repr, num_pp_con_repr, 
 		total_fp_sin_repr, monto_total_efectivo, monto_30_por_ciento, monto_70_por_ciento, comprobacion_monto 
 		FROM calculo_dppp WHERE ? IS NULL OR id_calculo = ?;";

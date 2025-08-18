@@ -90,7 +90,7 @@
                                 {{ tr.anioFiscal }}
                             </vs-td>                            
                             <vs-td class="tableRowHeight">
-                                {{ tr.fecha_pub }}
+                                {{ tr.fecha_pub ? formatDateToDMY(tr.fecha_pub) : '' }}
                             </vs-td>
                             <vs-td class="tableRowHeight">
                                 {{ formatCurrency(tr.uma) }}
@@ -163,6 +163,7 @@
 
 <script>
 import methods, { loading } from '../../../methods';
+import { formatDateToDMY } from '../../../utils/formatters';
 export default {
     data() {
         return{
@@ -187,6 +188,7 @@ export default {
         this.getCalculos();
     },
     methods: {
+        formatDateToDMY, // Funciones importadas
         /*
         * Formatea un número con separadores de miles y decimales
         */

@@ -730,34 +730,34 @@ export default {
                 // Actualizar distribución
                 if (this.distribucionId) {
                     const response = await axios.post(url, datos);
-                    
                     console.log('Respuesta del servidor (actualizar):', response.data);
-                    if (response.data && response.data.id) {
-                        this.distribucionId = response.data.id;
-                        this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
-                        console.log('Distribución actualizada con ID: ' + this.distribucionId);
-                    }
-                    else{
-                        // Mostrar mensaje de error del servidor si existe
+                    
+                    if (response.data && response.data.success) {
+                        this.distribucionId = response.data.id || this.distribucionId;
+                        this.$vs.notification({ 
+                            color: 'success', 
+                            text: response.data.message || 'Distribución actualizada exitosamente' 
+                        });
+                    } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
                     }
                 } else { // Guardar distribución
                     const response = await axios.post(url, datos);
                     console.log('Respuesta del servidor (guardar):', response.data);
-                    // Si es un nuevo registro, actualizamos el ID
-                    if (response.data && response.data.id) {
+                    
+                    if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
-                        this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
-                        console.log('Distribución guardada con ID: ' + response.data.id);
-                    }
-                    else{
-                        // Mostrar mensaje de error del servidor si existe
+                        this.$vs.notification({ 
+                            color: 'success', 
+                            text: response.data.message || 'Distribución guardada exitosamente' 
+                        });
+                    } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
                         throw new Error(errorMsg);
                     }
                 }
-               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+                url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
                 // Actualizamos la tabla de partidos políticos con representación
                 // Crear un array de promesas
                 //const promesas = this.Partidos_Con_Representacion.map(async partido => {
