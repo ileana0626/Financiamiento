@@ -23,10 +23,6 @@
         <div class="card-body container-fluid" style="background-color: var(--iee-white);">
             <div>
                 <vs-table class="tabla-ajustada">
-                    <!-- <template #header>
-                        <vs-input v-model="search" border placeholder="Escribe un Nombre"
-                            class="inputSearchPreguntas" />
-                    </template> -->
                     <template #thead>
                         <vs-tr>
                             <!-- 1 -->
@@ -90,7 +86,7 @@
                                 {{ tr.anioFiscal }}
                             </vs-td>                            
                             <vs-td class="tableRowHeight">
-                                {{ tr.fecha_pub ? formatDateToDMY(tr.fecha_pub) : '' }}
+                                {{ formatoFecha(tr.fecha_pub) }}
                             </vs-td>
                             <vs-td class="tableRowHeight">
                                 {{ formatCurrency(tr.uma) }}
@@ -134,9 +130,6 @@
                             </vs-td>
                             <vs-td class="tableRowHeight text-center">
                                 <div style="width: 100%; display: flex; justify-content: center;">
-                                    <!-- <a :href="`/calculos/${tr.id}/descargar-excel`" target="_blank">
-                                        Descargar Excel
-                                    </a> -->
                                     <vs-button icon color="success" size="small" @click="exportToExcel(tr.id)" title="Descargar Excel">
                                         <i class="fas fa-file-excel"></i>
                                     </vs-button>
@@ -145,9 +138,11 @@
                         </vs-tr>
                     </template>
                     <template #notFound>
-                        <div style="background-color: var(--iee-white) !important;">
-                            Sin resultados...
-                        </div>
+                        <div
+                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                                    <span class="noDataTitle">¡Sin Datos!</span>
+                                    </div>
                     </template>
                     <template #footer>
                         <vs-pagination v-model="page" color="dark"
@@ -226,13 +221,24 @@ export default {
                 loader.close();
             })
         },
+        formatoFecha(fechaStr) {
+        if (!fechaStr) return ''
+
+        // Parsear fecha en formato YYYY-MM-DD
+        const partes = fechaStr.split('-')
+        if (partes.length !== 3) return fechaStr
+
+        const anio = partes[0]
+        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+        const dia = partes[2]
+
+        const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const mesAbreviado = meses[mes] || ''
+
+        return `${dia} ${mesAbreviado} ${anio}`
+        },
         exportToExcel(id) {
             // Crear un nuevo loader
-            // const loading = this.$vs.loading({
-            //     type: 'points',
-            //     color: '#7D0CFF',
-            //     text: 'Generando archivo Excel...'
-            // });
             const loader = loading(this.$vs);
             loader.text = 'Generando archivo Excel...';
             // Crear un enlace temporal para la descarga

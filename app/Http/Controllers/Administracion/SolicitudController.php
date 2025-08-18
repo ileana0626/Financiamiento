@@ -473,9 +473,6 @@ class SolicitudController extends Controller
             // Obtener el segundo conjunto de resultados (partidos con representación)
             $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-            //Log::info('Partidos sin representación:', $partidosSinRep);
-            //Log::info('Partidos con representación:', $partidosConRep);
-
             $data = [
                 'calculo' => $calculoData,
                 'partidos_sin_rep' => $partidosSinRep,
@@ -483,10 +480,6 @@ class SolicitudController extends Controller
             ];
 
              Log::info('Datos preparados para la exportación:', $data);
-            
-            // Usar la clase FinanciamientoExport para generar el Excel
-            // return (new \App\Exports\CalculosFinanciamientoExport($data))
-            //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
             
             $filename = date('Y-m-d') . '_calculos_financiamiento' . '.xlsx';
                  // Retornamos la vista sin datos

@@ -274,33 +274,7 @@
                                     </vs-button>
                                 </div>
 
-                                <!-- <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="guardarSolicitud"
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-file-alt pr-2" style="font-size: 0.8125rem !important;"></i>Generar reporte
-                                        </div>
-                                    </vs-button>
-                                </div> -->
-
                             </div>
-
-
-                           <!--  <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'limpiar'+darkMode" @click.prevent="limpiarContrasena()">
-                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                    </div>
-                                </vs-button>      
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#595959'" :key="'pass'+darkMode" @click.prevent="accionPass()">
-                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                        <i class="fas fa-pencil-alt pr-2" style="font-size: 0.8125rem !important;"></i>Reestablecer contraseña
-                                    </div>
-                                </vs-button>                                
-                            </div>
- -->
-
                     </div>
                 </div>
             </div>
@@ -347,13 +321,6 @@ export default {
             errorAnio: '', // Para el mensaje de error de año fiscal
             errorFechaRecibido: '', // Para el mensaje de error de fecha de publicación de la UMA
             errorNumeroPadron: '', // Para el mensaje de error de número de personas en padrón electoral
-
-            // Variables de cache reactivas para evitar errores de javascript en la consola
-            // por calculos inec
-            /*_cachedFPAOP: null,
-            _cachedFPAOPFormatted: '',
-            _needsRecalculation: false,
-            */
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -516,11 +483,8 @@ export default {
                                 'cbPartidosPoliticosConRepr': this.formateaPartidosSeleccionadosConRepDB,
                                 'pp_sin_repr_siglas': this.formateaPartidosSeleccionadosSinRepSiglasDB,
                                 'pp_con_repr_siglas': this.formateaPartidosSeleccionadosConRepSiglasDB,
-                                
-                               //'nIdAuth': Auth.id(),
-                                // 'fAccion': fechaAccion,
+                            
                             });
-                            //console.log('Respuesta completa:', JSON.stringify(response.data, null, 2));
                             load.text = 'Registrando calculos...';
                             if (response.status === 200) {
                                 //Exito al guardar datos
@@ -568,46 +532,7 @@ export default {
                             methods.catchHandler(error, method[3], this.$router);c
                             return idGenerado;
                         }   
-                        /*    
-                            if (response.status === 200) {
-                                idSOLICITUD = response.data[0].p_new_id;
-                                console.log('idCaptura ', idSOLICITUD);
-                                return idSOLICITUD;
-                            }
-                        } catch (error) {
-                            const method = url.split('/');
-                            methods.catchHandler(error, method[3], this.$router);
-                            return idSOLICITUD;
-                        }*/
-
-                        /*const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1, '', this.tipoDoc, this.nOficio);
-                        // Registrar la solicitud
-                        load.text = 'Registrando solicitud...';
-                        const idSOLICITUD = await this.setRegistrarOficio(idARCHIVO, fechaAccion); */
-                        // Registrar las copias de conocimiento
-                        /* if (this.copiasConocimiento.length === 0) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Registrado correctamente',
-                                showConfirmButton: true,
-                                confirmButtonText: 'De acuerdo',
-                            }).then(result => {
-                                this.limpiarCampos();
-                            });
-                        } else {
-                            load.text = 'Registrando copias...';
-                            const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                            if (exitoCopias > 0) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Registrado correctamente',
-                                    showConfirmButton: true,
-                                    confirmButtonText: 'De acuerdo',
-                                }).then(result => {
-                                    this.limpiarCampos();
-                                });
-                            }
-                        } */
+                       
                         load.close();
                     }
                 });
@@ -734,13 +659,6 @@ export default {
      * @returns {number}
      */
     calculoFPAOPForm() {
-        /*if (!this._cachedFPAOP || this._needsRecalculation) {
-            this._cachedFPAOP = this.financiamientoAOPForm * 0.02;
-            this._needsRecalculation = false;
-        }
-        return this._cachedFPAOP;*/
-        // Validar primero para evitar cálculos innecesarios
-        
         return this.financiamientoAOPForm * 0.02;      
     },
     /**

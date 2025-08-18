@@ -60,7 +60,7 @@
                                     {{ tr.anioFiscal }}
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
-                                    {{ tr.fecha_pub }}
+                                    {{ formatoFecha(tr.fecha_pub) }}
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
                                     {{ formatCurrency(tr.uma) }}
@@ -155,7 +155,9 @@
                                 <!-- Montos globales -->
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
-                                    <vs-input v-model="monto30" type="text" placeholder="0.00" step="0.01" @click.native.stop/>
+                                    <vs-input v-model="monto30Input" 
+                                    @blur="formatear30"
+                                    type="text" placeholder="0.00" step="0.01" @click.native.stop/>
                                     <div class="danger-message">
                                         <template v-if="errorMonto30.length > 0">
                                             {{ errorMonto30 }}
@@ -164,7 +166,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (70%)</label>
-                                    <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
+                                    <vs-input v-model="monto70Input" 
+                                    @blur="formatear70"
+                                    type="text" placeholder="0.00" step="0.01" />
                                     <div class="danger-message">
                                         <template v-if="errorMonto70.length > 0">
                                             {{ errorMonto70 }}
@@ -329,7 +333,7 @@
                                         </vs-td>
                                     </vs-tr>
                                     <!-- Gran Total -->
-                                    <vs-tr class="font-weight-bold bg-dark text-white">
+                                    <vs-tr class="font-weight-bold text-white">
                                         <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
                                         <vs-td colspan="7" v-else>Gran total:</vs-td>
                                         <vs-td>
@@ -425,8 +429,10 @@ export default {
             //input2: '',
             //checkbox1: false,
             anio: '',
+            monto30Input: '',
             monto30: '',
             monto70: '',
+            monto70Input: '',
             //suma: '',
             colors: [
                 {
@@ -479,6 +485,22 @@ export default {
         formatCurrency(value) {
             return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
+        formatoFecha(fechaStr) {
+        if (!fechaStr) return ''
+
+        // Parsear fecha en formato YYYY-MM-DD
+        const partes = fechaStr.split('-')
+        if (partes.length !== 3) return fechaStr
+
+        const anio = partes[0]
+        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+        const dia = partes[2]
+
+        const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const mesAbreviado = meses[mes] || ''
+
+        return `${dia} ${mesAbreviado} ${anio}`
+        },
         getCalculos() {
             const loader = loading(this.$vs);
             loader.text = 'Cargando datos...';
@@ -509,18 +531,13 @@ export default {
         },
         abrirDialog(calculo_tr) {
             const loader = loading(this.$vs);
-
-            //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
             this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
             this.datosCalculoSeleccionado = {};
             this.Partidos_Sin_Representacion = [];
             this.Partidos_Con_Representacion = [];
             this.distribucionId = null; // resetea cada que se abra el Dialog
-            //this.monto30 = '';
-            //this.monto70 = '';
             this.limpiarCampos(); // 🧹
-            //console.log(calculo_tr.id);
             this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
             //Obtener los datos principales del Cálculo Financiero
@@ -529,7 +546,6 @@ export default {
                     'id': calculo_tr.id
                 }
             }).then(response => {
-                //console.log('Respuesta completa del servidor:', response);
                 debug('🐛 Datos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
@@ -542,8 +558,6 @@ export default {
                         // Variable temporarl en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
-                    //debug('🐛 Partidos_Con_Representacion:', this.Partidos_Con_Representacion);
-                    //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
@@ -621,6 +635,48 @@ export default {
 
             });
         },
+        formatear30() {
+            let valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
+
+            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
+            this.errorMonto30 = 'Ingrese un valor válido para UMA';
+            // this.errorMonto30 = true; // No es necesario por el mensaje
+            this.uma = null;
+            this.monto30Input = '';
+            } else {
+            //this.errorMonto30 = false; // No es necesario
+            this.errorMonto30 = '';
+            this.monto30 = valorNumerico;
+
+            this.monto30Input = valorNumerico.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            }
+        },
+        formatear70() {
+            let valorNumerico = parseFloat(this.monto70Input.toString().replace(/[^0-9.]/g, ''));
+
+            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
+            this.errorMonto70 = 'Ingrese un valor válido para UMA';
+            // this.errorMonto70 = true; // No es necesario por el mensaje
+            this.monto70 = null;
+            this.monto70Input = '';
+            } else {
+            //this.errorMonto70 = false; // No es necesario
+            this.errorMonto70 = '';
+            this.monto70 = valorNumerico;
+
+            this.monto70Input = valorNumerico.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            }
+        },
         guardarEdicion() {
             // Lógica para guardar edición (llamada axios)
             axios.put(`/api/calculos/${this.selectedCalculo.id}`, this.selectedCalculo)
@@ -649,10 +705,6 @@ export default {
                 // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
                 if( response.data && response.data.success && response.data.distribucion.length > 0){
                     this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-                    /*console.log('DataDistribucion: ', this.DataDistribucion);
-                    console.log('DataDistribucion type:', typeof this.DataDistribucion);
-                    console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
-                    */
                     this.distribucionId = this.DataDistribucion.id_calculo;
                     // Empieza a cargar los datos guardados
                     this.anio = this.DataDistribucion.anio_ejercicio;
@@ -661,18 +713,13 @@ export default {
                             .split(',')
                             .map(Number)
                             .filter(item => !isNaN(item));
-                        //console.log('Distribution array:', this.distribucion);
                     }
                     this.monto30 = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
-                    //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
-                    //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
                     this.monto70 = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
                     this.$nextTick(() => {
                         debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
                     });
-                    //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
-                    // ⚐ Habilita descargar archivo
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
@@ -734,10 +781,6 @@ export default {
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id || this.distribucionId;
-                        this.$vs.notification({ 
-                            color: 'success', 
-                            text: response.data.message || 'Distribución actualizada exitosamente' 
-                        });
                     } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
@@ -800,10 +843,13 @@ export default {
                 //await Promise.all(promesasSinRep);
 
                 // Notificación de éxito
-                this.$vs.notification({ 
-                    color: 'success', 
-                    text: 'Datos guardados correctamente' 
-                });
+                Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+                })
                 // HAbilita descargar archivo
                 this.descargar_disabled = true;
             } catch (error) {
@@ -1080,7 +1126,9 @@ export default {
          limpiarCampos() {
             this.anio = '',
             this.monto30 = '',
+            this.monto30Input = '',
             this.monto70 = '',
+            this.monto70Input = '',
             this.distribucion = [];
             this.opcionSelecionadaPorcentaje= '1'; //  Valor por defecto factorCalculo()
             this.descargar_disabled = true; // Deshabilita el botón de descargar

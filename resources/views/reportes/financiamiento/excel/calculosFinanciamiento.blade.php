@@ -7,14 +7,8 @@
 </head>
 <body>
     <div class="header">
-        {{-- <img src="{{ public_path('img/LOGO_NUEVO.png') }}" alt="Logo" style="width: 100px; height: auto;"> --}}
     </div>
     <table style="width: 100%; border-collapse: collapse; ">
-        {{-- <colgroup>
-            <col style="width: 100px">
-            <col style="width: 800px">
-            <col style="width: 200px">
-        </colgroup> --}}
         <thead>
             <tr>
                 <th colspan="3"></th>

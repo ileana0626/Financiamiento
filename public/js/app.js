@@ -4947,14 +4947,22 @@ __webpack_require__.r(__webpack_exports__);
         loader.close();
       });
     },
+    formatoFecha: function formatoFecha(fechaStr) {
+      if (!fechaStr) return '';
+
+      // Parsear fecha en formato YYYY-MM-DD
+      var partes = fechaStr.split('-');
+      if (partes.length !== 3) return fechaStr;
+      var anio = partes[0];
+      var mes = parseInt(partes[1], 10) - 1; // Meses van de 0 a 11
+      var dia = partes[2];
+      var meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+      var mesAbreviado = meses[mes] || '';
+      return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
+    },
     exportToExcel: function exportToExcel(id) {
       var _this3 = this;
       // Crear un nuevo loader
-      // const loading = this.$vs.loading({
-      //     type: 'points',
-      //     color: '#7D0CFF',
-      //     text: 'Generando archivo Excel...'
-      // });
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
       // Crear un enlace temporal para la descarga
@@ -5092,13 +5100,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       // Para el mensaje de error de fecha de publicación de la UMA
       errorNumeroPadron: '',
       // Para el mensaje de error de número de personas en padrón electoral
-
-      // Variables de cache reactivas para evitar errores de javascript en la consola
-      // por calculos inec
-      /*_cachedFPAOP: null,
-      _cachedFPAOPFormatted: '',
-      _needsRecalculation: false,
-      */
       pickerOptions: {
         disabledDate: function disabledDate(time) {
           return time.getTime() > Date.now();
@@ -5323,13 +5324,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                     'cbPartidosPoliticosConRepr': _this5.formateaPartidosSeleccionadosConRepDB,
                     'pp_sin_repr_siglas': _this5.formateaPartidosSeleccionadosSinRepSiglasDB,
                     'pp_con_repr_siglas': _this5.formateaPartidosSeleccionadosConRepSiglasDB
-
-                    //'nIdAuth': Auth.id(),
-                    // 'fAccion': fechaAccion,
                   });
                 case 8:
                   response = _context4.sent;
-                  //console.log('Respuesta completa:', JSON.stringify(response.data, null, 2));
                   load.text = 'Registrando calculos...';
                   if (response.status === 200) {
                     //Exito al guardar datos
@@ -5382,46 +5379,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   c;
                   return _context4.abrupt("return", idGenerado);
                 case 21:
-                  /*    
-                      if (response.status === 200) {
-                          idSOLICITUD = response.data[0].p_new_id;
-                          console.log('idCaptura ', idSOLICITUD);
-                          return idSOLICITUD;
-                      }
-                  } catch (error) {
-                      const method = url.split('/');
-                      methods.catchHandler(error, method[3], this.$router);
-                      return idSOLICITUD;
-                  }*/
-
-                  /*const idARCHIVO = await this.setSubirArchivoSolicitud(this.documentos.F1, '', this.tipoDoc, this.nOficio);
-                  // Registrar la solicitud
-                  load.text = 'Registrando solicitud...';
-                  const idSOLICITUD = await this.setRegistrarOficio(idARCHIVO, fechaAccion); */
-                  // Registrar las copias de conocimiento
-                  /* if (this.copiasConocimiento.length === 0) {
-                      Swal.fire({
-                          icon: 'success',
-                          title: 'Registrado correctamente',
-                          showConfirmButton: true,
-                          confirmButtonText: 'De acuerdo',
-                      }).then(result => {
-                          this.limpiarCampos();
-                      });
-                  } else {
-                      load.text = 'Registrando copias...';
-                      const exitoCopias = await this.setRegistrarCopiaCon(idSOLICITUD, fechaAccion);
-                      if (exitoCopias > 0) {
-                          Swal.fire({
-                              icon: 'success',
-                              title: 'Registrado correctamente',
-                              showConfirmButton: true,
-                              confirmButtonText: 'De acuerdo',
-                          }).then(result => {
-                              this.limpiarCampos();
-                          });
-                      }
-                  } */
                   load.close();
                 case 22:
                 case "end":
@@ -5547,13 +5504,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
      * @returns {number}
      */
     calculoFPAOPForm: function calculoFPAOPForm() {
-      /*if (!this._cachedFPAOP || this._needsRecalculation) {
-          this._cachedFPAOP = this.financiamientoAOPForm * 0.02;
-          this._needsRecalculation = false;
-      }
-      return this._cachedFPAOP;*/
-      // Validar primero para evitar cálculos innecesarios
-
       return this.financiamientoAOPForm * 0.02;
     },
     /**
@@ -11368,8 +11318,10 @@ var debug = function debug() {
       //input2: '',
       //checkbox1: false,
       anio: '',
+      monto30Input: '',
       monto30: '',
       monto70: '',
+      monto70Input: '',
       //suma: '',
       colors: [{
         color: 'warn'
@@ -11447,6 +11399,19 @@ var debug = function debug() {
     formatCurrency: function formatCurrency(value) {
       return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
+    formatoFecha: function formatoFecha(fechaStr) {
+      if (!fechaStr) return '';
+
+      // Parsear fecha en formato YYYY-MM-DD
+      var partes = fechaStr.split('-');
+      if (partes.length !== 3) return fechaStr;
+      var anio = partes[0];
+      var mes = parseInt(partes[1], 10) - 1; // Meses van de 0 a 11
+      var dia = partes[2];
+      var meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+      var mesAbreviado = meses[mes] || '';
+      return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
+    },
     getCalculos: function getCalculos() {
       var _this4 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11479,18 +11444,13 @@ var debug = function debug() {
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
-
-      //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
       this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = [];
       this.Partidos_Con_Representacion = [];
       this.distribucionId = null; // resetea cada que se abra el Dialog
-      //this.monto30 = '';
-      //this.monto70 = '';
       this.limpiarCampos(); // 🧹
-      //console.log(calculo_tr.id);
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
       //Obtener los datos principales del Cálculo Financiero
@@ -11500,7 +11460,6 @@ var debug = function debug() {
         }
       }).then(function (response) {
         var _response$data3;
-        //console.log('Respuesta completa del servidor:', response);
         debug('🐛 Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
@@ -11514,8 +11473,6 @@ var debug = function debug() {
               errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
           });
-          //debug('🐛 Partidos_Con_Representacion:', this.Partidos_Con_Representacion);
-          //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
@@ -11604,6 +11561,46 @@ var debug = function debug() {
         }, _callee3);
       }))();
     },
+    formatear30: function formatear30() {
+      var valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        // Si no es un número recetea valores
+        this.errorMonto30 = 'Ingrese un valor válido para UMA';
+        // this.errorMonto30 = true; // No es necesario por el mensaje
+        this.uma = null;
+        this.monto30Input = '';
+      } else {
+        //this.errorMonto30 = false; // No es necesario
+        this.errorMonto30 = '';
+        this.monto30 = valorNumerico;
+        this.monto30Input = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
+    formatear70: function formatear70() {
+      var valorNumerico = parseFloat(this.monto70Input.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        // Si no es un número recetea valores
+        this.errorMonto70 = 'Ingrese un valor válido para UMA';
+        // this.errorMonto70 = true; // No es necesario por el mensaje
+        this.monto70 = null;
+        this.monto70Input = '';
+      } else {
+        //this.errorMonto70 = false; // No es necesario
+        this.errorMonto70 = '';
+        this.monto70 = valorNumerico;
+        this.monto70Input = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
     guardarEdicion: function guardarEdicion() {
       var _this7 = this;
       // Lógica para guardar edición (llamada axios)
@@ -11652,10 +11649,6 @@ var debug = function debug() {
                 break;
               }
               _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-              /*console.log('DataDistribucion: ', this.DataDistribucion);
-              console.log('DataDistribucion type:', typeof this.DataDistribucion);
-              console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
-              */
               _this8.distribucionId = _this8.DataDistribucion.id_calculo;
               // Empieza a cargar los datos guardados
               _this8.anio = _this8.DataDistribucion.anio_ejercicio;
@@ -11663,19 +11656,13 @@ var debug = function debug() {
                 _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
                   return !isNaN(item);
                 });
-                //console.log('Distribution array:', this.distribucion);
               }
-
               _this8.monto30 = _this8.formatearDecimal(_this8.DataDistribucion.monto_30_por_ciento);
-              //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
-              //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
               _this8.monto70 = _this8.formatearDecimal(_this8.DataDistribucion.monto_70_por_ciento);
               _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']);
               _this8.$nextTick(function () {
                 debug('🐛 Factor de porcentaje: ', _this8.factorCalculo, 'Opción seleccionada: ', _this8.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this8.opcionSelecionadaPorcentaje));
               });
-              //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
-              // ⚐ Habilita descargar archivo
               if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
                 _this8.descargar_disabled = false;
               }
@@ -11757,7 +11744,7 @@ var debug = function debug() {
               console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
               _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 24;
+                _context5.next = 23;
                 break;
               }
               _context5.next = 13;
@@ -11766,30 +11753,26 @@ var debug = function debug() {
               response = _context5.sent;
               console.log('Respuesta del servidor (actualizar):', response.data);
               if (!(response.data && response.data.success)) {
-                _context5.next = 20;
+                _context5.next = 19;
                 break;
               }
               _this9.distribucionId = response.data.id || _this9.distribucionId;
-              _this9.$vs.notification({
-                color: 'success',
-                text: response.data.message || 'Distribución actualizada exitosamente'
-              });
-              _context5.next = 22;
+              _context5.next = 21;
               break;
-            case 20:
+            case 19:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 22:
-              _context5.next = 35;
+            case 21:
+              _context5.next = 34;
               break;
-            case 24:
-              _context5.next = 26;
+            case 23:
+              _context5.next = 25;
               return axios.post(url, datos);
-            case 26:
+            case 25:
               _response = _context5.sent;
               console.log('Respuesta del servidor (guardar):', _response.data);
               if (!(_response.data && _response.data.success)) {
-                _context5.next = 33;
+                _context5.next = 32;
                 break;
               }
               _this9.distribucionId = _response.data.id;
@@ -11797,121 +11780,124 @@ var debug = function debug() {
                 color: 'success',
                 text: _response.data.message || 'Distribución guardada exitosamente'
               });
-              _context5.next = 35;
+              _context5.next = 34;
               break;
-            case 33:
+            case 32:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 35:
+            case 34:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 37;
+              _context5.prev = 36;
               _iterator.s();
-            case 39:
+            case 38:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 55;
+                _context5.next = 54;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 41;
-              _context5.next = 44;
+              _context5.prev = 40;
+              _context5.next = 43;
               return axios.post(url, partido);
-            case 44:
+            case 43:
               _response2 = _context5.sent;
               if (_response2.data && _response2.data.ids) {
                 console.log('PPCR actualizado: ' + _response2.data.ids);
               }
-              _context5.next = 53;
+              _context5.next = 52;
               break;
-            case 48:
-              _context5.prev = 48;
-              _context5.t0 = _context5["catch"](41);
+            case 47:
+              _context5.prev = 47;
+              _context5.t0 = _context5["catch"](40);
               console.error('Error al actualizar partido PPCR: ' + partido.siglas, _context5.t0);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
-            case 53:
-              _context5.next = 39;
+            case 52:
+              _context5.next = 38;
               break;
-            case 55:
-              _context5.next = 60;
+            case 54:
+              _context5.next = 59;
               break;
-            case 57:
-              _context5.prev = 57;
-              _context5.t1 = _context5["catch"](37);
+            case 56:
+              _context5.prev = 56;
+              _context5.t1 = _context5["catch"](36);
               _iterator.e(_context5.t1);
-            case 60:
-              _context5.prev = 60;
+            case 59:
+              _context5.prev = 59;
               _iterator.f();
-              return _context5.finish(60);
-            case 63:
+              return _context5.finish(59);
+            case 62:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesas);
               // Actualizamos la tabla de partidos políticos sin representación   
               //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 65;
+              _context5.prev = 64;
               _iterator2.s();
-            case 67:
+            case 66:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 83;
+                _context5.next = 82;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 69;
-              _context5.next = 72;
+              _context5.prev = 68;
+              _context5.next = 71;
               return axios.post(url, _partido);
-            case 72:
+            case 71:
               _response3 = _context5.sent;
               if (_response3.data && _response3.data.ids) {
                 console.log('PPSR actualizado: ' + _response3.data.ids);
               }
-              _context5.next = 81;
+              _context5.next = 80;
               break;
-            case 76:
-              _context5.prev = 76;
-              _context5.t2 = _context5["catch"](69);
+            case 75:
+              _context5.prev = 75;
+              _context5.t2 = _context5["catch"](68);
               console.error('Error al actualizar partido PPSR: ' + _partido.siglas, _context5.t2);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 81:
-              _context5.next = 67;
+            case 80:
+              _context5.next = 66;
               break;
-            case 83:
-              _context5.next = 88;
+            case 82:
+              _context5.next = 87;
               break;
-            case 85:
-              _context5.prev = 85;
-              _context5.t3 = _context5["catch"](65);
+            case 84:
+              _context5.prev = 84;
+              _context5.t3 = _context5["catch"](64);
               _iterator2.e(_context5.t3);
-            case 88:
-              _context5.prev = 88;
+            case 87:
+              _context5.prev = 87;
               _iterator2.f();
-              return _context5.finish(88);
-            case 91:
+              return _context5.finish(87);
+            case 90:
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesasSinRep);
 
               // Notificación de éxito
-              _this9.$vs.notification({
-                color: 'success',
-                text: 'Datos guardados correctamente'
+              Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
               });
               // HAbilita descargar archivo
               _this9.descargar_disabled = true;
-              _context5.next = 101;
+              _context5.next = 100;
               break;
-            case 95:
-              _context5.prev = 95;
+            case 94:
+              _context5.prev = 94;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11921,15 +11907,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 101:
-              _context5.prev = 101;
+            case 100:
+              _context5.prev = 100;
               loader.close();
-              return _context5.finish(101);
-            case 104:
+              return _context5.finish(100);
+            case 103:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 95, 101, 104], [37, 57, 60, 63], [41, 48], [65, 85, 88, 91], [69, 76]]);
+        }, _callee5, null, [[9, 94, 100, 103], [36, 56, 59, 62], [40, 47], [64, 84, 87, 90], [68, 75]]);
       }))();
     },
     /**
@@ -12191,7 +12177,7 @@ var debug = function debug() {
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
-      this.anio = '', this.monto30 = '', this.monto70 = '', this.distribucion = [];
+      this.anio = '', this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.monto70Input = '', this.distribucion = [];
       this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
       this.descargar_disabled = true; // Deshabilita el botón de descargar
 
@@ -19436,7 +19422,7 @@ var render = function render() {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(tr.anioFiscal) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                              " + _vm._s(tr.fecha_pub ? _vm.formatDateToDMY(tr.fecha_pub) : "") + "\n                          ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                              " + _vm._s(_vm.formatoFecha(tr.fecha_pub)) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
@@ -19492,10 +19478,19 @@ var render = function render() {
       key: "notFound",
       fn: function fn() {
         return [_c("div", {
+          staticClass: "d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4"
+        }, [_c("img", {
+          staticClass: "imgNoData",
           staticStyle: {
-            "background-color": "var(--iee-white) !important"
+            width: "30%"
+          },
+          attrs: {
+            src: __webpack_require__(/*! ../ver/images/no_data.webp */ "./resources/js/components/modulos/ver/images/no_data.webp"),
+            alt: "Sin resultados"
           }
-        }, [_vm._v("\n                          Sin resultados...\n                      ")])];
+        }), _vm._v(" "), _c("span", {
+          staticClass: "noDataTitle"
+        }, [_vm._v("¡Sin Datos!")])])];
       },
       proxy: true
     }, {
@@ -19597,7 +19592,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                       " + _vm._s(_vm.errorAnio) + "\n                                   ")];
+        return [_vm._v("\n                                    " + _vm._s(_vm.errorAnio) + "\n                                ")];
       },
       proxy: true
     } : null], null, true),
@@ -19615,7 +19610,7 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n                                       " + _vm._s(item.anio) + "\n                                   ")]);
+    }, [_vm._v("\n                                    " + _vm._s(item.anio) + "\n                                ")]);
   })], 2) : _vm._e()], 1), _vm._v(" "), _c("div", {
     staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3"
   }, [_c("label", {
@@ -19636,7 +19631,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "danger-message"
-  }, [_vm.errorFechaRecibido.length > 0 ? [_vm._v("\n                                           " + _vm._s(_vm.errorFechaRecibido) + "\n                                       ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
+  }, [_vm.errorFechaRecibido.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.errorFechaRecibido) + "\n                                    ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-3 pb-3"
   }, [_c("label", {
     staticClass: "col-form-label",
@@ -19660,7 +19655,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "danger-message"
-  }, [_vm.errorUMA.length > 0 ? [_vm._v("\n                                           " + _vm._s(_vm.errorUMA) + "\n                                       ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
+  }, [_vm.errorUMA.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.errorUMA) + "\n                                    ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3"
   }, [_c("label", {
     staticClass: "col-form-label"
@@ -19692,7 +19687,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "danger-message"
-  }, [_vm.errorNumeroPadron.length > 0 ? [_vm._v("\n                                           " + _vm._s(_vm.errorNumeroPadron) + "\n                                       ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
+  }, [_vm.errorNumeroPadron.length > 0 ? [_vm._v("\n                                        " + _vm._s(_vm.errorNumeroPadron) + "\n                                    ")] : _vm._e()], 2)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3"
   }, [_c("label", {
     staticClass: "col-form-label"
@@ -19723,7 +19718,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorPartidosPoliticos_sinRepr.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                               " + _vm._s(_vm.errorPartidosPoliticos_sinRepr) + "\n                                           ")];
+        return [_vm._v("\n                                            " + _vm._s(_vm.errorPartidosPoliticos_sinRepr) + "\n                                        ")];
       },
       proxy: true
     } : null], null, true),
@@ -19741,7 +19736,7 @@ var render = function render() {
         label: item.siglas,
         value: item.id
       }
-    }, [_vm._v("\n                                               " + _vm._s(item.siglas) + "\n                                           ")]);
+    }, [_vm._v("\n                                            " + _vm._s(item.siglas) + "\n                                        ")]);
   })], 2) : _vm._e()], 1)])]), _vm._v(" "), _c("div", {
     staticClass: "row px-4"
   }, [_c("div", {
@@ -19824,7 +19819,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorPartidosPoliticos_conRepr.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                               " + _vm._s(_vm.errorPartidosPoliticos_conRepr) + "\n                                           ")];
+        return [_vm._v("\n                                            " + _vm._s(_vm.errorPartidosPoliticos_conRepr) + "\n                                        ")];
       },
       proxy: true
     } : null], null, true),
@@ -19842,7 +19837,7 @@ var render = function render() {
         label: item.siglas,
         value: item.id
       }
-    }, [_vm._v("\n                                               " + _vm._s(item.siglas) + "\n                                           ")]);
+    }, [_vm._v("\n                                            " + _vm._s(item.siglas) + "\n                                        ")]);
   })], 2) : _vm._e()], 1)]), _vm._v(" "), _c("div", {
     staticClass: "row px-4"
   }, [_c("div", {
@@ -19921,7 +19916,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "0.8125rem !important"
     }
-  }), _vm._v("\n                                           Guardar\n                                       ")])])], 1), _vm._v(" "), _c("div", {
+  }), _vm._v("\n                                        Guardar\n                                    ")])])], 1), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("vs-button", {
     key: "limpiar" + _vm.darkMode,
@@ -19948,7 +19943,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "0.8125rem !important"
     }
-  }), _vm._v("Limpiar\n                                       ")])])], 1)])])])])])]);
+  }), _vm._v("Limpiar\n                                    ")])])], 1)])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -27216,7 +27211,7 @@ var render = function render() {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                                " + _vm._s(tr.anioFiscal) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(tr.fecha_pub) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(_vm.formatoFecha(tr.fecha_pub)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                                " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
@@ -27392,17 +27387,20 @@ var render = function render() {
       placeholder: "0.00",
       step: "0.01"
     },
+    on: {
+      blur: _vm.formatear30
+    },
     nativeOn: {
       click: function click($event) {
         $event.stopPropagation();
       }
     },
     model: {
-      value: _vm.monto30,
+      value: _vm.monto30Input,
       callback: function callback($$v) {
-        _vm.monto30 = $$v;
+        _vm.monto30Input = $$v;
       },
-      expression: "monto30"
+      expression: "monto30Input"
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "danger-message"
@@ -27414,12 +27412,15 @@ var render = function render() {
       placeholder: "0.00",
       step: "0.01"
     },
+    on: {
+      blur: _vm.formatear70
+    },
     model: {
-      value: _vm.monto70,
+      value: _vm.monto70Input,
       callback: function callback($$v) {
-        _vm.monto70 = $$v;
+        _vm.monto70Input = $$v;
       },
-      expression: "monto70"
+      expression: "monto70Input"
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "danger-message"
@@ -27661,7 +27662,7 @@ var render = function render() {
             colspan: 1
           }
         }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.totalVotos)) + "\n                                    ")]) : _vm._e()], 1), _vm._v(" "), _c("vs-tr", {
-          staticClass: "font-weight-bold bg-dark text-white"
+          staticClass: "font-weight-bold text-white"
         }, [!_vm.distribucion.includes(2) ? _c("vs-td", {
           attrs: {
             colspan: "8"
@@ -27673,7 +27674,7 @@ var render = function render() {
         }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                    ")])], 1)];
       },
       proxy: true
-    }], null, false, 2855224768)
+    }], null, false, 3561847156)
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {
@@ -232308,6 +232309,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/modulos/ver/images/no_data.webp":
+/*!*****************************************************************!*\
+  !*** ./resources/js/components/modulos/ver/images/no_data.webp ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/no_data.webp?51bc1f979c00a8a513e85f4298fa0827";
+
+/***/ }),
+
 /***/ "./resources/js/components/modulos/ver/indexSolicitudes.vue":
 /*!******************************************************************!*\
   !*** ./resources/js/components/modulos/ver/indexSolicitudes.vue ***!
@@ -233445,7 +233457,7 @@ var formatDateToDMYWithMonthName = function formatDateToDMYWithMonthName(dateStr
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
