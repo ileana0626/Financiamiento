@@ -121,7 +121,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 // Establecer zoom al 85%
                 $sheet->getDelegate()->getParent()->getActiveSheet()->getSheetView()->setZoomScale(85);
                 
-                Log::info('Anchos de columna configurados', [
+                /*Log::info('Anchos de columna configurados', [
                     'ancho_A' => $sheet->getDelegate()->getColumnDimension('A')->getWidth(),
                     'ancho_B' => $sheet->getDelegate()->getColumnDimension('B')->getWidth(),
                     'ancho_C' => $sheet->getDelegate()->getColumnDimension('C')->getWidth(),
@@ -131,7 +131,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     'ancho_G' => $sheet->getDelegate()->getColumnDimension('G')->getWidth(),
                     'ancho_H' => $sheet->getDelegate()->getColumnDimension('H')->getWidth(),
                     'ancho_I' => $sheet->getDelegate()->getColumnDimension('I')->getWidth()
-                ]);
+                ]);*/
 
                 // Aplicar bordes solo a celdas con contenido
                 $highestRow = $sheet->getHighestRow();
