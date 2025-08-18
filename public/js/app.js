@@ -4875,6 +4875,8 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_formatters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/formatters */ "./resources/js/utils/formatters.js");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -4905,6 +4907,8 @@ __webpack_require__.r(__webpack_exports__);
     this.getCalculos();
   },
   methods: {
+    formatDateToDMY: _utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatDateToDMY"],
+    // Funciones importadas
     /*
     * Formatea un número con separadores de miles y decimales
     */
@@ -11343,6 +11347,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
  * 🐛 Función para depuración development
  * @param {...any} args - Uno o más mensajes a mostrar en consola
  * @example
+ * debug('Mensaje de prueba', {data: 123});
  */
 var debug = function debug() {
   if (true) {
@@ -11369,6 +11374,9 @@ var debug = function debug() {
       max: 10,
       // Dialog
       active: false,
+      //input1: '',
+      //input2: '',
+      //checkbox1: false,
       anio: '',
       monto30: '',
       monto70: '',
@@ -11386,6 +11394,8 @@ var debug = function debug() {
       errorDistribucion: '',
       errorMonto30: '',
       errorMonto70: '',
+      //errorPartidosPoliticos_conRepr: '',
+      //errorPorcentajeVotacion: '',
       descargar_disabled: true // true: disabled | false: enabled
     };
   },
@@ -11447,40 +11457,6 @@ var debug = function debug() {
     formatCurrency: function formatCurrency(value) {
       return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
-    formatearMonto: function formatearMonto() {
-      var valorNumerico = parseFloat(this.monto30.toString().replace(/[^0-9.]/g, ''));
-      if (isNaN(valorNumerico)) {
-        // Si no es un número recetea valores
-        this.errorMonto30 = 'Ingrese un valor válido para UMA';
-        this.monto30 = '';
-      } else {
-        //this.errorUMA = false; // No es necesario
-        this.errorMonto30 = '';
-        this.monto30 = valorNumerico.toLocaleString('es-MX', {
-          style: 'currency',
-          currency: 'MXN',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-    },
-    formatearMonto70: function formatearMonto70() {
-      var valorNumerico = parseFloat(this.monto70.toString().replace(/[^0-9.]/g, ''));
-      if (isNaN(valorNumerico)) {
-        // Si no es un número recetea valores
-        this.errorMonto70 = 'Ingrese un valor válido para UMA';
-        this.monto70 = '';
-      } else {
-        //this.errorUMA = false; // No es necesario
-        this.errorMonto70 = '';
-        this.monto70 = valorNumerico.toLocaleString('es-MX', {
-          style: 'currency',
-          currency: 'MXN',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-    },
     getCalculos: function getCalculos() {
       var _this4 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11512,15 +11488,20 @@ var debug = function debug() {
     },
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
-      this.limpiarCampos();
-      this.active = true; // activa el modal
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+
+      //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
       this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
       this.datosCalculoSeleccionado = {};
       this.Partidos_Sin_Representacion = [];
       this.Partidos_Con_Representacion = [];
       this.distribucionId = null; // resetea cada que se abra el Dialog
+      //this.monto30 = '';
+      //this.monto70 = '';
+      this.limpiarCampos(); // 🧹
+      //console.log(calculo_tr.id);
+      this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
       //Obtener los datos principales del Cálculo Financiero
       axios.get(url, {
@@ -11529,6 +11510,7 @@ var debug = function debug() {
         }
       }).then(function (response) {
         var _response$data3;
+        //console.log('Respuesta completa del servidor:', response);
         debug('🐛 Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
@@ -11542,6 +11524,8 @@ var debug = function debug() {
               errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
           });
+          //debug('🐛 Partidos_Con_Representacion:', this.Partidos_Con_Representacion);
+          //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
@@ -11551,6 +11535,7 @@ var debug = function debug() {
         // Cargando datos de Distribución
         _this5.cargarDistribucion();
       })["catch"](function (error) {
+        console.error('Error al cargar detalles del cálculo', error);
         _this5.$vs.notification({
           title: 'Error',
           text: 'Error al cargar los detalles del cálculo',
@@ -11562,11 +11547,6 @@ var debug = function debug() {
         loader.close();
         //debug('🐛 Finalizado !');
       });
-    },
-    onDialogClose: function onDialogClose(isOpen) {
-      if (!isOpen) {
-        this.limpiarCampos();
-      }
     },
     onChangeDistribucion: function onChangeDistribucion(value) {
       this.distribucion = value;
@@ -11682,6 +11662,10 @@ var debug = function debug() {
                 break;
               }
               _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+              /*console.log('DataDistribucion: ', this.DataDistribucion);
+              console.log('DataDistribucion type:', typeof this.DataDistribucion);
+              console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
+              */
               _this8.distribucionId = _this8.DataDistribucion.id_calculo;
               // Empieza a cargar los datos guardados
               _this8.anio = _this8.DataDistribucion.anio_ejercicio;
@@ -11689,13 +11673,19 @@ var debug = function debug() {
                 _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
                   return !isNaN(item);
                 });
+                //console.log('Distribution array:', this.distribucion);
               }
+
               _this8.monto30 = _this8.formatearDecimal(_this8.DataDistribucion.monto_30_por_ciento);
+              //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
+              //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
               _this8.monto70 = _this8.formatearDecimal(_this8.DataDistribucion.monto_70_por_ciento);
               _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']);
               _this8.$nextTick(function () {
                 debug('🐛 Factor de porcentaje: ', _this8.factorCalculo, 'Opción seleccionada: ', _this8.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this8.opcionSelecionadaPorcentaje));
               });
+              //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
+              // ⚐ Habilita descargar archivo
               if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
                 _this8.descargar_disabled = false;
               }
@@ -11706,11 +11696,12 @@ var debug = function debug() {
               debug('❌ No se encontro distribución, ➜ continua normalmente...');
               return _context4.abrupt("return");
             case 24:
-              _context4.next = 31;
+              _context4.next = 32;
               break;
             case 26:
               _context4.prev = 26;
               _context4.t0 = _context4["catch"](4);
+              console.error('Error al cargar distribución', _context4.t0);
               _this8.$vs.notification({
                 title: 'Error',
                 text: 'Error al cargar la distribución',
@@ -11718,15 +11709,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 31:
-              _context4.prev = 31;
+            case 32:
+              _context4.prev = 32;
               loader.close();
-              return _context4.finish(31);
-            case 34:
+              return _context4.finish(32);
+            case 35:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[4, 26, 31, 34]]);
+        }, _callee4, null, [[4, 26, 32, 35]]);
       }))();
     },
     guardarDistribucion: function guardarDistribucion() {
@@ -11773,143 +11764,150 @@ var debug = function debug() {
                 p_subtotal_D_candidatura: _this9.candidatura
               };
               _this9.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
-              _context5.prev = 8;
+              console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
+              _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 22;
+                _context5.next = 24;
                 break;
               }
-              _context5.next = 12;
+              _context5.next = 13;
               return axios.post(url, datos);
-            case 12:
+            case 13:
               response = _context5.sent;
-              if (!(response.data && response.data.id)) {
-                _context5.next = 18;
+              console.log('Respuesta del servidor (actualizar):', response.data);
+              if (!(response.data && response.data.success)) {
+                _context5.next = 20;
                 break;
               }
-              _this9.distribucionId = response.data.id;
+              _this9.distribucionId = response.data.id || _this9.distribucionId;
               _this9.$vs.notification({
                 color: 'success',
-                text: 'Distribución actualizada'
+                text: response.data.message || 'Distribución actualizada exitosamente'
               });
-              _context5.next = 20;
+              _context5.next = 22;
               break;
-            case 18:
-              // Mostrar mensaje de error del servidor si existe
+            case 20:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 20:
-              _context5.next = 32;
-              break;
             case 22:
-              _context5.next = 24;
-              return axios.post(url, datos);
+              _context5.next = 35;
+              break;
             case 24:
+              _context5.next = 26;
+              return axios.post(url, datos);
+            case 26:
               _response = _context5.sent;
-              if (!(_response.data && _response.data.id)) {
-                _context5.next = 30;
+              console.log('Respuesta del servidor (guardar):', _response.data);
+              if (!(_response.data && _response.data.success)) {
+                _context5.next = 33;
                 break;
               }
               _this9.distribucionId = _response.data.id;
               _this9.$vs.notification({
                 color: 'success',
-                text: 'Distribución guardada'
+                text: _response.data.message || 'Distribución guardada exitosamente'
               });
-              _context5.next = 32;
+              _context5.next = 35;
               break;
-            case 30:
-              // Mostrar mensaje de error del servidor si existe
+            case 33:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 32:
+            case 35:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 34;
+              _context5.prev = 37;
               _iterator.s();
-            case 36:
+            case 39:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 51;
+                _context5.next = 55;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 38;
-              _context5.next = 41;
+              _context5.prev = 41;
+              _context5.next = 44;
               return axios.post(url, partido);
-            case 41:
+            case 44:
               _response2 = _context5.sent;
-              if (_response2.data && _response2.data.ids) {}
-              _context5.next = 49;
+              if (_response2.data && _response2.data.ids) {
+                console.log('PPCR actualizado: ' + _response2.data.ids);
+              }
+              _context5.next = 53;
               break;
-            case 45:
-              _context5.prev = 45;
-              _context5.t0 = _context5["catch"](38);
+            case 48:
+              _context5.prev = 48;
+              _context5.t0 = _context5["catch"](41);
+              console.error('Error al actualizar partido PPCR: ' + partido.siglas, _context5.t0);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
-            case 49:
-              _context5.next = 36;
-              break;
-            case 51:
-              _context5.next = 56;
-              break;
             case 53:
-              _context5.prev = 53;
-              _context5.t1 = _context5["catch"](34);
+              _context5.next = 39;
+              break;
+            case 55:
+              _context5.next = 60;
+              break;
+            case 57:
+              _context5.prev = 57;
+              _context5.t1 = _context5["catch"](37);
               _iterator.e(_context5.t1);
-            case 56:
-              _context5.prev = 56;
+            case 60:
+              _context5.prev = 60;
               _iterator.f();
-              return _context5.finish(56);
-            case 59:
+              return _context5.finish(60);
+            case 63:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesas);
               // Actualizamos la tabla de partidos políticos sin representación   
               //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 61;
+              _context5.prev = 65;
               _iterator2.s();
-            case 63:
+            case 67:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 78;
+                _context5.next = 83;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 65;
-              _context5.next = 68;
+              _context5.prev = 69;
+              _context5.next = 72;
               return axios.post(url, _partido);
-            case 68:
-              _response3 = _context5.sent;
-              if (_response3.data && _response3.data.ids) {}
-              _context5.next = 76;
-              break;
             case 72:
-              _context5.prev = 72;
-              _context5.t2 = _context5["catch"](65);
+              _response3 = _context5.sent;
+              if (_response3.data && _response3.data.ids) {
+                console.log('PPSR actualizado: ' + _response3.data.ids);
+              }
+              _context5.next = 81;
+              break;
+            case 76:
+              _context5.prev = 76;
+              _context5.t2 = _context5["catch"](69);
+              console.error('Error al actualizar partido PPSR: ' + _partido.siglas, _context5.t2);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 76:
-              _context5.next = 63;
+            case 81:
+              _context5.next = 67;
               break;
-            case 78:
-              _context5.next = 83;
-              break;
-            case 80:
-              _context5.prev = 80;
-              _context5.t3 = _context5["catch"](61);
-              _iterator2.e(_context5.t3);
             case 83:
-              _context5.prev = 83;
+              _context5.next = 88;
+              break;
+            case 85:
+              _context5.prev = 85;
+              _context5.t3 = _context5["catch"](65);
+              _iterator2.e(_context5.t3);
+            case 88:
+              _context5.prev = 88;
               _iterator2.f();
-              return _context5.finish(83);
-            case 86:
+              return _context5.finish(88);
+            case 91:
               // Esperar a que todas las peticiones terminen
               //await Promise.all(promesasSinRep);
 
@@ -11920,11 +11918,12 @@ var debug = function debug() {
               });
               // HAbilita descargar archivo
               _this9.descargar_disabled = true;
-              _context5.next = 95;
+              _context5.next = 101;
               break;
-            case 90:
-              _context5.prev = 90;
-              _context5.t4 = _context5["catch"](8);
+            case 95:
+              _context5.prev = 95;
+              _context5.t4 = _context5["catch"](9);
+              console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
                 title: 'Error',
                 color: 'danger',
@@ -11932,15 +11931,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 95:
-              _context5.prev = 95;
+            case 101:
+              _context5.prev = 101;
               loader.close();
-              return _context5.finish(95);
-            case 98:
+              return _context5.finish(101);
+            case 104:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[8, 90, 95, 98], [34, 53, 56, 59], [38, 45], [61, 80, 83, 86], [65, 72]]);
+        }, _callee5, null, [[9, 95, 101, 104], [37, 57, 60, 63], [41, 48], [65, 85, 88, 91], [69, 76]]);
       }))();
     },
     /**
@@ -12017,7 +12016,7 @@ var debug = function debug() {
           this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'danger'
+            color: 'warning'
           });
         }
       } else if (operacion === 'restar') {
@@ -12034,10 +12033,12 @@ var debug = function debug() {
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+      //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
       return monto * porcentaje / totalPorcentajes;
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);
+      //console.log('B. Monto con ajuste:', {base, ajuste});
       return base + (ajuste || 0);
     },
     calcularMontoC: function calcularMontoC(partido) {
@@ -12079,21 +12080,6 @@ var debug = function debug() {
       this.Partidos_Sin_Representacion.forEach(function (partido) {
         partido.D_monto_2_por_ciento = _this11.calcularMontoD_ppsr(partido);
       });
-    },
-    formatoFecha: function formatoFecha(fechaStr) {
-      if (!fechaStr) return '';
-
-      // Parsear fecha en formato DD/MM/YYYY
-      var partes = fechaStr.split('/');
-      if (partes.length !== 3) return fechaStr;
-      var dia = partes[0];
-      var mes = parseInt(partes[1], 10) - 1; // meses van de 0 a 11
-      var anio = partes[2];
-
-      // Mapeo de meses abreviados en español
-      var meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-      var mesAbreviado = meses[mes] || '';
-      return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
     },
     /*
     * Formatea a moneda
@@ -12140,8 +12126,35 @@ var debug = function debug() {
       var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
       partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
       partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
+
+      /*
+      if (!isNaN(valorNumerico)) {
+          //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
+          partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
+          partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
+          
+      } else { // Si no es un número recetea valores
+          partido.porcentaje_votacion = 0.00000;
+          partido.inputPorcentaje = '0.00000 %';
+      }
+      */
     },
     /**
+     * Valida si un valor es un número decimal válido
+     * @param {string|number} value - Valor a validar
+     * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
+     * @returns {boolean} - true si es válido, false si no
+     */
+    validarDecimal: function validarDecimal(value) {
+      var maxDecimals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+      if (value === '' || value === null || value === undefined) {
+        return false;
+      }
+
+      // Expresión regular para validar números decimales
+      var regex = new RegExp("^\\d+(\\.\\d{1,".concat(maxDecimals, "})?$"));
+      return regex.test(String(value).replace(',', '.'));
+    },
     /**
      * ✔ Validar campos
      * @returns {boolean}
@@ -12153,11 +12166,11 @@ var debug = function debug() {
         this.errorAnio = 'El campo año es obligatorio';
         this.error = true;
       }
-      if (this.monto30 === '') {
+      if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
         this.errorMonto30 = 'Ingrese un monto 30% válido';
         this.error = true;
       }
-      if (this.monto70 === '') {
+      if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
         this.errorMonto70 = 'Ingrese un monto 70% válido';
         this.error = true;
       }
@@ -12167,7 +12180,16 @@ var debug = function debug() {
       }
       // Validar que llenen todos los campos
       this.Partidos_Con_Representacion.forEach(function (partido) {
-        if (partido.inputPorcentaje === '') {
+        /*
+        console.log('Validating:', {
+            siglas: partido.siglas,
+            input: partido.inputPorcentaje,
+            type: typeof partido.inputPorcentaje,
+            isEmpty: partido.inputPorcentaje === '',
+            isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
+        });
+        */
+        if (partido.inputPorcentaje === '' || !_this12.validarDecimal(partido.porcentaje_votacion, 5)) {
           partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
           _this12.error = true;
         }
@@ -19425,6 +19447,7 @@ var render = function render() {
           }, [_vm._v("\n                              " + _vm._s(tr.anioFiscal) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(_vm.formatoFecha(tr.fecha_pub)) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                              " + _vm._s(tr.fecha_pub ? _vm.formatDateToDMY(tr.fecha_pub) : "") + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                              " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                          ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
@@ -27165,7 +27188,7 @@ var render = function render() {
     staticStyle: {
       "background-color": "var(--iee-white)"
     }
-  }, [_c("div", [_vm.NewlistCalculos && _vm.NewlistCalculos.length ? _c("vs-table", {
+  }, [_c("div", [_c("vs-table", {
     staticClass: "tabla-ajustada",
     scopedSlots: _vm._u([{
       key: "thead",
@@ -27213,7 +27236,7 @@ var render = function render() {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                                " + _vm._s(tr.anioFiscal) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
-          }, [_vm._v("\n                                " + _vm._s(_vm.formatoFecha(tr.fecha_pub)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
+          }, [_vm._v("\n                                " + _vm._s(tr.fecha_pub) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
           }, [_vm._v("\n                                " + _vm._s(_vm.formatCurrency(tr.uma)) + "\n                            ")]), _vm._v(" "), _c("vs-td", {
             staticClass: "tableRowHeight"
@@ -27249,19 +27272,10 @@ var render = function render() {
       key: "notFound",
       fn: function fn() {
         return [_c("div", {
-          staticClass: "d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4"
-        }, [_c("img", {
-          staticClass: "imgNoData",
           staticStyle: {
-            width: "30%"
-          },
-          attrs: {
-            src: __webpack_require__(/*! ../ver/images/no_data.webp */ "./resources/js/components/modulos/ver/images/no_data.webp"),
-            alt: "Sin resultados"
+            "background-color": "var(--iee-white) !important"
           }
-        }), _vm._v(" "), _c("span", {
-          staticClass: "noDataTitle"
-        }, [_vm._v("¡Sin Datos!")])])];
+        }, [_vm._v("\n                            Sin resultados...\n                        ")])];
       },
       proxy: true
     }, {
@@ -27285,16 +27299,13 @@ var render = function render() {
         })];
       },
       proxy: true
-    }], null, false, 2022392001)
-  }) : _vm._e()], 1)])]), _vm._v(" "), [_c("div", {
+    }])
+  })], 1)])]), _vm._v(" "), [_c("div", {
     staticClass: "center"
   }, [_c("vs-dialog", {
     attrs: {
       "overflow-hidden": "",
       width: "90%"
-    },
-    on: {
-      change: _vm.onDialogClose
     },
     scopedSlots: _vm._u([{
       key: "header",
@@ -27389,7 +27400,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("\n                            " + _vm._s(item.nombre) + "\n                        ")]);
-  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", [_c("div", {
+  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) || _vm.distribucion.includes(2) ? _c("div", [_c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
     staticClass: "col-12"
@@ -27400,9 +27411,6 @@ var render = function render() {
       type: "text",
       placeholder: "0.00",
       step: "0.01"
-    },
-    on: {
-      blur: _vm.formatearMonto
     },
     nativeOn: {
       click: function click($event) {
@@ -27425,9 +27433,6 @@ var render = function render() {
       type: "text",
       placeholder: "0.00",
       step: "0.01"
-    },
-    on: {
-      blur: _vm.formatearMonto70
     },
     model: {
       value: _vm.monto70,
@@ -27685,14 +27690,10 @@ var render = function render() {
           attrs: {
             colspan: "7"
           }
-        }, [_c("span", {
-          staticClass: "blanco"
-        }, [_vm._v("Gran total: ")])]), _vm._v(" "), _c("vs-td", [_c("span", {
-          staticClass: "blanco"
-        }, [_vm._v(_vm._s(_vm.formatoMoneda(_vm.granTotal)) + " ")])])], 1)];
+        }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                    ")])], 1)];
       },
       proxy: true
-    }], null, false, 966686475)
+    }], null, false, 2855224768)
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {
@@ -42613,7 +42614,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.blanco,\r\n.blanco * {\r\n  color: #ffffff !important;\n}\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n\r\n\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
 
 // exports
 
@@ -233320,6 +233321,106 @@ function _userValidToEdit() {
 
 /***/ }),
 
+/***/ "./resources/js/utils/formatters.js":
+/*!******************************************!*\
+  !*** ./resources/js/utils/formatters.js ***!
+  \******************************************/
+/*! exports provided: formatDateToDMY */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+/*
+* @description Archivo de ayuda para formatear datos de la base de datos 
+* y mostrar en vistas .vue
+* @author Tony
+* @version 1.0.0
+* @date 18/08/2025
+*/
+/**
+ * Formatea una fecha de entrada a un formato específico con el separador indicado.
+ * @param {String} dateString - Fecha en formato 'YYYY-MM-DD', 'DD/MM/YYYY' o 'DD-MM-YYYY'
+ * @param {String} separator - Separador de salida ('/' o '-')
+ * @returns {String} Fecha formateada o cadena vacía si no es válida
+ */
+var formatDateToDMY = function formatDateToDMY(dateString) {
+  var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '/';
+  // Si no se proporciona una fecha, devolver cadena vacía
+  if (!dateString) return '';
+
+  // Expresión regular para validar los formatos de fecha aceptados:
+  // - YYYY-MM-DD (ISO)
+  // - DD/MM/YYYY
+  // - DD-MM-YYYY
+  var dateRegex = /^(\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))|((0[1-9]|[12][0-9]|3[01])[\/-](0[1-9]|1[0-2])[\/-]\d{4})$/;
+
+  // Validar el formato de la fecha con la expresión regular
+  if (!dateRegex.test(dateString)) {
+    console.error('Formato de fecha inválido');
+    return '';
+  }
+  try {
+    var day, month, year;
+
+    // Determinar el formato de la fecha y extraer día, mes y año
+    if (dateString.includes('-') && dateString.match(/-/g).length === 2) {
+      // Formato YYYY-MM-DD
+      var _dateString$split$map = dateString.split('-').map(Number);
+      var _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3);
+      year = _dateString$split$map2[0];
+      month = _dateString$split$map2[1];
+      day = _dateString$split$map2[2];
+    } else {
+      // Formato DD/MM/YYYY o DD-MM-YYYY
+      var sep = dateString.includes('/') ? '/' : '-';
+      var _dateString$split$map3 = dateString.split(sep).map(Number);
+      var _dateString$split$map4 = _slicedToArray(_dateString$split$map3, 3);
+      day = _dateString$split$map4[0];
+      month = _dateString$split$map4[1];
+      year = _dateString$split$map4[2];
+    }
+
+    // Validar si la fecha es real (días en mes, años bisiestos, etc.)
+    if (!isValidDate(day, month, year)) {
+      console.error('Fecha no válida');
+      return '';
+    }
+    // Función auxiliar para agregar ceros a la izquierda si es necesario
+    var pad = function pad(n) {
+      return n < 10 ? "0".concat(n) : n;
+    };
+
+    // Devolver la fecha formateada con el separador especificado
+    return "".concat(pad(day)).concat(separator).concat(pad(month)).concat(separator).concat(year);
+  } catch (error) {
+    // Manejar cualquier error inesperado durante el procesamiento
+    console.error('Error al formatear la fecha:', error);
+    return '';
+  }
+};
+
+/**
+* Valida si una fecha es válida (incluyendo días en meses y años bisiestos)
+* @param {number} day - Día del mes
+* @param {number} month - Mes (1-12)
+* @param {number} year - Año (4 dígitos)
+* @returns {boolean} true si la fecha es válida
+*/
+var isValidDate = function isValidDate(day, month, year) {
+  // Ajustar mes (JavaScript cuenta meses desde 0-11)
+  var date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
+
+/***/ }),
+
 /***/ 0:
 /*!***********************************!*\
   !*** multi ./resources/js/app.js ***!
@@ -233328,6 +233429,7 @@ function _userValidToEdit() {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

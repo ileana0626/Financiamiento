@@ -23,7 +23,11 @@
             </div>
             <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                 <div>
-                    <vs-table v-if="NewlistCalculos && NewlistCalculos.length" class="tabla-ajustada">
+                    <vs-table class="tabla-ajustada">
+                        <!-- <template #header>
+                        <vs-input v-model="search" border placeholder="Escribe un Nombre"
+                            class="inputSearchPreguntas" />
+                    </template> -->
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->
@@ -56,7 +60,7 @@
                                     {{ tr.anioFiscal }}
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
-                                    {{ formatoFecha(tr.fecha_pub) }}
+                                    {{ tr.fecha_pub }}
                                 </vs-td>
                                 <vs-td class="tableRowHeight">
                                     {{ formatCurrency(tr.uma) }}
@@ -69,6 +73,9 @@
                                 </vs-td>
                                 <vs-td class="tableRowHeight text-center">
                                     <div style="width: 100%; display: flex; justify-content: center;">
+                                        <!-- <a :href="`/calculos/${tr.id}/descargar-excel`" target="_blank">
+                                        Descargar Excel
+                                    </a> -->
                                         <vs-button icon color="danger" size="small" @click="abrirDialog(tr)"
                                             title="Distribuir">
                                             <i class="fas fa-pencil-alt"></i>
@@ -78,10 +85,8 @@
                             </vs-tr>
                         </template>
                         <template #notFound>
-                            <div
-                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
-                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
-                                    <span class="noDataTitle">¡Sin Datos!</span>
+                            <div style="background-color: var(--iee-white) !important;">
+                                Sin resultados...
                             </div>
                         </template>
                         <template #footer>
@@ -97,11 +102,7 @@
         <!-- formularios -->
         <template>
             <div class="center">
-                <vs-dialog v-model="active" 
-                @change="onDialogClose"
-                overflow-hidden 
-                width="90%"
-                >
+                <vs-dialog v-model="active" overflow-hidden width="90%">
                     <!-- HEADER -->
                     <template #header>
                         <h4 class="not-margin">Distribución del cálculo</h4>
@@ -146,7 +147,7 @@
                             </vs-select>
 
                         <!-- Formulario principal -->
-                        <div v-if="distribucion.includes(1)">
+                        <div v-if="distribucion.includes(1) || distribucion.includes(2)">
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <h5>Financiamiento público para actividades ordinarias permanentes</h5>
@@ -155,9 +156,8 @@
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (30%)</label>
                                     <vs-input v-model="monto30" 
-                                    @blur="formatearMonto"
-                                    type="text" placeholder="0.00" 
-                                    step="0.01" @click.native.stop/>
+                                    
+                                    type="text" placeholder="0.00" step="0.01" @click.native.stop/>
                                     <div class="danger-message">
                                         <template v-if="errorMonto30.length > 0">
                                             {{ errorMonto30 }}
@@ -166,9 +166,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label>Monto Total Efectivo (70%)</label>
-                                    <vs-input v-model="monto70" 
-                                    @blur="formatearMonto70"
-                                    type="text" placeholder="0.00" step="0.01" />
+                                    <vs-input v-model="monto70" type="text" placeholder="0.00" step="0.01" />
                                     <div class="danger-message">
                                         <template v-if="errorMonto70.length > 0">
                                             {{ errorMonto70 }}
@@ -335,10 +333,9 @@
                                     <!-- Gran Total -->
                                     <vs-tr class="font-weight-bold bg-dark text-white">
                                         <vs-td colspan="8" v-if="!distribucion.includes(2)">Gran total:</vs-td>
-                                        <vs-td colspan="7" v-else>
-                                            <span class="blanco">Gran total: </span></vs-td>
+                                        <vs-td colspan="7" v-else>Gran total:</vs-td>
                                         <vs-td>
-                                            <span class="blanco">{{ formatoMoneda(granTotal) }} </span>
+                                            {{ formatoMoneda(granTotal) }}
                                         </vs-td>
                                     </vs-tr>
                                 </template>
@@ -401,6 +398,7 @@ import { loading } from '../../../methods';
  * 🐛 Función para depuración development
  * @param {...any} args - Uno o más mensajes a mostrar en consola
  * @example
+ * debug('Mensaje de prueba', {data: 123});
  */
 const debug = (...args) => {
     if (process.env.NODE_ENV === 'development') {
@@ -424,6 +422,10 @@ export default {
             max: 10,
             // Dialog
             active: false,
+
+            //input1: '',
+            //input2: '',
+            //checkbox1: false,
             anio: '',
             monto30: '',
             monto70: '',
@@ -443,6 +445,8 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
+            //errorPartidosPoliticos_conRepr: '',
+            //errorPorcentajeVotacion: '',
             descargar_disabled: true, // true: disabled | false: enabled
         }
     },
@@ -477,42 +481,6 @@ export default {
         formatCurrency(value) {
             return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
-        formatearMonto() {
-            let valorNumerico = parseFloat(this.monto30.toString().replace(/[^0-9.]/g, ''));
-
-            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-            this.errorMonto30 = 'Ingrese un valor válido para UMA';
-            this.monto30 = '';
-            } else {
-            //this.errorUMA = false; // No es necesario
-            this.errorMonto30 = '';
-
-            this.monto30 = valorNumerico.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            }
-        },
-        formatearMonto70() {
-            let valorNumerico = parseFloat(this.monto70.toString().replace(/[^0-9.]/g, ''));
-
-            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-            this.errorMonto70 = 'Ingrese un valor válido para UMA';
-            this.monto70 = '';
-            } else {
-            //this.errorUMA = false; // No es necesario
-            this.errorMonto70 = '';
-
-            this.monto70 = valorNumerico.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            }
-        },
         getCalculos() {
             const loader = loading(this.$vs);
             loader.text = 'Cargando datos...';
@@ -542,15 +510,20 @@ export default {
                 })
         },
         abrirDialog(calculo_tr) {
-            this.limpiarCampos(); 
-            this.active = true; // activa el modal
             const loader = loading(this.$vs);
+
+            //let url = '/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion';
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
             this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
             this.datosCalculoSeleccionado = {};
             this.Partidos_Sin_Representacion = [];
             this.Partidos_Con_Representacion = [];
             this.distribucionId = null; // resetea cada que se abra el Dialog
+            //this.monto30 = '';
+            //this.monto70 = '';
+            this.limpiarCampos(); // 🧹
+            //console.log(calculo_tr.id);
+            this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
             //Obtener los datos principales del Cálculo Financiero
             axios.get(url, {
@@ -558,6 +531,7 @@ export default {
                     'id': calculo_tr.id
                 }
             }).then(response => {
+                //console.log('Respuesta completa del servidor:', response);
                 debug('🐛 Datos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
@@ -570,6 +544,8 @@ export default {
                         // Variable temporarl en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
+                    //debug('🐛 Partidos_Con_Representacion:', this.Partidos_Con_Representacion);
+                    //console.log('Partidos_Con_Representacion: ', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
@@ -578,6 +554,7 @@ export default {
                 // Cargando datos de Distribución
                 this.cargarDistribucion();
             }).catch((error) => {
+                console.error('Error al cargar detalles del cálculo', error);
                 this.$vs.notification({
                     title: 'Error',
                     text: 'Error al cargar los detalles del cálculo',
@@ -591,11 +568,6 @@ export default {
                 loader.close();
                 //debug('🐛 Finalizado !');
             })
-        },
-        onDialogClose(isOpen) {
-            if (!isOpen) {
-                this.limpiarCampos();
-            }
         },
         onChangeDistribucion(value) {
             this.distribucion = value;
@@ -679,6 +651,10 @@ export default {
                 // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
                 if( response.data && response.data.success && response.data.distribucion.length > 0){
                     this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+                    /*console.log('DataDistribucion: ', this.DataDistribucion);
+                    console.log('DataDistribucion type:', typeof this.DataDistribucion);
+                    console.log('DataDistribucion content:', JSON.stringify(this.DataDistribucion, null, 2));
+                    */
                     this.distribucionId = this.DataDistribucion.id_calculo;
                     // Empieza a cargar los datos guardados
                     this.anio = this.DataDistribucion.anio_ejercicio;
@@ -687,13 +663,18 @@ export default {
                             .split(',')
                             .map(Number)
                             .filter(item => !isNaN(item));
+                        //console.log('Distribution array:', this.distribucion);
                     }
                     this.monto30 = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
-                     this.monto70 = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
+                    //this.monto30 = this.DataDistribucion['monto_30_por_ciento']; // Otra forma
+                    //this.$set(this, 'monto30', this.DataDistribucion['monto_30_por_ciento']); // Otra forma
+                    this.monto70 = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
                     this.$nextTick(() => {
                         debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
                     });
+                    //console.log('distribucionId: ', this.distribucionId,'Año fiscal: ', this.anio, 'Monto 30%: ', this.monto30, 'Monto 70%: ', this.monto70);
+                    // ⚐ Habilita descargar archivo
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
@@ -703,6 +684,7 @@ export default {
                     return;
                 }
             }catch(error){
+                console.error('Error al cargar distribución', error);
                 this.$vs.notification({
                     title: 'Error',
                     text: 'Error al cargar la distribución',
@@ -745,34 +727,39 @@ export default {
                 p_subtotal_D_candidatura: this.candidatura,
             };
             this.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
+            console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion, this.Partidos_Sin_Representacion);
             try {
                 // Actualizar distribución
                 if (this.distribucionId) {
                     const response = await axios.post(url, datos);
+                    console.log('Respuesta del servidor (actualizar):', response.data);
                     
-                    if (response.data && response.data.id) {
-                        this.distribucionId = response.data.id;
-                        this.$vs.notification({ color: 'success', text: 'Distribución actualizada' });
-                    }
-                    else{
-                        // Mostrar mensaje de error del servidor si existe
+                    if (response.data && response.data.success) {
+                        this.distribucionId = response.data.id || this.distribucionId;
+                        this.$vs.notification({ 
+                            color: 'success', 
+                            text: response.data.message || 'Distribución actualizada exitosamente' 
+                        });
+                    } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
                     }
                 } else { // Guardar distribución
                     const response = await axios.post(url, datos);
-                    // Si es un nuevo registro, actualizamos el ID
-                    if (response.data && response.data.id) {
+                    console.log('Respuesta del servidor (guardar):', response.data);
+                    
+                    if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
-                        this.$vs.notification({ color: 'success', text: 'Distribución guardada' });
-                    }
-                    else{
-                        // Mostrar mensaje de error del servidor si existe
+                        this.$vs.notification({ 
+                            color: 'success', 
+                            text: response.data.message || 'Distribución guardada exitosamente' 
+                        });
+                    } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
                         throw new Error(errorMsg);
                     }
                 }
-               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+                url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
                 // Actualizamos la tabla de partidos políticos con representación
                 // Crear un array de promesas
                 //const promesas = this.Partidos_Con_Representacion.map(async partido => {
@@ -780,8 +767,10 @@ export default {
                     try {
                     const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
+                        console.log('PPCR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
+                        console.error('Error al actualizar partido PPCR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -798,8 +787,10 @@ export default {
                     try {
                     const response = await axios.post(url, partido);
                     if (response.data && response.data.ids) {
+                        console.log('PPSR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
+                        console.error('Error al actualizar partido PPSR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -818,6 +809,7 @@ export default {
                 // HAbilita descargar archivo
                 this.descargar_disabled = true;
             } catch (error) {
+                console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
 
                 let nombreMetodo = url.split('/');
@@ -904,7 +896,7 @@ export default {
                 this.$vs.notification({
                 title: 'Aviso',
                 text: 'Primero debes restar a otro partido antes de sumar.',
-                color: 'danger'
+                color: 'warning'
                 });
             }
             } else if (operacion === 'restar') {
@@ -921,10 +913,12 @@ export default {
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
             
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+            //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
             return (monto * porcentaje) / totalPorcentajes;
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
+            //console.log('B. Monto con ajuste:', {base, ajuste});
             return base + (ajuste || 0);
         },
         calcularMontoC(partido) {
@@ -966,24 +960,6 @@ export default {
                 partido.D_monto_2_por_ciento = this.calcularMontoD_ppsr(partido);
             });
         },
-        formatoFecha(fechaStr) {
-            if (!fechaStr) return ''
-
-            // Parsear fecha en formato DD/MM/YYYY
-            const partes = fechaStr.split('/')
-            if (partes.length !== 3) return fechaStr
-
-            const dia = partes[0]
-            const mes = parseInt(partes[1], 10) - 1 // meses van de 0 a 11
-            const anio = partes[2]
-
-            // Mapeo de meses abreviados en español
-            const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-
-            const mesAbreviado = meses[mes] || ''
-
-            return `${dia} ${mesAbreviado} ${anio}`
-    },
         /*
         * Formatea a moneda
         * @param {number} valor - El valor a formatear
@@ -1031,8 +1007,33 @@ export default {
             partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
             partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
             
+            /*
+            if (!isNaN(valorNumerico)) {
+                //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
+                partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
+                partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
+                
+            } else { // Si no es un número recetea valores
+                partido.porcentaje_votacion = 0.00000;
+                partido.inputPorcentaje = '0.00000 %';
+            }
+            */
         },
         /**
+         * Valida si un valor es un número decimal válido
+         * @param {string|number} value - Valor a validar
+         * @param {number} [maxDecimals=5] - Número máximo de decimales permitidos
+         * @returns {boolean} - true si es válido, false si no
+         */
+        validarDecimal(value, maxDecimals = 5) {
+            if (value === '' || value === null || value === undefined) {
+                return false;
+            }
+            
+            // Expresión regular para validar números decimales
+            const regex = new RegExp(`^\\d+(\\.\\d{1,${maxDecimals}})?$`);
+            return regex.test(String(value).replace(',', '.'));
+        },
         /**
          * ✔ Validar campos
          * @returns {boolean}
@@ -1043,12 +1044,12 @@ export default {
                 this.errorAnio = 'El campo año es obligatorio';
                 this.error = true;
             }
-            if (this.monto30 === '') {
+            if (this.monto30 === '' || !this.validarDecimal(this.monto30, 2)) {
                 this.errorMonto30 = 'Ingrese un monto 30% válido';
                 this.error = true;
             }
     
-            if (this.monto70 === '') {
+            if (this.monto70 === '' || !this.validarDecimal(this.monto70, 2)) {
                 this.errorMonto70 = 'Ingrese un monto 70% válido';
                 this.error = true;
             }
@@ -1058,8 +1059,16 @@ export default {
             } 
             // Validar que llenen todos los campos
             this.Partidos_Con_Representacion.forEach(partido => {
-              
-                if (partido.inputPorcentaje === '') {
+                /*
+                console.log('Validating:', {
+                    siglas: partido.siglas,
+                    input: partido.inputPorcentaje,
+                    type: typeof partido.inputPorcentaje,
+                    isEmpty: partido.inputPorcentaje === '',
+                    isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
+                });
+                */
+                if (partido.inputPorcentaje === '' || !this.validarDecimal(partido.porcentaje_votacion, 5)) {
                     partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
                     this.error = true;
                 }
@@ -1216,10 +1225,6 @@ export default {
 </script>
 
 <style>
-.blanco,
-.blanco * {
-  color: #ffffff !important;
-}
 .tabla-ajustada {
     width: 100% !important;
     margin-left: 0 !important;
@@ -1304,6 +1309,4 @@ export default {
 .vs-checkbox:hover .vs-checkbox__check {
     border-color: #1E90FF !important;
 }
-
-
 </style>

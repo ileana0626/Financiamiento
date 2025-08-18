@@ -400,8 +400,11 @@ class SolicitudController extends Controller
             return response()->json([
                 'success' => true,
                 'id' => $id, // Solo con INSERT y UPDATE
-                'distribucion' => $response, // Solo con GET
-                'message' => 'Datos de la distribución obtenidos correctamente'
+                'distribucion' => $comando === 'GET' ? $response : null, // Solo con GET
+                'message' => $comando === 'GET' ? 'Datos de la distribución obtenidos correctamente'
+                    : ($comando === 'INSERT' 
+                        ? 'Distribución creada exitosamente' 
+                        : 'Distribución actualizada exitosamente')
             ]);
         }
         catch(\Exception $e){
@@ -415,7 +418,10 @@ class SolicitudController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener la distribución'
+                'message' => $comando === 'GET' ? 'Error al obtener la distribución'
+                    : ($comando === 'INSERT' 
+                        ? 'Error al crear la distribución' 
+                        : 'Error al actualizar la distribución')
             ], 500);
         }
     }

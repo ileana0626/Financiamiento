@@ -158,6 +158,7 @@
 
 <script>
 import methods, { loading } from '../../../methods';
+import { formatDateToDMY } from '../../../utils/formatters';
 export default {
     data() {
         return{
@@ -182,6 +183,7 @@ export default {
         this.getCalculos();
     },
     methods: {
+        formatDateToDMY, // Funciones importadas
         /*
         * Formatea un número con separadores de miles y decimales
         */

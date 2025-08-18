@@ -101,19 +101,14 @@ class CalculosFinanciamientoExport implements FromView, ShouldAutoSize, WithTitl
                     ]
                 ]);
 
-                $richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
-            
-            // Agregar texto con diferentes estilos
-            $redText = $richText->createTextRun('Texto en rojo ');
-            $redText->getFont()->setBold(true)
-                               ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED));
-            
-            $blueText = $richText->createTextRun('y esto en azul');
-            $blueText->getFont()->setItalic(true)
-                                ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE));
-            
-            // Establecer el texto enriquecido en una celda
-            $sheet->setCellValue('A1', $richText);
+                // $sheet->getStyle('B3')->getAlignment()->applyFromArray([
+                //     'wrapText' => true,
+                //     'vertical' => 'top',  // Alinea el texto en la parte superior
+                // ]);
+
+
+                // Aplicar color rojo a montos específicos
+                //$sheet->getStyle('C8:C100')->getFont()->getColor()->setARGB('FF0000');
             
             // Ajustar el ancho de la columna para que se vea bien
             $sheet->getColumnDimension('A')->setAutoSize(true);
