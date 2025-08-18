@@ -11586,11 +11586,9 @@ var debug = function debug() {
       if (isNaN(valorNumerico)) {
         // Si no es un número recetea valores
         this.errorMonto70 = 'Ingrese un valor válido para UMA';
-        // this.errorMonto70 = true; // No es necesario por el mensaje
         this.monto70 = null;
         this.monto70Input = '';
       } else {
-        //this.errorMonto70 = false; // No es necesario
         this.errorMonto70 = '';
         this.monto70 = valorNumerico;
         this.monto70Input = valorNumerico.toLocaleString('es-MX', {
@@ -12102,18 +12100,6 @@ var debug = function debug() {
       var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
       partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
       partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
-
-      /*
-      if (!isNaN(valorNumerico)) {
-          //const valorFinal = Math.min(Math.max(valorNumerico, 0), 100);
-          partido.porcentaje_votacion = parseFloat(valorNumerico.toFixed(5));
-          partido.inputPorcentaje = partido.porcentaje_votacion + ' %';
-          
-      } else { // Si no es un número recetea valores
-          partido.porcentaje_votacion = 0.00000;
-          partido.inputPorcentaje = '0.00000 %';
-      }
-      */
     },
     /**
      * Valida si un valor es un número decimal válido
@@ -12156,15 +12142,6 @@ var debug = function debug() {
       }
       // Validar que llenen todos los campos
       this.Partidos_Con_Representacion.forEach(function (partido) {
-        /*
-        console.log('Validating:', {
-            siglas: partido.siglas,
-            input: partido.inputPorcentaje,
-            type: typeof partido.inputPorcentaje,
-            isEmpty: partido.inputPorcentaje === '',
-            isValid: this.validarDecimal(partido.porcentaje_votacion, 5)
-        });
-        */
         if (partido.inputPorcentaje === '' || !_this12.validarDecimal(partido.porcentaje_votacion, 5)) {
           partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
           _this12.error = true;
@@ -27163,7 +27140,7 @@ var render = function render() {
     staticStyle: {
       "background-color": "var(--iee-white)"
     }
-  }, [_c("div", [_c("vs-table", {
+  }, [_c("div", [_vm.NewlistCalculos && _vm.NewlistCalculos.length ? _c("vs-table", {
     staticClass: "tabla-ajustada",
     scopedSlots: _vm._u([{
       key: "thead",
@@ -27247,10 +27224,19 @@ var render = function render() {
       key: "notFound",
       fn: function fn() {
         return [_c("div", {
+          staticClass: "d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4"
+        }, [_c("img", {
+          staticClass: "imgNoData",
           staticStyle: {
-            "background-color": "var(--iee-white) !important"
+            width: "30%"
+          },
+          attrs: {
+            src: __webpack_require__(/*! ../ver/images/no_data.webp */ "./resources/js/components/modulos/ver/images/no_data.webp"),
+            alt: "Sin resultados"
           }
-        }, [_vm._v("\n                            Sin resultados...\n                        ")])];
+        }), _vm._v(" "), _c("span", {
+          staticClass: "noDataTitle"
+        }, [_vm._v("¡Sin Datos!")])])];
       },
       proxy: true
     }, {
@@ -27274,8 +27260,8 @@ var render = function render() {
         })];
       },
       proxy: true
-    }])
-  })], 1)])]), _vm._v(" "), [_c("div", {
+    }], null, false, 2022392001)
+  }) : _vm._e()], 1)])]), _vm._v(" "), [_c("div", {
     staticClass: "center"
   }, [_c("vs-dialog", {
     attrs: {
