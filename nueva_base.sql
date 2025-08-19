@@ -428,18 +428,25 @@ INSERT INTO `usuario_rol` (`idRol`, `idUsuario`) VALUES
 	(4, 45),
 	(4, 46),
 	(4, 47);
+    
 
--- Volcando estructura para tabla admin.view_cat_anios
-CREATE TABLE IF NOT EXISTS `view_cat_anios` (
-  `totalReg` bigint NOT NULL,
-  `anio` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- Volcando estructura para tabla admin.saludos
+CREATE TABLE IF NOT EXISTS `saludos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mensaje` varchar(255) DEFAULT '',
+  `estatus` enum('A','I') DEFAULT 'A',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla admin.view_cat_anios: 0 rows
-/*DELETE FROM `view_cat_anios`;*/
-/*!40000 ALTER TABLE `view_cat_anios` DISABLE KEYS */;
-/*!40000 ALTER TABLE `view_cat_anios` ENABLE KEYS */;
-
+-- Volcando datos para la tabla admin.saludos: ~5 rows (aproximadamente)
+/*DELETE FROM `saludos`;*/
+INSERT INTO `saludos` (`id`, `mensaje`, `estatus`) VALUES
+	(1, '¡Ten un buen día para trabajar 1!', 'A'),
+	(2, '¡Ten un buen día para trabajar 2!', 'A'),
+	(3, '¡Ten un buen día para trabajar 3!', 'A'),
+	(4, '¡Ten un buen día para trabajar 4!', 'A'),
+	(5, '¡Ten un buen día para trabajar 5!', 'A');
+    
 
 -- Volcando estructura para tabla admin.años fiscales
 CREATE TABLE IF NOT EXISTS `anios_fiscales` (
@@ -459,48 +466,39 @@ INSERT INTO anios_fiscales (anio) VALUES
 (2034),
 (2035);
 
--- partidos politicos sin representación --
+-- Volcando estructura para tabla admin.fechas
+CREATE TABLE IF NOT EXISTS `fechas` (
+  `idFecha` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL DEFAULT '0',
+  `descripcion` varchar(255) DEFAULT NULL,
+  `fechaInicio` date DEFAULT NULL,
+  `horaInicio` time DEFAULT NULL,
+  `fechaFin` date DEFAULT NULL,
+  `horaFin` time DEFAULT NULL,
+  `verCalendario` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`idFecha`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `cat_partido` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `siglas` varchar(10) DEFAULT NULL,
-  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- Volcando datos para la tabla admin.fechas: ~4 rows (aproximadamente)
+/*DELETE FROM `fechas`;*/
+INSERT INTO `fechas` (`idFecha`, `nombre`, `descripcion`, `fechaInicio`, `horaInicio`, `fechaFin`, `horaFin`, `verCalendario`) VALUES
+	(1, 'Registro', 'Presentación de solicitudes de registros de candidaturas', '2024-03-04', '00:00:00', '2024-04-07', '23:59:59', 1),
+	(2, 'Validacion', 'Verificación de Cumplimiento de requisitos', '2024-03-11', '00:00:00', '2024-05-29', '23:59:59', 1),
+	(3, 'Solventacion', 'Plazo de 72 horas para cumplir prevención', '2024-03-22', '00:00:00', '2024-05-29', '23:59:59', 1),
+	(4, 'Revision', 'Plazo para revisión de cumplimiento e informe sobre procedencia del registro de candidaturas pendientes ', '2024-03-24', '00:00:00', '2024-05-29', '23:59:59', 1);
 
--- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
-INSERT INTO `cat_partido` (`id`, `siglas`, `nombre`, `tipo`) VALUES
-	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
-	(2, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
-	(3, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
-    
-    
-CREATE TABLE IF NOT EXISTS `cat_partido_conRepresentacion` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `siglas` varchar(10) DEFAULT NULL,
-  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `tipo` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
-INSERT INTO `cat_partido_conRepresentacion` (`id`, `siglas`, `nombre`, `tipo`) VALUES
-	(1, 'PAN', 'PARTIDO ACCIÓN NACIONAL', 'PP'),
-	(2, 'PRI', 'PARTIDO REVOLUCIONARIO INSTITUCIONAL', 'PP'),
-	(3, 'PT', 'PARTIDO DEL TRABAJO', 'PP'),
-	(4, 'PVEM', 'PARTIDO VERDE ECOLOGISTA DE MÉXICO', 'PP'),
-	(5, 'MC', 'MOVIMIENTO CIUDADANO', 'PP'),
-	(6, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP'),
-	(7, 'MORENA', 'MORENA', 'PP'),
-	(8, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP'),
-	(9, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP');
+-- Volcando estructura para tabla admin.files
+CREATE TABLE IF NOT EXISTS `files` (
+  `idDOCUMENTO` int NOT NULL AUTO_INCREMENT,
+  `RUTA` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `FILENAME` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `TIPO` int DEFAULT NULL,
+  `CREADO_AT` timestamp NOT NULL,
+  `ACTUALIZADO_AT` timestamp NOT NULL,
+  PRIMARY KEY (`idDOCUMENTO`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2869 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- Volcando datos para la tabla admin.view_cat_anios: 0 rows
-/*DELETE FROM `view_cat_anios`;*/
-/*!40000 ALTER TABLE `anios_fiscales` DISABLE KEYS */;
-/*!40000 ALTER TABLE `anios_fiscales` ENABLE KEYS */;
 
 -- Volcando estructura para procedimiento admin.sp_ActualizarCatalogos
 DELIMITER //
@@ -712,63 +710,6 @@ BEGIN
 	WHERE BDAY.dia = @matchDia AND BDAY.mes = @matchMes;
 END//
 DELIMITER ;
-
--- Volcando estructura para procedimiento admin.sp_ConsultarDatos
-DELIMITER //
-CREATE PROCEDURE `sp_ConsultarDatos`(
-	IN `tipo` INT,
-	IN `consulta` INT
-)
-BEGIN
-if consulta = 1 then
-if tipo = 1  THEN
-	SELECT * FROM cat_cargos WHERE status = 'A';
-ELSEIF tipo = 2   THEN
-		SELECT * FROM cat_remitentes WHERE status = 'A';
-ELSEIF tipo = 3   THEN
-		SELECT * FROM cat_terminos WHERE status = 'A' ;
-ELSEIF tipo = 4   THEN
-		SELECT * FROM cat_dias_termino ORDER BY cat_dias_termino.idDiasTermino desc ;
-ELSEIF tipo = 5   THEN
-		SELECT * FROM cat_seguimiento WHERE status = 'A';
-ELSEIF tipo = 6   THEN
-		SELECT * FROM cat_departamentos WHERE status = 'A';
-ELSEIF tipo = 7   THEN
-		SELECT * FROM cat_tipo WHERE status = 'A';
-ELSEIF tipo = 8   THEN
-		SELECT * FROM cat_estatus WHERE status = 'A';
-ELSEIF tipo = 9   THEN
-		SELECT * FROM cat_partido;
-ELSEIF tipo = 10   THEN
-		SELECT * FROM cat_partido_conRepresentacion;
-END if;
-ELSEIF  consulta = 2 then
-	if tipo = 1  THEN
-			SELECT * FROM cat_cargos;
-	ELSEIF tipo = 2   THEN
-			SELECT * FROM cat_remitentes;
-	ELSEIF tipo = 3   THEN
-			SELECT * FROM cat_terminos;
-	ELSEIF tipo = 5   THEN
-			SELECT * FROM cat_seguimiento;
-	ELSEIF tipo = 6   THEN
-			SELECT * FROM cat_departamentos;
-	ELSEIF tipo = 7   THEN
-			SELECT * FROM cat_tipo;
-	ELSEIF tipo = 8   THEN
-			SELECT * FROM cat_estatus;	
-	ELSEIF tipo = 9   THEN
-			SELECT * FROM saludos;
-	ELSEIF tipo = 10   THEN
-			SELECT * FROM cat_adscripcion;	
-	ELSEIF tipo = 11   THEN
-			SELECT * FROM cat_meses;	
-	END if;	
-END if;
-END//
-DELIMITER ;
-
-drop procedure sp_ConsultarDatos;
 
 -- Volcando estructura para procedimiento admin.sp_ConsultarRolUsuario
 DELIMITER //
@@ -1170,6 +1111,7 @@ BEGIN
 	WHERE users.id = nId;
 END//
 DELIMITER ;
+
 
 -- Volcando estructura para procedimiento admin.sp_getDepartamentos
 DELIMITER //
@@ -3081,10 +3023,7 @@ CREATE TABLE distribucion_dppp(
 
 -- INICIO DE CREACION DE STORE PROCEDURES
 
--- Actualizamos la consulta de los catálogos
-USE `admin`;
-
-DROP PROCEDURE  IF EXISTS `sp_ConsultarDatos`;
+DROP PROCEDURE IF EXISTS `sp_ConsultarDatos`;
 -- Volcando estructura para procedimiento admin.sp_ConsultarDatos
 DELIMITER //
 CREATE PROCEDURE `sp_ConsultarDatos`(

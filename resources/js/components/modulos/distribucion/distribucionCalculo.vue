@@ -718,8 +718,6 @@ export default {
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
-                    // Habilita descargar archivo
-                    this.descargar_disabled = false;
                     debug('✅ Distribución cargada.');
                 }else{
                     debug('❌ No se encontro distribución, ➜ continua normalmente...');
@@ -746,6 +744,9 @@ export default {
             {
                 this.$vs.notification({ color: 'danger', text: 'Verifique los datos e inténtelo de nuevo.' });
                 return;
+            }
+            if(this.distribucionId? null : this.distribucionId === null || this.distribucionId === 0){
+                throw new Error('✘ No se encontro el ID de la distribución');
             }
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';

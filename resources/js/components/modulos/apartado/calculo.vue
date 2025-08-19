@@ -346,9 +346,6 @@ export default {
         const load = methods.loading(this.$vs);
         /* await this.getTipoDic(); */
         await this.getAnio();
-        await this.obtenerDatos(3);
-        await this.obtenerDatos(5);
-        await this.obtenerDatos(6);
         await this.obtenerDatos(9);
         await this.obtenerDatos(10);
         load.close();
