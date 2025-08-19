@@ -11945,6 +11945,7 @@ var debug = function debug() {
     },
     calcularMontoIgualitario30: function calcularMontoIgualitario30() {
       var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
+      debug('monto: ', monto);
       var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
       return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
     },
