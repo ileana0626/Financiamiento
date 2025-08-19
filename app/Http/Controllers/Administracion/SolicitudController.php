@@ -12,10 +12,613 @@ use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
+use PDO;
 use PDF;
+use Illuminate\Support\Facades\Validator;
 
 class SolicitudController extends Controller
 {
+    //Desactivar transacciones del lado de la Base de Datos y evitar conflictos
+    protected static $useTransaction = false;
+
+    /**
+     * Registrar un nuevo cálculo de financiamiento público
+     * @param $request
+     * @return json con el id del cálculo insertado
+     */
+    public function setRegistrarCalculoFinanciamiento(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $nAnio = $request->nAnio;
+        $fPublicacion = $request->fPublicacion;
+        $cUMA = $request->cUMA;
+        $cPersonas_padron = $request->cPersonas_padron;
+        $cbPartidosPoliticosSinRepr = $request->cbPartidosPoliticosSinRepr;
+        $pp_sin_repr_siglas = $request->pp_sin_repr_siglas;
+        $cbPartidosPoliticosConRepr = $request->cbPartidosPoliticosConRepr;
+        $pp_con_repr_siglas = $request->pp_con_repr_siglas;
+        //$nIdAuth = $request->nIdAuth;
+       
+        // $nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+
+        DB::beginTransaction();
+        try {
+            DB::statement('SET @p_new_id = 0');
+            $rpta =  DB::statement('call sp_insert_calculo(?,?,?,?,?,?,?,?,?, @p_new_id)', [
+                $nAnio,
+                $fPublicacion,
+                $cUMA,
+                $cPersonas_padron,
+                $cbPartidosPoliticosSinRepr,
+                $pp_sin_repr_siglas,
+                $cbPartidosPoliticosConRepr,
+                $pp_con_repr_siglas,
+                //$nIdAuth = ($nIdAuth == NULL) ? Auth::id() : $nIdAuth;
+                self::$useTransaction, // bandera estática
+                
+            ]); 
+
+            $rpta = DB::select('SELECT @p_new_id as idInsertado');
+            //$idInsertado = $rpta[0]->p_new_id; // o el nombre de la columna que devuelve el procedimiento
+            Log::info('Cálculo insertado con id: '.$rpta[0]->idInsertado);
+            DB::commit();
+            return $rpta;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error en setRegistrarCalculo', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            throw $e;
+            // $errorCode = $e->errorInfo[1];
+            // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    //modificar con la consulta o crear consulta
+    public function obtenerCalculo(Request $request)
+    {
+        if (!$request->ajax())  return redirect('/');
+
+        $tipo = $request->tipo;
+        $consulta = $request->consulta;
+
+        $tipo = ($tipo == NULL) ? 0 : $tipo;
+        $consulta = ($consulta == NULL) ? 0 : $consulta;
+
+        try {
+            $rpta = DB::select('call sp_ConsultarC( ?, ? )', [$tipo, $consulta]);
+
+            return $rpta;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            throw new \ErrorException("No se ha podido obtener la información, inténtelo más tarde." . $errorCode);
+        }
+    }
+
+    /**
+     * Obtiene los cálculos de financiamiento para listarlos
+     * @param $id Id del cálculo o null para obtener todos los cálculos
+     * @return json con los cálculos de financiamiento
+     */
+    public function getCalculosFinanciamiento(Request $request)
+    {
+        if (!$request->ajax()) {return redirect('/');}
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        try {
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Consulta SQL ejecutada:', $queryLog);
+        
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'calculos' => $rpta,
+                'message' => 'Cálculos obtenidos correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error en getCalculosFinanciamiento', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cálculos'
+            ]);
+            throw $e;
+        }
+    }
+    /** -- DEPRECATED
+     * Obtiene los partidos políticos de un cálculo de financiamiento
+     * @param Id del cálculo
+     * @return tablas con los partidos políticos de
+     * 1. Partidos políticos con representación
+     */
+    public function Distribucion_get_Partidos_Con_Representacion(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            $rpta = DB::select('call sp_Distribucion_get_Partidos_Con_Representacion(?)', [$id]);
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'partidosConRep' => $rpta,
+                'message' => 'Datos de los partidos obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en sp_Distribucion_get_Partidos_Con_Representacion', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los partidos políticos'
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Obtiene los partidos políticos de una Distribución de Financiamiento
+     * @param Id del cálculo
+     * @return tablas con los partidos políticos de
+     * 1. Partidos políticos sin representación
+     * 2. Partidos políticos con representación
+     */
+    public function get_Partidos_Calculo_porId(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::enableQueryLog();
+            $id = $request->input('id', null); // Valor por defecto null
+            Log::info('ID recibido en get_Partidos_Calculo_porId:', ['id' => $id]);
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'partidosSinRep' => $partidosSinRep,
+                'partidosConRep' => $partidosConRep,
+                'message' => 'Datos de los partidos obtenidos correctamente'
+            ]);
+        }
+        catch(\Exception $e){
+            Log::error('Error en get_Partidos_Calculo_porId', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los partidos políticos'
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Actualiza los partidos políticos con representación
+     * @param partido del partido político con representación
+     * @return json con los partidos políticos actualizados
+     */
+    public function Update_Partidos_Con_Representacion(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+             // Obtener el objeto partido completo
+            $partido = $request->all();
+
+            // Llamar al procedimiento almacenado
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Con_Representacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $partido['id_calculo'] ?? null,
+                $partido['id_partido'] ?? null,
+                $partido['porcentaje_votacion'] ?? null,
+                $partido['A_30_por_ciento'] ?? null,
+                $partido['B_70_por_ciento'] ?? null,
+                $partido['ajuste'] ?? null,
+                $partido['B_Ajuste_70_por_ciento'] ?? null,
+                $partido['C_fpaop'] ?? null,
+                $partido['D_fpatov'] ?? null,
+                //Arr::get($partido, 'C_fpaop'),
+                //Arr::get($partido, 'D_fpatov')
+            ]);
+            Log::info('Consulta SQL ejecutada:', $result);
+            DB::commit();
+            
+            // Obtener el ID del primer resultado
+            $ids = !empty($result) ? $result[0]->ids : null; // String desde el sp_
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'ids' => $ids,
+                'message' => 'Partido con representación actualizados correctamente',
+                //'data' => $result[0] ?? null
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar partido', [
+                'error' => $e->getMessage(),
+                'errorCode' => $e->getCode()
+                //'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el partido',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+    /**
+     * Actualiza los partidos políticos sin representación
+     * @param partido del partido político sin representación
+     * @return json con los partidos políticos actualizados
+     */
+    public function Update_Partidos_Sin_Representacion(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+             // Obtener el objeto partido completo
+            $partido = $request->all();
+
+            // Llamar al procedimiento almacenado
+            $result = DB::select('CALL sp_Distr_Update_Partidos_Sin_Representacion(?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $partido['id_calculo'] ?? null,
+                $partido['id_partido'] ?? null,
+                $partido['D_monto_2_por_ciento'] ?? null
+            ]);
+            Log::info('Consulta SQL ejecutada:', $result);
+            DB::commit();
+            
+            // Obtener el ID del primer resultado
+            $ids = !empty($result) ? $result[0]->ids : null; // String desde el sp_
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+            return response()->json([
+                'success' => true,
+                'ids' => $ids,
+                'message' => 'Partido sin representación actualizados correctamente',
+                //'data' => $result[0] ?? null
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar partido', [
+                'error' => $e->getMessage(),
+                'errorCode' => $e->getCode()
+                //'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el partido',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtiene los partidos políticos de una Distribución de Financiamiento
+     * @param Id del cálculo
+     * @return data de la distribución
+     */
+    public function Distr_Get_Insert_Update_distribucion_dppp(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+
+            $comando = $request->input('p_comando', null);
+            if ($comando === 'UPDATE' || $comando === 'INSERT') {
+                 // Verificar si ya existe un registro para este cálculo
+                 $existe = DB::table('distribucion_dppp')
+                 ->where('id_calculo', $request->input('id_calculo'))
+                 ->exists();
+
+                 // Si ya existe, cambiamos el comando INSERT a UPDATE
+                 $comando = $existe ? 'UPDATE' : 'INSERT';
+            } // else -> el comando es 'GET', rellena los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
+
+
+            //$id = $request->input('id', null); // Valor por defecto null
+            $response = DB::select('call sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                //$request->input('p_comando', null),
+                $comando,
+                $request->input('p_id_calculo', null),
+                $request->input('p_anio_ejercicio', null),
+                $request->input('p_tipo_distribucion', null),
+                $request->input('p_monto_30_por_ciento', null),
+                $request->input('p_monto_70_por_ciento', null),
+                $request->input('p_tipoPorcentaje', null),
+                $request->input('p_subtotal_A_30_por_ciento', null),
+                $request->input('p_subtotal_B_70_por_ciento', null),
+                $request->input('p_subtotal_B_Ajuste_70_por_ciento', null),
+                $request->input('p_subtotal_C_fpaop', null),
+                $request->input('p_subtotal_D_fpatov', null),
+                $request->input('p_subtotal_2_por_ciento_fpaop_ppsr', null),
+                $request->input('p_subtotal_D_2_por_ciento_ppsr', null),
+                $request->input('p_subtotal_D_candidatura', null)
+            ]);
+            DB::commit();
+            // Obtener el ID del primer resultado
+            $id = null;
+            // en 'GET' no se obtiene el ID
+            if($comando === 'UPDATE' || $comando === 'INSERT'){
+                $id = !empty($response) ? $response[0]->id : null;
+            }
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Distribución -> Consulta SQL ejecutada:', $queryLog);
+
+            // Verificar si hubo un error en el procedimiento almacenado
+            if (isset($response[0]->error) && $response[0]->error) {
+                throw new \Exception($response[0]->mensaje ?? 'Error en el procedimiento almacenado');
+            }
+
+            return response()->json([
+                'success' => true,
+                'id' => $id, // Solo con INSERT y UPDATE
+                'distribucion' => $comando === 'GET' ? $response : null, // Solo con GET
+                'message' => $comando === 'GET' ? 'Datos de la distribución obtenidos correctamente'
+                    : ($comando === 'INSERT' 
+                        ? 'Distribución creada exitosamente' 
+                        : 'Distribución actualizada exitosamente')
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error en sp_Distr_Get_Insert_Update_distribucion_dppp', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                //'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => $comando === 'GET' ? 'Error al obtener la distribución'
+                    : ($comando === 'INSERT' 
+                        ? 'Error al crear la distribución' 
+                        : 'Error al actualizar la distribución')
+            ], 500);
+        }
+    }
+    
+    /**
+     * Exporta el reporte de Anexo 1. Cálculo Financiamiento a Excel
+     *
+     * @param $id Id del cálculo 
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarCalculosFinanciamientoExcel(Request $request, $id = null)
+    {
+        try {
+            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            $data = [
+                'calculo' => $calculoData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+
+             Log::info('Datos preparados para la exportación:', $data);
+            
+            $filename = date('Y-m-d') . '_calculos_financiamiento' . '.xlsx';
+                 // Retornamos la vista sin datos
+            return (new \App\Exports\CalculosFinanciamientoExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Exporta el reporte de Anexo 2. Distribución de Financiamiento a Excel
+     *
+     * @param $id Id del cálculo o distribución
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarFinanciamientoDistribucionExcel(Request $request, $id = null)
+    {
+        try {
+            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
+            $operacion = (string) "GET"; // Nos aseguramos de que sea un string
+            // Obtener los datos de la distribución
+            $distribucion = DB::select('CALL sp_Distr_Get_Insert_Update_distribucion_dppp(?, ?, ?,
+	            ?, ?, ?,
+	            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
+                    self::$useTransaction, // bandera estática,
+                    $operacion,
+                    $id,
+                    null, null, null,
+                    null, null, null, null, null, null, null, null, null, null
+            ]);
+            
+            Log::info('Datos de la distribución obtenidos:', ['distribucion' => $distribucion]);
+            if (empty($distribucion)) {
+                Log::error('No se encontró la distribución con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró la distribución solicitada'
+                ], 404);
+            }
+            $distribucionData = !empty($distribucion) ? (array)$distribucion[0] : [];
+
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            //Log::info('Partidos sin representación:', $partidosSinRep);
+            //Log::info('Partidos con representación:', $partidosConRep);
+
+            $data = [
+                'calculo' => $calculoData,
+                'distribucion' => $distribucionData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+
+             Log::info('Datos preparados para la exportación:', $data);
+            
+            // Usar la clase FinanciamientoExport para generar el Excel
+            // return (new \App\Exports\CalculosFinanciamientoExport($data))
+            //     ->download(date('Y-m-d') . '_calculos_financiamiento.xlsx');
+            
+            $filename = date('Y-m-d') . '_Anexo_2_Distribucion' . '.xlsx';
+                 // Retornamos la vista sin datos
+            return (new \App\Exports\FinanciamientoDistribucionExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento', [
+                'error' => $e->getMessage(),
+                //'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    //'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+
     public function setRegistrarRequi(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
@@ -112,6 +715,10 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+
+
+
     public function setRegistrarCalculo(Request $request){
         if(!$request->ajax()) return redirect('/');
 

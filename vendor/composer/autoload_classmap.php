@@ -12,6 +12,7 @@ return array(
     'App\\Events\\NuevoMensaje' => $baseDir . '/app/Events/NuevoMensaje.php',
     'App\\Events\\Testear' => $baseDir . '/app/Events/Testear.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Exports\\CalculosFinanciamientoExport' => $baseDir . '/app/Exports/CalculosFinanciamientoExport.php',
     'App\\Exports\\CandidatosExport' => $baseDir . '/app/Exports/CandidatosExport.php',
     'App\\Exports\\CandidaturasAyuntaExport' => $baseDir . '/app/Exports/CandidaturasAyuntaExport.php',
     'App\\Exports\\CandidaturasGubernaturaExport' => $baseDir . '/app/Exports/CandidaturasGubernaturaExport.php',

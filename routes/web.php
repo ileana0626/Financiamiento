@@ -39,7 +39,19 @@ Route::group(['middleware' => ['auth']], function () {
     /**Nuevo registro de solicitudes */
     Route::post('/administracion/solicitud/setRegistrarRequi','Administracion\SolicitudController@setRegistrarRequi');
     Route::post('/administracion/solicitud/setRegistrarMemo','Administracion\SolicitudController@setRegistrarMemo');
-    Route::post('/administracion/solicitud/setRegistrarCalculo','Administracion\SolicitudController@setRegistrarCalculo');
+
+    
+    // Calculos de Prerrogativas Partidos Politicos
+    Route::post('/administracion/solicitud/setRegistrarCalculoFinanciamiento','Administracion\SolicitudController@setRegistrarCalculoFinanciamiento');
+    Route::get('/administracion/solicitud/getCalculosFinanciamiento','Administracion\SolicitudController@getCalculosFinanciamiento');
+    Route::get('/administracion/solicitud/exportarCalculosFinanciamientoExcel/{id}', 'Administracion\SolicitudController@exportarCalculosFinanciamientoExcel');
+    //Route::get('/administracion/solicitud/Distribucion_get_Partidos_Con_Representacion', 'Administracion\SolicitudController@Distribucion_get_Partidos_Con_Representacion');
+    Route::get('/administracion/solicitud/get_Partidos_Calculo_porId', 'Administracion\SolicitudController@get_Partidos_Calculo_porId');
+    Route::post('/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp', 'Administracion\SolicitudController@Distr_Get_Insert_Update_distribucion_dppp');
+    Route::post('/administracion/solicitud/Update_Partidos_Con_Representacion', 'Administracion\SolicitudController@Update_Partidos_Con_Representacion');
+    Route::post('/administracion/solicitud/Update_Partidos_Sin_Representacion', 'Administracion\SolicitudController@Update_Partidos_Sin_Representacion');
+    Route::get('/administracion/solicitud/exportarFinanciamientoDistribucionExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoDistribucionExcel');
+
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');
     Route::post('/administracion/solicitud/setRegistrarExtra','Administracion\SolicitudController@setRegistrarExtra');
