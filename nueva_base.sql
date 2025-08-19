@@ -18,7 +18,12 @@
 -- Volcando estructura de base de datos para admin
 CREATE DATABASE IF NOT EXISTS `admin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `admin`;
-
+-- Volcando estructura para tabla admin.cat_meses
+CREATE TABLE IF NOT EXISTS `cat_meses` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mes` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 -- Volcando datos para la tabla admin.cat_meses: ~12 rows (aproximadamente)
 /*DELETE FROM `cat_meses`;*/
 INSERT INTO `cat_meses` (`id`, `mes`) VALUES
@@ -642,181 +647,6 @@ END//
 DELIMITER ;
 
 
--- Volcando estructura para procedimiento admin.sp_Solicitud_getAllByUser
-DELIMITER //
-CREATE PROCEDURE `sp_Solicitud_getAllByUser`(
-	IN `nTipo` INT,
-	IN `nUser` INT
-)
-BEGIN
-	IF nTipo = 1 then
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			CAPITULO.serie AS `capitulo`,
-			SOLIC.numFolio,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			SOLIC.motivoCambio,
-			SOLIC.fechaTermino,
-			ESTATUS.nombre AS `estatus`
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_capitulos CAPITULO ON CAPITULO.id = SOLIC.capitulo 
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.tipo = nTipo AND SOLIC.created_by = nUser AND NOT(SOLIC.idStatus = 4 OR SOLIC.idStatus = 7 OR SOLIC.idStatus = 10)
-		ORDER BY SOLIC.created_at DESC;
-	ELSEIF nTIpo = 2 THEN
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			SOLIC.numMemo,
-			SOLIC.asunto,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			TERMINO.nombre AS `termino`,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			SOLIC.respuesta,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.tipo = nTipo AND SOLIC.created_by = nUser AND NOT(SOLIC.idStatus = 4 OR SOLIC.idStatus = 7 OR SOLIC.idStatus = 10)
-		ORDER BY SOLIC.created_at DESC;
-	ELSEIF nTipo = 3 THEN
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			SOLIC.numOficio,
-			SOLIC.remitente,
-			SOLIC.cargo,
-			SOLIC.asunto,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			TERMINO.nombre AS `termino`,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.tipo = nTipo AND SOLIC.created_by = nUser AND NOT(SOLIC.idStatus = 4 OR SOLIC.idStatus = 7 OR SOLIC.idStatus = 10)
-		ORDER BY SOLIC.created_at DESC;
-	ELSEIF nTipo = 4 THEN
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			DPTO_Emite.nombre AS `areaEmite`,
-			SOLIC.horaRecibido,
-			SOLIC.asunto,
-			files.RUTA AS `rutaDoc`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Emite ON DPTO_Emite.id = SOLIC.areaEmite
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.tipo = nTipo AND SOLIC.created_by = nUser AND NOT(SOLIC.idStatus = 4 OR SOLIC.idStatus = 7 OR SOLIC.idStatus = 10)
-		ORDER BY SOLIC.created_at DESC;
-	ELSEIF nTipo = 5 THEN
-	-- consulta base - historial
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			DPTO_Emite.nombre AS `areaEmite`,
-			SOLIC.asunto,
-			SOLIC.cargo,
-			SOLIC.remitente,
-			SOLIC.numOficio, 
-			SOLIC.numFolio,
-			SOLIC.numMemo,
-			CAPITULO.serie AS `capitulo`,
-			TERMINO.nombre AS `termino`,
-			SOLIC.respuesta,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_departamentos DPTO_Emite ON DPTO_Emite.id = SOLIC.areaEmite
-		LEFT JOIN cat_capitulos CAPITULO ON CAPITULO.id = SOLIC.capitulo 
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus		
-		WHERE SOLIC.created_by = nUser 
-		ORDER BY SOLIC.created_at DESC;
-	ELSEIF (nTipo = 6 OR nTipo = 7 OR nTipo = 8) THEN
-	-- para escrito, tarjeta y correo
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			SOLIC.asunto,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			TERMINO.nombre AS `termino`,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			SOLIC.respuesta,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.tipo = (nTipo - 1) AND SOLIC.created_by = nUser AND NOT(SOLIC.idStatus = 4 OR SOLIC.idStatus = 7 OR SOLIC.idStatus = 10)
-		ORDER BY SOLIC.created_at DESC;
-	END if;
-END//
-DELIMITER ;
-
 -- Volcando estructura para procedimiento admin.sp_Solicitud_getAnios
 DELIMITER //
 CREATE PROCEDURE `sp_Solicitud_getAnios`()
@@ -830,106 +660,6 @@ DELIMITER //
 CREATE PROCEDURE `sp_Solicitud_getAniosFiscales`()
 BEGIN
 	SELECT anio FROM anios_fiscales ORDER BY anio;
-END//
-DELIMITER ;
-
-
--- Volcando estructura para procedimiento admin.sp_Solicitud_getDatosById
-DELIMITER //
-CREATE PROCEDURE `sp_Solicitud_getDatosById`(
-	IN `nIdSolicitud` INT
-)
-BEGIN
-	SELECT * FROM cap_solicitud WHERE id = nIdSolicitud;
-END//
-DELIMITER ;
-
--- Volcando estructura para procedimiento admin.sp_Solicitud_getHistorial
-DELIMITER //
-CREATE PROCEDURE `sp_Solicitud_getHistorial`(
-	IN `nUsuario` INT,
-	IN `nRol` INT,
-	IN `nDPTO` INT,
-	IN `fInicio` DATE,
-	IN `fFin` DATE
-)
-BEGIN
-	IF nRol != 4 THEN -- 
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			DPTO_Emite.nombre AS `areaEmite`,
-			SOLIC.asunto,
-			SOLIC.cargo,
-			SOLIC.remitente,
-			SOLIC.numOficio, 
-			SOLIC.numFolio,
-			SOLIC.numMemo,
-			CAPITULO.serie AS `capitulo`,
-			TERMINO.nombre AS `termino`,
-			SOLIC.respuesta,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`,
-			SOLIC.motivoCambio
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_departamentos DPTO_Emite ON DPTO_Emite.id = SOLIC.areaEmite
-		LEFT JOIN cat_capitulos CAPITULO ON CAPITULO.id = SOLIC.capitulo 
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus		
-		WHERE SOLIC.fechaRecibido >= fInicio AND SOLIC.fechaRecibido <= fFin AND 
-			(CASE 
-				WHEN nDPTO > 0 THEN SOLIC.areaAsignar = nDPTO OR JSON_CONTAINS(SOLIC.seguimiento, JSON_OBJECT('id', nDPTO))
-				ELSE TRUE
-			END)
-		ORDER BY SOLIC.created_at DESC;	
-	ELSE 
-		SELECT 
-			SOLIC.id AS `idSolicitud`,
-			cat_doc.nombre AS `solicitud`,
-			DPTO_Solicita.nombre AS `areaSolicita`,
-			DPTO_Asignar.nombre AS `areaAsignar`,
-			DPTO_Emite.nombre AS `areaEmite`,
-			SOLIC.asunto,
-			SOLIC.cargo,
-			SOLIC.remitente,
-			SOLIC.numOficio, 
-			SOLIC.numFolio,
-			SOLIC.numMemo,
-			CAPITULO.serie AS `capitulo`,
-			TERMINO.nombre AS `termino`,
-			SOLIC.respuesta,
-			DATE_FORMAT(SOLIC.fechaRecibido, "%d/%m/%Y") AS `fechaRecibido`,
-			SOLIC.horaRecibido,
-			DATE_FORMAT(SOLIC.fechaTermino, "%d/%m/%Y") AS `fechaTermino`,
-			files.RUTA AS `rutaDoc`,
-			FL_CONTE.RUTA AS `rutaContestacion`,
-			ESTATUS.nombre AS `estatus`
-		FROM cap_solicitud SOLIC
-		LEFT JOIN cat_departamentos DPTO_Solicita ON DPTO_Solicita.id = SOLIC.areaSolicita
-		LEFT JOIN cat_seguimiento DPTO_Asignar ON DPTO_Asignar.idSeguimiento = SOLIC.areaAsignar
-		LEFT JOIN cat_departamentos DPTO_Emite ON DPTO_Emite.id = SOLIC.areaEmite
-		LEFT JOIN cat_capitulos CAPITULO ON CAPITULO.id = SOLIC.capitulo 
-		LEFT JOIN cat_terminos TERMINO ON TERMINO.idTermino = SOLIC.termino
-		LEFT JOIN cat_doc ON cat_doc.id = SOLIC.tipo
-		LEFT JOIN files ON files.idDOCUMENTO = SOLIC.idArchivo
-		LEFT JOIN cap_contestacion CONTE ON CONTE.idSolicitud = SOLIC.id
-		LEFT JOIN files FL_CONTE ON FL_CONTE.idDOCUMENTO = CONTE.idArchivo
-		LEFT JOIN cat_estatus ESTATUS ON ESTATUS.id = SOLIC.idStatus
-		WHERE SOLIC.fechaRecibido >= fInicio AND SOLIC.fechaRecibido <= fFIN AND SOLIC.created_by = nUsuario
-		ORDER BY SOLIC.created_at DESC;
-	END IF;
 END//
 DELIMITER ;
 
@@ -1021,46 +751,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- Volcando estructura para procedimiento admin.sp_Solicitud_setRegistrarCircular
-DELIMITER //
-CREATE PROCEDURE `sp_Solicitud_setRegistrarCircular`(
-	IN `nTipo` INT,
-	IN `fRecibido` DATE,
-	IN `hRecibido` TIME,
-	IN `nAreaEmite` INT,
-	IN `cAsunto` VARCHAR(55),
-	IN `nIdArchivo` INT,
-	IN `jsonSeguimiento` JSON,
-	IN `nIdAuth` INT,
-	IN `fAccion` TIMESTAMP
-)
-BEGIN
-	INSERT INTO cap_solicitud (
-		tipo,
-		fechaRecibido,
-		horaRecibido,
-		areaEmite,
-		asunto,
-		idArchivo,
-		seguimiento,
-		created_by,
-		created_at
-	)
-	VALUES(
-		nTipo,
-		fRecibido,
-		hRecibido,
-		nAreaEmite,
-		cAsunto,
-		nIdArchivo,
-		jsonSeguimiento,
-		nIdAuth,
-		fAccion
-	);
-	
-	SELECT LAST_INSERT_ID() AS `idSOLICITUD`;
-END//
-DELIMITER ;
 
 -- Volcando estructura para procedimiento admin.sp_Solicitud_setRegistrarCopiaCon
 DELIMITER //
@@ -1075,58 +765,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- Volcando estructura para procedimiento admin.sp_Solicitud_setRegistrarExtra
-DELIMITER //
-CREATE PROCEDURE `sp_Solicitud_setRegistrarExtra`(
-	IN `nTipo` INT,
-	IN `nAreaSolicita` INT,
-	IN `cAsunto` VARCHAR(55),
-	IN `fRecibido` DATE,
-	IN `hRecibido` TIME,
-	IN `nTermino` INT,
-	IN `fTermino` DATE,
-	IN `nAsignacion` INT,
-	IN `nRespuesta` INT,
-	IN `nIdArchivo` INT,
-	IN `jsonSeguimiento` JSON,
-	IN `nIdAuth` INT,
-	IN `fAccion` TIMESTAMP
-)
-BEGIN
-	INSERT INTO cap_solicitud (
-		tipo,
-		areaSolicita,
-		asunto,
-		fechaRecibido,
-		horaRecibido,
-		termino,
-		fechaTermino,
-		areaAsignar,
-		respuesta,
-		idArchivo,
-		seguimiento,
-		created_by,
-		created_at
-	)
-	VALUES (
-		nTipo,
-		nAreaSolicita,
-		cAsunto,
-		fRecibido,
-		hRecibido,
-		nTermino,
-		fTermino,
-		nAsignacion,
-		nRespuesta,
-		nIdArchivo,
-		jsonSeguimiento,
-		nIdAuth,
-		fAccion
-	);
-	
-	SELECT LAST_INSERT_ID() AS `idSOLICITUD`;
-END//
-DELIMITER ;
 
 -- Volcando estructura para procedimiento admin.sp_Usuario_checkUsername
 DELIMITER //
@@ -1572,7 +1210,7 @@ CREATE TABLE IF NOT EXISTS `cat_partido_sin_repr` (
 
 -- Volcando datos para la tabla src2025.cat_partido: ~19 rows (aproximadamente)
 INSERT INTO `cat_partido_sin_repr` (`id`, `siglas`, `nombre`, `tipo`, logo) VALUES
-	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP','PSI.webp'),
+	(1, 'PSI', 'PACTO SOCIAL DE INTEGRACIÓN, PARTIDO POLÍTICO', 'PP','PSI_Small.webp'),
 	(2, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP','NAP_Small.webp'),
 	(3, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP','FXMP_Small.webp');
     
@@ -1869,7 +1507,6 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS sp_insert_partidos_sin_repr;
 
-*/
 DELIMITER //
 CREATE PROCEDURE sp_insert_partidos_sin_repr (
 	IN p_id_calculo INT,
