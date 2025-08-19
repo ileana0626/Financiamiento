@@ -498,7 +498,20 @@ CREATE TABLE IF NOT EXISTS `files` (
   PRIMARY KEY (`idDOCUMENTO`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2869 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Volcando estructura para tabla admin.cat_cargos
+CREATE TABLE IF NOT EXISTS `cat_cargos` (
+  `idCargo` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(1000) DEFAULT NULL,
+  `status` enum('A','I') DEFAULT 'A',
+  PRIMARY KEY (`idCargo`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Volcando datos para la tabla admin.cat_cargos: ~3 rows (aproximadamente)
+/*DELETE FROM `cat_cargos`;*/
+INSERT INTO `cat_cargos` (`idCargo`, `nombre`, `status`) VALUES
+	(1, 'Otro', 'A'),
+	(2, 'Encargado de Despacho', 'A'),
+	(4, 'Jefe de Departamento', 'A');
 
 -- Volcando estructura para procedimiento admin.sp_ActualizarCatalogos
 DELIMITER //
