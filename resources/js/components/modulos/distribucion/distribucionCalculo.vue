@@ -745,9 +745,7 @@ export default {
                 this.$vs.notification({ color: 'danger', text: 'Verifique los datos e inténtelo de nuevo.' });
                 return;
             }
-            if(this.distribucionId? null : this.distribucionId === null || this.distribucionId === 0){
-                throw new Error('✘ No se encontro el ID de la distribución');
-            }
+            
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
@@ -774,7 +772,7 @@ export default {
             try {
                 // Actualizar distribución
                 if (this.distribucionId) {
-                    const response = await axios.post(url, datos);
+                    const response = await axios.post(url, datos); //   UPDATE
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id || this.distribucionId;
@@ -783,7 +781,7 @@ export default {
                         throw new Error(errorMsg);
                     }
                 } else { // Guardar distribución
-                    const response = await axios.post(url, datos);
+                    const response = await axios.post(url, datos); // INSERT
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
@@ -834,6 +832,7 @@ export default {
                 confirmButtonText: 'Aceptar'
                 })
                 // Habilita descargar archivo
+                this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
                 this.descargar_disabled = false;
             } catch (error) {
                 console.error('Error al guardar:', error);
@@ -855,6 +854,10 @@ export default {
             const apiUrl = `/administracion/solicitud/exportarFinanciamientoDistribucionExcel/${id}`;
             let downloadUrl = null;
             let link = null;
+
+            if(this.distribucionId? null : this.distribucionId === null || this.distribucionId === 0){
+                throw new Error('✘ No se encontro el ID de la distribución');
+            }
 
             axios.get(apiUrl, {
                 responseType: 'blob',
