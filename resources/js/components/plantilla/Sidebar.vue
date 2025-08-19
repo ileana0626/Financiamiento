@@ -55,24 +55,14 @@ Consulta de Errores
             <!-- modulo distribucion -->
             <vs-sidebar-group>
                 <template #header>
-                    <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
-                        to="/distribucion" arrow>
+                    <vs-sidebar-item v-if="listPermisos.includes('distribucion.captura')" id="distribucion.captura"
+                        to="/distribucion">
                         <template #icon>
                             <span class="material-symbols-rounded">scatter_plot</span>
                         </template>
                         Distribución
                     </vs-sidebar-item>
                 </template>
-                <!-- <template>
-             <vs-sidebar-item id="listado">
-                <template #icon>
-                  <i class="fas fa-file-alt color"></i>
-                </template>
-                  <router-link class="nav-link color" :to="'/listado'">
-                    Listado de cálculos
-                </router-link>
-              </vs-sidebar-item>
-            </template> -->
             </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
@@ -85,107 +75,10 @@ Consulta de Errores
                     Notificaciones
                 </vs-sidebar-item>
 
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('solicitudes.index')" id="solicitudes.index"
-                    to="/indexSolicitudes">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            list_alt
-                        </span>
-                    </template>
-                    Solicitudes
-                </vs-sidebar-item> -->
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('solicitudes.ver')" id="solicitudes.ver"
-                    to="/gestionSolicitudes">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            list_alt
-                        </span>
-                    </template>
-                    Solicitudes
-                </vs-sidebar-item> -->
-
-                <!-- vs-sidebar-group>
-              <template #header>
-                <vs-sidebar-item arrow>
-                  <template #icon>
-                  <i class="fas fa-folder"></i>
-                  </template>
-                  DOCUMENTOS
-                </vs-sidebar-item>
-              </template>
-              <template>
-             <vs-sidebar-item id="Memo">
-                <template #icon>
-                  <i class="fas fa-file-alt color"></i>
-                </template>
-                  <router-link class="nav-link color" :to="'/memo'">
-                    Memorándum
-                </router-link>
-              </vs-sidebar-item>
-            </template>
-            </vs-sidebar-group> -->
-
-               <!--  <vs-sidebar-item v-if="listPermisos.includes('admin.catalogos')" id="admin.catalogos" to="/catalogos">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            menu_book
-                        </span>
-                    </template>
-                    Catálogos
-                </vs-sidebar-item> -->
-
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('perfil.index')" id="perfil.index"
-                    :to="'/perfil/' + usuario.id">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            account_circle
-                        </span>
-                    </template>
-                    Mi Perfil
-                </vs-sidebar-item> -->
-
-                <!-- <vs-sidebar-item id="birthday.index" to="/birthday" v-if="listPermisos.includes('birthday.index')">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            featured_seasonal_and_gifts
-                        </span>
-                    </template>
-                    Cumpleaños
-                </vs-sidebar-item>
- -->
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')" id="admin.usuarios" to="/usuarios">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            list
-                        </span>
-                    </template>
-                    Usuarios
-                </vs-sidebar-item> -->
-
-               <!--  <vs-sidebar-item v-if="listPermisos.includes('admin.preferencias')" id="admin.preferencias"
-                    to="/preferenciasInterfaz">
-                    <template #icon>
-                        <span class="material-symbols-rounded">
-                            draw
-                        </span>
-                    </template>
-                    Configuraciones
-                </vs-sidebar-item> -->
             </template>
             <template #footer>
                 <div class="container-fluid d-flex justify-content-between mx-0 px-0 flex-column-reverse flex-lg-row footer-sb">
                     <div class="">
-                        <!-- <vs-tooltip top>
-                            <vs-button id="logoutBtn" icon danger size="large" @click.prevent="logout">
-                                <span class="material-symbols-rounded"
-                                    style="color: #FFFFFF !important; font-size: 20px !important; ">
-                                    logout
-                                </span>
-                            </vs-button>
-                            <template #tooltip>
-                                Salir
-                            </template>
-                        </vs-tooltip> -->
                     </div>
                     <!-- helper -->
                      <vs-row justify="space-between" v-if="listPermisos.includes('faq.index')">
