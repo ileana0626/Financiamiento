@@ -36133,11 +36133,10 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
-        return [_vm.listPermisos.includes("captura.index") ? _c("vs-sidebar-item", {
+        return [_vm.listPermisos.includes("distribucion.captura") ? _c("vs-sidebar-item", {
           attrs: {
-            id: "captura.index",
-            to: "/distribucion",
-            arrow: ""
+            id: "distribucion.captura",
+            to: "/distribucion"
           },
           scopedSlots: _vm._u([{
             key: "icon",
@@ -233237,7 +233236,7 @@ function _userValidToEdit() {
     }
   }, {
     path: '/distribucion',
-    name: 'captura.index',
+    name: 'distribucion.captura',
     component: _components_modulos_distribucion_distribucionCalculo_vue__WEBPACK_IMPORTED_MODULE_18__["default"],
     beforeEnter: function beforeEnter(to, from, next) {
       verificarAcceso(to, from, next);

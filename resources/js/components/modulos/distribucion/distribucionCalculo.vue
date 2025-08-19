@@ -545,7 +545,8 @@ export default {
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
-                            inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
+                        inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
+
                         // Variable temporarl en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
