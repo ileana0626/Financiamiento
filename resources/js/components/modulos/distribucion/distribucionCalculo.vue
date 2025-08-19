@@ -143,7 +143,7 @@
                             </vs-select>
 
                         <!-- Formulario principal -->
-                        <div v-if="distribucion.includes(1) || distribucion.includes(2)">
+                        <div v-if="distribucion.includes(1)">
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <h5>Financiamiento público para actividades ordinarias permanentes</h5>
@@ -186,7 +186,7 @@
                             <!-- Tabla de distribución -->
                             <vs-table class="tabla-ajustada mt-4">
                                 <template #thead>
-                                    <vs-tr>
+                                    <vs-tr >
                                         <vs-th :colspan="1">Siglas</vs-th>
                                         <vs-th :colspan="1">Emblema</vs-th>
                                         <vs-th :colspan="1">% de votación</vs-th>

@@ -27333,7 +27333,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("\n                            " + _vm._s(item.nombre) + "\n                        ")]);
-  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) || _vm.distribucion.includes(2) ? _c("div", [_c("div", {
+  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", [_c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
     staticClass: "col-12"
