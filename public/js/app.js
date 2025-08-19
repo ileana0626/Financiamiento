@@ -11319,7 +11319,6 @@ var debug = function debug() {
       monto30: '',
       monto70: '',
       monto70Input: '',
-      //suma: '',
       colors: [{
         color: 'warn'
       }],
@@ -11333,8 +11332,6 @@ var debug = function debug() {
       errorDistribucion: '',
       errorMonto30: '',
       errorMonto70: '',
-      //errorPartidosPoliticos_conRepr: '',
-      //errorPorcentajeVotacion: '',
       descargar_disabled: true // true: disabled | false: enabled
     };
   },
@@ -11472,7 +11469,7 @@ var debug = function debug() {
             return _objectSpread(_objectSpread({}, p), {}, {
               ajuste: 0,
               // valor temporal para el input
-              inputPorcentaje: _this5.formatearPorcentaje(p.porcentaje_votacion),
+              inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
               // Variable temporarl en el Front
               errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
@@ -11496,7 +11493,6 @@ var debug = function debug() {
         _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
       })["finally"](function () {
         loader.close();
-        //debug('🐛 Finalizado !');
       });
     },
     onChangeDistribucion: function onChangeDistribucion(value) {
@@ -11573,7 +11569,6 @@ var debug = function debug() {
         this.monto30 = null;
         this.monto30Input = '';
       } else {
-        //this.errorMonto30 = false; // No es necesario
         this.errorMonto30 = '';
         this.monto30 = valorNumerico;
         this.monto30Input = valorNumerico.toLocaleString('es-MX', {
@@ -11747,148 +11742,129 @@ var debug = function debug() {
               console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
               _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 23;
+                _context5.next = 22;
                 break;
               }
               _context5.next = 13;
               return axios.post(url, datos);
             case 13:
               response = _context5.sent;
-              debug('🐛 Respuesta del servidor (actualizar):', response.data);
               if (!(response.data && response.data.success)) {
-                _context5.next = 19;
+                _context5.next = 18;
                 break;
               }
               _this9.distribucionId = response.data.id || _this9.distribucionId;
-              _context5.next = 21;
+              _context5.next = 20;
               break;
-            case 19:
+            case 18:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 21:
-              _context5.next = 34;
+            case 20:
+              _context5.next = 31;
               break;
-            case 23:
-              _context5.next = 25;
+            case 22:
+              _context5.next = 24;
               return axios.post(url, datos);
-            case 25:
+            case 24:
               _response = _context5.sent;
-              debug('🐛 Respuesta del servidor (guardar):', _response.data);
               if (!(_response.data && _response.data.success)) {
-                _context5.next = 32;
+                _context5.next = 29;
                 break;
               }
               _this9.distribucionId = _response.data.id;
-              _this9.$vs.notification({
-                color: 'success',
-                text: _response.data.message || 'Distribución guardada exitosamente'
-              });
-              _context5.next = 34;
+              _context5.next = 31;
               break;
-            case 32:
+            case 29:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 34:
+            case 31:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 36;
+              _context5.prev = 33;
               _iterator.s();
-            case 38:
+            case 35:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 54;
+                _context5.next = 50;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 40;
-              _context5.next = 43;
+              _context5.prev = 37;
+              _context5.next = 40;
               return axios.post(url, partido);
-            case 43:
+            case 40:
               _response2 = _context5.sent;
               // ⇋
-              if (_response2.data && _response2.data.ids) {
-                debug('🐛 PPCR actualizado: ' + _response2.data.ids);
-              }
-              _context5.next = 52;
+              if (_response2.data && _response2.data.ids) {}
+              _context5.next = 48;
               break;
-            case 47:
-              _context5.prev = 47;
-              _context5.t0 = _context5["catch"](40);
-              debug('🐛 Error al actualizar partido PPCR: ' + partido.siglas, _context5.t0);
+            case 44:
+              _context5.prev = 44;
+              _context5.t0 = _context5["catch"](37);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
+            case 48:
+              _context5.next = 35;
+              break;
+            case 50:
+              _context5.next = 55;
+              break;
             case 52:
-              _context5.next = 38;
-              break;
-            case 54:
-              _context5.next = 59;
-              break;
-            case 56:
-              _context5.prev = 56;
-              _context5.t1 = _context5["catch"](36);
+              _context5.prev = 52;
+              _context5.t1 = _context5["catch"](33);
               _iterator.e(_context5.t1);
-            case 59:
-              _context5.prev = 59;
+            case 55:
+              _context5.prev = 55;
               _iterator.f();
-              return _context5.finish(59);
-            case 62:
+              return _context5.finish(55);
+            case 58:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
-              // Esperar a que todas las peticiones terminen
-              //await Promise.all(promesas);
-              // Actualizamos la tabla de partidos políticos sin representación   
-              //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 64;
+              _context5.prev = 60;
               _iterator2.s();
-            case 66:
+            case 62:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 82;
+                _context5.next = 77;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 68;
-              _context5.next = 71;
+              _context5.prev = 64;
+              _context5.next = 67;
               return axios.post(url, _partido);
-            case 71:
+            case 67:
               _response3 = _context5.sent;
               // ⇋
-              if (_response3.data && _response3.data.ids) {
-                debug('🐛 PPSR actualizado: ' + _response3.data.ids);
-              }
-              _context5.next = 80;
+              if (_response3.data && _response3.data.ids) {}
+              _context5.next = 75;
               break;
-            case 75:
-              _context5.prev = 75;
-              _context5.t2 = _context5["catch"](68);
-              debug('🐛 Error al actualizar partido PPSR: ' + _partido.siglas, _context5.t2);
+            case 71:
+              _context5.prev = 71;
+              _context5.t2 = _context5["catch"](64);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 80:
-              _context5.next = 66;
+            case 75:
+              _context5.next = 62;
               break;
-            case 82:
-              _context5.next = 87;
+            case 77:
+              _context5.next = 82;
               break;
-            case 84:
-              _context5.prev = 84;
-              _context5.t3 = _context5["catch"](64);
+            case 79:
+              _context5.prev = 79;
+              _context5.t3 = _context5["catch"](60);
               _iterator2.e(_context5.t3);
-            case 87:
-              _context5.prev = 87;
+            case 82:
+              _context5.prev = 82;
               _iterator2.f();
-              return _context5.finish(87);
-            case 90:
-              // Esperar a que todas las peticiones terminen
-              //await Promise.all(promesasSinRep);
-
+              return _context5.finish(82);
+            case 85:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -11899,10 +11875,10 @@ var debug = function debug() {
               });
               // Habilita descargar archivo
               _this9.descargar_disabled = false;
-              _context5.next = 100;
+              _context5.next = 95;
               break;
-            case 94:
-              _context5.prev = 94;
+            case 89:
+              _context5.prev = 89;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11912,15 +11888,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 100:
-              _context5.prev = 100;
+            case 95:
+              _context5.prev = 95;
               loader.close();
-              return _context5.finish(100);
-            case 103:
+              return _context5.finish(95);
+            case 98:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 94, 100, 103], [36, 56, 59, 62], [40, 47], [64, 84, 87, 90], [68, 75]]);
+        }, _callee5, null, [[9, 89, 95, 98], [33, 52, 55, 58], [37, 44], [60, 79, 82, 85], [64, 71]]);
       }))();
     },
     /**
@@ -12014,12 +11990,10 @@ var debug = function debug() {
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-      //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
       return monto * porcentaje / totalPorcentajes;
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);
-      //console.log('B. Monto con ajuste:', {base, ajuste});
       return base + (ajuste || 0);
     },
     calcularMontoC: function calcularMontoC(partido) {
@@ -12099,14 +12073,21 @@ var debug = function debug() {
     * @returns {void}
     */
     onBlurPorcentaje: function onBlurPorcentaje(partido) {
-      if (!partido.inputPorcentaje) {
-        partido.inputPorcentaje = '0.00000 %';
-        partido.porcentaje_votacion = 0.00000;
+      var valorCrudo = partido.inputPorcentaje;
+      if (!valorCrudo) {
+        partido.inputPorcentaje = ''; // input vacío, no mostrar nada
+        partido.porcentaje_votacion = 0;
         return;
       }
-      var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+
+      // Obtener número completo del input
+      var valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
+
+      // Guardar valor completo para los cálculos
       partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
-      partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
+
+      // Mostrar solo dos decimales en el input, pero sin perder precisión interna
+      partido.inputPorcentaje = isNaN(valorNumerico) ? '' : valorNumerico.toFixed(2) + ' %';
     },
     /**
      * ✔ Validar campos
@@ -36159,11 +36140,10 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
-        return [_vm.listPermisos.includes("captura.index") ? _c("vs-sidebar-item", {
+        return [_vm.listPermisos.includes("distribucion.captura") ? _c("vs-sidebar-item", {
           attrs: {
-            id: "captura.index",
-            to: "/distribucion",
-            arrow: ""
+            id: "distribucion.captura",
+            to: "/distribucion"
           },
           scopedSlots: _vm._u([{
             key: "icon",
@@ -233263,7 +233243,7 @@ function _userValidToEdit() {
     }
   }, {
     path: '/distribucion',
-    name: 'captura.index',
+    name: 'distribucion.captura',
     component: _components_modulos_distribucion_distribucionCalculo_vue__WEBPACK_IMPORTED_MODULE_18__["default"],
     beforeEnter: function beforeEnter(to, from, next) {
       verificarAcceso(to, from, next);
@@ -233517,7 +233497,7 @@ var formatearDecimal = function formatearDecimal(valor) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

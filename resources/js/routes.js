@@ -152,7 +152,7 @@ export default new Router({
         { path: '/calculo', name: 'captura.index', component: Calculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/listado', name:'solicitudes.ver', component: ListadoCalculos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         
-        { path: '/distribucion', name: 'captura.index', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/distribucion', name: 'distribucion.captura', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 
 

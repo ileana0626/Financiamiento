@@ -427,7 +427,6 @@ export default {
             monto30: '',
             monto70: '',
             monto70Input: '',
-            //suma: '',
             colors: [
                 {
                     color: 'warn'
@@ -443,8 +442,6 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
-            //errorPartidosPoliticos_conRepr: '',
-            //errorPorcentajeVotacion: '',
             descargar_disabled: true, // true: disabled | false: enabled
         }
     },
@@ -555,7 +552,8 @@ export default {
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
-                        inputPorcentaje: this.formatearPorcentaje(p.porcentaje_votacion),
+                        inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
+
                         // Variable temporarl en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
@@ -579,7 +577,6 @@ export default {
             })
             .finally(() => {
                 loader.close();
-                //debug('🐛 Finalizado !');
             })
         },
         onChangeDistribucion(value) {
@@ -644,7 +641,6 @@ export default {
             this.monto30 = null;
             this.monto30Input = '';
             } else {
-            //this.errorMonto30 = false; // No es necesario
             this.errorMonto30 = '';
             this.monto30 = valorNumerico;
 
@@ -778,7 +774,6 @@ export default {
                 // Actualizar distribución
                 if (this.distribucionId) {
                     const response = await axios.post(url, datos);
-                    debug('🐛 Respuesta del servidor (actualizar):', response.data);
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id || this.distribucionId;
@@ -788,14 +783,10 @@ export default {
                     }
                 } else { // Guardar distribución
                     const response = await axios.post(url, datos);
-                    debug('🐛 Respuesta del servidor (guardar):', response.data);
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
-                        this.$vs.notification({ 
-                            color: 'success', 
-                            text: response.data.message || 'Distribución guardada exitosamente' 
-                        });
+                        
                     } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
                         throw new Error(errorMsg);
@@ -809,10 +800,8 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
-                        debug('🐛 PPCR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
-                        debug('🐛 Error al actualizar partido PPCR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -821,18 +810,12 @@ export default {
                     }
                 }
                 url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
-                // Esperar a que todas las peticiones terminen
-                //await Promise.all(promesas);
-                // Actualizamos la tabla de partidos políticos sin representación   
-                //const promesasSinRep = this.Partidos_Sin_Representacion.map(async partido => {
                 for (const partido of this.Partidos_Sin_Representacion) {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
-                        debug('🐛 PPSR actualizado: ' + response.data.ids);
                     }
                     } catch (error) {
-                        debug('🐛 Error al actualizar partido PPSR: ' + partido.siglas, error);
                         this.$vs.notification({ 
                             color: 'danger', 
                             text: `Error al actualizar ${partido.siglas}` 
@@ -840,8 +823,6 @@ export default {
                         throw error;
                     }
                 }
-                // Esperar a que todas las peticiones terminen
-                //await Promise.all(promesasSinRep);
 
                 // Notificación de éxito
                 Swal.fire({
@@ -958,12 +939,10 @@ export default {
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
             
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            //console.log('B. Monto proporcional:', {porcentaje, totalPorcentajes, monto});
             return (monto * porcentaje) / totalPorcentajes;
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
-            //console.log('B. Monto con ajuste:', {base, ajuste});
             return base + (ajuste || 0);
         },
         calcularMontoC(partido) {
@@ -1042,16 +1021,22 @@ export default {
         * @returns {void}
         */
         onBlurPorcentaje(partido) {
-            if (!partido.inputPorcentaje) {
-                partido.inputPorcentaje = '0.00000 %';
-                partido.porcentaje_votacion = 0.00000;
+            const valorCrudo = partido.inputPorcentaje;
+
+            if (!valorCrudo) {
+                partido.inputPorcentaje = ''; // input vacío, no mostrar nada
+                partido.porcentaje_votacion = 0;
                 return;
             }
-            
-            const valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+
+            // Obtener número completo del input
+            const valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
+
+            // Guardar valor completo para los cálculos
             partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
-            partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
-            
+
+            // Mostrar solo dos decimales en el input, pero sin perder precisión interna
+            partido.inputPorcentaje = isNaN(valorNumerico) ? '' : valorNumerico.toFixed(2) + ' %';
         },
         /**
          * ✔ Validar campos
