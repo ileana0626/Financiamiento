@@ -685,14 +685,14 @@ export default {
                 p_id_calculo: this.selectedCalculo.id
             }
             try{
-                const response = await axios.post(url, datos); // Se manda post aunque sea GET por el controlador
+                const response = await axios.post(url, datos); // ⇋ Se manda post aunque sea GET por el controlador
                 debug('🐛 response.data:', response.data); 
                 // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
                 if( response.data && response.data.success && response.data.distribucion.length > 0){
                     this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
                     this.distribucionId = this.DataDistribucion.id_calculo;
                     // Empieza a cargar los datos guardados
-                    this.anio = this.DataDistribucion.anio_ejercicio;
+                    this.anio = this.DataDistribucion.anio_ejercicio; // asigna año
                     if (this.DataDistribucion?.tipo_distribucion) {
                         this.distribucion = this.DataDistribucion.tipo_distribucion
                             .split(',')
@@ -700,14 +700,18 @@ export default {
                             .filter(item => !isNaN(item));
                     }
                     this.monto30Input = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
+                    this.monto30 = this.DataDistribucion.monto_30_por_ciento;
                     this.monto70Input = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
-                    this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']);
+                    this.monto70 = this.DataDistribucion.monto_70_por_ciento;
+                    this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
                     this.$nextTick(() => {
                         debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
                     });
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
+                    // Habilita descargar archivo
+                    this.descargar_disabled = false;
                     debug('✅ Distribución cargada.');
                 }else{
                     debug('❌ No se encontro distribución, ➜ continua normalmente...');
@@ -786,7 +790,7 @@ export default {
                 //const promesas = this.Partidos_Con_Representacion.map(async partido => {
                 for (const partido of this.Partidos_Con_Representacion) {
                     try {
-                    const response = await axios.post(url, partido);
+                    const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
                     }
                     } catch (error) {
@@ -800,7 +804,7 @@ export default {
                 url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
                 for (const partido of this.Partidos_Sin_Representacion) {
                     try {
-                    const response = await axios.post(url, partido);
+                    const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
                     }
                     } catch (error) {
@@ -820,8 +824,8 @@ export default {
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Aceptar'
                 })
-                // HAbilita descargar archivo
-                this.descargar_disabled = true;
+                // Habilita descargar archivo
+                this.descargar_disabled = false;
             } catch (error) {
                 console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });

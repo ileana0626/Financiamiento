@@ -11628,42 +11628,46 @@ var debug = function debug() {
               return axios.post(url, datos);
             case 7:
               response = _context4.sent;
-              // Se manda post aunque sea GET por el controlador
+              // ⇋ Se manda post aunque sea GET por el controlador
               debug('🐛 response.data:', response.data);
               // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
               if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
-                _context4.next = 22;
+                _context4.next = 25;
                 break;
               }
               _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
               _this8.distribucionId = _this8.DataDistribucion.id_calculo;
               // Empieza a cargar los datos guardados
-              _this8.anio = _this8.DataDistribucion.anio_ejercicio;
+              _this8.anio = _this8.DataDistribucion.anio_ejercicio; // asigna año
               if ((_this8$DataDistribuci = _this8.DataDistribucion) !== null && _this8$DataDistribuci !== void 0 && _this8$DataDistribuci.tipo_distribucion) {
                 _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
                   return !isNaN(item);
                 });
               }
               _this8.monto30Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_30_por_ciento);
+              _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
               _this8.monto70Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_70_por_ciento);
-              _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']);
+              _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
+              _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
               _this8.$nextTick(function () {
                 debug('🐛 Factor de porcentaje: ', _this8.factorCalculo, 'Opción seleccionada: ', _this8.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this8.opcionSelecionadaPorcentaje));
               });
               if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
                 _this8.descargar_disabled = false;
               }
+              // Habilita descargar archivo
+              _this8.descargar_disabled = false;
               debug('✅ Distribución cargada.');
-              _context4.next = 24;
+              _context4.next = 27;
               break;
-            case 22:
+            case 25:
               debug('❌ No se encontro distribución, ➜ continua normalmente...');
               return _context4.abrupt("return");
-            case 24:
-              _context4.next = 32;
+            case 27:
+              _context4.next = 35;
               break;
-            case 26:
-              _context4.prev = 26;
+            case 29:
+              _context4.prev = 29;
               _context4.t0 = _context4["catch"](4);
               console.error('Error al cargar distribución', _context4.t0);
               _this8.$vs.notification({
@@ -11673,15 +11677,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 32:
-              _context4.prev = 32;
-              loader.close();
-              return _context4.finish(32);
             case 35:
+              _context4.prev = 35;
+              loader.close();
+              return _context4.finish(35);
+            case 38:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[4, 26, 32, 35]]);
+        }, _callee4, null, [[4, 29, 35, 38]]);
       }))();
     },
     guardarDistribucion: function guardarDistribucion() {
@@ -11785,6 +11789,7 @@ var debug = function debug() {
               return axios.post(url, partido);
             case 40:
               _response2 = _context5.sent;
+              // ⇋
               if (_response2.data && _response2.data.ids) {}
               _context5.next = 48;
               break;
@@ -11826,6 +11831,7 @@ var debug = function debug() {
               return axios.post(url, _partido);
             case 67:
               _response3 = _context5.sent;
+              // ⇋
               if (_response3.data && _response3.data.ids) {}
               _context5.next = 75;
               break;
@@ -11860,8 +11866,8 @@ var debug = function debug() {
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Aceptar'
               });
-              // HAbilita descargar archivo
-              _this9.descargar_disabled = true;
+              // Habilita descargar archivo
+              _this9.descargar_disabled = false;
               _context5.next = 95;
               break;
             case 89:
