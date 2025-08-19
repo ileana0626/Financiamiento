@@ -11462,7 +11462,7 @@ var debug = function debug() {
             return _objectSpread(_objectSpread({}, p), {}, {
               ajuste: 0,
               // valor temporal para el input
-              inputPorcentaje: _this5.formatearPorcentaje(p.porcentaje_votacion),
+              inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
               // Variable temporarl en el Front
               errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
@@ -12066,14 +12066,21 @@ var debug = function debug() {
     * @returns {void}
     */
     onBlurPorcentaje: function onBlurPorcentaje(partido) {
-      if (!partido.inputPorcentaje) {
-        partido.inputPorcentaje = '0.00000 %';
-        partido.porcentaje_votacion = 0.00000;
+      var valorCrudo = partido.inputPorcentaje;
+      if (!valorCrudo) {
+        partido.inputPorcentaje = ''; // input vacío, no mostrar nada
+        partido.porcentaje_votacion = 0;
         return;
       }
-      var valorNumerico = parseFloat(partido.inputPorcentaje.toString().replace(/[^0-9.]/g, ''));
+
+      // Obtener número completo del input
+      var valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
+
+      // Guardar valor completo para los cálculos
       partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
-      partido.inputPorcentaje = this.formatearPorcentaje(partido.porcentaje_votacion);
+
+      // Mostrar solo dos decimales en el input, pero sin perder precisión interna
+      partido.inputPorcentaje = isNaN(valorNumerico) ? '' : valorNumerico.toFixed(2) + ' %';
     },
     /**
      * ✔ Validar campos

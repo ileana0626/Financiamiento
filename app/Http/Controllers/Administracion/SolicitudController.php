@@ -187,6 +187,7 @@ class SolicitudController extends Controller
         try{
             DB::enableQueryLog();
             $id = $request->input('id', null); // Valor por defecto null
+            Log::info('ID recibido en get_Partidos_Calculo_porId:', ['id' => $id]);
             $pdo = DB::connection()->getPdo();
             $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
             $stmt->execute([$id]);
