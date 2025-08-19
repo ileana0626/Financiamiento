@@ -75,39 +75,6 @@ INSERT INTO `cat_partido_con_repr` (`id`, `siglas`, `nombre`, `tipo`, logo) VALU
 	(8, 'NAP', 'NUEVA ALIANZA PUEBLA', 'PP', 'NAP_Small.webp'),
 	(9, 'FXMP', 'FUERZA POR MÉXICO PUEBLA', 'PP', 'FXMP_Small.webp');
 
-/*tabla intermedia*/
-DROP TABLE IF EXISTS calculo_partido_sin_repr;
-CREATE TABLE calculo_partido_sin_repr (
-    id_calculo INT NOT NULL,
-    id_partido INT NOT NULL,
-    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
-    D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo',
-    PRIMARY KEY (id_calculo, id_partido),
-    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
-		ON DELETE RESTRICT,
-    FOREIGN KEY (id_partido) REFERENCES cat_partido_sin_repr(id)
-		ON DELETE RESTRICT
-);
-
-DROP TABLE IF EXISTS calculo_partido_con_repr;
-CREATE TABLE calculo_partido_con_repr (
-    id_calculo INT NOT NULL,
-    id_partido INT NOT NULL,
-    -- Nuevos campos para distribución
-    porcentaje_votacion DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> % de votación por cada partido político en elección inmediata anterior de diputaciones',
-    A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> A. 30% en forma igualitaria',
-    B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> B. 70% conforme al % de votación',
-	ajuste DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Distribución -> Ajuste decimas de centavos',
-    B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Total de B. 70% conforme al % de votación después del ajuste',
-    C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades ordinarias permanentes (A+B)',
-    D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades tendientes a la obtención del voto (D=C*Factor%)',
-    
-    PRIMARY KEY (id_calculo, id_partido),
-    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
-		ON DELETE RESTRICT,
-    FOREIGN KEY (id_partido) REFERENCES cat_partido_con_repr(id)
-		ON DELETE RESTRICT
-);
 
 /*tabla calculo*/
 SET FOREIGN_KEY_CHECKS = 0;
@@ -143,6 +110,39 @@ CREATE TABLE calculo_dppp (
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+/*tabla intermedia*/
+DROP TABLE IF EXISTS calculo_partido_sin_repr;
+CREATE TABLE calculo_partido_sin_repr (
+    id_calculo INT NOT NULL,
+    id_partido INT NOT NULL,
+    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
+    D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo',
+    PRIMARY KEY (id_calculo, id_partido),
+    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT,
+    FOREIGN KEY (id_partido) REFERENCES cat_partido_sin_repr(id)
+		ON DELETE RESTRICT
+);
+
+DROP TABLE IF EXISTS calculo_partido_con_repr;
+CREATE TABLE calculo_partido_con_repr (
+    id_calculo INT NOT NULL,
+    id_partido INT NOT NULL,
+    -- Nuevos campos para distribución
+    porcentaje_votacion DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> % de votación por cada partido político en elección inmediata anterior de diputaciones',
+    A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> A. 30% en forma igualitaria',
+    B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> B. 70% conforme al % de votación',
+	ajuste DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Distribución -> Ajuste decimas de centavos',
+    B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Total de B. 70% conforme al % de votación después del ajuste',
+    C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades ordinarias permanentes (A+B)',
+    D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades tendientes a la obtención del voto (D=C*Factor%)',
+    
+    PRIMARY KEY (id_calculo, id_partido),
+    FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT,
+    FOREIGN KEY (id_partido) REFERENCES cat_partido_con_repr(id)
+		ON DELETE RESTRICT
+);
 
 DROP TABlE IF EXISTS cat_tipo_distribucion;
 /*
