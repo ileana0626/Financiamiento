@@ -480,21 +480,24 @@ export default {
             return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
         formatoFecha(fechaStr) {
-        if (!fechaStr) return ''
+            if (!fechaStr) return ''
 
-        // Parsear fecha en formato YYYY-MM-DD
-        const partes = fechaStr.split('-')
-        if (partes.length !== 3) return fechaStr
+            // Parsear fecha en formato YYYY-MM-DD
+            const partes = fechaStr.split('-')
+            if (partes.length !== 3) return fechaStr
 
-        const anio = partes[0]
-        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
-        const dia = partes[2]
+            const anio = partes[0]
+            const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+            const dia = partes[2]
 
-        const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-        const mesAbreviado = meses[mes] || ''
+            const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+            const mesAbreviado = meses[mes] || ''
 
-        return `${dia} ${mesAbreviado} ${anio}`
+            return `${dia} ${mesAbreviado} ${anio}`
         },
+        /**
+         * Obtiene los calculos de financiamiento para listar
+         */
         getCalculos() {
             const loader = loading(this.$vs);
             loader.text = 'Cargando datos...';
@@ -523,6 +526,10 @@ export default {
                     loader.close();
                 })
         },
+        /**
+         * Abre el dialogo para editar la distribución
+         * @param {Object} calculo_tr - El calculo seleccionado
+         */
         abrirDialog(calculo_tr) {
             const loader = loading(this.$vs);
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
@@ -704,9 +711,9 @@ export default {
                             .map(Number)
                             .filter(item => !isNaN(item));
                     }
-                    this.monto30Input = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
+                    this.monto30Input = this.formatoMoneda(this.DataDistribucion.monto_30_por_ciento);
                     this.monto30 = this.DataDistribucion.monto_30_por_ciento;
-                    this.monto70Input = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
+                    this.monto70Input = this.formatoMoneda(this.DataDistribucion.monto_70_por_ciento);
                     this.monto70 = this.DataDistribucion.monto_70_por_ciento;
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
                     this.$nextTick(() => {

@@ -11409,6 +11409,9 @@ var debug = function debug() {
       var mesAbreviado = meses[mes] || '';
       return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
     },
+    /**
+     * Obtiene los calculos de financiamiento para listar
+     */
     getCalculos: function getCalculos() {
       var _this4 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11438,6 +11441,10 @@ var debug = function debug() {
         loader.close();
       });
     },
+    /**
+     * Abre el dialogo para editar la distribución
+     * @param {Object} calculo_tr - El calculo seleccionado
+     */
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11649,9 +11656,9 @@ var debug = function debug() {
                   return !isNaN(item);
                 });
               }
-              _this8.monto30Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_30_por_ciento);
+              _this8.monto30Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_30_por_ciento);
               _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
-              _this8.monto70Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_70_por_ciento);
+              _this8.monto70Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_70_por_ciento);
               _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
               _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
               _this8.$nextTick(function () {
@@ -233276,13 +233283,17 @@ function _userValidToEdit() {
 /*!******************************************!*\
   !*** ./resources/js/utils/formatters.js ***!
   \******************************************/
-/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName */
+/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMoneda, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMYWithMonthName", function() { return formatDateToDMYWithMonthName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMoneda", function() { return formatoMoneda; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentajeSimple", function() { return formatearPorcentajeSimple; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentaje", function() { return formatearPorcentaje; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearDecimal", function() { return formatearDecimal; });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -233416,6 +233427,85 @@ var formatDateToDMYWithMonthName = function formatDateToDMYWithMonthName(dateStr
     console.error('Error al formatear la fecha:', error);
     return '';
   }
+};
+
+/*
+* Formatea a moneda
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+var formatoMoneda = function formatoMoneda(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: defaultDecimal,
+    maximumFractionDigits: defaultDecimal
+  }).format(valor);
+};
+
+/* Función para formatear el porcentaje (solo formatea)
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+var formatearPorcentajeSimple = function formatearPorcentajeSimple(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+  if (!valor) return '0.00000 %';
+  var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  return isNaN(numero) ? '0.00000 %' : numero.toFixed(defaultDecimal) + ' %';
+};
+
+/**
+ * Formatea un número a porcentaje con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear como porcentaje
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 5)
+ * @returns {string} - El valor formateado como porcentaje con los decimales especificados
+ * @example
+ * formatearPorcentaje(5)       // "5.00000 %"
+ * formatearPorcentaje(5.5, 3)  // "5.500 %"
+ * formatearPorcentaje(null)    // "0.00000 %"
+ * formatearPorcentaje('abc')   // "0.00000 %"
+ */
+var formatearPorcentaje = function formatearPorcentaje(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+  if (valor === null || valor === undefined || valor === '') {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+  }
+  var numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  if (isNaN(numero)) {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+  }
+  return numero.toFixed(defaultDecimal) + ' %';
+};
+
+/**
+ * Formatea un número a string con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 2)
+ * @returns {string} - El valor formateado como string con los decimales especificados
+ * @example
+ * formatearDecimal(5)       // "5.00"
+ * formatearDecimal(5.5, 3)  // "5.500"
+ * formatearDecimal(5.6789)  // "5.67"
+ * formatearDecimal(null)    // "0.00"
+ * formatearDecimal('abc')   // "0.00"
+ */
+var formatearDecimal = function formatearDecimal(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  if (valor === null || valor === undefined || valor === '') {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+  }
+  var numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  if (isNaN(numero)) {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+  }
+  var partes = numero.toString().split('.');
+  var parteEntera = partes[0];
+  var parteDecimal = partes[1] || '';
+
+  // Asegurar la cantidad correcta de decimales
+  parteDecimal = parteDecimal.padEnd(defaultDecimal, '0').slice(0, defaultDecimal);
+  return parteDecimal ? "".concat(parteEntera, ".").concat(parteDecimal) : parteEntera;
 };
 
 /***/ }),

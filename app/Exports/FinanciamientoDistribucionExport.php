@@ -86,17 +86,17 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         $sheet->getColumnDimension('C')->setAutoSize(false);
         $sheet->getColumnDimension('C')->setWidth(15); // Partido Político
         $sheet->getColumnDimension('D')->setAutoSize(false);
-        $sheet->getColumnDimension('D')->setWidth(30); // % Votación
+        $sheet->getColumnDimension('D')->setWidth(35); // % Votación
         $sheet->getColumnDimension('E')->setAutoSize(false);
-        $sheet->getColumnDimension('E')->setWidth(30); // 30% igualitario
+        $sheet->getColumnDimension('E')->setWidth(35); // 30% igualitario
+        // $sheet->getColumnDimension('F')->setAutoSize(false);
+        // $sheet->getColumnDimension('F')->setWidth(30); // 70% votación
         $sheet->getColumnDimension('F')->setAutoSize(false);
-        $sheet->getColumnDimension('F')->setWidth(30); // 70% votación
+        $sheet->getColumnDimension('F')->setWidth(35); // 70% con ajuste
         $sheet->getColumnDimension('G')->setAutoSize(false);
-        $sheet->getColumnDimension('G')->setWidth(30); // 70% con ajuste
+        $sheet->getColumnDimension('G')->setWidth(35); // Financiamiento ordinario
         $sheet->getColumnDimension('H')->setAutoSize(false);
-        $sheet->getColumnDimension('H')->setWidth(30); // Financiamiento ordinario
-        $sheet->getColumnDimension('I')->setAutoSize(false);
-        $sheet->getColumnDimension('I')->setWidth(30); // Financiamiento voto
+        $sheet->getColumnDimension('H')->setWidth(35); // Financiamiento voto
 
         // Ajustar altura de filas
         $sheet->getDefaultRowDimension()->setRowHeight(-1);
@@ -110,6 +110,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 $worksheet = $sheet->getDelegate();
                 $highestRow = $worksheet->getHighestRow();
                 $highestColumn = $worksheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow();
                 
                 $this->ajustarTamañoLogos($sheet, $worksheet);            
                 // Ajustar altura de filas automáticamente
@@ -132,13 +133,9 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     'ancho_H' => $sheet->getDelegate()->getColumnDimension('H')->getWidth(),
                     'ancho_I' => $sheet->getDelegate()->getColumnDimension('I')->getWidth()
                 ]);*/
-
-                // Aplicar bordes solo a celdas con contenido
-                $highestRow = $sheet->getHighestRow();
-                
-
+             
                 // Formato de números para columnas monetarias en rojo
-                $sheet->getStyle('E2:I' . $highestRow)->applyFromArray([
+                /*$sheet->getStyle('E2:H' . $highestRow)->applyFromArray([
                     'numberFormat' => [
                         'formatCode' => '[Red]\$#,##0.00_);[Red](\$#,##0.00)'
                     ],
@@ -146,11 +143,13 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     //     'color' => ['argb' => 'FFFF0000']  // Rojo puro
                     // ]
                 ]);
+                */
+
                 // Formato de porcentaje
-                $sheet->getStyle('D2:D' . $highestRow)->getNumberFormat()->setFormatCode('0.00%');
+                //$sheet->getStyle('D2:D' . $highestRow)->getNumberFormat()->setFormatCode('0.00%');
                 
                 // Estilo para fila 3 (negritas y color negro)
-                $sheet->getStyle('A3:I3')->applyFromArray([
+                $sheet->getStyle('A3:H3')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['argb' => 'FFFFFFFF']  // Letras blancas
@@ -158,14 +157,14 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => [
-                            'argb' => 'FFAE8700', // Fondo amarillo claro #AE8700
+                            'argb' => 'FFAE8700', // Amarillo claro #AE8700
                         ],
                     ],
                 ]);
                 //Formateando Título
                 $tituloBase = 'FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES Y ACTIVIDADES TENDIENTES A LA OBTENCIÓN DEL VOTO DE LOS PARTIDOS POLÍTICOS Y CANDIDATURAS INDEPENDIENTES EN EL AÑO ';
                 $richText = $this->crearTituloConAnio($tituloBase, $this->datos['distribucion']['anio_ejercicio']);
-                $sheet->setCellValue('A1', $richText);
+                $sheet->setCellValue('A1', $richText); // Agregamos el título con el año en rojo
 
                 // Alinear texto al centro para encabezados
                 $sheet->getStyle('A1:' . $highestColumn . '1')->applyFromArray([
@@ -192,10 +191,6 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 
                 //Aplicar estilos subtotal fondo dorado
                 $this->aplicarEstilosSubtotal($sheet);
-
-                //Insertar logos
-                //$this->insertarLogos($sheet);
-                // Redimensionar imágenes
                              
                 // Ajustar altura de filas
                 $sheet->getDefaultRowDimension()->setRowHeight(-1);
@@ -206,10 +201,11 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                 // Establecer ancho para la nueva columna
                 $sheet->getColumnDimension('A')->setWidth(4); // Ancho de 8 unidades para la nueva columna
 
-                // Ocultar columna J si tipo_distribucion no contiene '2' (por ejemplo: '1,2' o '2')
+                // Ocultar columna H si tipo_distribucion no contiene '2' (por ejemplo: '1,2' o '2')
                 $tipoDistribucion = $this->datos['distribucion']['tipo_distribucion'];
-                if (strpos($tipoDistribucion, '2') == false) {
-                    $sheet->getColumnDimension('J')->setVisible(false);
+                if (strpos($tipoDistribucion, '2') === false){ // Ocultar columna H si tipo_distribucion no contiene '2'
+                    $sheet->getColumnDimension('I')->setVisible(false); // Ocultar la columna
+                    $sheet->removeColumn('I'); // Eliminar la columna
                 }
 
             },
@@ -230,7 +226,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         */
     
     /**
-     * Crea un título formateado con el año en rojo
+     * Crea un título formateado con el año en rojo ✅
      */
     private function crearTituloConAnio($tituloBase, $anio)
     {
@@ -246,9 +242,12 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         return $richText;
     }
 
+    /**
+     * Aplica el texto con el año en rojo ✅
+     */
     public function getTextoConAnioRojo($sheet, $anio) {
         // Obtener la última fila con datos
-        $highestRow = $sheet->getHighestRow();
+        $highestRow = 23; //$sheet->getHighestRow();
         
         // Aplicar a toda la columna D
         for ($row = 1; $row <= $highestRow; $row++) {
@@ -275,6 +274,8 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
                     $parte2 = $richText->createTextRun($partes[1]);
                     $parte2->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('000000'));
                 }
+                // Aplicar ancho a la fila
+                $sheet->getRowDimension($row)->setRowHeight(35);
                 
                 $sheet->setCellValue('D' . $row, $richText);
                 $sheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
@@ -282,22 +283,9 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         }
     }
 
-    public function formatoTextoNegro($sheet, $highestColumn, $highestRow) {
-        // Aplicar formato a celdas con clase 'texto-negro'
-        $sheet->getStyle('A1:'.$highestColumn.$highestRow)->applyFromArray([
-            'font' => [
-                'color' => ['argb' => 'FF000000'] // Negro
-            ]
-        ]);
-        
-        // Aplicar formato a la fila de TOTALES
-        $sheet->getStyle('A'.$highestRow.':'.$highestColumn.($highestRow+1))->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'color' => ['argb' => 'FF000000'] // Negro
-            ]
-        ]);
-    }
+    /**
+     * Aplica bordes a celdas con contenido ✅
+     */
     public function aplicarBordes($sheet, $highestRow) {
         // Aplicar bordes a celdas con contenido
         foreach ($sheet->getRowIterator(4, $highestRow) as $row) {
@@ -305,7 +293,7 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             $hasContent = false;
             
             // Verificar si la fila tiene contenido
-            foreach (range('A', 'J') as $col) {
+            foreach (range('A', 'H') as $col) {
                 if ($sheet->getCell($col . $rowIndex)->getValue() !== null) {
                     $hasContent = true;
                     break;
@@ -315,24 +303,23 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             // Si la fila tiene contenido, aplicar bordes solo hasta la columna I
             if ($hasContent) {
                 // Primero, asegurarse de que no haya estilos aplicados más allá de I -> resetea bordes
-                $sheet->getStyle('I' . $rowIndex . ':' . $sheet->getHighestColumn() . $rowIndex)->applyFromArray([
+                $sheet->getStyle('H' . $rowIndex . ':' . $sheet->getHighestColumn() . $rowIndex)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE,
                         ],
                     ],
                 ]);
-                
-                // Luego aplicar bordes hasta I
-                $sheet->getStyle('A' . $rowIndex . ':I' . $rowIndex)->applyFromArray([
+                // Luego aplicar bordes hasta H
+                $sheet->getStyle('A' . $rowIndex . ':H' . $rowIndex)->applyFromArray([
                     'borders' => [
                         'outline' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            'color' => ['argb' => 'FFAE8700'],
+                            'color' => ['argb' => 'FFAE8700'], // Amarillo claro #AE8700
                         ],
                         'inside' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            'color' => ['argb' => 'FFAE8700'],
+                            'color' => ['argb' => 'FFAE8700'], // Amarillo claro #AE8700
                         ],
                     ],
                 ]);
@@ -340,55 +327,73 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
         }
     }
 
+    public function limpiarEstilos($sheet, $col, $rowIndex) {
+        // Primero, asegurarse de que no haya estilos aplicados más allá de $col -> resetea bordes
+        $sheet->getStyle($col . $rowIndex . ':' . $sheet->getHighestColumn() . $rowIndex)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Aplica estilos a las filas que contengan "SUBTOTAL", "TOTALES" o "GRAN TOTAL" ✅
+     * el formateo es por fila
+     */
     public function aplicarEstilosSubtotal($sheet) {
-        // Buscar filas que contengan "SUBTOTAL", "TOTALES" o "GRAN TOTAL" en las columnas C a H
-        $highestRow = $sheet->getHighestRow();
-        $columnsToCheck = ['C', 'D', 'E', 'F', 'G', 'H'];
-        $targets = ['SUBTOTAL', 'TOTALES', 'GRAN TOTAL', 'GRANTOTAL'];
+        //$highestRow = $sheet->getHighestRow();
+        $highestRow = 23; // hasta la fila 23
+        $columnsToCheck = ['A', 'C'];
+        $targets = ['SUBTOTAL', 'TOTALES', 'GRAN TOTAL'];
         $foundCount = 0;
         $targetCount = 4; // Número de coincidencias que necesitamos encontrar
         
         // Buscar desde la fila 4 hacia abajo (asumiendo que las filas 1-3 son encabezados)
         for ($row = 4; $row <= $highestRow && $foundCount < $targetCount; $row++) {
-            foreach ($columnsToCheck as $col) {
-                $cell = $sheet->getCell("{$col}{$row}");
-                $cellValue = $cell ? strtoupper(trim($cell->getValue())) : '';
-                
-                // Depuración: Mostrar valores de celdas
-                if ($cellValue !=='') {
-                    Log::info("Celda {$col}{$row}: Count: {$foundCount}", ['valor' => $cellValue]);
-                }
-                
-                // Verificar si el valor de la celda contiene alguna de las palabras clave
-                foreach ($targets as $target) {
-                    if (str_contains($cellValue, $target)) {
-                        // Aplicar estilos a la fila donde se encontró el texto
-                        $sheet->getStyle($col.$row)->applyFromArray([
-                            'alignment' => [
-                                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                            ],
-                            'font' => [
-                                'bold' => true,
-                                'color' => ['argb' => 'FFFFFFFF'],
-                            ],
-                        ]);
-                        $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
-                            'fill' => [
-                                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                                'startColor' => ['argb' => 'FFAE8700'],
-                            ],
-                            'font' => [
-                                'bold' => true,
-                            ],
-                        ]);
-                        $foundCount++;
-                        break 2; // Salir de ambos bucles (columnas y targets)
+            foreach ($columnsToCheck as $col) { // recorre las columnas
+                $cell = $sheet->getCell("{$col}{$row}"); // Obtiene el valor de la celda
+                $cellValue = $cell ? strtoupper(trim($cell->getValue())) : ''; // checa si existe, y si no, lo deja vacio ''
+                if ($cellValue !=='') { // si la celda no esta vacia
+                    // Verificar si el valor de la celda contiene alguna de las palabras clave
+                    foreach ($targets as $target) {
+                        if (str_contains($cellValue, $target)) { // si el valor de la celda contiene alguna de las palabras clave
+                            // Depuración: Mostrar valores de celdas
+                            Log::info("Celda {$col}{$row}: Count: {$foundCount}", ['valor' => $cellValue]);
+
+                            // Aplicar estilos a la fila donde se encontró el texto
+                            $sheet->getStyle($col.$row)->applyFromArray([
+                                'alignment' => [
+                                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                                ],
+                                'font' => [
+                                    'bold' => true,
+                                    'color' => ['argb' => 'FFFFFFFF'],
+                                ],
+                            ]);
+                            $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
+                                'fill' => [
+                                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                                    'startColor' => ['argb' => 'FFAE8700'], // Amarillo claro #AE8700
+                                ],
+                                'font' => [
+                                    'bold' => true,
+                                ],
+                            ]);
+                            $foundCount++;
+                            break 2; // Salir de ambos bucles (columnas y targets)
+                        }
                     }
                 }
             }
         }
     }
+
+    /**
+     * Ajustar tamaño y centrar imágenes ✅
+     */
     public function ajustarTamañoLogos($sheet, $worksheet) {
         // Ajustar tamaño y centrar imágenes
         $cellWidth = $sheet->getDelegate()->getColumnDimension('C')->getWidth();
@@ -451,45 +456,4 @@ class FinanciamientoDistribucionExport implements FromView, ShouldAutoSize, With
             $sheet->getRowDimension($row)->setRowHeight($desiredRowHeight);
         }
     }
-
-    // public function insertarLogos($sheet) {
-    //     try {
-    //         // Get the underlying PhpSpreadsheet worksheet
-    //         $worksheet = $sheet->getDelegate();
-    //         $row = 5; // Starting row for data
-                    
-    //         if (isset($this->datos['partidos_con_rep'])) {
-    //             foreach ($this->datos['partidos_con_rep'] as $partido) {
-    //                 try {
-    //                     // Convert to PNG if needed
-    //                     $logoFile = str_replace('.webp', '.png', $partido->logo);
-    //                     $logoPath = public_path('img/logos/' . $logoFile);
-                        
-    //                     // Only try to add logo if file exists
-    //                     if (file_exists($logoPath)) {
-    //                         $drawing = new Drawing();
-    //                         $drawing->setName($partido->siglas);
-    //                         $drawing->setDescription('Logo de ' . $partido->nombre);
-    //                         $drawing->setPath($logoPath);
-    //                         $drawing->setHeight(15);
-    //                         $drawing->setCoordinates('C' . $row);
-    //                         $drawing->setOffsetX(5);
-    //                         $drawing->setWorksheet($worksheet);
-                            
-    //                         // Adjust row height to fit the logo
-    //                         $worksheet->getRowDimension($row)->setRowHeight(20);
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error('Error al insertar logo en Excel: ' . $e->getMessage());
-    //                 }
-    //                 $row++;
-    //             }
-    //         }
-            
-    //         // Apply other styles after adding images
-    //         $this->aplicarEstilosSubtotal($worksheet);
-    //     } catch (\Exception $e) {
-    //         Log::error('Error en insertarLogos: ' . $e->getMessage());
-    //     }
-    // }   
 }
