@@ -832,7 +832,8 @@ export default {
                 confirmButtonText: 'Aceptar'
                 })
                 // Habilita descargar archivo
-                this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+                //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+                debug('🐛 this.distribucionId', this.distribucionId);
                 this.descargar_disabled = false;
             } catch (error) {
                 console.error('Error al guardar:', error);

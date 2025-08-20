@@ -5203,6 +5203,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     /**
+     * Valida que el valor sea un número entero
+     * @param {string} valor - Valor a validar
+     * @returns {string} - Valor validado
+     */
+    validarNumeroEntero: function validarNumeroEntero(valor) {
+      // Elimina todo lo que no sea número
+      var soloNumeros = valor.replace(/\D/g, '');
+      // Convierte a número entero positivo, mínimo 1
+      var numero = Math.max(1, parseInt(soloNumeros) || 1);
+      return numero.toString();
+    },
+    /**
      * Obtiene los datos de la base de datos
      * @param {number} tipo - Tipo de datos a obtener
      * @returns {void}
@@ -11863,7 +11875,8 @@ var debug = function debug() {
                 confirmButtonText: 'Aceptar'
               });
               // Habilita descargar archivo
-              _this9.distribucionId = _this9.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+              //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+              debug('🐛 this.distribucionId', _this9.distribucionId);
               _this9.descargar_disabled = false;
               _context5.next = 96;
               break;
@@ -19619,6 +19632,11 @@ var render = function render() {
     attrs: {
       type: "text",
       placeholder: _vm.numeroPadron.length > 0 ? "" : "Ingresa el número de personas"
+    },
+    on: {
+      blur: function blur($event) {
+        _vm.numeroPadron = _vm.validarNumeroEntero(_vm.numeroPadron);
+      }
     },
     model: {
       value: _vm.numeroPadron,
@@ -233490,7 +233508,7 @@ var formatearDecimal = function formatearDecimal(valor) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\25_IEE\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
