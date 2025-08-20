@@ -143,7 +143,7 @@
                             </vs-select>
 
                         <!-- Formulario principal -->
-                        <div v-if="distribucion.includes(1) || distribucion.includes(2)">
+                        <div v-if="distribucion.includes(1)">
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <h5>Financiamiento público para actividades ordinarias permanentes</h5>
@@ -186,7 +186,7 @@
                             <!-- Tabla de distribución -->
                             <vs-table class="tabla-ajustada mt-4">
                                 <template #thead>
-                                    <vs-tr>
+                                    <vs-tr >
                                         <vs-th :colspan="1">Siglas</vs-th>
                                         <vs-th :colspan="1">Emblema</vs-th>
                                         <vs-th :colspan="1">% de votación</vs-th>
@@ -477,21 +477,24 @@ export default {
             return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
         formatoFecha(fechaStr) {
-        if (!fechaStr) return ''
+            if (!fechaStr) return ''
 
-        // Parsear fecha en formato YYYY-MM-DD
-        const partes = fechaStr.split('-')
-        if (partes.length !== 3) return fechaStr
+            // Parsear fecha en formato YYYY-MM-DD
+            const partes = fechaStr.split('-')
+            if (partes.length !== 3) return fechaStr
 
-        const anio = partes[0]
-        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
-        const dia = partes[2]
+            const anio = partes[0]
+            const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+            const dia = partes[2]
 
-        const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-        const mesAbreviado = meses[mes] || ''
+            const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+            const mesAbreviado = meses[mes] || ''
 
-        return `${dia} ${mesAbreviado} ${anio}`
+            return `${dia} ${mesAbreviado} ${anio}`
         },
+        /**
+         * Obtiene los calculos de financiamiento para listar
+         */
         getCalculos() {
             const loader = loading(this.$vs);
             loader.text = 'Cargando datos...';
@@ -520,6 +523,10 @@ export default {
                     loader.close();
                 })
         },
+        /**
+         * Abre el dialogo para editar la distribución
+         * @param {Object} calculo_tr - El calculo seleccionado
+         */
         abrirDialog(calculo_tr) {
             const loader = loading(this.$vs);
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
@@ -700,9 +707,9 @@ export default {
                             .map(Number)
                             .filter(item => !isNaN(item));
                     }
-                    this.monto30Input = this.formatearDecimal(this.DataDistribucion.monto_30_por_ciento);
+                    this.monto30Input = this.formatoMoneda(this.DataDistribucion.monto_30_por_ciento);
                     this.monto30 = this.DataDistribucion.monto_30_por_ciento;
-                    this.monto70Input = this.formatearDecimal(this.DataDistribucion.monto_70_por_ciento);
+                    this.monto70Input = this.formatoMoneda(this.DataDistribucion.monto_70_por_ciento);
                     this.monto70 = this.DataDistribucion.monto_70_por_ciento;
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
                     this.$nextTick(() => {
@@ -711,11 +718,9 @@ export default {
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
-                    // Habilita descargar archivo
-                    this.descargar_disabled = false;
                     debug('✅ Distribución cargada.');
                 }else{
-                    debug('❌ No se encontro distribución, ➜ continua normalmente...');
+                    debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
                     return;
                 }
             }catch(error){
@@ -740,12 +745,13 @@ export default {
                 this.$vs.notification({ color: 'danger', text: 'Verifique los datos e inténtelo de nuevo.' });
                 return;
             }
+            
             const loader = loading(this.$vs);
             loader.text = 'Guardando distribución...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
 
             let datos = {
-                p_comando: 'INSERT', // INSERT, UPDATE
+                p_comando: "INSERT", // INSERT, UPDATE
                 p_id_calculo: this.selectedCalculo.id,
                 p_anio_ejercicio: this.anio, //valor manual
                 p_tipo_distribucion: this.distribucion.join(','), // "1,2,3" - valor manual
@@ -766,19 +772,21 @@ export default {
             try {
                 // Actualizar distribución
                 if (this.distribucionId) {
-                    const response = await axios.post(url, datos);
+                    const response = await axios.post(url, datos); // ⇋ UPDATE
                     
                     if (response.data && response.data.success) {
-                        this.distribucionId = response.data.id || this.distribucionId;
+                        this.distribucionId = response.data.id; // || this.distribucionId;
+                        debug('🐛 Update response.data.id:', response.data.id);
                     } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
                     }
                 } else { // Guardar distribución
-                    const response = await axios.post(url, datos);
+                    const response = await axios.post(url, datos); // ⇋ INSERT
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
+                        debug('🐛 Insert response.data.id:', response.data.id);
                         
                     } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
@@ -793,6 +801,7 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
+                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -807,6 +816,7 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
+                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -826,6 +836,8 @@ export default {
                 confirmButtonText: 'Aceptar'
                 })
                 // Habilita descargar archivo
+                //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+                debug('🐛 this.distribucionId: ', this.distribucionId);
                 this.descargar_disabled = false;
             } catch (error) {
                 console.error('Error al guardar:', error);
@@ -848,6 +860,10 @@ export default {
             let downloadUrl = null;
             let link = null;
 
+            if(this.distribucionId? null : this.distribucionId === null || this.distribucionId === 0){
+                throw new Error('❌ No se encontro el ID de la distribución');
+            }
+            // ⇋
             axios.get(apiUrl, {
                 responseType: 'blob',
                 method: 'GET',

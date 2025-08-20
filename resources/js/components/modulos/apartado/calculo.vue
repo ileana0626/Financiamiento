@@ -95,6 +95,7 @@
                                 <vs-input
                                 v-model="numeroPadron"
                                 type="text"
+                                @blur=" numeroPadron = validarNumeroEntero(numeroPadron)"
                                 :placeholder="(numeroPadron.length > 0) ? '' : 'Ingresa el número de personas'"
                                 >
                                 </vs-input>
@@ -346,9 +347,6 @@ export default {
         const load = methods.loading(this.$vs);
         /* await this.getTipoDic(); */
         await this.getAnio();
-        await this.obtenerDatos(3);
-        await this.obtenerDatos(5);
-        await this.obtenerDatos(6);
         await this.obtenerDatos(9);
         await this.obtenerDatos(10);
         load.close();
@@ -394,6 +392,18 @@ export default {
                 maximumFractionDigits: 2
             });
             }
+        },
+        /**
+         * Valida que el valor sea un número entero
+         * @param {string} valor - Valor a validar
+         * @returns {string} - Valor validado
+         */
+        validarNumeroEntero(valor) {
+            // Elimina todo lo que no sea número
+            const soloNumeros = valor.replace(/\D/g, '');
+            // Convierte a número entero positivo, mínimo 1
+            const numero = Math.max(1, parseInt(soloNumeros) || 1);
+            return numero.toString();
         },
         /**
          * Obtiene los datos de la base de datos
@@ -851,8 +861,7 @@ export default {
         */
         formateaPartidosSeleccionadosConRepSiglasDB() {
             return this.partidos_conRepr_Seleccionados.map(partido => partido.siglas).join(', ');
-        },
-   
+        },  
     }
 }
 

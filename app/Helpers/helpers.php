@@ -3,8 +3,8 @@
 * @description Archivo de ayuda para formatear datos de la base de datos 
 * y mostrar en platillas .blade.php, para exportar a Excel y PDF
 * @author Tony
-* @version 1.0.0
-* @date 04/08/2025
+* @version 1.2.0
+* @date 19/08/2025
 */
 use Carbon\Carbon;
 
@@ -110,7 +110,9 @@ if (!function_exists('formato_fecha_es')) {
             return $fecha; // Devuelve la fecha original si hay error
         }
     }
+}
 
+if (!function_exists('formato_porcentaje')) {
     /**
      * Formatea un valor numérico como porcentaje
      * 
@@ -119,24 +121,20 @@ if (!function_exists('formato_fecha_es')) {
      * @return string
      * 
      * @example
-     * formato_porcentaje(25.5); // '25.50000 %'
-     * formato_porcentaje('10.5', 2); // '10.50 %'
-     * formato_porcentaje(null); // '0.00000 %'
+     * formato_porcentaje(25.5);        // '25.50000 %'
+     * formato_porcentaje('10.5', 2);   // '10.50 %'
+     * formato_porcentaje('123.4567', 3) // '123.457 %'
+     * formato_porcentaje(null);        // '0.00000 %'
      */
     function formato_porcentaje($valor, $decimales = 5) {
         if ($valor === null || $valor === '') {
-            return '0.' . str_repeat('0', $decimales) . ' %';
+            return '0' . ($decimales > 0 ? '.' . str_repeat('0', $decimales) : '') . ' %';
         }
 
         // Asegurar que sea numérico
-        $numero = is_numeric($valor) ? $valor : 0;
-        
-        // Limitar entre 0 y 100
-        $numero = max(0, min(100, (float) $numero));
+        $numero = is_numeric($valor) ? (float)$valor : 0;
         
         // Formatear con el número de decimales especificado
         return number_format($numero, $decimales, '.', '') . ' %';
     }
-
-
 }

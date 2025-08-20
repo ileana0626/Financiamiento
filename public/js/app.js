@@ -5136,22 +5136,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             return _this2.getAnio();
           case 3:
             _context.next = 5;
-            return _this2.obtenerDatos(3);
+            return _this2.obtenerDatos(9);
           case 5:
             _context.next = 7;
-            return _this2.obtenerDatos(5);
-          case 7:
-            _context.next = 9;
-            return _this2.obtenerDatos(6);
-          case 9:
-            _context.next = 11;
-            return _this2.obtenerDatos(9);
-          case 11:
-            _context.next = 13;
             return _this2.obtenerDatos(10);
-          case 13:
+          case 7:
             load.close();
-          case 14:
+          case 8:
           case "end":
             return _context.stop();
         }
@@ -5210,6 +5201,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           maximumFractionDigits: 2
         });
       }
+    },
+    /**
+     * Valida que el valor sea un número entero
+     * @param {string} valor - Valor a validar
+     * @returns {string} - Valor validado
+     */
+    validarNumeroEntero: function validarNumeroEntero(valor) {
+      // Elimina todo lo que no sea número
+      var soloNumeros = valor.replace(/\D/g, '');
+      // Convierte a número entero positivo, mínimo 1
+      var numero = Math.max(1, parseInt(soloNumeros) || 1);
+      return numero.toString();
     },
     /**
      * Obtiene los datos de la base de datos
@@ -11406,6 +11409,9 @@ var debug = function debug() {
       var mesAbreviado = meses[mes] || '';
       return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
     },
+    /**
+     * Obtiene los calculos de financiamiento para listar
+     */
     getCalculos: function getCalculos() {
       var _this4 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11435,6 +11441,10 @@ var debug = function debug() {
         loader.close();
       });
     },
+    /**
+     * Abre el dialogo para editar la distribución
+     * @param {Object} calculo_tr - El calculo seleccionado
+     */
     abrirDialog: function abrirDialog(calculo_tr) {
       var _this5 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
@@ -11632,7 +11642,7 @@ var debug = function debug() {
               debug('🐛 response.data:', response.data);
               // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
               if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
-                _context4.next = 25;
+                _context4.next = 24;
                 break;
               }
               _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
@@ -11644,9 +11654,9 @@ var debug = function debug() {
                   return !isNaN(item);
                 });
               }
-              _this8.monto30Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_30_por_ciento);
+              _this8.monto30Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_30_por_ciento);
               _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
-              _this8.monto70Input = _this8.formatearDecimal(_this8.DataDistribucion.monto_70_por_ciento);
+              _this8.monto70Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_70_por_ciento);
               _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
               _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
               _this8.$nextTick(function () {
@@ -11655,19 +11665,17 @@ var debug = function debug() {
               if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
                 _this8.descargar_disabled = false;
               }
-              // Habilita descargar archivo
-              _this8.descargar_disabled = false;
               debug('✅ Distribución cargada.');
-              _context4.next = 27;
+              _context4.next = 26;
               break;
-            case 25:
-              debug('❌ No se encontro distribución, ➜ continua normalmente...');
+            case 24:
+              debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
               return _context4.abrupt("return");
-            case 27:
-              _context4.next = 35;
+            case 26:
+              _context4.next = 34;
               break;
-            case 29:
-              _context4.prev = 29;
+            case 28:
+              _context4.prev = 28;
               _context4.t0 = _context4["catch"](4);
               console.error('Error al cargar distribución', _context4.t0);
               _this8.$vs.notification({
@@ -11677,15 +11685,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 35:
-              _context4.prev = 35;
+            case 34:
+              _context4.prev = 34;
               loader.close();
-              return _context4.finish(35);
-            case 38:
+              return _context4.finish(34);
+            case 37:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[4, 29, 35, 38]]);
+        }, _callee4, null, [[4, 28, 34, 37]]);
       }))();
     },
     guardarDistribucion: function guardarDistribucion() {
@@ -11709,7 +11717,7 @@ var debug = function debug() {
               loader.text = 'Guardando distribución...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
-                p_comando: 'INSERT',
+                p_comando: "INSERT",
                 // INSERT, UPDATE
                 p_id_calculo: _this9.selectedCalculo.id,
                 p_anio_ejercicio: _this9.anio,
@@ -11735,7 +11743,7 @@ var debug = function debug() {
               console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
               _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 22;
+                _context5.next = 23;
                 break;
               }
               _context5.next = 13;
@@ -11743,121 +11751,127 @@ var debug = function debug() {
             case 13:
               response = _context5.sent;
               if (!(response.data && response.data.success)) {
-                _context5.next = 18;
+                _context5.next = 19;
                 break;
               }
-              _this9.distribucionId = response.data.id || _this9.distribucionId;
-              _context5.next = 20;
+              _this9.distribucionId = response.data.id; // || this.distribucionId;
+              debug('🐛 Update response.data.id:', response.data.id);
+              _context5.next = 21;
               break;
-            case 18:
+            case 19:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 20:
-              _context5.next = 31;
+            case 21:
+              _context5.next = 33;
               break;
-            case 22:
-              _context5.next = 24;
+            case 23:
+              _context5.next = 25;
               return axios.post(url, datos);
-            case 24:
+            case 25:
               _response = _context5.sent;
               if (!(_response.data && _response.data.success)) {
-                _context5.next = 29;
+                _context5.next = 31;
                 break;
               }
               _this9.distribucionId = _response.data.id;
-              _context5.next = 31;
+              debug('🐛 Insert response.data.id:', _response.data.id);
+              _context5.next = 33;
               break;
-            case 29:
+            case 31:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 31:
+            case 33:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 33;
+              _context5.prev = 35;
               _iterator.s();
-            case 35:
+            case 37:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 50;
+                _context5.next = 52;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 37;
-              _context5.next = 40;
+              _context5.prev = 39;
+              _context5.next = 42;
               return axios.post(url, partido);
-            case 40:
+            case 42:
               _response2 = _context5.sent;
               // ⇋
-              if (_response2.data && _response2.data.ids) {}
-              _context5.next = 48;
+              if (_response2.data && _response2.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context5.next = 50;
               break;
-            case 44:
-              _context5.prev = 44;
-              _context5.t0 = _context5["catch"](37);
+            case 46:
+              _context5.prev = 46;
+              _context5.t0 = _context5["catch"](39);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
-            case 48:
-              _context5.next = 35;
-              break;
             case 50:
-              _context5.next = 55;
+              _context5.next = 37;
               break;
             case 52:
-              _context5.prev = 52;
-              _context5.t1 = _context5["catch"](33);
+              _context5.next = 57;
+              break;
+            case 54:
+              _context5.prev = 54;
+              _context5.t1 = _context5["catch"](35);
               _iterator.e(_context5.t1);
-            case 55:
-              _context5.prev = 55;
+            case 57:
+              _context5.prev = 57;
               _iterator.f();
-              return _context5.finish(55);
-            case 58:
+              return _context5.finish(57);
+            case 60:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 60;
+              _context5.prev = 62;
               _iterator2.s();
-            case 62:
+            case 64:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 77;
+                _context5.next = 79;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 64;
-              _context5.next = 67;
+              _context5.prev = 66;
+              _context5.next = 69;
               return axios.post(url, _partido);
-            case 67:
+            case 69:
               _response3 = _context5.sent;
               // ⇋
-              if (_response3.data && _response3.data.ids) {}
-              _context5.next = 75;
+              if (_response3.data && _response3.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context5.next = 77;
               break;
-            case 71:
-              _context5.prev = 71;
-              _context5.t2 = _context5["catch"](64);
+            case 73:
+              _context5.prev = 73;
+              _context5.t2 = _context5["catch"](66);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 75:
-              _context5.next = 62;
-              break;
             case 77:
-              _context5.next = 82;
+              _context5.next = 64;
               break;
             case 79:
-              _context5.prev = 79;
-              _context5.t3 = _context5["catch"](60);
+              _context5.next = 84;
+              break;
+            case 81:
+              _context5.prev = 81;
+              _context5.t3 = _context5["catch"](62);
               _iterator2.e(_context5.t3);
-            case 82:
-              _context5.prev = 82;
+            case 84:
+              _context5.prev = 84;
               _iterator2.f();
-              return _context5.finish(82);
-            case 85:
+              return _context5.finish(84);
+            case 87:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -11867,11 +11881,13 @@ var debug = function debug() {
                 confirmButtonText: 'Aceptar'
               });
               // Habilita descargar archivo
+              //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+              debug('🐛 this.distribucionId: ', _this9.distribucionId);
               _this9.descargar_disabled = false;
-              _context5.next = 95;
+              _context5.next = 98;
               break;
-            case 89:
-              _context5.prev = 89;
+            case 92:
+              _context5.prev = 92;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11881,15 +11897,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 95:
-              _context5.prev = 95;
-              loader.close();
-              return _context5.finish(95);
             case 98:
+              _context5.prev = 98;
+              loader.close();
+              return _context5.finish(98);
+            case 101:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 89, 95, 98], [33, 52, 55, 58], [37, 44], [60, 79, 82, 85], [64, 71]]);
+        }, _callee5, null, [[9, 92, 98, 101], [35, 54, 57, 60], [39, 46], [62, 81, 84, 87], [66, 73]]);
       }))();
     },
     /**
@@ -11903,6 +11919,10 @@ var debug = function debug() {
       var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
       var downloadUrl = null;
       var link = null;
+      if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
+        throw new Error('❌ No se encontro el ID de la distribución');
+      }
+      // ⇋
       axios.get(apiUrl, {
         responseType: 'blob',
         method: 'GET'
@@ -19620,6 +19640,11 @@ var render = function render() {
       type: "text",
       placeholder: _vm.numeroPadron.length > 0 ? "" : "Ingresa el número de personas"
     },
+    on: {
+      blur: function blur($event) {
+        _vm.numeroPadron = _vm.validarNumeroEntero(_vm.numeroPadron);
+      }
+    },
     model: {
       value: _vm.numeroPadron,
       callback: function callback($$v) {
@@ -27326,7 +27351,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("\n                            " + _vm._s(item.nombre) + "\n                        ")]);
-  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) || _vm.distribucion.includes(2) ? _c("div", [_c("div", {
+  })], 2) : _vm._e(), _vm._v(" "), _vm.distribucion.includes(1) ? _c("div", [_c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
     staticClass: "col-12"
@@ -233256,13 +233281,17 @@ function _userValidToEdit() {
 /*!******************************************!*\
   !*** ./resources/js/utils/formatters.js ***!
   \******************************************/
-/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName */
+/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMoneda, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMYWithMonthName", function() { return formatDateToDMYWithMonthName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMoneda", function() { return formatoMoneda; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentajeSimple", function() { return formatearPorcentajeSimple; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentaje", function() { return formatearPorcentaje; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearDecimal", function() { return formatearDecimal; });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -233396,6 +233425,85 @@ var formatDateToDMYWithMonthName = function formatDateToDMYWithMonthName(dateStr
     console.error('Error al formatear la fecha:', error);
     return '';
   }
+};
+
+/*
+* Formatea a moneda
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+var formatoMoneda = function formatoMoneda(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: defaultDecimal,
+    maximumFractionDigits: defaultDecimal
+  }).format(valor);
+};
+
+/* Función para formatear el porcentaje (solo formatea)
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+var formatearPorcentajeSimple = function formatearPorcentajeSimple(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+  if (!valor) return '0.00000 %';
+  var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  return isNaN(numero) ? '0.00000 %' : numero.toFixed(defaultDecimal) + ' %';
+};
+
+/**
+ * Formatea un número a porcentaje con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear como porcentaje
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 5)
+ * @returns {string} - El valor formateado como porcentaje con los decimales especificados
+ * @example
+ * formatearPorcentaje(5)       // "5.00000 %"
+ * formatearPorcentaje(5.5, 3)  // "5.500 %"
+ * formatearPorcentaje(null)    // "0.00000 %"
+ * formatearPorcentaje('abc')   // "0.00000 %"
+ */
+var formatearPorcentaje = function formatearPorcentaje(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+  if (valor === null || valor === undefined || valor === '') {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+  }
+  var numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  if (isNaN(numero)) {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+  }
+  return numero.toFixed(defaultDecimal) + ' %';
+};
+
+/**
+ * Formatea un número a string con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 2)
+ * @returns {string} - El valor formateado como string con los decimales especificados
+ * @example
+ * formatearDecimal(5)       // "5.00"
+ * formatearDecimal(5.5, 3)  // "5.500"
+ * formatearDecimal(5.6789)  // "5.67"
+ * formatearDecimal(null)    // "0.00"
+ * formatearDecimal('abc')   // "0.00"
+ */
+var formatearDecimal = function formatearDecimal(valor) {
+  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  if (valor === null || valor === undefined || valor === '') {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+  }
+  var numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+  if (isNaN(numero)) {
+    return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+  }
+  var partes = numero.toString().split('.');
+  var parteEntera = partes[0];
+  var parteDecimal = partes[1] || '';
+
+  // Asegurar la cantidad correcta de decimales
+  parteDecimal = parteDecimal.padEnd(defaultDecimal, '0').slice(0, defaultDecimal);
+  return parteDecimal ? "".concat(parteEntera, ".").concat(parteDecimal) : parteEntera;
 };
 
 /***/ }),

@@ -118,3 +118,84 @@ export const formatDateToDMYWithMonthName = (dateString, format = 'full') => {
         return '';
     }
 }
+
+
+/*
+* Formatea a moneda
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+export const formatoMoneda = (valor, defaultDecimal = 2) => {
+    return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: defaultDecimal,
+    maximumFractionDigits: defaultDecimal
+    }).format(valor);
+}
+
+/* Función para formatear el porcentaje (solo formatea)
+* @param {number} valor - El valor a formatear
+* @returns {string} - El valor formateado
+*/
+export const formatearPorcentajeSimple = (valor, defaultDecimal = 5) => {
+    if (!valor) return '0.00000 %';
+    const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+    return isNaN(numero) ? '0.00000 %' : numero.toFixed(defaultDecimal) + ' %';
+}
+
+/**
+ * Formatea un número a porcentaje con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear como porcentaje
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 5)
+ * @returns {string} - El valor formateado como porcentaje con los decimales especificados
+ * @example
+ * formatearPorcentaje(5)       // "5.00000 %"
+ * formatearPorcentaje(5.5, 3)  // "5.500 %"
+ * formatearPorcentaje(null)    // "0.00000 %"
+ * formatearPorcentaje('abc')   // "0.00000 %"
+ */
+export const formatearPorcentaje = (valor, defaultDecimal = 5) => {
+    if (valor === null || valor === undefined || valor === '') {
+        return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+    }
+    const numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+    if (isNaN(numero)) {
+        return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0') + ' %';
+    }
+    return numero.toFixed(defaultDecimal) + ' %';
+}
+
+
+/**
+ * Formatea un número a string con una cantidad fija de decimales
+ * @param {number|string} valor - El valor a formatear
+ * @param {number} defaultDecimal - Número de decimales a mostrar (por defecto: 2)
+ * @returns {string} - El valor formateado como string con los decimales especificados
+ * @example
+ * formatearDecimal(5)       // "5.00"
+ * formatearDecimal(5.5, 3)  // "5.500"
+ * formatearDecimal(5.6789)  // "5.67"
+ * formatearDecimal(null)    // "0.00"
+ * formatearDecimal('abc')   // "0.00"
+ */
+export const formatearDecimal = (valor, defaultDecimal = 2) => {
+    if (valor === null || valor === undefined || valor === '') {
+        return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+    }
+    
+    const numero = typeof valor === 'number' ? valor : parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+    
+    if (isNaN(numero)) {
+        return '0'.padEnd(defaultDecimal + 1, '.0').padEnd(defaultDecimal + 2, '0');
+    }
+    
+    const partes = numero.toString().split('.');
+    let parteEntera = partes[0];
+    let parteDecimal = partes[1] || '';
+    
+    // Asegurar la cantidad correcta de decimales
+    parteDecimal = parteDecimal.padEnd(defaultDecimal, '0').slice(0, defaultDecimal);
+    
+    return parteDecimal ? `${parteEntera}.${parteDecimal}` : parteEntera;
+}
