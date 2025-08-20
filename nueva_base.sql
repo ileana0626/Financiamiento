@@ -1436,6 +1436,8 @@ BEGIN
 END;
 //DELIMITER ;
 
+use admin;
+ 
 DROP PROCEDURE IF EXISTS sp_Distr_Get_Insert_Update_distribucion_dppp;
 DELIMITER //
 /*
