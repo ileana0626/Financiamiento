@@ -1488,7 +1488,7 @@ BEGIN
 				(p_id_calculo, p_anio_ejercicio, p_tipo_distribucion, p_monto_30_por_ciento, p_monto_70_por_ciento, p_tipoPorcentaje,
                 p_subtotal_A_30_por_ciento, p_subtotal_B_70_por_ciento, p_subtotal_B_Ajuste_70_por_ciento, p_subtotal_C_fpaop, p_subtotal_D_fpatov,
                 p_subtotal_2_por_ciento_fpaop_ppsr, p_subtotal_D_2_por_ciento_ppsr, p_subtotal_D_candidatura);
-			SELECT LAST_INSERT_ID() AS id; -- Solo funciona con columnas AUTO_INCREMENT.
+			-- SELECT LAST_INSERT_ID() AS id; -- Solo funciona con columnas AUTO_INCREMENT.
             SELECT p_id_calculo AS id;
 		ELSE -- Si existe 'UPDATE'
 			UPDATE distribucion_dppp

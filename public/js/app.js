@@ -11669,7 +11669,7 @@ var debug = function debug() {
               _context4.next = 26;
               break;
             case 24:
-              debug('❌ No se encontro distribución, ➜ continua normalmente...');
+              debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
               return _context4.abrupt("return");
             case 26:
               _context4.next = 34;
@@ -11717,7 +11717,7 @@ var debug = function debug() {
               loader.text = 'Guardando distribución...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
-                p_comando: 'INSERT',
+                p_comando: "INSERT",
                 // INSERT, UPDATE
                 p_id_calculo: _this9.selectedCalculo.id,
                 p_anio_ejercicio: _this9.anio,
@@ -11743,7 +11743,7 @@ var debug = function debug() {
               console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
               _context5.prev = 9;
               if (!_this9.distribucionId) {
-                _context5.next = 22;
+                _context5.next = 23;
                 break;
               }
               _context5.next = 13;
@@ -11751,121 +11751,127 @@ var debug = function debug() {
             case 13:
               response = _context5.sent;
               if (!(response.data && response.data.success)) {
-                _context5.next = 18;
+                _context5.next = 19;
                 break;
               }
-              _this9.distribucionId = response.data.id || _this9.distribucionId;
-              _context5.next = 20;
+              _this9.distribucionId = response.data.id; // || this.distribucionId;
+              debug('🐛 Update response.data.id:', response.data.id);
+              _context5.next = 21;
               break;
-            case 18:
+            case 19:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 20:
-              _context5.next = 31;
+            case 21:
+              _context5.next = 33;
               break;
-            case 22:
-              _context5.next = 24;
+            case 23:
+              _context5.next = 25;
               return axios.post(url, datos);
-            case 24:
+            case 25:
               _response = _context5.sent;
               if (!(_response.data && _response.data.success)) {
-                _context5.next = 29;
+                _context5.next = 31;
                 break;
               }
               _this9.distribucionId = _response.data.id;
-              _context5.next = 31;
+              debug('🐛 Insert response.data.id:', _response.data.id);
+              _context5.next = 33;
               break;
-            case 29:
+            case 31:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 31:
+            case 33:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 33;
+              _context5.prev = 35;
               _iterator.s();
-            case 35:
+            case 37:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 50;
+                _context5.next = 52;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 37;
-              _context5.next = 40;
+              _context5.prev = 39;
+              _context5.next = 42;
               return axios.post(url, partido);
-            case 40:
+            case 42:
               _response2 = _context5.sent;
               // ⇋
-              if (_response2.data && _response2.data.ids) {}
-              _context5.next = 48;
+              if (_response2.data && _response2.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context5.next = 50;
               break;
-            case 44:
-              _context5.prev = 44;
-              _context5.t0 = _context5["catch"](37);
+            case 46:
+              _context5.prev = 46;
+              _context5.t0 = _context5["catch"](39);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
-            case 48:
-              _context5.next = 35;
-              break;
             case 50:
-              _context5.next = 55;
+              _context5.next = 37;
               break;
             case 52:
-              _context5.prev = 52;
-              _context5.t1 = _context5["catch"](33);
+              _context5.next = 57;
+              break;
+            case 54:
+              _context5.prev = 54;
+              _context5.t1 = _context5["catch"](35);
               _iterator.e(_context5.t1);
-            case 55:
-              _context5.prev = 55;
+            case 57:
+              _context5.prev = 57;
               _iterator.f();
-              return _context5.finish(55);
-            case 58:
+              return _context5.finish(57);
+            case 60:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 60;
+              _context5.prev = 62;
               _iterator2.s();
-            case 62:
+            case 64:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 77;
+                _context5.next = 79;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 64;
-              _context5.next = 67;
+              _context5.prev = 66;
+              _context5.next = 69;
               return axios.post(url, _partido);
-            case 67:
+            case 69:
               _response3 = _context5.sent;
               // ⇋
-              if (_response3.data && _response3.data.ids) {}
-              _context5.next = 75;
+              if (_response3.data && _response3.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context5.next = 77;
               break;
-            case 71:
-              _context5.prev = 71;
-              _context5.t2 = _context5["catch"](64);
+            case 73:
+              _context5.prev = 73;
+              _context5.t2 = _context5["catch"](66);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 75:
-              _context5.next = 62;
-              break;
             case 77:
-              _context5.next = 82;
+              _context5.next = 64;
               break;
             case 79:
-              _context5.prev = 79;
-              _context5.t3 = _context5["catch"](60);
+              _context5.next = 84;
+              break;
+            case 81:
+              _context5.prev = 81;
+              _context5.t3 = _context5["catch"](62);
               _iterator2.e(_context5.t3);
-            case 82:
-              _context5.prev = 82;
+            case 84:
+              _context5.prev = 84;
               _iterator2.f();
-              return _context5.finish(82);
-            case 85:
+              return _context5.finish(84);
+            case 87:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -11876,12 +11882,12 @@ var debug = function debug() {
               });
               // Habilita descargar archivo
               //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
-              debug('🐛 this.distribucionId', _this9.distribucionId);
+              debug('🐛 this.distribucionId: ', _this9.distribucionId);
               _this9.descargar_disabled = false;
-              _context5.next = 96;
+              _context5.next = 98;
               break;
-            case 90:
-              _context5.prev = 90;
+            case 92:
+              _context5.prev = 92;
               _context5.t4 = _context5["catch"](9);
               console.error('Error al guardar:', _context5.t4);
               _this9.$vs.notification({
@@ -11891,15 +11897,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 96:
-              _context5.prev = 96;
+            case 98:
+              _context5.prev = 98;
               loader.close();
-              return _context5.finish(96);
-            case 99:
+              return _context5.finish(98);
+            case 101:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 90, 96, 99], [33, 52, 55, 58], [37, 44], [60, 79, 82, 85], [64, 71]]);
+        }, _callee5, null, [[9, 92, 98, 101], [35, 54, 57, 60], [39, 46], [62, 81, 84, 87], [66, 73]]);
       }))();
     },
     /**
@@ -11914,8 +11920,9 @@ var debug = function debug() {
       var downloadUrl = null;
       var link = null;
       if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
-        throw new Error('✘ No se encontro el ID de la distribución');
+        throw new Error('❌ No se encontro el ID de la distribución');
       }
+      // ⇋
       axios.get(apiUrl, {
         responseType: 'blob',
         method: 'GET'

@@ -350,14 +350,14 @@ class SolicitudController extends Controller
             DB::enableQueryLog();
 
             $comando = $request->input('p_comando', null);
-            if ($comando === 'UPDATE' || $comando === 'INSERT') {
+            if ($comando === "UPDATE" || $comando === "INSERT") {
                  // Verificar si ya existe un registro para este cálculo
                  $existe = DB::table('distribucion_dppp')
                  ->where('id_calculo', $request->input('id_calculo'))
                  ->exists();
 
                  // Si ya existe, cambiamos el comando INSERT a UPDATE
-                 $comando = $existe ? 'UPDATE' : 'INSERT';
+                 $comando = $existe ? "UPDATE" : "INSERT";
             } // else -> el comando es 'GET', rellena los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
 
 
@@ -387,6 +387,7 @@ class SolicitudController extends Controller
             // en 'GET' no se obtiene el ID
             if($comando === 'UPDATE' || $comando === 'INSERT'){
                 $id = !empty($response) ? $response[0]->id : null;
+                Log::info('Distribución -> ID obtenido:', ['id' => $id, 'comando' => $comando]);
             }
 
             // Obtener y loguear la consulta

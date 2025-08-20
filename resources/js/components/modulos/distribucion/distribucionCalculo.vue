@@ -720,7 +720,7 @@ export default {
                     }
                     debug('✅ Distribución cargada.');
                 }else{
-                    debug('❌ No se encontro distribución, ➜ continua normalmente...');
+                    debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
                     return;
                 }
             }catch(error){
@@ -751,7 +751,7 @@ export default {
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
 
             let datos = {
-                p_comando: 'INSERT', // INSERT, UPDATE
+                p_comando: "INSERT", // INSERT, UPDATE
                 p_id_calculo: this.selectedCalculo.id,
                 p_anio_ejercicio: this.anio, //valor manual
                 p_tipo_distribucion: this.distribucion.join(','), // "1,2,3" - valor manual
@@ -772,19 +772,21 @@ export default {
             try {
                 // Actualizar distribución
                 if (this.distribucionId) {
-                    const response = await axios.post(url, datos); //   UPDATE
+                    const response = await axios.post(url, datos); // ⇋ UPDATE
                     
                     if (response.data && response.data.success) {
-                        this.distribucionId = response.data.id || this.distribucionId;
+                        this.distribucionId = response.data.id; // || this.distribucionId;
+                        debug('🐛 Update response.data.id:', response.data.id);
                     } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
                     }
                 } else { // Guardar distribución
-                    const response = await axios.post(url, datos); // INSERT
+                    const response = await axios.post(url, datos); // ⇋ INSERT
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
+                        debug('🐛 Insert response.data.id:', response.data.id);
                         
                     } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
@@ -799,6 +801,7 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
+                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -813,6 +816,7 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
+                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -833,7 +837,7 @@ export default {
                 })
                 // Habilita descargar archivo
                 //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
-                debug('🐛 this.distribucionId', this.distribucionId);
+                debug('🐛 this.distribucionId: ', this.distribucionId);
                 this.descargar_disabled = false;
             } catch (error) {
                 console.error('Error al guardar:', error);
@@ -857,9 +861,9 @@ export default {
             let link = null;
 
             if(this.distribucionId? null : this.distribucionId === null || this.distribucionId === 0){
-                throw new Error('✘ No se encontro el ID de la distribución');
+                throw new Error('❌ No se encontro el ID de la distribución');
             }
-
+            // ⇋
             axios.get(apiUrl, {
                 responseType: 'blob',
                 method: 'GET',
