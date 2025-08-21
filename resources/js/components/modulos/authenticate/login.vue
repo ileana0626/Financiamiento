@@ -318,17 +318,17 @@ export default {
           text: "La contraseña es un campo obligatorio",
         });
       }
-      // if (!this.captchaResponse) {
-      //     this.captchaError = true;
-      //     this.mensajeError.push('Error captcha falta');
-      //     const noti = this.$vs.notification({
-      //         position: this.notiPos,
-      //         duration: 10000,
-      //         color: 'danger',
-      //         title: 'Alerta',
-      //         text: 'Por favor marca la casilla de verificación CAPTCHA'
-      //     });
-      // }
+       if (!this.captchaResponse) {
+           this.captchaError = true;
+           this.mensajeError.push('Error captcha falta');
+           const noti = this.$vs.notification({
+               position: this.notiPos,
+               duration: 10000,
+               color: 'danger',
+               title: 'Alerta',
+               text: 'Por favor marca la casilla de verificación CAPTCHA'
+           });
+       }
       if (this.mensajeError.length) {
         this.error = 1;
       }
