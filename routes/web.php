@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], function () {
     /***Captura v2***/
     Route::get('/administracion/usuario/getTipoDic','Administracion\UsersController@getTipoDic');
     Route::get('/administracion/usuario/getAnioFiscal','Administracion\UsersController@getAnioFiscal');
+    Route::get('/administracion/solicitud/getDistribucionesPorAnio','Administracion\SolicitudController@getDistribucionesPorAnio');
     Route::get('/administracion/usuario/getCapitulo','Administracion\UsersController@getCapitulo');
 });
 

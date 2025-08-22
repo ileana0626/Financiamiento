@@ -64,6 +64,19 @@ Consulta de Errores
                     </vs-sidebar-item>
                 </template>
             </vs-sidebar-group>
+            
+            <!-- ministraciones -->
+            <vs-sidebar-group>
+                <template #header>
+                    <vs-sidebar-item v-if="listPermisos.includes('ministracion.captura')" id="ministracion.captura"
+                        to="/ministracion">
+                        <template #icon>
+                        <span class="material-symbols-rounded">receipt_long</span>
+                        </template>
+                        Ministraciones
+                    </vs-sidebar-item>
+                </template>
+            </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
                     to="/recordatorios">

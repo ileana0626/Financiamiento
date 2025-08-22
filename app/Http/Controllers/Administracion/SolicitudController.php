@@ -1395,6 +1395,46 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
+
+    public function getDistribucionesPorAnio(Request $request)
+{
+    $anio = $request->anio;
+
+    try {
+        $calculo = DB::table('calculo_dppp')->where('anio_ejercicio', $anio)->first();
+
+        $distribuciones = DB::table('distribucion_dppp')
+            ->where('anio_ejercicio', $anio)
+            ->get();
+
+        $partidos_con = [];
+        $partidos_sin = [];
+
+        if ($calculo) {
+            if ($calculo->pp_con_repr) {
+                $partidos_con = DB::table('cat_partido_con_repr')
+                    ->whereIn('id', explode(',', $calculo->pp_con_repr))
+                    ->get();
+            }
+
+            if ($calculo->pp_sin_repr) {
+                $partidos_sin = DB::table('cat_partido_sin_repr')
+                    ->whereIn('id', explode(',', $calculo->pp_sin_repr))
+                    ->get();
+            }
+        }
+
+        return response()->json([
+            'distribuciones' => $distribuciones,
+            'partidos_con_repr' => $partidos_con,
+            'partidos_sin_repr' => $partidos_sin,
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al obtener datos'], 500);
+    }
+}
+
     public function setUpdateCopias(Request $request){
         if(!$request->ajax()) return redirect('/');
 

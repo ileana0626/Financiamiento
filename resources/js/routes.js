@@ -30,6 +30,7 @@ import Error404 from './components/plantilla/404.vue';
 import SADecoder from './components/modulos/superadmin/decoder.vue';
 
 import methods from './methods';
+import Ministraciones from './components/modulos/ministracion/ministraciones.vue';
 
 Vue.use(Router)
 const { isNavigationFailure, NavigationFailureType } = Router;
@@ -153,6 +154,7 @@ export default new Router({
         { path: '/listado', name:'solicitudes.ver', component: ListadoCalculos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         
         { path: '/distribucion', name: 'distribucion.captura', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/ministracion', name: 'ministracion.captura', component: Ministraciones, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 
 

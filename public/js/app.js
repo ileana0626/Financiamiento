@@ -5916,17 +5916,17 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
           text: "La contraseña es un campo obligatorio"
         });
       }
-      // if (!this.captchaResponse) {
-      //     this.captchaError = true;
-      //     this.mensajeError.push('Error captcha falta');
-      //     const noti = this.$vs.notification({
-      //         position: this.notiPos,
-      //         duration: 10000,
-      //         color: 'danger',
-      //         title: 'Alerta',
-      //         text: 'Por favor marca la casilla de verificación CAPTCHA'
-      //     });
-      // }
+      if (!this.captchaResponse) {
+        this.captchaError = true;
+        this.mensajeError.push('Error captcha falta');
+        var _noti4 = this.$vs.notification({
+          position: this.notiPos,
+          duration: 10000,
+          color: 'danger',
+          title: 'Alerta',
+          text: 'Por favor marca la casilla de verificación CAPTCHA'
+        });
+      }
       if (this.mensajeError.length) {
         this.error = 1;
       }
@@ -12245,6 +12245,1078 @@ var debug = function debug() {
       var _this15 = this;
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
         return total + _this15.calcularMontoC(partido) * _this15.factorCalculo;
+      }, 0);
+    },
+    // Subtotal C para partidos sin representación (ya lo tienes)
+    subtotalC_SinRepresentacion: function subtotalC_SinRepresentacion() {
+      return this.subtotalMonto2PorCiento;
+    },
+    // Subtotal D para partidos sin representación (ya lo tienes)
+    subtotalD_SinRepresentacion: function subtotalD_SinRepresentacion() {
+      return this.subtotalMonto2PorCientoD;
+    },
+    candidatura: function candidatura() {
+      var subtotal1 = this.subtotalD_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCientoD;
+      var resultado = (subtotal1 + subtotal2) * 0.02;
+      return resultado;
+    },
+    totalPermanentes: function totalPermanentes() {
+      var subtotal1 = this.subtotalC_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCiento;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    totalVotos: function totalVotos() {
+      var subtotal1 = this.subtotalD_ConRepresentacion;
+      var subtotal2 = this.subtotalMonto2PorCientoD;
+      var resultado = subtotal1 + subtotal2;
+      return resultado;
+    },
+    granTotal: function granTotal() {
+      if (this.distribucion.includes(2)) {
+        return this.totalPermanentes + this.totalVotos;
+      }
+      return this.totalPermanentes;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js":
+/*!*********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js ***!
+  \*********************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
+function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
+function _regeneratorAsync(n, e, r, t, o) { var a = _regeneratorAsyncGen(n, e, r, t, o); return a.next().then(function (n) { return n.done ? n.value : a.next(); }); }
+function _regeneratorAsyncGen(r, e, t, o, n) { return new _regeneratorAsyncIterator(_regenerator().w(r, e, t, o), n || Promise); }
+function _regeneratorAsyncIterator(t, e) { function n(r, o, i, f) { try { var c = t[r](o), u = c.value; return u instanceof _OverloadYield ? e.resolve(u.v).then(function (t) { n("next", t, i, f); }, function (t) { n("throw", t, i, f); }) : e.resolve(u).then(function (t) { c.value = t, i(c); }, function (t) { return n("throw", t, i, f); }); } catch (t) { f(t); } } var r; this.next || (_regeneratorDefine2(_regeneratorAsyncIterator.prototype), _regeneratorDefine2(_regeneratorAsyncIterator.prototype, "function" == typeof Symbol && Symbol.asyncIterator || "@asyncIterator", function () { return this; })), _regeneratorDefine2(this, "_invoke", function (t, o, i) { function f() { return new e(function (e, r) { n(t, i, e, r); }); } return r = r ? r.then(f, f) : f(); }, !0); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { if (r) i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n;else { var o = function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); }; o("next", 0), o("throw", 1), o("return", 2); } }, _regeneratorDefine2(e, r, n, t); }
+function _OverloadYield(e, d) { this.v = e, this.k = d; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+//import { forEach } from 'lodash';
+
+
+/**
+ * 🐛 Función para depuración development
+ * @param {...any} args - Uno o más mensajes a mostrar en consola
+ * @example
+ * debug('Mensaje de prueba', {data: 123});
+ */
+var debug = function debug() {
+  if (true) {
+    var _console;
+    (_console = console).log.apply(_console, arguments);
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      darkMode: localStorage.getItem('theme') == 'dark',
+      // Variables para listar
+      selectedCalculo: {},
+      Partidos_Sin_Representacion: [],
+      Partidos_Con_Representacion: [],
+      NewlistCalculos: [],
+      distribucionId: null,
+      // Para saber si ya se ha guardado un registro
+      cb_ppSeleccionados: [],
+      opcionSelecionadaPorcentaje: '1',
+      //  Valor por defecto Gubernatura
+      search: '',
+      page: 1,
+      max: 10,
+      // Dialog
+      active: false,
+      anio: '',
+      monto30Input: '',
+      monto30: '',
+      monto70: '',
+      monto70Input: '',
+      colors: [{
+        color: 'warn'
+      }],
+      catAnio: [],
+      cat_tipo_distribucion: [],
+      distribucion: [],
+      distribuciones: [],
+      // Validaciones
+      error: false,
+      errorAnio: '',
+      errorDistribucion: '',
+      errorMonto30: '',
+      errorMonto70: '',
+      descargar_disabled: true // true: disabled | false: enabled
+    };
+  },
+
+  watch: {
+    anio: function anio(newAnio) {
+      if (newAnio) {
+        this.getDistribucionesPorAnio(newAnio);
+      }
+    }
+  },
+  created: function created() {
+    var _this = this;
+    EventBus.$on('darkMode', function (data) {
+      _this.darkMode = data;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    // Limpiar el event listener
+    EventBus.$off('darkMode');
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _this2.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
+            _this2.getCalculos();
+            _context.next = 4;
+            return _this2.getAnio();
+          case 4:
+            _context.next = 6;
+            return _this2.obtenerDatos(11);
+          case 6:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
+  },
+  methods: {
+    getAnio: function getAnio() {
+      var _this3 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _this3.catAnio = [];
+              url = '/administracion/usuario/getAnioFiscal';
+              _context2.next = 4;
+              return axios.get(url).then(function (response) {
+                _this3.catAnio = response.data;
+              })["catch"](function (error) {
+                console.log(error);
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
+              });
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      }))();
+    },
+    formatCurrency: function formatCurrency(value) {
+      return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    },
+    formatoFecha: function formatoFecha(fechaStr) {
+      if (!fechaStr) return '';
+
+      // Parsear fecha en formato YYYY-MM-DD
+      var partes = fechaStr.split('-');
+      if (partes.length !== 3) return fechaStr;
+      var anio = partes[0];
+      var mes = parseInt(partes[1], 10) - 1; // Meses van de 0 a 11
+      var dia = partes[2];
+      var meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+      var mesAbreviado = meses[mes] || '';
+      return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
+    },
+    /**
+     * Obtiene los calculos de financiamiento para listar
+     */
+    getCalculos: function getCalculos() {
+      var _this4 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Cargando datos...';
+      var url = '/administracion/solicitud/getCalculosFinanciamiento';
+      this.NewlistCalculos = [];
+      axios.get(url).then(function (response) {
+        var _response$data;
+        if ((_response$data = response.data) !== null && _response$data !== void 0 && _response$data.success) {
+          _this4.NewlistCalculos = response.data.calculos || [];
+        } else {
+          var _response$data2;
+          // success: false
+          var errorMessage = ((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || 'Error en la respuesta del servidor';
+          throw new Error(errorMessage);
+        }
+      })["catch"](function (error) {
+        console.error('Error al cargar cálculos:', error);
+        _this4.$vs.notification({
+          title: 'Error',
+          text: 'Error al cargar los cálculos',
+          color: 'danger'
+        });
+        var nombreMetodo = url.split('/');
+        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
+      })["finally"](function () {
+        loader.close();
+      });
+    },
+    /**
+     * Abre el dialogo para editar la distribución
+     * @param {Object} calculo_tr - El calculo seleccionado
+     */
+    abrirDialog: function abrirDialog(calculo_tr) {
+      var _this5 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
+      this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+      this.datosCalculoSeleccionado = {};
+      this.Partidos_Sin_Representacion = [];
+      this.Partidos_Con_Representacion = [];
+      this.distribucionId = null; // resetea cada que se abra el Dialog
+      this.limpiarCampos(); // 🧹
+      this.active = true; // activa el modal
+      loader.text = 'Cargando datos...';
+      //Obtener los datos principales del Cálculo Financiero
+      axios.get(url, {
+        params: {
+          'id': calculo_tr.id
+        }
+      }).then(function (response) {
+        var _response$data3;
+        debug('🐛 Datos recibidos:', response.data);
+        if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
+          //Obtenemos los datos de los partidos politicos
+          _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
+          _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
+            return _objectSpread(_objectSpread({}, p), {}, {
+              ajuste: 0,
+              // valor temporal para el input
+              inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
+              // Variable temporarl en el Front
+              errorPorcentajeVotacion: '' // Variable temporarl en el Front
+            });
+          });
+        } else {
+          var _response$data4;
+          // success: false
+          var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
+          throw new Error(errorMessage);
+        }
+        // Cargando datos de Distribución
+        _this5.cargarDistribucion();
+      })["catch"](function (error) {
+        console.error('Error al cargar detalles del cálculo', error);
+        _this5.$vs.notification({
+          title: 'Error',
+          text: 'Error al cargar los detalles del cálculo',
+          color: 'danger'
+        });
+        var nombreMetodo = url.split('/');
+        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
+      })["finally"](function () {
+        loader.close();
+      });
+    },
+    onChangeDistribucion: function onChangeDistribucion(value) {
+      this.distribucion = value;
+      setTimeout(function () {
+        document.activeElement.blur();
+      }, 100);
+    },
+    obtenerDatos: function obtenerDatos(tipo) {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              url = '/administracion/usuario/obtenerDatos';
+              _context3.next = 3;
+              return axios.get(url, {
+                params: {
+                  'tipo': tipo,
+                  'consulta': 1
+                }
+              }).then(function (response) {
+                switch (tipo) {
+                  case 1:
+                    _this6.catCargos = response.data;
+                    break;
+                  case 2:
+                    _this6.catRemitente = response.data;
+                    break;
+                  case 3:
+                    _this6.catTermino = response.data;
+                    break;
+                  case 4:
+                    _this6.cat_diasTermino = response.data;
+                    break;
+                  case 5:
+                    _this6.cat_seguimiento = response.data;
+                    break;
+                  case 6:
+                    _this6.cat_departamentos = response.data;
+                    break;
+                  case 7:
+                    _this6.cat_tipo = response.data;
+                    break;
+                  case 8:
+                    _this6.cat_estutus = response.data;
+                    break;
+                  case 9:
+                    _this6.cat_partido = response.data;
+                    break;
+                  case 11:
+                    _this6.cat_tipo_distribucion = response.data;
+                    break;
+                  default:
+                    break;
+                }
+              })["catch"](function (error) {
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+              });
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
+    },
+    getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
+      var _this7 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var response;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.prev = 0;
+              _context4.next = 3;
+              return axios.get('/administracion/solicitud/getDistribucionesPorAnio', {
+                params: {
+                  anio: anio
+                }
+              });
+            case 3:
+              response = _context4.sent;
+              _this7.distribuciones = response.data.distribuciones;
+              _this7.Partidos_Con_Representacion = response.data.partidos_con_repr;
+              _this7.Partidos_Sin_Representacion = response.data.partidos_sin_repr;
+              _context4.next = 12;
+              break;
+            case 9:
+              _context4.prev = 9;
+              _context4.t0 = _context4["catch"](0);
+              console.error("Error al obtener distribuciones:", _context4.t0);
+            case 12:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, null, [[0, 9]]);
+      }))();
+    },
+    formatear30: function formatear30() {
+      var valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        // Si no es un número recetea valores
+
+        this.monto30 = null;
+        this.monto30Input = '';
+      } else {
+        this.errorMonto30 = '';
+        this.monto30 = valorNumerico;
+        this.monto30Input = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
+    formatear70: function formatear70() {
+      var valorNumerico = parseFloat(this.monto70Input.toString().replace(/[^0-9.]/g, ''));
+      if (isNaN(valorNumerico)) {
+        this.monto70 = null;
+        this.monto70Input = '';
+      } else {
+        this.errorMonto70 = '';
+        this.monto70 = valorNumerico;
+        this.monto70Input = valorNumerico.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+    },
+    guardarEdicion: function guardarEdicion() {
+      var _this8 = this;
+      // Lógica para guardar edición (llamada axios)
+      axios.put("/api/calculos/".concat(this.selectedCalculo.id), this.selectedCalculo).then(function () {
+        _this8.$vs.notification({
+          color: 'success',
+          text: 'Cálculo actualizado'
+        });
+        _this8.dialog = false;
+        _this8.getCalculos(); // refrescar lista
+      })["catch"](function () {
+        _this8.$vs.notification({
+          color: 'danger',
+          text: 'Error al guardar'
+        });
+      });
+    },
+    /**
+     * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
+     */
+    cargarDistribucion: function cargarDistribucion() {
+      var _this9 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var loader, url, datos, response, _this9$DataDistribuci, _this9$distribucionId, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              // ✅
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this9.$vs);
+              loader.text = 'Cargando distribución...';
+              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              datos = {
+                p_comando: 'GET',
+                p_id_calculo: _this9.selectedCalculo.id
+              };
+              _context5.prev = 4;
+              _context5.next = 7;
+              return axios.post(url, datos);
+            case 7:
+              response = _context5.sent;
+              // ⇋ Se manda post aunque sea GET por el controlador
+              debug('🐛 response.data:', response.data);
+              // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
+              if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
+                _context5.next = 24;
+                break;
+              }
+              _this9.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+              _this9.distribucionId = _this9.DataDistribucion.id_calculo;
+              // Empieza a cargar los datos guardados
+              _this9.anio = _this9.DataDistribucion.anio_ejercicio; // asigna año
+              if ((_this9$DataDistribuci = _this9.DataDistribucion) !== null && _this9$DataDistribuci !== void 0 && _this9$DataDistribuci.tipo_distribucion) {
+                _this9.distribucion = _this9.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
+                  return !isNaN(item);
+                });
+              }
+              _this9.monto30Input = _this9.formatoMoneda(_this9.DataDistribucion.monto_30_por_ciento);
+              _this9.monto30 = _this9.DataDistribucion.monto_30_por_ciento;
+              _this9.monto70Input = _this9.formatoMoneda(_this9.DataDistribucion.monto_70_por_ciento);
+              _this9.monto70 = _this9.DataDistribucion.monto_70_por_ciento;
+              _this9.opcionSelecionadaPorcentaje = String(_this9.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
+              _this9.$nextTick(function () {
+                debug('🐛 Factor de porcentaje: ', _this9.factorCalculo, 'Opción seleccionada: ', _this9.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this9.opcionSelecionadaPorcentaje));
+              });
+              if (((_this9$distribucionId = _this9.distribucionId) !== null && _this9$distribucionId !== void 0 ? _this9$distribucionId : null) !== null) {
+                _this9.descargar_disabled = false;
+              }
+              debug('✅ Distribución cargada.');
+              _context5.next = 26;
+              break;
+            case 24:
+              debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
+              return _context5.abrupt("return");
+            case 26:
+              _context5.next = 34;
+              break;
+            case 28:
+              _context5.prev = 28;
+              _context5.t0 = _context5["catch"](4);
+              console.error('Error al cargar distribución', _context5.t0);
+              _this9.$vs.notification({
+                title: 'Error',
+                text: 'Error al cargar la distribución',
+                color: 'danger'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this9.$router);
+            case 34:
+              _context5.prev = 34;
+              loader.close();
+              return _context5.finish(34);
+            case 37:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5, null, [[4, 28, 34, 37]]);
+      }))();
+    },
+    guardarDistribucion: function guardarDistribucion() {
+      var _this10 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var loader, url, datos, response, _response$data5, errorMsg, _response, _response$data6, _errorMsg, _iterator, _step, partido, _response2, _iterator2, _step2, _partido, _response3, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              if (!_this10.validarCampos()) {
+                _context6.next = 3;
+                break;
+              }
+              _this10.$vs.notification({
+                color: 'danger',
+                text: 'Verifique los datos e inténtelo de nuevo.'
+              });
+              return _context6.abrupt("return");
+            case 3:
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this10.$vs);
+              loader.text = 'Guardando distribución...';
+              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              datos = {
+                p_comando: "INSERT",
+                // INSERT, UPDATE
+                p_id_calculo: _this10.selectedCalculo.id,
+                p_anio_ejercicio: _this10.anio,
+                //valor manual
+                p_tipo_distribucion: _this10.distribucion.join(','),
+                // "1,2,3" - valor manual
+                p_monto_30_por_ciento: _this10.monto30,
+                //valor manual
+                p_monto_70_por_ciento: _this10.monto70,
+                //valor manual
+                p_tipoPorcentaje: _this10.opcionSelecionadaPorcentaje,
+                //valor manual
+                p_subtotal_A_30_por_ciento: 0,
+                p_subtotal_B_70_por_ciento: 0,
+                p_subtotal_B_Ajuste_70_por_ciento: 0,
+                p_subtotal_C_fpaop: _this10.subtotalC_ConRepresentacion,
+                p_subtotal_D_fpatov: _this10.subtotalD_ConRepresentacion,
+                p_subtotal_2_por_ciento_fpaop_ppsr: _this10.subtotalMonto2PorCiento,
+                p_subtotal_D_2_por_ciento_ppsr: _this10.subtotalMonto2PorCientoD,
+                p_subtotal_D_candidatura: _this10.candidatura
+              };
+              _this10.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
+              console.log('Datos a guardar: ', datos, _this10.Partidos_Con_Representacion, _this10.Partidos_Sin_Representacion);
+              _context6.prev = 9;
+              if (!_this10.distribucionId) {
+                _context6.next = 23;
+                break;
+              }
+              _context6.next = 13;
+              return axios.post(url, datos);
+            case 13:
+              response = _context6.sent;
+              if (!(response.data && response.data.success)) {
+                _context6.next = 19;
+                break;
+              }
+              _this10.distribucionId = response.data.id; // || this.distribucionId;
+              debug('🐛 Update response.data.id:', response.data.id);
+              _context6.next = 21;
+              break;
+            case 19:
+              errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
+              throw new Error(errorMsg);
+            case 21:
+              _context6.next = 33;
+              break;
+            case 23:
+              _context6.next = 25;
+              return axios.post(url, datos);
+            case 25:
+              _response = _context6.sent;
+              if (!(_response.data && _response.data.success)) {
+                _context6.next = 31;
+                break;
+              }
+              _this10.distribucionId = _response.data.id;
+              debug('🐛 Insert response.data.id:', _response.data.id);
+              _context6.next = 33;
+              break;
+            case 31:
+              _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
+              throw new Error(_errorMsg);
+            case 33:
+              url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
+              // Actualizamos la tabla de partidos políticos con representación
+              // Crear un array de promesas
+              //const promesas = this.Partidos_Con_Representacion.map(async partido => {
+              _iterator = _createForOfIteratorHelper(_this10.Partidos_Con_Representacion);
+              _context6.prev = 35;
+              _iterator.s();
+            case 37:
+              if ((_step = _iterator.n()).done) {
+                _context6.next = 52;
+                break;
+              }
+              partido = _step.value;
+              _context6.prev = 39;
+              _context6.next = 42;
+              return axios.post(url, partido);
+            case 42:
+              _response2 = _context6.sent;
+              // ⇋
+              if (_response2.data && _response2.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context6.next = 50;
+              break;
+            case 46:
+              _context6.prev = 46;
+              _context6.t0 = _context6["catch"](39);
+              _this10.$vs.notification({
+                color: 'danger',
+                text: "Error al actualizar ".concat(partido.siglas)
+              });
+              throw _context6.t0;
+            case 50:
+              _context6.next = 37;
+              break;
+            case 52:
+              _context6.next = 57;
+              break;
+            case 54:
+              _context6.prev = 54;
+              _context6.t1 = _context6["catch"](35);
+              _iterator.e(_context6.t1);
+            case 57:
+              _context6.prev = 57;
+              _iterator.f();
+              return _context6.finish(57);
+            case 60:
+              url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
+              _iterator2 = _createForOfIteratorHelper(_this10.Partidos_Sin_Representacion);
+              _context6.prev = 62;
+              _iterator2.s();
+            case 64:
+              if ((_step2 = _iterator2.n()).done) {
+                _context6.next = 79;
+                break;
+              }
+              _partido = _step2.value;
+              _context6.prev = 66;
+              _context6.next = 69;
+              return axios.post(url, _partido);
+            case 69:
+              _response3 = _context6.sent;
+              // ⇋
+              if (_response3.data && _response3.data.ids) {
+                //debug('🐛 response.data.ids:', response.data.ids);
+              }
+              _context6.next = 77;
+              break;
+            case 73:
+              _context6.prev = 73;
+              _context6.t2 = _context6["catch"](66);
+              _this10.$vs.notification({
+                color: 'danger',
+                text: "Error al actualizar ".concat(_partido.siglas)
+              });
+              throw _context6.t2;
+            case 77:
+              _context6.next = 64;
+              break;
+            case 79:
+              _context6.next = 84;
+              break;
+            case 81:
+              _context6.prev = 81;
+              _context6.t3 = _context6["catch"](62);
+              _iterator2.e(_context6.t3);
+            case 84:
+              _context6.prev = 84;
+              _iterator2.f();
+              return _context6.finish(84);
+            case 87:
+              // Notificación de éxito
+              Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+              });
+              // Habilita descargar archivo
+              //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
+              debug('🐛 this.distribucionId: ', _this10.distribucionId);
+              _this10.descargar_disabled = false;
+              _context6.next = 98;
+              break;
+            case 92:
+              _context6.prev = 92;
+              _context6.t4 = _context6["catch"](9);
+              console.error('Error al guardar:', _context6.t4);
+              _this10.$vs.notification({
+                title: 'Error',
+                color: 'danger',
+                text: 'Error al guardar'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context6.t4, nombreMetodo[3], _this10.$router);
+            case 98:
+              _context6.prev = 98;
+              loader.close();
+              return _context6.finish(98);
+            case 101:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, null, [[9, 92, 98, 101], [35, 54, 57, 60], [39, 46], [62, 81, 84, 87], [66, 73]]);
+      }))();
+    },
+    /**
+     * Descarga el archivo Excel de la distribución
+     * @param DistribucionId // debe de existir un preguardado antes
+     */
+    descargarDistribucion: function descargarDistribucion(id) {
+      var _this11 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Generando archivo Excel...';
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
+      var downloadUrl = null;
+      var link = null;
+      if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
+        throw new Error('❌ No se encontro el ID de la distribución');
+      }
+      // ⇋
+      axios.get(apiUrl, {
+        responseType: 'blob',
+        method: 'GET'
+      }).then(function (response) {
+        downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+        link = document.createElement('a');
+        link.href = downloadUrl;
+        var filename = "Anexo 2. Distribuci\xF3n.xlsx";
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        _this11.$vs.notification({
+          title: 'Éxito',
+          text: 'El archivo Excel se está descargando',
+          color: 'success'
+        });
+      })["catch"](function (error) {
+        var _error$response;
+        debug('🐛 Error al descargar Excel:', error);
+        var errorMessage = 'Error al descargar Excel';
+        if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        _this11.$vs.notification({
+          title: 'Error',
+          text: errorMessage,
+          color: 'danger',
+          time: 10000
+        });
+      })["finally"](function () {
+        loader.close();
+        try {
+          if (link && link.parentNode) {
+            link.parentNode.removeChild(link); // Elimina el elemento hijo
+          }
+
+          if (downloadUrl && typeof downloadUrl === 'string') {
+            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+          }
+        } catch (e) {
+          console.error('Error al limpiar recursos:', e);
+        }
+      });
+    },
+    calcularMontoIgualitario30: function calcularMontoIgualitario30() {
+      var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
+      var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
+      return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
+    },
+    ajustarDecimal: function ajustarDecimal(partido, operacion) {
+      var ajusteUnitario = 0.01;
+
+      // Asegurar que el campo ajuste exista y sea reactivo
+      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (operacion === 'sumar') {
+        if (this.totalAjusteDecimales < 0) {
+          partido.ajuste += ajusteUnitario;
+        } else {
+          this.$vs.notification({
+            title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'warning'
+          });
+        }
+      } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+      }
+    },
+    /*
+    * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
+    * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+     */
+    calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
+      var porcentaje = parseFloat(porcentajePartido);
+      var totalPorcentajes = this.sumaTotalPorcentajes;
+      var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
+
+      if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
+      return monto * porcentaje / totalPorcentajes;
+    },
+    calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
+      var base = this.calcularMontoProporcionalB(porcentajePartido);
+      return base + (ajuste || 0);
+    },
+    calcularMontoC: function calcularMontoC(partido) {
+      var montoA = parseFloat(this.calcularMontoIgualitario30());
+      var montoB = parseFloat(this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste));
+
+      // Verificar si los valores son números válidos
+      if (isNaN(montoA) || isNaN(montoB)) {
+        console.error('C. Valores inválidos:', {
+          montoA: montoA,
+          montoB: montoB,
+          porcentaje: partido.porcentaje_votacion,
+          ajuste: partido.ajuste
+        });
+        return 0; // O algún valor por defecto
+      }
+
+      return montoA + montoB;
+    },
+    calcularMontoD: function calcularMontoD(partido) {
+      return this.calcularMontoC(partido) * this.factorCalculo;
+    },
+    calcularMontoD_ppsr: function calcularMontoD_ppsr(partido) {
+      return partido.monto_2_por_ciento * this.factorCalculo;
+    },
+    /*
+    * Almacena temporalmente en los Objetos de los partidos,
+    * los cálculos aplicados a las columnas antes de Guardar
+    */
+    AlmacenarCalculos_Partidos: function AlmacenarCalculos_Partidos() {
+      var _this12 = this;
+      this.Partidos_Con_Representacion.forEach(function (partido) {
+        partido.A_30_por_ciento = _this12.calcularMontoIgualitario30();
+        partido.B_70_por_ciento = _this12.calcularMontoProporcionalB(partido.porcentaje_votacion);
+        partido.B_Ajuste_70_por_ciento = _this12.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+        partido.C_fpaop = _this12.calcularMontoC(partido);
+        partido.D_fpatov = _this12.calcularMontoD(partido);
+      });
+      this.Partidos_Sin_Representacion.forEach(function (partido) {
+        partido.D_monto_2_por_ciento = _this12.calcularMontoD_ppsr(partido);
+      });
+    },
+    /*
+    * Formatea a moneda
+    * @param {number} valor - El valor a formatear
+    * @returns {string} - El valor formateado
+    */
+    formatoMoneda: function formatoMoneda(valor) {
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+      }).format(valor);
+    },
+    /* Función para formatear el porcentaje (solo formatea)
+    * @param {number} valor - El valor a formatear
+    * @returns {string} - El valor formateado
+    */
+    formatearPorcentaje: function formatearPorcentaje(valor) {
+      if (!valor) return '0.00000 %';
+      var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+      return isNaN(numero) ? '0.00000 %' : numero.toFixed(5) + ' %';
+    },
+    /*
+    * Formatea a decimal
+    * @param {number} valor - El valor a formatear
+    * @returns {string} - El valor formateado
+    */
+    formatearDecimal: function formatearDecimal(valor) {
+      if (!valor) return '0.00';
+      var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+      return isNaN(numero) ? '0.00' : numero.toFixed(2);
+    },
+    /*
+    * Formatea el porcentaje del partido
+    * @param {Object} partido - El objeto del partido político
+    * @returns {void}
+    */
+    onBlurPorcentaje: function onBlurPorcentaje(partido) {
+      var valorCrudo = partido.inputPorcentaje;
+      if (!valorCrudo) {
+        partido.inputPorcentaje = ''; // input vacío, no mostrar nada
+        partido.porcentaje_votacion = 0;
+        return;
+      }
+
+      // Obtener número completo del input
+      var valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
+
+      // Guardar valor completo para los cálculos
+      partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
+
+      // Mostrar solo dos decimales en el input, pero sin perder precisión interna
+      partido.inputPorcentaje = isNaN(valorNumerico) ? '' : valorNumerico.toFixed(2) + ' %';
+    },
+    /**
+     * ✔ Validar campos
+     * @returns {boolean}
+     */
+    validarCampos: function validarCampos() {
+      var _this13 = this;
+      this.limpiarErrores();
+      if (this.anio === '') {
+        this.errorAnio = 'El campo año es obligatorio';
+        this.error = true;
+      }
+      if (this.monto30Input === '') {
+        this.errorMonto30 = 'Ingrese un monto 30% válido';
+        this.error = true;
+      }
+      if (this.monto70Input === '') {
+        this.errorMonto70 = 'Ingrese un monto 70% válido';
+        this.error = true;
+      }
+      if (this.distribucion === '') {
+        this.errorDistribucion = 'El campo distribución es obligatorio';
+        this.error = true;
+      }
+      // Validar que llenen todos los campos
+      this.Partidos_Con_Representacion.forEach(function (partido) {
+        if (partido.inputPorcentaje === '') {
+          partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
+          _this13.error = true;
+        }
+      });
+      return this.error;
+    },
+    /**
+     * 🧹 Limpia todos los campos del formulario
+     * @returns {void}
+     */
+    limpiarCampos: function limpiarCampos() {
+      this.anio = '', this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.monto70Input = '', this.distribucion = [];
+      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
+      this.descargar_disabled = true; // Deshabilita el botón de descargar
+
+      // Reiniciar valores de partidos a 0.0 si existen
+      if (this.Partidos_Con_Representacion) {
+        this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
+          return _objectSpread(_objectSpread({}, partido), {}, {
+            porcentaje_votacion: 0.00,
+            inputPorcentaje: '',
+            errorPorcentajeVotacion: '',
+            ajuste: 0.00
+          });
+        });
+      } else {
+        this.Partidos_Con_Representacion = [];
+      }
+      if (this.Partidos_Sin_Representacion) {
+        this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(function (partido) {
+          return _objectSpread(_objectSpread({}, partido), {}, {
+            D_monto_2_por_ciento: 0.00
+          });
+        });
+      } else {
+        this.Partidos_Sin_Representacion = [];
+      }
+      this.limpiarErrores();
+    },
+    /**
+     * Limpia todos los mensajes de error
+     * @returns {void}
+     */
+    limpiarErrores: function limpiarErrores() {
+      this.error = false;
+      this.errorAnio = '';
+      this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
+      this.Partidos_Con_Representacion.forEach(function (partido) {
+        partido.errorPorcentajeVotacion = '';
+      });
+    }
+  },
+  computed: {
+    /*
+    * Retorna la Sumatoria de los porcentajes de votación de los partidos con representación en el Congreso
+    */
+    sumaTotalPorcentajes: function sumaTotalPorcentajes() {
+      return this.Partidos_Con_Representacion.reduce(function (total, partido) {
+        // Convierte a número y evita NaN si el input está vacío
+        var valor = parseFloat(partido.porcentaje_votacion);
+        return total + (isNaN(valor) ? 0 : valor);
+      }, 0); //.toFixed(2);
+    },
+    totalAjusteDecimales: function totalAjusteDecimales() {
+      return this.Partidos_Con_Representacion.reduce(function (sum, p) {
+        return sum + (p.ajuste || 0);
+      }, 0);
+    },
+    /*
+    * Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
+    * Partidos sin representación en el Congreso
+    * monto_2_por_ciento * factorCalculo
+    */
+    subtotalMonto2PorCiento: function subtotalMonto2PorCiento() {
+      if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+        return 0;
+      }
+      return this.Partidos_Sin_Representacion.reduce(function (total, partido) {
+        return total + (parseFloat(partido.monto_2_por_ciento) || 0);
+      }, 0);
+    },
+    /*
+    * Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
+    * Partidos sin representación en el Congreso
+    * SUMA(monto_2_por_ciento * factorCalculo)
+    */
+    subtotalMonto2PorCientoD: function subtotalMonto2PorCientoD() {
+      var _this14 = this;
+      if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
+        return 0;
+      }
+      return this.Partidos_Sin_Representacion.reduce(function (total, partido) {
+        return total + (parseFloat(partido.monto_2_por_ciento * _this14.factorCalculo) || 0);
+      }, 0);
+    },
+    factorCalculo: function factorCalculo() {
+      //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
+      if (this.opcionSelecionadaPorcentaje === '1') {
+        return 0.5; // 50% Gubernatura
+      } else if (this.opcionSelecionadaPorcentaje === '2') {
+        return 0.3; // 30% Intermedia
+      }
+
+      return 0; // Valor por defecto
+    },
+    // Subtotal C para partidos con representación (C = A + B)
+    subtotalC_ConRepresentacion: function subtotalC_ConRepresentacion() {
+      var _this15 = this;
+      return this.Partidos_Con_Representacion.reduce(function (total, partido) {
+        return total + _this15.calcularMontoC(partido);
+      }, 0);
+    },
+    // Subtotal D para partidos con representación (D = C * factor)
+    subtotalD_ConRepresentacion: function subtotalD_ConRepresentacion() {
+      var _this16 = this;
+      return this.Partidos_Con_Representacion.reduce(function (total, partido) {
+        return total + _this16.calcularMontoC(partido) * _this16.factorCalculo;
       }, 0);
     },
     // Subtotal C para partidos sin representación (ya lo tienes)
@@ -27768,6 +28840,128 @@ render._withStripped = true;
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250":
+/*!*******************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib/loaders/templateLoader.js??ref--6!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250 ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("div", {
+    staticClass: "content-header"
+  }, [_c("div", {
+    staticClass: "container-fluid mb-md-3 pl-4 pl-md-3 pt-0"
+  }, [_c("div", {
+    staticClass: "float-sm-right mr-5"
+  }, [_c("ul", {
+    staticClass: "breadcrumb"
+  }, [_c("li", [_c("router-link", {
+    attrs: {
+      to: "/"
+    }
+  }, [_c("span", {
+    staticClass: "material-symbols-rounded v-align-icon-bc"
+  }, [_vm._v("home")])])], 1), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
+    staticClass: "row col-md-11 col-10 mx-auto card-info"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "card-body container-fluid",
+    staticStyle: {
+      "background-color": "var(--iee-white)"
+    }
+  }, [_c("div", {
+    staticClass: "row p-4"
+  }, [_c("div", {
+    staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3"
+  }, [_c("label", {
+    staticClass: "col-form-label"
+  }, [_vm._v("Selecciona un año fiscal: ")]), _vm._v(" "), _vm.catAnio.length > 0 ? _c("vs-select", {
+    attrs: {
+      placeholder: "Seleccione una opción",
+      filter: "",
+      color: _vm.colors[0].color,
+      autocomplete: "off"
+    },
+    scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
+      key: "message-danger",
+      fn: function fn() {
+        return [_vm._v("\n              " + _vm._s(_vm.errorAnio) + "\n            ")];
+      },
+      proxy: true
+    } : null], null, true),
+    model: {
+      value: _vm.anio,
+      callback: function callback($$v) {
+        _vm.anio = $$v;
+      },
+      expression: "anio"
+    }
+  }, [_vm._v(" "), _vm._l(_vm.catAnio, function (item, index) {
+    return _c("vs-option", {
+      key: index,
+      attrs: {
+        label: item.anio,
+        value: item.anio
+      }
+    }, [_vm._v("\n              " + _vm._s(item.anio) + "\n            ")]);
+  })], 2) : _vm._e()], 1)]), _vm._v(" "), _vm.Partidos_Con_Representacion.length > 0 ? _c("div", [_c("vs-table", {
+    staticClass: "tabla-ajustada mt-4",
+    scopedSlots: _vm._u([{
+      key: "thead",
+      fn: function fn() {
+        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")])], 1)];
+      },
+      proxy: true
+    }, {
+      key: "tbody",
+      fn: function fn() {
+        return _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          return _c("vs-tr", {
+            key: "partido-con-" + i
+          }, [_c("vs-td", [_vm._v(_vm._s(partido.siglas))]), _vm._v(" "), _c("vs-td", [_c("img", {
+            staticClass: "img-fluid rounded",
+            staticStyle: {
+              "max-width": "40px",
+              "max-height": "40px"
+            },
+            attrs: {
+              src: "/img/logos/" + partido.logo,
+              alt: partido.siglas,
+              onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+            }
+          })])], 1);
+        });
+      },
+      proxy: true
+    }], null, false, 201712809)
+  })], 1) : _vm._e()])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("li", {
+    staticClass: "breadActive"
+  }, [_c("span", [_vm._v("Ministraciones")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "card-header d-flex justify-content-between align-items-center container-fluid"
+  }, [_c("h3", {
+    staticClass: "card-title font-weight-bold"
+  }, [_vm._v("Ministraciones")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/superadmin/ResultCard.vue?vue&type=template&id=48c7b7ca&scoped=true":
 /*!*************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib/loaders/templateLoader.js??ref--6!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/superadmin/ResultCard.vue?vue&type=template&id=48c7b7ca&scoped=true ***!
@@ -36176,6 +37370,28 @@ var render = function render() {
       },
       proxy: true
     }])
+  }), _vm._v(" "), _c("vs-sidebar-group", {
+    scopedSlots: _vm._u([{
+      key: "header",
+      fn: function fn() {
+        return [_vm.listPermisos.includes("ministracion.captura") ? _c("vs-sidebar-item", {
+          attrs: {
+            id: "ministracion.captura",
+            to: "/ministracion"
+          },
+          scopedSlots: _vm._u([{
+            key: "icon",
+            fn: function fn() {
+              return [_c("span", {
+                staticClass: "material-symbols-rounded"
+              }, [_vm._v("receipt_long")])];
+            },
+            proxy: true
+          }], null, false, 3619510047)
+        }, [_vm._v("\n                        Ministraciones\n                    ")]) : _vm._e()];
+      },
+      proxy: true
+    }])
   }), _vm._v(" "), _vm.listPermisos.includes("recordatorios.captura") ? _c("vs-sidebar-item", {
     attrs: {
       id: "recordatorios.captura",
@@ -42562,6 +43778,25 @@ exports.push([module.i, "\n.square-chart-container,\r\n.landscape-chart-containe
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/distribucion/distribucionCalculo.vue?vue&type=style&index=0&id=80482e5e&lang=css ***!
   \*********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -175895,6 +177130,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--5-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--5-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/superadmin/ResultCard.vue?vue&type=style&index=0&id=48c7b7ca&scoped=true&lang=css":
 /*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/superadmin/ResultCard.vue?vue&type=style&index=0&id=48c7b7ca&scoped=true&lang=css ***!
@@ -230952,6 +232217,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/modulos/ministracion/ministraciones.vue":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/modulos/ministracion/ministraciones.vue ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ministraciones.vue?vue&type=template&id=16d4e250 */ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250");
+/* harmony import */ var _ministraciones_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ministraciones.vue?vue&type=script&lang=js */ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js");
+/* empty/unused harmony star reexport *//* harmony import */ var _ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css */ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _ministraciones_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/modulos/ministracion/ministraciones.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ministraciones.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css":
+/*!*********************************************************************************************************************!*\
+  !*** ./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css ***!
+  \*********************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--5-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--5-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=style&index=0&id=16d4e250&lang=css");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_style_index_0_id_16d4e250_lang_css__WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
+
+/***/ }),
+
+/***/ "./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250 ***!
+  \*******************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ref--6!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ministraciones.vue?vue&type=template&id=16d4e250 */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=template&id=16d4e250");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ministraciones_vue_vue_type_template_id_16d4e250__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/modulos/superadmin/ResultCard.vue":
 /*!*******************************************************************!*\
   !*** ./resources/js/components/modulos/superadmin/ResultCard.vue ***!
@@ -232884,6 +234236,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_modulos_superadmin_decoder_vue__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./components/modulos/superadmin/decoder.vue */ "./resources/js/components/modulos/superadmin/decoder.vue");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_23__);
+/* harmony import */ var _components_modulos_ministracion_ministraciones_vue__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./components/modulos/ministracion/ministraciones.vue */ "./resources/js/components/modulos/ministracion/ministraciones.vue");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
@@ -232916,6 +234269,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 // Calculos de Prerrogativas Partidos Politicos
+
 
 
 
@@ -233263,6 +234617,13 @@ function _userValidToEdit() {
     path: '/distribucion',
     name: 'distribucion.captura',
     component: _components_modulos_distribucion_distribucionCalculo_vue__WEBPACK_IMPORTED_MODULE_18__["default"],
+    beforeEnter: function beforeEnter(to, from, next) {
+      verificarAcceso(to, from, next);
+    }
+  }, {
+    path: '/ministracion',
+    name: 'ministracion.captura',
+    component: _components_modulos_ministracion_ministraciones_vue__WEBPACK_IMPORTED_MODULE_24__["default"],
     beforeEnter: function beforeEnter(to, from, next) {
       verificarAcceso(to, from, next);
     }
