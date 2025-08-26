@@ -255,7 +255,7 @@
                             
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
                                 <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'limpiar'+darkMode" 
                                     @click.prevent="guardarCalculo" 
                                     style="padding: 0.20rem; font-size: 1rem;">
                                         <div style="color: var(--btn-txt-color); font-weight: 700;">

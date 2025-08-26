@@ -20977,7 +20977,7 @@ var render = function render() {
       "font-size": "1rem"
     },
     attrs: {
-      color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a"
+      color: !!_vm.darkMode ? "#f5f5f5" : "#1a2e35"
     },
     on: {
       click: function click($event) {
@@ -28805,7 +28805,7 @@ var render = function render() {
       "font-size": "1rem"
     },
     attrs: {
-      color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a"
+      color: !!_vm.darkMode ? "#f5f5f5" : "#1a2e35"
     },
     on: {
       click: function click($event) {

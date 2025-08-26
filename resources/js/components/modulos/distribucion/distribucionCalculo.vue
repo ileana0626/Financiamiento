@@ -351,7 +351,7 @@
                                     </vs-button>
                                 </div>
                                 <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'guardar'+darkMode" 
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
                                     @click.stop="guardarDistribucion" 
                                     style="padding: 0.20rem; font-size: 1rem;">
                                         <div style="color: var(--btn-txt-color); font-weight: 700;">
