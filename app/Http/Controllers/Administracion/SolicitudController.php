@@ -1396,7 +1396,7 @@ class SolicitudController extends Controller
         }
     }
 
-    public function getDistribucionesPorAnio(Request $request)
+    /* public function getDistribucionesPorAnio(Request $request)
 {
     $anio = $request->anio;
 
@@ -1433,7 +1433,40 @@ class SolicitudController extends Controller
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error al obtener datos'], 500);
     }
-}
+} */
+
+    public function getDistribucionesPorAnio(Request $request)
+    {
+        $anio = $request->anio;
+
+        try {
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_GetDistribucionesPorAnio(?)');
+            $stmt->execute([$anio]);
+
+            $calculos = $stmt->fetchAll(\PDO::FETCH_ASSOC);       // Primer SELECT
+            $stmt->nextRowset();
+            $distribuciones = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Segundo SELECT
+            $stmt->nextRowset();
+            $partidosCon = $stmt->fetchAll(\PDO::FETCH_ASSOC);    // Tercer SELECT
+            $stmt->nextRowset();
+            $partidosSin = $stmt->fetchAll(\PDO::FETCH_ASSOC);    // Cuarto SELECT
+
+            return response()->json([
+                'success' => true,
+                'calculos' => $calculos,
+                'distribuciones' => $distribuciones,
+                'partidos_con_repr' => $partidosCon,
+                'partidos_sin_repr' => $partidosSin,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener datos del año',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function setUpdateCopias(Request $request){
         if(!$request->ajax()) return redirect('/');

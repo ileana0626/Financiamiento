@@ -23,63 +23,117 @@
         <h3 class="card-title font-weight-bold">Ministraciones</h3>
       </div>
 
-      <div class="card-body container-fluid" style="background-color: var(--iee-white);">
-        <div class="row p-4">
-          <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-            <label class="col-form-label">Selecciona un año fiscal: </label>
-            <vs-select
-              placeholder="Seleccione una opción"
-              v-model="anio"
-              v-if="catAnio.length > 0"
-              filter
-              :color="colors[0].color"
-              autocomplete="off"
-            >
-              <template #message-danger v-if="errorAnio.length > 0">
-                {{ errorAnio }}
-              </template>
-
-              <vs-option
-                v-for="(item, index) in catAnio"
-                :key="index"
-                :label="item.anio"
-                :value="item.anio"
-              >
-                {{ item.anio }}
-              </vs-option>
-            </vs-select>
-          </div>
-        </div>
-
-        <div v-if="Partidos_Con_Representacion.length > 0">
-  <vs-table class="tabla-ajustada mt-4">
-    <template #thead>
-      <vs-tr>
-        <vs-th>Siglas</vs-th>
-        <vs-th>Emblema</vs-th>
-      </vs-tr>
-    </template>
-
-    <template #tbody>
-      <vs-tr
-        v-for="(partido, i) in Partidos_Con_Representacion"
-        :key="'partido-con-' + i"
+     <div class="card-body container-fluid" style="background-color: var(--iee-white);">
+  <div class="row p-4">
+    <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+      <label class="col-form-label">Selecciona un año fiscal:</label>
+      <vs-select
+        placeholder="Seleccione una opción"
+        v-model="anio"
+        v-if="catAnio.length > 0"
+        filter
+        :color="colors[0].color"
+        autocomplete="off"
+        @change="getDistribucionesPorAnio"
       >
-        <vs-td>{{ partido.siglas }}</vs-td>
-        <vs-td>
-          <img
-            :src="'/img/logos/' + partido.logo"
-            :alt="partido.siglas"
-            class="img-fluid rounded"
-            style="max-width: 40px; max-height: 40px;"
-            onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-          />
-        </vs-td>
-      </vs-tr>
-    </template>
-  </vs-table>
-        </div>
-      </div>
+        <template #message-danger v-if="errorAnio.length > 0">
+          {{ errorAnio }}
+        </template>
+
+        <vs-option
+          v-for="(item, index) in catAnio"
+          :key="index"
+          :label="item.anio"
+          :value="item.anio"
+        >
+          {{ item.anio }}
+        </vs-option>
+      </vs-select>
+    </div>
+  </div>
+
+  <div v-if="CalculosPorAnio.length > 0" class="mt-4">
+    <div
+      v-for="(calculo, index) in CalculosPorAnio"
+      :key="'calculo-' + index"
+      class="mb-5"
+    >
+    <div class="d-flex align-items-center gap-2">
+        <span class="material-symbols-rounded">receipt_long</span>
+        <h5 class="mb-0">
+        ID Cálculo: {{ calculo.id_calculo }} - Año: {{ calculo.anio_ejercicio }}
+        </h5>
+    </div>
+
+      <!-- Partidos con representación -->
+      <vs-table class="tabla-ajustada mt-3">
+        <template #thead>
+          <vs-tr>
+            <vs-th style="text-align: left;">Emblema</vs-th>
+            <vs-th style="text-align: left;">Total Financiamiento</vs-th>
+            <vs-th style="text-align: left;">Enero</vs-th>
+            <vs-th style="text-align: left;">Febrero</vs-th>
+            <vs-th style="text-align: left;">Marzo</vs-th>
+            <vs-th style="text-align: left;">Abril</vs-th>
+            <vs-th style="text-align: left;">Mayo</vs-th>
+            <vs-th style="text-align: left;">Junio</vs-th>
+            <vs-th style="text-align: left;">Julio</vs-th>
+            <vs-th style="text-align: left;">Agosto</vs-th>
+            <vs-th style="text-align: left;">Septiembre</vs-th>
+            <vs-th style="text-align: left;">Octubre</vs-th>
+            <vs-th style="text-align: left;">Noviembre</vs-th>
+            <vs-th style="text-align: left;">Diciembre</vs-th>
+          </vs-tr>
+        </template>
+        <template #tbody>
+          <vs-tr
+            v-for="(partido, i) in Partidos_Con_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
+            :key="'con-' + i"
+          >
+            <vs-td>
+              <img
+                :src="'/img/logos/' + partido.logo"
+                :alt="partido.siglas"
+                class="img-fluid rounded"
+                style="max-width: 40px; max-height: 40px;"
+                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+              />
+            </vs-td>
+            <vs-td style="text-align: left;">
+                {{  formatCurrency(partido.C_fpaop)  }}
+            </vs-td>
+            <vs-td 
+  v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
+    partido.C_fpaop, 
+    ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]
+  )" 
+  :key="'mes-con-' + i + '-' + mesIndex" 
+  style="text-align: left;"
+>
+  <!-- Solo diciembre (índice 11) es editable -->
+  <template v-if="mesIndex === 11">
+    <input
+      type="number"
+      step="0.01"
+      :min="0"
+      :value="monto"
+      class="form-control"
+      style="max-width: 90px;"
+      @input="e => ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] = parseFloat(e.target.value)"
+    />
+  </template>
+  <!-- Los otros 11 meses -->
+  <template v-else>
+    {{ formatCurrency(monto) }}
+  </template>
+</vs-td>
+          </vs-tr>
+        </template>
+      </vs-table>
+
+    </div>
+  </div>
+</div>
     </div>
   </div>
 </template>
@@ -105,8 +159,8 @@ export default {
             darkMode: localStorage.getItem('theme') == 'dark',
             // Variables para listar
             selectedCalculo: {},
-            Partidos_Sin_Representacion: [],
             Partidos_Con_Representacion: [],
+            Partidos_Sin_Representacion: [],
             NewlistCalculos: [],
             distribucionId: null, // Para saber si ya se ha guardado un registro
             cb_ppSeleccionados: [],
@@ -128,9 +182,11 @@ export default {
             ],
            
             catAnio: [],
+            ajustesDiciembre: {},
             cat_tipo_distribucion: [],
             distribucion: [],
             distribuciones: [],
+            CalculosPorAnio : [],
             // Validaciones
             error: false,
             errorAnio: '',
@@ -146,7 +202,7 @@ export default {
             this.getDistribucionesPorAnio(newAnio);
         }
     }
-},
+    },
     created() {
         EventBus.$on('darkMode', (data) => { this.darkMode = data })
     },
@@ -176,8 +232,13 @@ export default {
             })
         },
         formatCurrency(value) {
-            return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-        },
+        if (!value) return '$0.00';
+        return Number(value).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+        });
+    },
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
 
@@ -249,8 +310,8 @@ export default {
                 debug('🐛 Datos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
-                    this.Partidos_Sin_Representacion = response.data.partidosSinRep;
-                    this.Partidos_Con_Representacion = response.data.partidosConRep.map(p => ({
+                    this.Partidos_Sin_Representacion = response.data.Partidos_Sin_Representacion;
+                    this.Partidos_Con_Representacion = response.data.Partidos_Con_Representacion.map(p => ({
                         ...p,
                         ajuste: 0,
                         // valor temporal para el input
@@ -336,19 +397,36 @@ export default {
             });
         },
         async getDistribucionesPorAnio(anio) {
-    try {
-        const response = await axios.get('/administracion/solicitud/getDistribucionesPorAnio', {
-            params: { anio }
-        });
+        if (!anio) return;
+        try {
+            const { data } = await axios.get('/administracion/solicitud/getDistribucionesPorAnio', { params: { anio } });
+            if (data.success) {
+            this.CalculosPorAnio = data.calculos;
+            this.distribuciones = data.distribuciones;
+            this.Partidos_Con_Representacion = data.partidos_con_repr;
+            this.Partidos_Sin_Representacion = data.partidos_sin_repr;
+            }
+        } catch (error) {
+            console.error("Error al obtener distribuciones:", error);
+        }
+        },
+         distribuirConEditableDiciembre(montoTotal, overrideDiciembre = null) {
+    const mensual = parseFloat((montoTotal / 12));
+    const meses = Array(11).fill(mensual);
 
-        this.distribuciones = response.data.distribuciones;
-        this.Partidos_Con_Representacion = response.data.partidos_con_repr;
-        this.Partidos_Sin_Representacion = response.data.partidos_sin_repr;
+    // Si el usuario ajustó diciembre, usar ese valor. Si no, usar el predeterminado.
+    const diciembre = overrideDiciembre !== null 
+      ? parseFloat(overrideDiciembre) 
+      : mensual;
 
-    } catch (error) {
-        console.error("Error al obtener distribuciones:", error);
-    }
-},
+    meses.push(diciembre);
+    return meses;
+  },
+        getFinanciamientoOrdinario(id_calculo) {
+            const dist = this.distribuciones.find(d => d.id_calculo === id_calculo);
+            console.log(this.distribuciones);
+            return dist ? this.formatCurrency(dist.subtotal_C_fpaop) : '$0.00';
+        },
         formatear30() {
             let valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
 

@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column flex-md-row">
     <div class="img mx-auto my-auto" style="max-height: 100vh !important">
-      <img src="/img/admin.webp" alt="banner" />
+      <img src="/img/dppp.webp" alt="banner" />
     </div>
     <div
       class="d-flex justify-content-center align-items-center p-5 bgSizing"

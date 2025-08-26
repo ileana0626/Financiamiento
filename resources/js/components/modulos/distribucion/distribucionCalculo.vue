@@ -243,8 +243,8 @@
                                             <span>{{ formatoMoneda(calcularMontoProporcionalB(partido.porcentaje_votacion)) }}</span>
 
                                             <div class="d-flex gap-1">
-                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'restar')" color="danger" icon-pack="feather" icon-name="minus" />
-                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'sumar')" color="success" icon-pack="feather" icon-name="plus" />
+                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'restar')" color="danger" icon-name="minus" :class="{ 'activo-rojo': partido.restado }"/>
+                                                <vs-button icon small flat @click="ajustarDecimal(partido, 'sumar')" color="success" icon-name="plus" :class="{ 'activo-verde': partido.sumado }"/>
                                             </div>
                                         </div>
                                         </vs-td>
@@ -551,6 +551,8 @@ export default {
                     this.Partidos_Con_Representacion = response.data.partidosConRep.map(p => ({
                         ...p,
                         ajuste: 0,
+                        sumado: false,
+                        restado: false,
                         // valor temporal para el input
                         inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
 
@@ -923,19 +925,23 @@ export default {
 
             // Asegurar que el campo ajuste exista y sea reactivo
             if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+            if (partido.restado === undefined) this.$set(partido, 'restado', false);
+            if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
 
             if (operacion === 'sumar') {
             if (this.totalAjusteDecimales < 0) {
                 partido.ajuste += ajusteUnitario;
+                partido.sumado = true;
             } else {
                 this.$vs.notification({
                 title: 'Aviso',
                 text: 'Primero debes restar a otro partido antes de sumar.',
-                color: 'warning'
+                color: 'danger'
                 });
             }
             } else if (operacion === 'restar') {
             partido.ajuste -= ajusteUnitario;
+            partido.restado = true;
             }
         },
         /*
@@ -1315,5 +1321,16 @@ export default {
 /* Asegurar que el borde sea visible en el hover */
 .vs-checkbox:hover .vs-checkbox__check {
     border-color: #1E90FF !important;
+}
+
+.activo-rojo{
+    background-color: #FF4757;
+    opacity: inherit;
+
+}
+
+.activo-verde {
+  background-color: #46C93A;
+  border-radius: 50%;
 }
 </style>

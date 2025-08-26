@@ -11471,6 +11471,8 @@ var debug = function debug() {
           _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
             return _objectSpread(_objectSpread({}, p), {}, {
               ajuste: 0,
+              sumado: false,
+              restado: false,
               // valor temporal para el input
               inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
               // Variable temporarl en el Front
@@ -11979,18 +11981,22 @@ var debug = function debug() {
 
       // Asegurar que el campo ajuste exista y sea reactivo
       if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (partido.restado === undefined) this.$set(partido, 'restado', false);
+      if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
       if (operacion === 'sumar') {
         if (this.totalAjusteDecimales < 0) {
           partido.ajuste += ajusteUnitario;
+          partido.sumado = true;
         } else {
           this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'warning'
+            color: 'danger'
           });
         }
       } else if (operacion === 'restar') {
         partido.ajuste -= ajusteUnitario;
+        partido.restado = true;
       }
     },
     /*
@@ -12336,8 +12342,8 @@ var debug = function debug() {
       darkMode: localStorage.getItem('theme') == 'dark',
       // Variables para listar
       selectedCalculo: {},
-      Partidos_Sin_Representacion: [],
       Partidos_Con_Representacion: [],
+      Partidos_Sin_Representacion: [],
       NewlistCalculos: [],
       distribucionId: null,
       // Para saber si ya se ha guardado un registro
@@ -12358,9 +12364,11 @@ var debug = function debug() {
         color: 'warn'
       }],
       catAnio: [],
+      ajustesDiciembre: {},
       cat_tipo_distribucion: [],
       distribucion: [],
       distribuciones: [],
+      CalculosPorAnio: [],
       // Validaciones
       error: false,
       errorAnio: '',
@@ -12434,7 +12442,12 @@ var debug = function debug() {
       }))();
     },
     formatCurrency: function formatCurrency(value) {
-      return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      if (!value) return '$0.00';
+      return Number(value).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+      });
     },
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
@@ -12507,8 +12520,8 @@ var debug = function debug() {
         debug('🐛 Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
-          _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
-          _this5.Partidos_Con_Representacion = response.data.partidosConRep.map(function (p) {
+          _this5.Partidos_Sin_Representacion = response.data.Partidos_Sin_Representacion;
+          _this5.Partidos_Con_Representacion = response.data.Partidos_Con_Representacion.map(function (p) {
             return _objectSpread(_objectSpread({}, p), {}, {
               ajuste: 0,
               // valor temporal para el input
@@ -12607,34 +12620,61 @@ var debug = function debug() {
     getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var response;
+        var _yield$axios$get, data;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              _context4.prev = 0;
-              _context4.next = 3;
+              if (anio) {
+                _context4.next = 2;
+                break;
+              }
+              return _context4.abrupt("return");
+            case 2:
+              _context4.prev = 2;
+              _context4.next = 5;
               return axios.get('/administracion/solicitud/getDistribucionesPorAnio', {
                 params: {
                   anio: anio
                 }
               });
-            case 3:
-              response = _context4.sent;
-              _this7.distribuciones = response.data.distribuciones;
-              _this7.Partidos_Con_Representacion = response.data.partidos_con_repr;
-              _this7.Partidos_Sin_Representacion = response.data.partidos_sin_repr;
-              _context4.next = 12;
+            case 5:
+              _yield$axios$get = _context4.sent;
+              data = _yield$axios$get.data;
+              if (data.success) {
+                _this7.CalculosPorAnio = data.calculos;
+                _this7.distribuciones = data.distribuciones;
+                _this7.Partidos_Con_Representacion = data.partidos_con_repr;
+                _this7.Partidos_Sin_Representacion = data.partidos_sin_repr;
+              }
+              _context4.next = 13;
               break;
-            case 9:
-              _context4.prev = 9;
-              _context4.t0 = _context4["catch"](0);
+            case 10:
+              _context4.prev = 10;
+              _context4.t0 = _context4["catch"](2);
               console.error("Error al obtener distribuciones:", _context4.t0);
-            case 12:
+            case 13:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[0, 9]]);
+        }, _callee4, null, [[2, 10]]);
       }))();
+    },
+    distribuirConEditableDiciembre: function distribuirConEditableDiciembre(montoTotal) {
+      var overrideDiciembre = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var mensual = parseFloat(montoTotal / 12);
+      var meses = Array(11).fill(mensual);
+
+      // Si el usuario ajustó diciembre, usar ese valor. Si no, usar el predeterminado.
+      var diciembre = overrideDiciembre !== null ? parseFloat(overrideDiciembre) : mensual;
+      meses.push(diciembre);
+      return meses;
+    },
+    getFinanciamientoOrdinario: function getFinanciamientoOrdinario(id_calculo) {
+      var dist = this.distribuciones.find(function (d) {
+        return d.id_calculo === id_calculo;
+      });
+      console.log(this.distribuciones);
+      return dist ? this.formatCurrency(dist.subtotal_C_fpaop) : '$0.00';
     },
     formatear30: function formatear30() {
       var valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
@@ -21156,7 +21196,7 @@ var staticRenderFns = [function () {
     }
   }, [_c("img", {
     attrs: {
-      src: "/img/admin.webp",
+      src: "/img/dppp.webp",
       alt: "banner"
     }
   })]);
@@ -28597,12 +28637,14 @@ var render = function render() {
           }, [_c("span", [_vm._v(_vm._s(_vm.formatoMoneda(_vm.calcularMontoProporcionalB(partido.porcentaje_votacion))))]), _vm._v(" "), _c("div", {
             staticClass: "d-flex gap-1"
           }, [_c("vs-button", {
+            "class": {
+              "activo-rojo": partido.restado
+            },
             attrs: {
               icon: "",
               small: "",
               flat: "",
               color: "danger",
-              "icon-pack": "feather",
               "icon-name": "minus"
             },
             on: {
@@ -28611,12 +28653,14 @@ var render = function render() {
               }
             }
           }), _vm._v(" "), _c("vs-button", {
+            "class": {
+              "activo-verde": partido.sumado
+            },
             attrs: {
               icon: "",
               small: "",
               flat: "",
               color: "success",
-              "icon-pack": "feather",
               "icon-name": "plus"
             },
             on: {
@@ -28722,7 +28766,7 @@ var render = function render() {
         }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                    ")])], 1)];
       },
       proxy: true
-    }], null, false, 3561847156)
+    }], null, false, 1963411703)
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {
@@ -28881,17 +28925,20 @@ var render = function render() {
     staticClass: "col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3"
   }, [_c("label", {
     staticClass: "col-form-label"
-  }, [_vm._v("Selecciona un año fiscal: ")]), _vm._v(" "), _vm.catAnio.length > 0 ? _c("vs-select", {
+  }, [_vm._v("Selecciona un año fiscal:")]), _vm._v(" "), _vm.catAnio.length > 0 ? _c("vs-select", {
     attrs: {
       placeholder: "Seleccione una opción",
       filter: "",
       color: _vm.colors[0].color,
       autocomplete: "off"
     },
+    on: {
+      change: _vm.getDistribucionesPorAnio
+    },
     scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n              " + _vm._s(_vm.errorAnio) + "\n            ")];
+        return [_vm._v("\n          " + _vm._s(_vm.errorAnio) + "\n        ")];
       },
       proxy: true
     } : null], null, true),
@@ -28909,38 +28956,138 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n              " + _vm._s(item.anio) + "\n            ")]);
-  })], 2) : _vm._e()], 1)]), _vm._v(" "), _vm.Partidos_Con_Representacion.length > 0 ? _c("div", [_c("vs-table", {
-    staticClass: "tabla-ajustada mt-4",
-    scopedSlots: _vm._u([{
-      key: "thead",
-      fn: function fn() {
-        return [_c("vs-tr", [_c("vs-th", [_vm._v("Siglas")]), _vm._v(" "), _c("vs-th", [_vm._v("Emblema")])], 1)];
-      },
-      proxy: true
-    }, {
-      key: "tbody",
-      fn: function fn() {
-        return _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
-          return _c("vs-tr", {
-            key: "partido-con-" + i
-          }, [_c("vs-td", [_vm._v(_vm._s(partido.siglas))]), _vm._v(" "), _c("vs-td", [_c("img", {
-            staticClass: "img-fluid rounded",
+    }, [_vm._v("\n          " + _vm._s(item.anio) + "\n        ")]);
+  })], 2) : _vm._e()], 1)]), _vm._v(" "), _vm.CalculosPorAnio.length > 0 ? _c("div", {
+    staticClass: "mt-4"
+  }, _vm._l(_vm.CalculosPorAnio, function (calculo, index) {
+    return _c("div", {
+      key: "calculo-" + index,
+      staticClass: "mb-5"
+    }, [_c("div", {
+      staticClass: "d-flex align-items-center gap-2"
+    }, [_c("span", {
+      staticClass: "material-symbols-rounded"
+    }, [_vm._v("receipt_long")]), _vm._v(" "), _c("h5", {
+      staticClass: "mb-0"
+    }, [_vm._v("\n        ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n        ")])]), _vm._v(" "), _c("vs-table", {
+      staticClass: "tabla-ajustada mt-3",
+      scopedSlots: _vm._u([{
+        key: "thead",
+        fn: function fn() {
+          return [_c("vs-tr", [_c("vs-th", {
             staticStyle: {
-              "max-width": "40px",
-              "max-height": "40px"
-            },
-            attrs: {
-              src: "/img/logos/" + partido.logo,
-              alt: partido.siglas,
-              onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+              "text-align": "left"
             }
-          })])], 1);
-        });
-      },
-      proxy: true
-    }], null, false, 201712809)
-  })], 1) : _vm._e()])])]);
+          }, [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Total Financiamiento")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Enero")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Febrero")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Marzo")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Abril")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Mayo")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Junio")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Julio")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Agosto")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Septiembre")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Octubre")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Noviembre")]), _vm._v(" "), _c("vs-th", {
+            staticStyle: {
+              "text-align": "left"
+            }
+          }, [_vm._v("Diciembre")])], 1)];
+        },
+        proxy: true
+      }, {
+        key: "tbody",
+        fn: function fn() {
+          return _vm._l(_vm.Partidos_Con_Representacion.filter(function (p) {
+            return p.id_calculo === calculo.id_calculo;
+          }), function (partido, i) {
+            return _c("vs-tr", {
+              key: "con-" + i
+            }, [_c("vs-td", [_c("img", {
+              staticClass: "img-fluid rounded",
+              staticStyle: {
+                "max-width": "40px",
+                "max-height": "40px"
+              },
+              attrs: {
+                src: "/img/logos/" + partido.logo,
+                alt: partido.siglas,
+                onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+              }
+            })]), _vm._v(" "), _c("vs-td", {
+              staticStyle: {
+                "text-align": "left"
+              }
+            }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n            ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop, _vm.ajustesDiciembre["con-" + partido.id_calculo + "-" + partido.id_partido]), function (monto, mesIndex) {
+              return _c("vs-td", {
+                key: "mes-con-" + i + "-" + mesIndex,
+                staticStyle: {
+                  "text-align": "left"
+                }
+              }, [mesIndex === 11 ? [_c("input", {
+                staticClass: "form-control",
+                staticStyle: {
+                  "max-width": "90px"
+                },
+                attrs: {
+                  type: "number",
+                  step: "0.01",
+                  min: 0
+                },
+                domProps: {
+                  value: monto
+                },
+                on: {
+                  input: function input(e) {
+                    return _vm.ajustesDiciembre["con-" + partido.id_calculo + "-" + partido.id_partido] = parseFloat(e.target.value);
+                  }
+                }
+              })] : [_vm._v("\n    " + _vm._s(_vm.formatCurrency(monto)) + "\n  ")]], 2);
+            })], 2);
+          });
+        },
+        proxy: true
+      }], null, true)
+    })], 1);
+  }), 0) : _vm._e()])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -36912,7 +37059,7 @@ var staticRenderFns = [function () {
     staticClass: "fas fa-heart pulse-heart"
   }), _vm._v("   por la Coordinación de\n                Informática")])]), _vm._v(" "), _c("div", {
     staticClass: "d-sm-block ml-2 text-right text-sm-center"
-  }, [_c("small", [_vm._v("Versión 1.0.0.18072025")])])])]);
+  }, [_c("small", [_vm._v("Versión 1.2.0.18072025")])])])]);
 }];
 render._withStripped = true;
 
@@ -43786,7 +43933,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\n.activo-rojo{\r\n    background-color: #FF4757;\r\n    opacity: inherit;\n}\n.activo-verde {\r\n  background-color: #46C93A;\r\n  border-radius: 50%;\n}\r\n", ""]);
 
 // exports
 
