@@ -30,8 +30,7 @@ Consulta de Errores
 </vs-sidebar-item> -->
             <vs-sidebar-group>
                 <template #header>
-                    <vs-sidebar-item v-if="listPermisos.includes('captura.index')" id="captura.index"
-                        to="/calculo" arrow>
+                    <vs-sidebar-item arrow>
                         <template #icon>
                             <span class="material-symbols-rounded">
                                 calculate
@@ -40,7 +39,16 @@ Consulta de Errores
                         Cálculo
                     </vs-sidebar-item>
                 </template>
-                <template>
+
+             <vs-sidebar-item id="calculo">
+                <template #icon>
+                    <span class="material-symbols-rounded">request_quote</span>
+                </template>
+                  <router-link class="nav-link color" :to="'/calculo'">
+                    Registrar Calculo
+                </router-link>
+              </vs-sidebar-item>
+
              <vs-sidebar-item id="listado">
                 <template #icon>
                   <i class="fas fa-file-alt color"></i>
@@ -49,7 +57,7 @@ Consulta de Errores
                     Listado de cálculos
                 </router-link>
               </vs-sidebar-item>
-            </template>
+
             </vs-sidebar-group>
 
             <!-- modulo distribucion -->

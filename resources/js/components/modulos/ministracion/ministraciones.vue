@@ -82,7 +82,7 @@
             <vs-th style="text-align: left;">Septiembre</vs-th>
             <vs-th style="text-align: left;">Octubre</vs-th>
             <vs-th style="text-align: left;">Noviembre</vs-th>
-            <vs-th style="text-align: left;">Diciembre</vs-th>
+            <vs-th style="text-align: left; width: 10%;">Diciembre</vs-th>
           </vs-tr>
         </template>
         <template #tbody>
@@ -118,7 +118,7 @@
       :min="0"
       :value="monto"
       class="form-control"
-      style="max-width: 90px;"
+      style="width: 100%;"
       @input="e => ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] = parseFloat(e.target.value)"
     />
   </template>
@@ -130,6 +130,39 @@
           </vs-tr>
         </template>
       </vs-table>
+
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
+                                    @click.stop="guardarCambios" 
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Guardar
+                                        </div>
+                                    </vs-button>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-tooltip>
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
+                                    @click.stop="descargar(distribucionId)" hover="true"
+                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
+                                            <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Descargar
+                                        </div>
+                                    </vs-button>
+                                    <template #tooltip>
+                                        <div v-if="descargar_disabled">
+                                            Debes guardar los cambios antes de descargar
+                                        </div>
+                                        <div v-else>
+                                            Descargar distribución
+                                        </div>
+                                    </template>
+                                    </vs-tooltip>
+                                </div>
+                            </div>
 
     </div>
   </div>
@@ -534,14 +567,8 @@ export default {
         },
         async guardarDistribucion() { //✅
 
-            if(this.validarCampos())
-            {
-                this.$vs.notification({ color: 'danger', text: 'Verifique los datos e inténtelo de nuevo.' });
-                return;
-            }
-            
             const loader = loading(this.$vs);
-            loader.text = 'Guardando distribución...';
+            loader.text = 'Guardando datos...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
 
             let datos = {

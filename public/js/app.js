@@ -12815,18 +12815,9 @@ var debug = function debug() {
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              if (!_this10.validarCampos()) {
-                _context6.next = 3;
-                break;
-              }
-              _this10.$vs.notification({
-                color: 'danger',
-                text: 'Verifique los datos e inténtelo de nuevo.'
-              });
-              return _context6.abrupt("return");
-            case 3:
+              //✅
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this10.$vs);
-              loader.text = 'Guardando distribución...';
+              loader.text = 'Guardando datos...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
                 p_comando: "INSERT",
@@ -12853,137 +12844,137 @@ var debug = function debug() {
               };
               _this10.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
               console.log('Datos a guardar: ', datos, _this10.Partidos_Con_Representacion, _this10.Partidos_Sin_Representacion);
-              _context6.prev = 9;
+              _context6.prev = 6;
               if (!_this10.distribucionId) {
-                _context6.next = 23;
+                _context6.next = 20;
                 break;
               }
-              _context6.next = 13;
+              _context6.next = 10;
               return axios.post(url, datos);
-            case 13:
+            case 10:
               response = _context6.sent;
               if (!(response.data && response.data.success)) {
-                _context6.next = 19;
+                _context6.next = 16;
                 break;
               }
               _this10.distribucionId = response.data.id; // || this.distribucionId;
               debug('🐛 Update response.data.id:', response.data.id);
-              _context6.next = 21;
+              _context6.next = 18;
               break;
-            case 19:
+            case 16:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 21:
-              _context6.next = 33;
+            case 18:
+              _context6.next = 30;
               break;
-            case 23:
-              _context6.next = 25;
+            case 20:
+              _context6.next = 22;
               return axios.post(url, datos);
-            case 25:
+            case 22:
               _response = _context6.sent;
               if (!(_response.data && _response.data.success)) {
-                _context6.next = 31;
+                _context6.next = 28;
                 break;
               }
               _this10.distribucionId = _response.data.id;
               debug('🐛 Insert response.data.id:', _response.data.id);
-              _context6.next = 33;
+              _context6.next = 30;
               break;
-            case 31:
+            case 28:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 33:
+            case 30:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this10.Partidos_Con_Representacion);
-              _context6.prev = 35;
+              _context6.prev = 32;
               _iterator.s();
-            case 37:
+            case 34:
               if ((_step = _iterator.n()).done) {
-                _context6.next = 52;
+                _context6.next = 49;
                 break;
               }
               partido = _step.value;
-              _context6.prev = 39;
-              _context6.next = 42;
+              _context6.prev = 36;
+              _context6.next = 39;
               return axios.post(url, partido);
-            case 42:
+            case 39:
               _response2 = _context6.sent;
               // ⇋
               if (_response2.data && _response2.data.ids) {
                 //debug('🐛 response.data.ids:', response.data.ids);
               }
-              _context6.next = 50;
+              _context6.next = 47;
               break;
-            case 46:
-              _context6.prev = 46;
-              _context6.t0 = _context6["catch"](39);
+            case 43:
+              _context6.prev = 43;
+              _context6.t0 = _context6["catch"](36);
               _this10.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context6.t0;
-            case 50:
-              _context6.next = 37;
+            case 47:
+              _context6.next = 34;
               break;
-            case 52:
-              _context6.next = 57;
+            case 49:
+              _context6.next = 54;
               break;
+            case 51:
+              _context6.prev = 51;
+              _context6.t1 = _context6["catch"](32);
+              _iterator.e(_context6.t1);
             case 54:
               _context6.prev = 54;
-              _context6.t1 = _context6["catch"](35);
-              _iterator.e(_context6.t1);
-            case 57:
-              _context6.prev = 57;
               _iterator.f();
-              return _context6.finish(57);
-            case 60:
+              return _context6.finish(54);
+            case 57:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               _iterator2 = _createForOfIteratorHelper(_this10.Partidos_Sin_Representacion);
-              _context6.prev = 62;
+              _context6.prev = 59;
               _iterator2.s();
-            case 64:
+            case 61:
               if ((_step2 = _iterator2.n()).done) {
-                _context6.next = 79;
+                _context6.next = 76;
                 break;
               }
               _partido = _step2.value;
-              _context6.prev = 66;
-              _context6.next = 69;
+              _context6.prev = 63;
+              _context6.next = 66;
               return axios.post(url, _partido);
-            case 69:
+            case 66:
               _response3 = _context6.sent;
               // ⇋
               if (_response3.data && _response3.data.ids) {
                 //debug('🐛 response.data.ids:', response.data.ids);
               }
-              _context6.next = 77;
+              _context6.next = 74;
               break;
-            case 73:
-              _context6.prev = 73;
-              _context6.t2 = _context6["catch"](66);
+            case 70:
+              _context6.prev = 70;
+              _context6.t2 = _context6["catch"](63);
               _this10.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context6.t2;
-            case 77:
-              _context6.next = 64;
+            case 74:
+              _context6.next = 61;
               break;
-            case 79:
-              _context6.next = 84;
+            case 76:
+              _context6.next = 81;
               break;
+            case 78:
+              _context6.prev = 78;
+              _context6.t3 = _context6["catch"](59);
+              _iterator2.e(_context6.t3);
             case 81:
               _context6.prev = 81;
-              _context6.t3 = _context6["catch"](62);
-              _iterator2.e(_context6.t3);
-            case 84:
-              _context6.prev = 84;
               _iterator2.f();
-              return _context6.finish(84);
-            case 87:
+              return _context6.finish(81);
+            case 84:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -12996,11 +12987,11 @@ var debug = function debug() {
               //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
               debug('🐛 this.distribucionId: ', _this10.distribucionId);
               _this10.descargar_disabled = false;
-              _context6.next = 98;
+              _context6.next = 95;
               break;
-            case 92:
-              _context6.prev = 92;
-              _context6.t4 = _context6["catch"](9);
+            case 89:
+              _context6.prev = 89;
+              _context6.t4 = _context6["catch"](6);
               console.error('Error al guardar:', _context6.t4);
               _this10.$vs.notification({
                 title: 'Error',
@@ -13009,15 +13000,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context6.t4, nombreMetodo[3], _this10.$router);
-            case 98:
-              _context6.prev = 98;
+            case 95:
+              _context6.prev = 95;
               loader.close();
-              return _context6.finish(98);
-            case 101:
+              return _context6.finish(95);
+            case 98:
             case "end":
               return _context6.stop();
           }
-        }, _callee6, null, [[9, 92, 98, 101], [35, 54, 57, 60], [39, 46], [62, 81, 84, 87], [66, 73]]);
+        }, _callee6, null, [[6, 89, 95, 98], [32, 51, 54, 57], [36, 43], [59, 78, 81, 84], [63, 70]]);
       }))();
     },
     /**
@@ -29028,7 +29019,8 @@ var render = function render() {
             }
           }, [_vm._v("Noviembre")]), _vm._v(" "), _c("vs-th", {
             staticStyle: {
-              "text-align": "left"
+              "text-align": "left",
+              width: "10%"
             }
           }, [_vm._v("Diciembre")])], 1)];
         },
@@ -29065,7 +29057,7 @@ var render = function render() {
               }, [mesIndex === 11 ? [_c("input", {
                 staticClass: "form-control",
                 staticStyle: {
-                  "max-width": "90px"
+                  width: "100%"
                 },
                 attrs: {
                   type: "number",
@@ -29086,7 +29078,75 @@ var render = function render() {
         },
         proxy: true
       }], null, true)
-    })], 1);
+    }), _vm._v(" "), _c("div", {
+      staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-center"
+    }, [_c("vs-button", {
+      key: "guardar" + _vm.darkMode,
+      staticStyle: {
+        padding: "0.20rem",
+        "font-size": "1rem"
+      },
+      attrs: {
+        color: !!_vm.darkMode ? "#f5f5f5" : "#1a2e35"
+      },
+      on: {
+        click: function click($event) {
+          $event.stopPropagation();
+          return _vm.guardarCambios.apply(null, arguments);
+        }
+      }
+    }, [_c("div", {
+      staticStyle: {
+        color: "var(--btn-txt-color)",
+        "font-weight": "700"
+      }
+    }, [_c("i", {
+      staticClass: "fas fa-save pr-2",
+      staticStyle: {
+        "font-size": "0.8125rem !important"
+      }
+    }), _vm._v("\n                                            Guardar\n                                        ")])])], 1), _vm._v(" "), _c("div", {
+      staticClass: "d-flex justify-content-center"
+    }, [_c("vs-tooltip", {
+      scopedSlots: _vm._u([{
+        key: "tooltip",
+        fn: function fn() {
+          return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                            Debes guardar los cambios antes de descargar\n                                        ")]) : _c("div", [_vm._v("\n                                            Descargar distribución\n                                        ")])];
+        },
+        proxy: true
+      }], null, true)
+    }, [_c("vs-button", {
+      key: "descargar" + _vm.darkMode,
+      staticStyle: {
+        padding: "0.20rem",
+        "font-size": "1rem"
+      },
+      attrs: {
+        color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
+        hover: "true",
+        disabled: _vm.descargar_disabled
+      },
+      on: {
+        click: function click($event) {
+          $event.stopPropagation();
+          return _vm.descargar(_vm.distribucionId);
+        }
+      }
+    }, [_c("div", {
+      staticStyle: {
+        color: "var(--btn-txt-color)",
+        "font-weight": "700",
+        display: "flex",
+        "align-items": "center"
+      }
+    }, [_c("i", {
+      staticClass: "fas fa-file-download pr-2",
+      staticStyle: {
+        "font-size": "0.8125rem !important"
+      }
+    }), _vm._v("\n                                            Descargar\n                                        ")])])], 1)], 1)])], 1);
   }), 0) : _vm._e()])])]);
 };
 var staticRenderFns = [function () {
@@ -37458,10 +37518,8 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
-        return [_vm.listPermisos.includes("captura.index") ? _c("vs-sidebar-item", {
+        return [_c("vs-sidebar-item", {
           attrs: {
-            id: "captura.index",
-            to: "/calculo",
             arrow: ""
           },
           scopedSlots: _vm._u([{
@@ -37472,12 +37530,30 @@ var render = function render() {
               }, [_vm._v("\n                                calculate\n                            ")])];
             },
             proxy: true
-          }], null, false, 884284178)
-        }, [_vm._v("\n                        Cálculo\n                    ")]) : _vm._e()];
+          }])
+        }, [_vm._v("\n                        Cálculo\n                    ")])];
       },
       proxy: true
     }])
-  }, [_vm._v(" "), [_c("vs-sidebar-item", {
+  }, [_vm._v(" "), _c("vs-sidebar-item", {
+    attrs: {
+      id: "calculo"
+    },
+    scopedSlots: _vm._u([{
+      key: "icon",
+      fn: function fn() {
+        return [_c("span", {
+          staticClass: "material-symbols-rounded"
+        }, [_vm._v("request_quote")])];
+      },
+      proxy: true
+    }])
+  }, [_vm._v(" "), _c("router-link", {
+    staticClass: "nav-link color",
+    attrs: {
+      to: "/calculo"
+    }
+  }, [_vm._v("\n                    Registrar Calculo\n                ")])], 1), _vm._v(" "), _c("vs-sidebar-item", {
     attrs: {
       id: "listado"
     },
@@ -37495,7 +37571,7 @@ var render = function render() {
     attrs: {
       to: "/listado"
     }
-  }, [_vm._v("\n                    Listado de cálculos\n                ")])], 1)]], 2), _vm._v(" "), _c("vs-sidebar-group", {
+  }, [_vm._v("\n                    Listado de cálculos\n                ")])], 1)], 1), _vm._v(" "), _c("vs-sidebar-group", {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
