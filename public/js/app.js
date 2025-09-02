@@ -12454,12 +12454,8 @@ var debug = function debug() {
     onDecimalInput: function onDecimalInput(event, idCalculo, idPartido) {
       var key = "con-".concat(idCalculo, "-").concat(idPartido);
       var valor = event.target.value;
-
-      // Opcional: sanitizar para evitar letras o múltiples puntos
       valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-      // Almacenar como texto (NO usar parseFloat)
-      this.$set(this.ajustesDiciembre, key, valor);
+      this.$set(this.ajustesDiciembre, key, parseFloat(valor));
     },
     formatCurrency: function formatCurrency(value) {
       if (value === null || value === undefined || isNaN(value)) return '$0.00';
@@ -12472,12 +12468,37 @@ var debug = function debug() {
     getStepForMonto: function getStepForMonto(monto) {
       if (!monto || isNaN(monto)) return '0.01';
       var parts = monto.toString().split('.');
-      console.log(parts);
       if (parts.length === 2) {
-        var decLength = parts[1].length;
-        console.log(decLength);
-        return '0.' + '0'.repeat(decLength - 1) + '1';
+        var longitudDecimales = parts[1].length;
+        return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
       }
+      return '1';
+    },
+    ajustarDecimalManual: function ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
+      var _valorActual$toString;
+      var key = "con-".concat(idCalculo, "-").concat(idPartido);
+      var actual = new Decimal(valorActual || 0);
+
+      // Detectar número de decimales en el valor actual
+      var decimales = ((_valorActual$toString = valorActual.toString().split('.')[1]) === null || _valorActual$toString === void 0 ? void 0 : _valorActual$toString.length) || 0;
+      var paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
+
+      if (operacion === 'sumar') {
+        actual = actual.plus(paso);
+      } else {
+        actual = actual.minus(paso);
+        if (actual.isNegative()) actual = new Decimal(0);
+      }
+
+      // Asegurar límite superior (el total original)
+      var partido = this.Partidos_Con_Representacion.find(function (p) {
+        return p.id_calculo === idCalculo && p.id_partido === idPartido;
+      }) || this.Partidos_Sin_Representacion.find(function (p) {
+        return p.id_calculo === idCalculo && p.id_partido === idPartido;
+      });
+      var total = new Decimal((partido === null || partido === void 0 ? void 0 : partido.C_fpaop) || (partido === null || partido === void 0 ? void 0 : partido.monto_2_por_ciento) || 0);
+      if (actual.greaterThan(total)) actual = total;
+      this.$set(this.ajustesDiciembre, key, actual.toNumber());
     },
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
@@ -28949,7 +28970,9 @@ var render = function render() {
                 staticStyle: {
                   "text-align": "left"
                 }
-              }, [mesIndex === 11 ? [_c("input", {
+              }, [mesIndex === 11 ? [_c("div", {
+                staticClass: "d-flex align-items-center"
+              }, [_c("input", {
                 staticClass: "form-control",
                 staticStyle: {
                   width: "100%"
@@ -28965,7 +28988,29 @@ var render = function render() {
                     return _vm.onDecimalInput($event, partido.id_calculo, partido.id_partido);
                   }
                 }
-              })] : [_vm._v("\n    " + _vm._s(_vm.formatCurrency(monto)) + "\n  ")]], 2);
+              }), _vm._v(" "), _c("div", {
+                staticClass: "d-flex flex-column ms-1"
+              }, [_c("button", {
+                staticClass: "btn btn-sm p-0",
+                attrs: {
+                  type: "button"
+                },
+                on: {
+                  click: function click($event) {
+                    return _vm.ajustarDecimalManual("sumar", partido.id_calculo, partido.id_partido, monto);
+                  }
+                }
+              }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
+                staticClass: "btn btn-sm p-0",
+                attrs: {
+                  type: "button"
+                },
+                on: {
+                  click: function click($event) {
+                    return _vm.ajustarDecimalManual("restar", partido.id_calculo, partido.id_partido, monto);
+                  }
+                }
+              }, [_vm._v("▼")])])])] : [_vm._v("\n    " + _vm._s(_vm.formatCurrency(monto)) + "\n  ")]], 2);
             })], 2);
           }), _vm._v(" "), _c("hr", {
             attrs: {
@@ -28997,7 +29042,9 @@ var render = function render() {
                 staticStyle: {
                   "text-align": "left"
                 }
-              }, [mesIndex === 11 ? [_c("input", {
+              }, [mesIndex === 11 ? [_c("div", {
+                staticClass: "d-flex align-items-center"
+              }, [_c("input", {
                 staticClass: "form-control",
                 staticStyle: {
                   width: "100%"
@@ -29010,10 +29057,32 @@ var render = function render() {
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onDecimalInput($event, _vm.partido.id_calculo, _vm.partido.id_partido);
+                    return _vm.onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido);
                   }
                 }
-              })] : [_vm._v("\n                " + _vm._s(mesIndex === 11 ? _vm.formatCurrency(monto) : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]], 2);
+              }), _vm._v(" "), _c("div", {
+                staticClass: "d-flex flex-column ms-1"
+              }, [_c("button", {
+                staticClass: "btn btn-sm p-0",
+                attrs: {
+                  type: "button"
+                },
+                on: {
+                  click: function click($event) {
+                    return _vm.ajustarDecimalManual("sumar", partidoS.id_calculo, partidoS.id_partido, monto);
+                  }
+                }
+              }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
+                staticClass: "btn btn-sm p-0",
+                attrs: {
+                  type: "button"
+                },
+                on: {
+                  click: function click($event) {
+                    return _vm.ajustarDecimalManual("restar", partidoS.id_calculo, partidoS.id_partido, monto);
+                  }
+                }
+              }, [_vm._v("▼")])])])] : [_vm._v("\n                " + _vm._s(mesIndex === 11 ? _vm.formatCurrency(monto) : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]], 2);
             })], 2);
           }), _vm._v(" "), _c("vs-tr", {
             key: "fila-total-mensual"
@@ -37088,7 +37157,7 @@ var staticRenderFns = [function () {
     staticClass: "fas fa-heart pulse-heart"
   }), _vm._v("   por la Coordinación de\n                Informática")])]), _vm._v(" "), _c("div", {
     staticClass: "d-sm-block ml-2 text-right text-sm-center"
-  }, [_c("small", [_vm._v("Versión 1.2.0.18072025")])])])]);
+  }, [_c("small", [_vm._v("Versión 1..0.18072025")])])])]);
 }];
 render._withStripped = true;
 

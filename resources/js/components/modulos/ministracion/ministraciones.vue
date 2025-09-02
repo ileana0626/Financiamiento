@@ -112,15 +112,21 @@
   style="text-align: left;"
 >
   <!-- Solo diciembre (índice 11) es editable -->
-  <template v-if="mesIndex === 11">
+ <template v-if="mesIndex === 11">
+  <div class="d-flex align-items-center">
     <input
-    type="text"
-    :value="monto"
-    class="form-control"
-    style="width: 100%;"
-    @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)"
+      type="text"
+      :value="monto"
+      class="form-control"
+      style="width: 100%;"
+      @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)"
     />
-  </template>
+    <div class="d-flex flex-column ms-1">
+      <button type="button" class="btn btn-sm p-0" @click="ajustarDecimalManual('sumar', partido.id_calculo, partido.id_partido, monto)">▲</button>
+      <button type="button" class="btn btn-sm p-0" @click="ajustarDecimalManual('restar', partido.id_calculo, partido.id_partido, monto)">▼</button>
+    </div>
+  </div>
+</template>
   <!-- Los otros 11 meses -->
   <template v-else>
     {{ formatCurrency(monto) }}
@@ -156,14 +162,20 @@
             >
   <!-- Solo diciembre (índice 11) es editable -->
             <template v-if="mesIndex === 11">
-                <input
-                type="text"
-                :value="monto"
-                class="form-control"
-                style="width: 100%;"
-                @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)"
-                />
-            </template>
+  <div class="d-flex align-items-center">
+    <input
+      type="text"
+      :value="monto"
+      class="form-control"
+      style="width: 100%;"
+      @input="onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido)"
+    />
+    <div class="d-flex flex-column ms-1">
+      <button type="button" class="btn btn-sm p-0" @click="ajustarDecimalManual('sumar', partidoS.id_calculo, partidoS.id_partido, monto)">▲</button>
+      <button type="button" class="btn btn-sm p-0" @click="ajustarDecimalManual('restar', partidoS.id_calculo, partidoS.id_partido, monto)">▼</button>
+    </div>
+  </div>
+</template>
   <!-- Los otros 11 meses -->
             <template v-else>
                 {{ mesIndex === 11 ? formatCurrency(monto) : '$' + truncateTo2Decimals(monto) }}
@@ -340,11 +352,9 @@ export default {
         const key = `con-${idCalculo}-${idPartido}`;
         let valor = event.target.value;
 
-        // Opcional: sanitizar para evitar letras o múltiples puntos
         valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
-        // Almacenar como texto (NO usar parseFloat)
-        this.$set(this.ajustesDiciembre, key, valor);
+        this.$set(this.ajustesDiciembre, key, parseFloat(valor));
         },
         formatCurrency(value) {
             if (value === null || value === undefined || isNaN(value)) return '$0.00';
@@ -356,14 +366,36 @@ export default {
         },
         getStepForMonto(monto) {
             if (!monto || isNaN(monto)) return '0.01';
+
             const parts = monto.toString().split('.');
-            console.log(parts);
             if (parts.length === 2) {
-            const decLength = parts[1].length;
-            console.log(decLength);
-            return '0.' + '0'.repeat(decLength - 1) + '1';
+            const longitudDecimales = parts[1].length;
+            return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
             }
-           
+            return '1';
+        },
+        ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
+        const key = `con-${idCalculo}-${idPartido}`;
+        let actual = new Decimal(valorActual || 0);
+
+        // Detectar número de decimales en el valor actual
+        const decimales = valorActual.toString().split('.')[1]?.length || 0;
+        const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
+
+        if (operacion === 'sumar') {
+            actual = actual.plus(paso);
+        } else {
+            actual = actual.minus(paso);
+            if (actual.isNegative()) actual = new Decimal(0);
+        }
+
+        // Asegurar límite superior (el total original)
+        const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
+                        || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
+        const total = new Decimal(partido?.C_fpaop || partido?.monto_2_por_ciento || 0);
+        if (actual.greaterThan(total)) actual = total;
+
+        this.$set(this.ajustesDiciembre, key, actual.toNumber());
         },
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
