@@ -58,111 +58,111 @@
       :key="'calculo-' + index"
       class="mb-5"
     >
-    <div class="d-flex align-items-center gap-2">
-        <span class="material-symbols-rounded">receipt_long</span>
-        <h5 class="mb-0">
-        ID Cálculo: {{ calculo.id_calculo }} - Año: {{ calculo.anio_ejercicio }}
-        </h5>
-    </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="material-symbols-rounded">receipt_long</span>
+            <h5 class="mb-0">
+            ID Cálculo: {{ calculo.id_calculo }} - Año: {{ calculo.anio_ejercicio }}
+            </h5>
+        </div>
 
-      <!-- Partidos con representación -->
-      <vs-table class="tabla-ajustada mt-3">
-        <template #thead>
-          <vs-tr>
-            <vs-th style="text-align: left;">Emblema</vs-th>
-            <vs-th style="text-align: left;">Total Financiamiento</vs-th>
-            <vs-th style="text-align: left;">Enero</vs-th>
-            <vs-th style="text-align: left;">Febrero</vs-th>
-            <vs-th style="text-align: left;">Marzo</vs-th>
-            <vs-th style="text-align: left;">Abril</vs-th>
-            <vs-th style="text-align: left;">Mayo</vs-th>
-            <vs-th style="text-align: left;">Junio</vs-th>
-            <vs-th style="text-align: left;">Julio</vs-th>
-            <vs-th style="text-align: left;">Agosto</vs-th>
-            <vs-th style="text-align: left;">Septiembre</vs-th>
-            <vs-th style="text-align: left;">Octubre</vs-th>
-            <vs-th style="text-align: left;">Noviembre</vs-th>
-            <vs-th style="text-align: left; width: 10%;">Diciembre</vs-th>
-          </vs-tr>
-        </template>
-        <template #tbody>
-          <vs-tr
-            v-for="(partido, i) in Partidos_Con_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
-            :key="'con-' + i"
-          >
-            <vs-td>
-              <img
-                :src="'/img/logos/' + partido.logo"
-                :alt="partido.siglas"
-                class="img-fluid rounded"
-                style="max-width: 40px; max-height: 40px;"
-                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-              />
-            </vs-td>
-            <vs-td style="text-align: left;">
-                {{  formatCurrency(partido.C_fpaop)  }}
-            </vs-td>
-            <vs-td 
-  v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
-    partido.C_fpaop, 
-    ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]
-  )" 
-  :key="'mes-con-' + i + '-' + mesIndex" 
-  style="text-align: left;"
->
-  <!-- Solo diciembre (índice 11) es editable -->
-  <template v-if="mesIndex === 11">
-    <input
-      type="number"
-      step="0.01"
-      :min="0"
-      :value="monto"
-      class="form-control"
-      style="width: 100%;"
-      @input="e => ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] = parseFloat(e.target.value)"
-    />
-  </template>
-  <!-- Los otros 11 meses -->
-  <template v-else>
-    {{ formatCurrency(monto) }}
-  </template>
-</vs-td>
-          </vs-tr>
-        </template>
-      </vs-table>
+        <!-- Partidos con representación -->
+        <vs-table class="tabla-ajustada mt-3">
+            <template #thead>
+            <vs-tr>
+                <vs-th style="text-align: left;">Emblema</vs-th>
+                <vs-th style="text-align: left;">Total Financiamiento</vs-th>
+                <vs-th style="text-align: left;">Enero</vs-th>
+                <vs-th style="text-align: left;">Febrero</vs-th>
+                <vs-th style="text-align: left;">Marzo</vs-th>
+                <vs-th style="text-align: left;">Abril</vs-th>
+                <vs-th style="text-align: left;">Mayo</vs-th>
+                <vs-th style="text-align: left;">Junio</vs-th>
+                <vs-th style="text-align: left;">Julio</vs-th>
+                <vs-th style="text-align: left;">Agosto</vs-th>
+                <vs-th style="text-align: left;">Septiembre</vs-th>
+                <vs-th style="text-align: left;">Octubre</vs-th>
+                <vs-th style="text-align: left;">Noviembre</vs-th>
+                <vs-th style="text-align: left; width: 10%;">Diciembre</vs-th>
+            </vs-tr>
+            </template>
+            <template #tbody>
+            <vs-tr
+                v-for="(partido, i) in Partidos_Con_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
+                :key="'con-' + i"
+            >
+                <vs-td>
+                <img
+                    :src="'/img/logos/' + partido.logo"
+                    :alt="partido.siglas"
+                    class="img-fluid rounded"
+                    style="max-width: 40px; max-height: 40px;"
+                    onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+                />
+                </vs-td>
+                <vs-td style="text-align: left;">
+                    {{  formatCurrency(partido.C_fpaop)  }}
+                </vs-td>
+                <vs-td 
+                sv-for="(monto, mesIndex) in distribuirConEditableDiciembre(
+                    partido.C_fpaop, 
+                    ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]
+                )" 
+                :key="'me-con-' + i + '-' + mesIndex" 
+                style="text-align: left;"
+                >
+                    <!-- Solo diciembre (índice 11) es editable -->
+                    <template v-if="mesIndex === 11">
+                        <input
+                        type="number"
+                        step="0.01"
+                        :min="0"
+                        :value="monto"
+                        class="form-control"
+                        style="width: 100%;"
+                        @input="e => ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] = parseFloat(e.target.value)"
+                        />
+                    </template>
+                    <!-- Los otros 11 meses -->
+                    <template v-else>
+                        {{ formatCurrency(monto) }}
+                    </template>
+                </vs-td>
+            </vs-tr>
+            </template>
+        </vs-table>
 
-                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
-                                    @click.stop="guardarCambios" 
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
-                                            Guardar
-                                        </div>
-                                    </vs-button>
-                                </div>
-                                <div class="d-flex justify-content-center">
-                                    <vs-tooltip>
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
-                                    @click.stop="descargar(distribucionId)" hover="true"
-                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
-                                            <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
-                                            Descargar
-                                        </div>
-                                    </vs-button>
-                                    <template #tooltip>
-                                        <div v-if="descargar_disabled">
-                                            Debes guardar los cambios antes de descargar
-                                        </div>
-                                        <div v-else>
-                                            Descargar distribución
-                                        </div>
-                                    </template>
-                                    </vs-tooltip>
-                                </div>
-                            </div>
+        <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
+            <div class="d-flex justify-content-center">
+                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
+                @click.stop="guardarCambios" 
+                style="padding: 0.20rem; font-size: 1rem;">
+                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                        <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                        Guardar
+                    </div>
+                </vs-button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <vs-tooltip>
+                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
+                @click.stop="descargar(distribucionId)" hover="true"
+                style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
+                    <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
+                        <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
+                        Descargar
+                    </div>
+                </vs-button>
+                <template #tooltip>
+                    <div v-if="descargar_disabled">
+                        Debes guardar los cambios antes de descargar
+                    </div>
+                    <div v-else>
+                        Descargar distribución
+                    </div>
+                </template>
+                </vs-tooltip>
+            </div>
+        </div>
 
     </div>
   </div>

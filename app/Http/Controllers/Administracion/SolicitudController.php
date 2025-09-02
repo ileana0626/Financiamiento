@@ -619,6 +619,12 @@ class SolicitudController extends Controller
             ], 500);
         }
     }
+    
+    public function exportarFinanciamientoMinistracionesExcel(Request $request, $id = null)
+    {
+        if (!$request->ajax()) return redirect('/');
+        
+    }
 
     public function setRegistrarRequi(Request $request)
     {
