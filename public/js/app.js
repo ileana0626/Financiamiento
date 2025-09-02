@@ -28855,7 +28855,7 @@ var render = function render() {
       staticClass: "material-symbols-rounded"
     }, [_vm._v("receipt_long")]), _vm._v(" "), _c("h5", {
       staticClass: "mb-0"
-    }, [_vm._v("\n        ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n        ")])]), _vm._v(" "), _c("vs-table", {
+    }, [_vm._v("\n            ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n            ")])]), _vm._v(" "), _c("vs-table", {
       staticClass: "tabla-ajustada mt-3",
       scopedSlots: _vm._u([{
         key: "thead",
@@ -29063,7 +29063,7 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.stopPropagation();
-          return _vm.guardarCambios(calculo);
+          return _vm.guardarCambios.apply(null, arguments);
         }
       }
     }, [_c("div", {
@@ -240014,7 +240014,7 @@ var formatearDecimal = function formatearDecimal(valor) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })

@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/Update_Partidos_Con_Representacion', 'Administracion\SolicitudController@Update_Partidos_Con_Representacion');
     Route::post('/administracion/solicitud/Update_Partidos_Sin_Representacion', 'Administracion\SolicitudController@Update_Partidos_Sin_Representacion');
     Route::get('/administracion/solicitud/exportarFinanciamientoDistribucionExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoDistribucionExcel');
+    Route::get('/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoMinistracionesExcel');
 
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');

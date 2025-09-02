@@ -620,10 +620,74 @@ class SolicitudController extends Controller
         }
     }
     
+    /**
+     * Exporta el reporte de Anexo 3. Ministraciones de Financiamiento a Excel
+     *
+     * @param $id Id del cálculo o distribución
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
     public function exportarFinanciamientoMinistracionesExcel(Request $request, $id = null)
     {
         if (!$request->ajax()) return redirect('/');
         
+        try {
+            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            $operacion = (string) "GET"; // Nos aseguramos de que sea un string
+            
+            // Obtener los datos de las ministraciones
+            /*$ministraciones = DB::select('CALL sp_Distr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
+                ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
+                    self::$useTransaction, // bandera estática,
+                    $operacion,
+                    $id,
+                    null, null, null,
+                    null, null, null, null, null, null, null, null, null, null
+            ]);
+            */
+            $ministracionesData = !empty($ministraciones) ? (array)$ministraciones[0] : [];
+            
+            $data = [
+                //'calculo' => $calculoData,
+                //'distribucion' => $distribucionData,
+                'ministraciones' => $ministracionesData,
+                //'partidos_sin_rep' => $partidosSinRep,
+                //'partidos_con_rep' => $partidosConRep
+            ];
+            Log::info('Datos preparados para la exportación:', $data);
+
+            $filename = date('Y-m-d') . '_Anexo_3_Ministraciones' . '.xlsx';
+            return (new \App\Exports\FinanciamientoMinistracionesExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento', [
+                'error' => $e->getMessage(),
+                //'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    //'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
     }
 
     public function setRegistrarRequi(Request $request)
