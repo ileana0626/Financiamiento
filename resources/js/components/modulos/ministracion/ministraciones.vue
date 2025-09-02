@@ -386,17 +386,19 @@ export default {
             actual = actual.plus(paso);
         } else {
             actual = actual.minus(paso);
-            if (actual.isNegative()) actual = new Decimal(0);
+            if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
         }
 
-        // Asegurar límite superior (el total original)
-        const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
-                        || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
-        const total = new Decimal(partido?.C_fpaop || partido?.monto_2_por_ciento || 0);
-        if (actual.greaterThan(total)) actual = total;
-
         this.$set(this.ajustesDiciembre, key, actual.toNumber());
-        },
+
+        if (actual.greaterThan(total)) {
+            this.$vs.notification({
+                title: 'Atención',
+                text: 'El monto de diciembre supera el total asignado al partido.',
+                color: 'warning'
+            });
+        }
+    },
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
 
