@@ -13,6 +13,9 @@ window.Vue.use(VCalendar);
 import Swal from 'sweetalert2'
 window.Swal = Swal;
 
+import Decimal from 'decimal.js';
+window.Decimal = Decimal;
+
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
   Vue.use(Vuesax, {

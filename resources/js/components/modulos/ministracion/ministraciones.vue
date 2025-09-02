@@ -65,104 +65,169 @@
             </h5>
         </div>
 
-        <!-- Partidos con representación -->
-        <vs-table class="tabla-ajustada mt-3">
-            <template #thead>
-            <vs-tr>
-                <vs-th style="text-align: left;">Emblema</vs-th>
-                <vs-th style="text-align: left;">Total Financiamiento</vs-th>
-                <vs-th style="text-align: left;">Enero</vs-th>
-                <vs-th style="text-align: left;">Febrero</vs-th>
-                <vs-th style="text-align: left;">Marzo</vs-th>
-                <vs-th style="text-align: left;">Abril</vs-th>
-                <vs-th style="text-align: left;">Mayo</vs-th>
-                <vs-th style="text-align: left;">Junio</vs-th>
-                <vs-th style="text-align: left;">Julio</vs-th>
-                <vs-th style="text-align: left;">Agosto</vs-th>
-                <vs-th style="text-align: left;">Septiembre</vs-th>
-                <vs-th style="text-align: left;">Octubre</vs-th>
-                <vs-th style="text-align: left;">Noviembre</vs-th>
-                <vs-th style="text-align: left; width: 10%;">Diciembre</vs-th>
-            </vs-tr>
-            </template>
-            <template #tbody>
-            <vs-tr
-                v-for="(partido, i) in Partidos_Con_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
-                :key="'con-' + i"
-            >
-                <vs-td>
-                <img
-                    :src="'/img/logos/' + partido.logo"
-                    :alt="partido.siglas"
-                    class="img-fluid rounded"
-                    style="max-width: 40px; max-height: 40px;"
-                    onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-                />
-                </vs-td>
-                <vs-td style="text-align: left;">
-                    {{  formatCurrency(partido.C_fpaop)  }}
-                </vs-td>
-                <vs-td 
-                sv-for="(monto, mesIndex) in distribuirConEditableDiciembre(
-                    partido.C_fpaop, 
-                    ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]
-                )" 
-                :key="'me-con-' + i + '-' + mesIndex" 
-                style="text-align: left;"
-                >
-                    <!-- Solo diciembre (índice 11) es editable -->
-                    <template v-if="mesIndex === 11">
-                        <input
-                        type="number"
-                        step="0.01"
-                        :min="0"
-                        :value="monto"
-                        class="form-control"
-                        style="width: 100%;"
-                        @input="e => ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] = parseFloat(e.target.value)"
-                        />
-                    </template>
-                    <!-- Los otros 11 meses -->
-                    <template v-else>
-                        {{ formatCurrency(monto) }}
-                    </template>
-                </vs-td>
-            </vs-tr>
-            </template>
-        </vs-table>
+      <!-- Partidos con representación -->
+      <vs-table class="tabla-ajustada mt-3">
+        <template #thead>
+          <vs-tr>
+            <vs-th style="text-align: left;">Emblema</vs-th>
+            <vs-th style="text-align: left;">Total Financiamiento</vs-th>
+            <vs-th style="text-align: left;">Enero</vs-th>
+            <vs-th style="text-align: left;">Febrero</vs-th>
+            <vs-th style="text-align: left;">Marzo</vs-th>
+            <vs-th style="text-align: left;">Abril</vs-th>
+            <vs-th style="text-align: left;">Mayo</vs-th>
+            <vs-th style="text-align: left;">Junio</vs-th>
+            <vs-th style="text-align: left;">Julio</vs-th>
+            <vs-th style="text-align: left;">Agosto</vs-th>
+            <vs-th style="text-align: left;">Septiembre</vs-th>
+            <vs-th style="text-align: left;">Octubre</vs-th>
+            <vs-th style="text-align: left;">Noviembre</vs-th>
+            <vs-th style="text-align: left; width: 10%;">Diciembre</vs-th>
+          </vs-tr>
+        </template>
+        <template #tbody>
+          <vs-tr
+            v-for="(partido, i) in Partidos_Con_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
+            :key="'con-' + partido.id_calculo + '-' + partido.id_partido"
+          >
+            <vs-td>
+              <img
+                :src="'/img/logos/' + partido.logo"
+                :alt="partido.siglas"
+                class="img-fluid rounded"
+                style="max-width: 40px; max-height: 40px;"
+                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+              />
+            </vs-td>
+            <vs-td style="text-align: left;">
+                {{  formatCurrency(partido.C_fpaop)  }}
+            </vs-td>
+            <vs-td 
+  v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
+    partido.C_fpaop, 
+    ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido],
+    'con-' + partido.id_calculo + '-' + partido.id_partido
+  )" 
+  :key="'mes-' + partido.id_calculo + '-' + partido.id_partido + '-' + mesIndex"
+  style="text-align: left;"
+>
+  <!-- Solo diciembre (índice 11) es editable -->
+  <template v-if="mesIndex === 11">
+    <input
+    type="text"
+    :value="monto"
+    class="form-control"
+    style="width: 100%;"
+    @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)"
+    />
+  </template>
+  <!-- Los otros 11 meses -->
+  <template v-else>
+    {{ formatCurrency(monto) }}
+  </template>
+</vs-td>
+          </vs-tr>
 
-        <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
-            <div class="d-flex justify-content-center">
-                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
-                @click.stop="guardarCambios" 
-                style="padding: 0.20rem; font-size: 1rem;">
-                    <div style="color: var(--btn-txt-color); font-weight: 700;">
-                        <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
-                        Guardar
-                    </div>
-                </vs-button>
-            </div>
-            <div class="d-flex justify-content-center">
-                <vs-tooltip>
-                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
-                @click.stop="descargar(distribucionId)" hover="true"
-                style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
-                    <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
-                        <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
-                        Descargar
-                    </div>
-                </vs-button>
-                <template #tooltip>
-                    <div v-if="descargar_disabled">
-                        Debes guardar los cambios antes de descargar
-                    </div>
-                    <div v-else>
-                        Descargar distribución
-                    </div>
-                </template>
-                </vs-tooltip>
-            </div>
-        </div>
+          <!-- partidos sin representacion-->
+           <hr width="100%"/>
+          <vs-tr
+            v-for="(partidoS, i) in Partidos_Sin_Representacion.filter(p => p.id_calculo === calculo.id_calculo)"
+            :key="'sin-' + partidoS.id_calculo + '-' + partidoS.id_partido"
+          >
+            <vs-td>
+              <img
+                :src="'/img/logos/' + partidoS.logo"
+                :alt="partidoS.siglas"
+                class="img-fluid rounded"
+                style="max-width: 40px; max-height: 40px;"
+                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
+              />
+            </vs-td>
+            <vs-td style="text-align: left;">
+                {{  formatCurrency(partidoS.monto_2_por_ciento)  }}
+            </vs-td>
+            <vs-td 
+            v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
+                partidoS.monto_2_por_ciento, 
+                ajustesDiciembre['con-' + partidoS.id_calculo + '-' + partidoS.id_partido]
+            )" 
+            :key="'mes-sin-' + partidoS.id_calculo + '-' + partidoS.id_partido + '-' + mesIndex"
+            style="text-align: left;"
+            >
+  <!-- Solo diciembre (índice 11) es editable -->
+            <template v-if="mesIndex === 11">
+                <input
+                type="text"
+                :value="monto"
+                class="form-control"
+                style="width: 100%;"
+                @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)"
+                />
+            </template>
+  <!-- Los otros 11 meses -->
+            <template v-else>
+                {{ mesIndex === 11 ? formatCurrency(monto) : '$' + truncateTo2Decimals(monto) }}
+            </template>
+</vs-td>
+          </vs-tr>
+
+          <!-- totales -->
+           <vs-tr :key="'fila-total-mensual'">
+            <vs-td style="font-weight: bold;">Totales</vs-td>
+            <vs-td></vs-td> <!-- Columna vacía debajo de "Total Financiamiento" -->
+
+            <vs-td
+                v-for="(monto, i) in obtenerTotalesMensuales(calculo.id_calculo)"
+                :key="'total-mes-' + i"
+                style="text-align: left; font-weight: bold;"
+            >
+                {{  i === 11 ? monto : '$' + truncateTo2Decimals(monto) }}
+            </vs-td>
+            </vs-tr>
+
+            <!-- Fila de Total General -->
+            <vs-tr :key="'fila-total-general'">
+            <vs-td style="font-weight: bold;">Total General</vs-td>
+            <vs-td></vs-td>
+            <vs-td colspan="12" style="text-align: left; font-weight: bold;">
+                {{ formatCurrency(obtenerTotalGeneral(calculo.id_calculo)) }}
+            </vs-td>
+            </vs-tr>
+        </template>
+      </vs-table>
+
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
+                                    @click.stop="guardarCambios" 
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Guardar
+                                        </div>
+                                    </vs-button>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-tooltip>
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
+                                    @click.stop="descargar(distribucionId)" hover="true"
+                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
+                                            <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Descargar
+                                        </div>
+                                    </vs-button>
+                                    <template #tooltip>
+                                        <div v-if="descargar_disabled">
+                                            Debes guardar los cambios antes de descargar
+                                        </div>
+                                        <div v-else>
+                                            Descargar distribución
+                                        </div>
+                                    </template>
+                                    </vs-tooltip>
+                                </div>
+                            </div>
 
     </div>
   </div>
@@ -215,6 +280,8 @@ export default {
             ],
            
             catAnio: [],
+            calculo: {},
+            montosFijos: {},
             ajustesDiciembre: {},
             cat_tipo_distribucion: [],
             distribucion: [],
@@ -264,14 +331,40 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router)
             })
         },
+        truncateTo2Decimals(value) {
+        if (!value) return '0.00';
+        const num = parseFloat(value);
+        return (Math.floor(num * 100) / 100).toFixed(2);
+        },
+        onDecimalInput(event, idCalculo, idPartido) {
+        const key = `con-${idCalculo}-${idPartido}`;
+        let valor = event.target.value;
+
+        // Opcional: sanitizar para evitar letras o múltiples puntos
+        valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+        // Almacenar como texto (NO usar parseFloat)
+        this.$set(this.ajustesDiciembre, key, valor);
+        },
         formatCurrency(value) {
-        if (!value) return '$0.00';
-        return Number(value).toLocaleString('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-        minimumFractionDigits: 2
-        });
-    },
+            if (value === null || value === undefined || isNaN(value)) return '$0.00';
+            const num = Math.floor(parseFloat(value) * 100) / 100;
+            return num.toLocaleString('es-MX', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        getStepForMonto(monto) {
+            if (!monto || isNaN(monto)) return '0.01';
+            const parts = monto.toString().split('.');
+            console.log(parts);
+            if (parts.length === 2) {
+            const decLength = parts[1].length;
+            console.log(decLength);
+            return '0.' + '0'.repeat(decLength - 1) + '1';
+            }
+           
+        },
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
 
@@ -443,59 +536,50 @@ export default {
             console.error("Error al obtener distribuciones:", error);
         }
         },
-         distribuirConEditableDiciembre(montoTotal, overrideDiciembre = null) {
-    const mensual = parseFloat((montoTotal / 12));
-    const meses = Array(11).fill(mensual);
+        actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
+            const key = `con-${idCalculo}-${idPartido}`;
+            const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
+                            || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
+            const total = partido ? (partido.C_fpaop || partido.monto_2_por_ciento) : 0;
 
-    // Si el usuario ajustó diciembre, usar ese valor. Si no, usar el predeterminado.
-    const diciembre = overrideDiciembre !== null 
-      ? parseFloat(overrideDiciembre) 
-      : mensual;
+            let parsedValue = parseFloat(valor);
+            if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
+            if (parsedValue > total) parsedValue = total;
 
-    meses.push(diciembre);
-    return meses;
-  },
-        getFinanciamientoOrdinario(id_calculo) {
-            const dist = this.distribuciones.find(d => d.id_calculo === id_calculo);
-            console.log(this.distribuciones);
-            return dist ? this.formatCurrency(dist.subtotal_C_fpaop) : '$0.00';
+            this.$set(this.ajustesDiciembre, key, parsedValue);
         },
-        formatear30() {
-            let valorNumerico = parseFloat(this.monto30Input.toString().replace(/[^0-9.]/g, ''));
-
-            if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-
-            this.monto30 = null;
-            this.monto30Input = '';
-            } else {
-            this.errorMonto30 = '';
-            this.monto30 = valorNumerico;
-
-            this.monto30Input = valorNumerico.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+        inicializarMontosFijos() {
+            [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].forEach(partido => {
+            const key = `con-${partido.id_calculo}-${partido.id_partido}`;
+            if (!this.montosFijos[key]) {
+                const total = partido.C_fpaop || partido.monto_2_por_ciento;
+                // Asignar los primeros 11 meses igual: (total / 12) cada uno
+                const mensual = total / 12;
+                this.$set(this.montosFijos, key, Array(11).fill(mensual));
             }
+            });
         },
-        formatear70() {
-            let valorNumerico = parseFloat(this.monto70Input.toString().replace(/[^0-9.]/g, ''));
+        distribuirConEditableDiciembre(montoTotal, overrideDiciembre, key) {
+        const montos = [];
+        const override = overrideDiciembre !== undefined ? new Decimal(overrideDiciembre) : null;
+        
+        // Si no hay montos fijos, inicializarlos
+        if (!this.montosFijos[key]) {
+        this.inicializarMontosFijos();
+        }
+        
+        if (!override || override.isNaN()) {
+            const mensual = new Decimal(montoTotal).dividedBy(12);
+            montos.push(...Array(11).fill(mensual));
+            montos.push(mensual);
+        } else {
+            const fijoMensual = (new Decimal(montoTotal).minus(override)).dividedBy(11);
+            montos.push(...Array(11).fill(fijoMensual));
+            montos.push(override);
+        }
 
-            if (isNaN(valorNumerico)) { 
-            this.monto70 = null;
-            this.monto70Input = '';
-            } else {
-            this.errorMonto70 = '';
-            this.monto70 = valorNumerico;
+        return montos.map(m => m.toNumber());
 
-            this.monto70Input = valorNumerico.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            }
         },
         guardarEdicion() {
             // Lógica para guardar edición (llamada axios)
@@ -565,9 +649,40 @@ export default {
                 loader.close();
             }
         },
-        async guardarDistribucion() { //✅
+        async guardarCambios(calculo) { 
 
-            const loader = loading(this.$vs);
+            //id del calculo seleccionado 
+            const idCalculo = calculo.id_calculo;
+            console.log('Id del calculo: ' + idCalculo);
+            const partidos = this.Partidos_Con_Representacion.filter(p => p.id_calculo === idCalculo);
+
+            partidos.forEach(partido => {
+                const totalFinanciamiento = partido.C_fpaop;
+                const overrideDiciembre = this.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] ?? null;
+
+                const montosMensuales = this.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
+
+                console.log(`\n📌 Partido: ${partido.siglas}`);
+
+                montosMensuales.forEach((monto, index) => {
+                const nombreMes = [
+                    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ][index];
+
+                if (index === 11) {
+                // Diciembre: mostrar todos los decimales
+                console.log(`  ${nombreMes}: ${monto}`);
+                } else {
+                // Mostrar monto completo, sin formatear
+                console.log(`  ${nombreMes}: ${monto}`);
+                }
+                });
+            });
+            },
+            
+
+            /* const loader = loading(this.$vs);
             loader.text = 'Guardando datos...';
             let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
 
@@ -668,8 +783,7 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             } finally {
                 loader.close();
-            }
-        },
+            } */
         /**
          * Descarga el archivo Excel de la distribución
          * @param DistribucionId // debe de existir un preguardado antes
@@ -951,102 +1065,35 @@ export default {
                 partido.errorPorcentajeVotacion = '';
             });
         },
+        obtenerTotalesMensuales(idCalculo) {
+            const totales = Array(12).fill().map(() => new Decimal(0));
+
+            const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(p => p.id_calculo === idCalculo);
+
+            partidos.forEach(partido => {
+                const total = partido.C_fpaop || partido.monto_2_por_ciento;
+                const key = `con-${partido.id_calculo}-${partido.id_partido}`;
+                const override = this.ajustesDiciembre[key];
+
+                const montos = this.distribuirConEditableDiciembre(total, override, key);
+                montos.forEach((monto, i) => {
+                    // Precisión total
+                    totales[i] = totales[i].plus(new Decimal(monto));
+                });
+            });
+
+            // Convertir a números nativos para mostrar
+            return totales.map(t => t.toNumber());
+        },
+
+        obtenerTotalGeneral(id_calculo) {
+            const totales = this.obtenerTotalesMensuales(id_calculo);
+            return totales.reduce((sum, val) => new Decimal(sum).plus(new Decimal(val)), new Decimal(0)).toNumber();
+        }
     },
     computed:{
-        /*
-        * Retorna la Sumatoria de los porcentajes de votación de los partidos con representación en el Congreso
-        */
-        sumaTotalPorcentajes() {
-            return this.Partidos_Con_Representacion.reduce((total, partido) => {
-                // Convierte a número y evita NaN si el input está vacío
-                const valor = parseFloat(partido.porcentaje_votacion);
-                return total + (isNaN(valor) ? 0 : valor);
-            }, 0);//.toFixed(2);
-        },
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
-        },
-        /*
-        * Retorna el subtotal de la sumatoria de 2% del monto de financiamiento público para actividades ordinarias
-        * Partidos sin representación en el Congreso
-        * monto_2_por_ciento * factorCalculo
-        */
-        subtotalMonto2PorCiento() {
-            if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
-                return 0;
-            }
-            return this.Partidos_Sin_Representacion.reduce((total, partido) => {
-                return total + (parseFloat(partido.monto_2_por_ciento) || 0);
-            }, 0);
-        },
-        /*
-        * Retorna el subtotal de la sumatoria de Financiamiento público para actividades tendientes a la obtención del voto
-        * Partidos sin representación en el Congreso
-        * SUMA(monto_2_por_ciento * factorCalculo)
-        */
-        subtotalMonto2PorCientoD() {
-            if (!this.Partidos_Sin_Representacion || this.Partidos_Sin_Representacion.length === 0) {
-                return 0;
-            }
-            return this.Partidos_Sin_Representacion.reduce((total, partido) => {
-                return total + (parseFloat(partido.monto_2_por_ciento * this.factorCalculo) || 0);
-            }, 0);
-        },
-        factorCalculo() {
-            //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
-            if (this.opcionSelecionadaPorcentaje === '1') {
-                return 0.5;  // 50% Gubernatura
-            } else if (this.opcionSelecionadaPorcentaje === '2') {
-                return 0.3;  // 30% Intermedia
-            }
-            return 0;  // Valor por defecto
-        },
-         // Subtotal C para partidos con representación (C = A + B)
-        subtotalC_ConRepresentacion() {
-            return this.Partidos_Con_Representacion.reduce((total, partido) => {
-            return total + this.calcularMontoC(partido);
-            }, 0);
-        },
-
-        // Subtotal D para partidos con representación (D = C * factor)
-        subtotalD_ConRepresentacion() {
-            return this.Partidos_Con_Representacion.reduce((total, partido) => {
-            return total + (this.calcularMontoC(partido) * this.factorCalculo);
-            }, 0);
-        },
-
-        // Subtotal C para partidos sin representación (ya lo tienes)
-        subtotalC_SinRepresentacion() {
-            return this.subtotalMonto2PorCiento;
-        },
-
-        // Subtotal D para partidos sin representación (ya lo tienes)
-        subtotalD_SinRepresentacion() {
-            return this.subtotalMonto2PorCientoD;
-        }, 
-        candidatura(){
-            const subtotal1 = this.subtotalD_ConRepresentacion;
-            const subtotal2 = this.subtotalMonto2PorCientoD;
-            const resultado = (subtotal1 + subtotal2) * 0.02
-            return resultado;
-        },
-        totalPermanentes(){
-            const subtotal1 = this.subtotalC_ConRepresentacion;
-            const subtotal2 = this.subtotalMonto2PorCiento;
-            const resultado = subtotal1 + subtotal2
-            return resultado;
-        },
-        totalVotos(){
-            const subtotal1 = this.subtotalD_ConRepresentacion;
-            const subtotal2 = this.subtotalMonto2PorCientoD;
-            const resultado = subtotal1 + subtotal2
-            return resultado;
-        },
-        granTotal() {
-            if (this.distribucion.includes(2)) {
-            return this.totalPermanentes + this.totalVotos;
-            }
-            return this.totalPermanentes;
         }
     }
 }
