@@ -788,8 +788,6 @@ class SolicitudController extends Controller
     }
 
 
-
-
     public function setRegistrarCalculo(Request $request){
         if(!$request->ajax()) return redirect('/');
 

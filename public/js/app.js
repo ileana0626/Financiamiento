@@ -12863,7 +12863,7 @@ var debug = function debug() {
             case 0:
               //id del calculo seleccionado 
               idCalculo = calculo.id_calculo;
-              console.log('Id del calculo: ' + idCalculo);
+              debug(' 🐛 Id del calculo: ' + idCalculo);
               partidos = _this11.Partidos_Con_Representacion.filter(function (p) {
                 return p.id_calculo === idCalculo;
               });
@@ -12872,7 +12872,7 @@ var debug = function debug() {
                 var totalFinanciamiento = partido.C_fpaop;
                 var overrideDiciembre = (_this11$ajustesDiciem = _this11.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this11$ajustesDiciem !== void 0 ? _this11$ajustesDiciem : null;
                 var montosMensuales = _this11.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
-                console.log("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
+                debug("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
                 montosMensuales.forEach(function (monto, index) {
                   var nombreMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][index];
                   if (index === 11) {
@@ -12884,7 +12884,8 @@ var debug = function debug() {
                   }
                 });
               });
-            case 4:
+              _this11.descargar_disabled = false; // Habilita descargar archivo
+            case 5:
             case "end":
               return _context6.stop();
           }
@@ -12994,11 +12995,11 @@ var debug = function debug() {
      * Descarga el archivo Excel de la distribución
      * @param DistribucionId // debe de existir un preguardado antes
      */
-    descargarDistribucion: function descargarDistribucion(id) {
+    descargarMinistraciones: function descargarMinistraciones(id) {
       var _this12 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
-      var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id);
       var downloadUrl = null;
       var link = null;
       if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
@@ -13012,7 +13013,7 @@ var debug = function debug() {
         downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
         link = document.createElement('a');
         link.href = downloadUrl;
-        var filename = "Anexo 2. Distribuci\xF3n.xlsx";
+        var filename = "Anexo 3. Ministraciones.xlsx";
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
@@ -28149,8 +28150,11 @@ var render = function render() {
     staticStyle: {
       "background-color": "var(--iee-white)"
     }
-  }, [_c("div", [_vm.NewlistCalculos && _vm.NewlistCalculos.length ? _c("vs-table", {
+  }, [_c("div", [_c("vs-table", {
     staticClass: "tabla-ajustada",
+    attrs: {
+      data: _vm.NewlistCalculos || []
+    },
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
@@ -28269,8 +28273,8 @@ var render = function render() {
         })];
       },
       proxy: true
-    }], null, false, 2022392001)
-  }) : _vm._e()], 1)])]), _vm._v(" "), [_c("div", {
+    }])
+  })], 1)])]), _vm._v(" "), [_c("div", {
     staticClass: "center"
   }, [_c("vs-dialog", {
     attrs: {

@@ -23,7 +23,7 @@
             </div>
             <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                 <div>
-                    <vs-table v-if="NewlistCalculos && NewlistCalculos.length" class="tabla-ajustada">
+                    <vs-table :data="NewlistCalculos || []" class="tabla-ajustada">
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->

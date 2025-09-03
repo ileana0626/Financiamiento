@@ -685,7 +685,7 @@ export default {
 
             //id del calculo seleccionado 
             const idCalculo = calculo.id_calculo;
-            console.log('Id del calculo: ' + idCalculo);
+            debug(' 🐛 Id del calculo: ' + idCalculo);
             const partidos = this.Partidos_Con_Representacion.filter(p => p.id_calculo === idCalculo);
 
             partidos.forEach(partido => {
@@ -694,7 +694,7 @@ export default {
 
                 const montosMensuales = this.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
 
-                console.log(`\n📌 Partido: ${partido.siglas}`);
+                debug(`\n📌 Partido: ${partido.siglas}`);
 
                 montosMensuales.forEach((monto, index) => {
                 const nombreMes = [
@@ -711,7 +711,8 @@ export default {
                 }
                 });
             });
-            },
+            this.descargar_disabled = false; // Habilita descargar archivo
+        },
             
 
             /* const loader = loading(this.$vs);
@@ -820,10 +821,10 @@ export default {
          * Descarga el archivo Excel de la distribución
          * @param DistribucionId // debe de existir un preguardado antes
          */
-        descargarDistribucion(id) {
+        descargarMinistraciones(id) {
             const loader = loading(this.$vs);
             loader.text = 'Generando archivo Excel...';
-            const apiUrl = `/administracion/solicitud/exportarFinanciamientoDistribucionExcel/${id}`;
+            const apiUrl = `/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/${id}`;
             let downloadUrl = null;
             let link = null;
 
@@ -839,7 +840,7 @@ export default {
                 downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
                 link = document.createElement('a');
                 link.href = downloadUrl;
-                const filename = `Anexo 2. Distribución.xlsx`;
+                const filename = `Anexo 3. Ministraciones.xlsx`;
                 link.setAttribute('download', filename);
                 document.body.appendChild(link);
                 link.click();

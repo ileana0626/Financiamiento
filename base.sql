@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 
 
 -- Volcando estructura para tabla admin.permiso_has_rol
-drop table permiso_has_rol;
+DROP TABLE IF EXISTS permiso_has_rol;
 CREATE TABLE IF NOT EXISTS `permiso_has_rol` (
   `idPERMISO` int NOT NULL,
   `idROL` int NOT NULL,
@@ -1448,7 +1448,7 @@ BEGIN
 END;
 //DELIMITER ;
 
-use admin;
+-- use admin;
  
 DROP PROCEDURE IF EXISTS sp_Distr_Get_Insert_Update_distribucion_dppp;
 DELIMITER //
@@ -1685,9 +1685,9 @@ END;
 //
 DELIMITER ;
 
-use admin;
+-- use admin;
 
-call sp_GetDistribucionesPorAnio(2025);
+-- call sp_GetDistribucionesPorAnio(2025);
 
 /* FIN PROCEDURE */
 
