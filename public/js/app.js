@@ -12487,18 +12487,17 @@ var debug = function debug() {
         actual = actual.plus(paso);
       } else {
         actual = actual.minus(paso);
-        if (actual.isNegative()) actual = new Decimal(0);
+        if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
       }
 
-      // Asegurar límite superior (el total original)
-      var partido = this.Partidos_Con_Representacion.find(function (p) {
-        return p.id_calculo === idCalculo && p.id_partido === idPartido;
-      }) || this.Partidos_Sin_Representacion.find(function (p) {
-        return p.id_calculo === idCalculo && p.id_partido === idPartido;
-      });
-      var total = new Decimal((partido === null || partido === void 0 ? void 0 : partido.C_fpaop) || (partido === null || partido === void 0 ? void 0 : partido.monto_2_por_ciento) || 0);
-      if (actual.greaterThan(total)) actual = total;
       this.$set(this.ajustesDiciembre, key, actual.toNumber());
+      if (actual.greaterThan(total)) {
+        this.$vs.notification({
+          title: 'Atención',
+          text: 'El monto de diciembre supera el total asignado al partido.',
+          color: 'warning'
+        });
+      }
     },
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
@@ -12728,9 +12727,9 @@ var debug = function debug() {
       [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).forEach(function (partido) {
         var key = "con-".concat(partido.id_calculo, "-").concat(partido.id_partido);
         if (!_this8.montosFijos[key]) {
-          var total = partido.C_fpaop || partido.monto_2_por_ciento;
+          var _total = partido.C_fpaop || partido.monto_2_por_ciento;
           // Asignar los primeros 11 meses igual: (total / 12) cada uno
-          var mensual = total / 12;
+          var mensual = _total / 12;
           _this8.$set(_this8.montosFijos, key, Array(11).fill(mensual));
         }
       });
