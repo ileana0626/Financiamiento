@@ -85,6 +85,19 @@ Consulta de Errores
                     </vs-sidebar-item>
                 </template>
             </vs-sidebar-group>
+            
+            <!-- financiamiento privado -->
+            <vs-sidebar-group>
+                <template #header>
+                    <vs-sidebar-item v-if="listPermisos.includes('financiamientop.captura')" id="financiamientop.captura"
+                        to="/financiamiento">
+                        <template #icon>
+                        <span class="material-symbols-rounded">insert_chart</span>
+                        </template>
+                        Financiamiento Privado
+                    </vs-sidebar-item>
+                </template>
+            </vs-sidebar-group>
 
                 <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
                     to="/recordatorios">

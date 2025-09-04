@@ -31,6 +31,7 @@ import SADecoder from './components/modulos/superadmin/decoder.vue';
 
 import methods from './methods';
 import Ministraciones from './components/modulos/ministracion/ministraciones.vue';
+import Financiamiento_pCalculo from './components/financiamiento_publico/Financiamiento_pCalculo.vue';
 
 Vue.use(Router)
 const { isNavigationFailure, NavigationFailureType } = Router;
@@ -155,6 +156,7 @@ export default new Router({
         
         { path: '/distribucion', name: 'distribucion.captura', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/ministracion', name: 'ministracion.captura', component: Ministraciones, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/financiamiento', name: 'financiamientop.captura', component: Financiamiento_pCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 
 
