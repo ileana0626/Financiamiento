@@ -142,7 +142,7 @@ const tieneFormatoMonedaValido = (str) => {
  * formatoMoneda(null);          // "$0.00"
  * formatoMoneda("abc");         // "$0.00"
  */
-export const formatoMoneda = (valor, decimales = 2) => {
+export const formatoMonedaMX = (valor, decimales = 2) => {
     // Validación de entrada
     if (valor === null || valor === undefined || valor === '') return '$0.00';
     

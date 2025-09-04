@@ -12295,9 +12295,781 @@ var debug = function debug() {
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/modulos/ministracion/ministraciones.vue?vue&type=script&lang=js ***!
   \*********************************************************************************************************************************************************************************************/
 /*! exports provided: default */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\resources\\js\\components\\modulos\\ministracion\\ministraciones.vue: Unexpected token, expected \",\" (639:8)\n\n\u001b[0m \u001b[90m 637 |\u001b[39m \u001b[90m         * @returns {void}\u001b[39m\n \u001b[90m 638 |\u001b[39m \u001b[90m         */\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 639 |\u001b[39m         limpiarCampos() {\n \u001b[90m     |\u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 640 |\u001b[39m             \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39manio \u001b[33m=\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 641 |\u001b[39m             \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mmonto30 \u001b[33m=\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 642 |\u001b[39m             \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mmonto30Input \u001b[33m=\u001b[39m \u001b[32m''\u001b[39m\u001b[33m,\u001b[39m\u001b[0m\n    at constructor (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:367:19)\n    at Parser.raise (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:6627:19)\n    at Parser.unexpected (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:6647:16)\n    at Parser.expect (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:6927:12)\n    at Parser.parseObjectLike (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11821:14)\n    at Parser.parseExprAtom (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11334:23)\n    at Parser.parseExprSubscripts (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11076:23)\n    at Parser.parseUpdate (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11061:21)\n    at Parser.parseMaybeUnary (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11041:23)\n    at Parser.parseMaybeUnaryOrPrivate (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10894:61)\n    at Parser.parseExprOps (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10899:23)\n    at Parser.parseMaybeConditional (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10876:23)\n    at Parser.parseMaybeAssign (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10826:21)\n    at C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:39\n    at Parser.allowInAnd (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12427:12)\n    at Parser.parseMaybeAssignAllowIn (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:17)\n    at Parser.parseMaybeAssignAllowInOrVoidPattern (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12494:17)\n    at Parser.parseObjectProperty (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11951:83)\n    at Parser.parseObjPropValue (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11979:100)\n    at Parser.parsePropertyDefinition (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11916:17)\n    at Parser.parseObjectLike (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11831:21)\n    at Parser.parseExprAtom (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11334:23)\n    at Parser.parseExprSubscripts (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11076:23)\n    at Parser.parseUpdate (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11061:21)\n    at Parser.parseMaybeUnary (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:11041:23)\n    at Parser.parseMaybeUnaryOrPrivate (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10894:61)\n    at Parser.parseExprOps (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10899:23)\n    at Parser.parseMaybeConditional (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10876:23)\n    at Parser.parseMaybeAssign (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10826:21)\n    at C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:39\n    at Parser.allowInAnd (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12422:16)\n    at Parser.parseMaybeAssignAllowIn (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:10795:17)\n    at Parser.parseExportDefaultExpression (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13925:22)\n    at Parser.parseExport (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13828:25)\n    at Parser.parseStatementContent (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12878:27)\n    at Parser.parseStatementLike (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12767:17)\n    at Parser.parseModuleItem (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12744:17)\n    at Parser.parseBlockOrModuleBlockBody (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13316:36)\n    at Parser.parseBlockBody (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:13309:10)\n    at Parser.parseProgram (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12625:10)\n    at Parser.parseTopLevel (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:12615:25)\n    at Parser.parse (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:14492:10)\n    at parse (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\parser\\lib\\index.js:14526:38)\n    at parser (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\core\\lib\\parser\\index.js:41:34)\n    at parser.next (<anonymous>)\n    at normalizeFile (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\core\\lib\\transformation\\normalize-file.js:64:37)\n    at normalizeFile.next (<anonymous>)\n    at run (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\core\\lib\\transformation\\index.js:21:50)\n    at run.next (<anonymous>)\n    at transform (C:\\wamp64\\www\\25_IEE_Ileana\\Financiamiento\\node_modules\\@babel\\core\\lib\\transform.js:22:33)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
+/* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_formatters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/formatters */ "./resources/js/utils/formatters.js");
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! decimal.js */ "./node_modules/decimal.js/decimal.js");
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(decimal_js__WEBPACK_IMPORTED_MODULE_2__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
+function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
+function _regeneratorAsync(n, e, r, t, o) { var a = _regeneratorAsyncGen(n, e, r, t, o); return a.next().then(function (n) { return n.done ? n.value : a.next(); }); }
+function _regeneratorAsyncGen(r, e, t, o, n) { return new _regeneratorAsyncIterator(_regenerator().w(r, e, t, o), n || Promise); }
+function _regeneratorAsyncIterator(t, e) { function n(r, o, i, f) { try { var c = t[r](o), u = c.value; return u instanceof _OverloadYield ? e.resolve(u.v).then(function (t) { n("next", t, i, f); }, function (t) { n("throw", t, i, f); }) : e.resolve(u).then(function (t) { c.value = t, i(c); }, function (t) { return n("throw", t, i, f); }); } catch (t) { f(t); } } var r; this.next || (_regeneratorDefine2(_regeneratorAsyncIterator.prototype), _regeneratorDefine2(_regeneratorAsyncIterator.prototype, "function" == typeof Symbol && Symbol.asyncIterator || "@asyncIterator", function () { return this; })), _regeneratorDefine2(this, "_invoke", function (t, o, i) { function f() { return new e(function (e, r) { n(t, i, e, r); }); } return r = r ? r.then(f, f) : f(); }, !0); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { if (r) i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n;else { var o = function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); }; o("next", 0), o("throw", 1), o("return", 2); } }, _regeneratorDefine2(e, r, n, t); }
+function _OverloadYield(e, d) { this.v = e, this.k = d; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+//import { forEach } from 'lodash';
+
+
+ // 😉
+
+/**
+ * 🐛 Función para depuración development
+ * @param {...any} args - Uno o más mensajes a mostrar en consola
+ * @example
+ * debug('Mensaje de prueba', {data: 123});
+ */
+var debug = function debug() {
+  if (true) {
+    var _console;
+    (_console = console).log.apply(_console, arguments);
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      darkMode: localStorage.getItem('theme') == 'dark',
+      // Variables para listar
+      selectedCalculo: {},
+      Partidos_Con_Representacion: [],
+      Partidos_Sin_Representacion: [],
+      NewlistCalculos: [],
+      distribucionId: null,
+      // Para saber si ya se ha guardado un registro
+      cb_ppSeleccionados: [],
+      opcionSelecionadaPorcentaje: '1',
+      //  Valor por defecto Gubernatura
+      search: '',
+      page: 1,
+      max: 10,
+      // Dialog
+      active: false,
+      anio: '',
+      monto30Input: '',
+      monto30: '',
+      monto70: '',
+      monto70Input: '',
+      colors: [{
+        color: 'warn'
+      }],
+      catAnio: [],
+      //calculo: {}, // Se usa para cargar el cálculo seleccionado
+      //montosFijos: {},
+      ajustesDiciembre: {},
+      // como un objeto para almacenar pares clave-valor para partidos con y sin representación
+      //cat_tipo_distribucion: [],
+      //distribucion: [],
+      distribuciones: [],
+      CalculosPorAnio: [],
+      // Se usan para listar los calculos por año
+      // Validaciones
+      error: false,
+      errorAnio: '',
+      errorDistribucion: '',
+      errorMonto30: '',
+      errorMonto70: '',
+      descargar_disabled: true // true: disabled | false: enabled
+    };
+  },
+  // watch: {
+  //     anio(newAnio) {
+  //         if (newAnio) {
+  //             this.getDistribucionesPorAnio(newAnio);
+  //         }
+  //     }
+  // },
+  created: function created() {
+    var _this = this;
+    EventBus.$on('darkMode', function (data) {
+      _this.darkMode = data;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    // Limpiar el event listener
+    EventBus.$off('darkMode');
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _this2.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
+            //this.getCalculos();
+            _context.next = 3;
+            return _this2.getAnio();
+          case 3:
+            _context.next = 5;
+            return _this2.obtenerDatos(11);
+          case 5:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
+  },
+  methods: {
+    // DEPRECATED
+    /*        truncateTo2Decimals(value) {
+        if (!value) return '0.00';
+        const num = parseFloat(value);
+        // usa Math.floor para truncar y luego toFixed(2), es redundante
+        return (Math.floor(num * 100) / 100).toFixed(2);
+    },
+    */
+    /* DEPRECATED
+    formatoFecha(fechaStr) {
+        if (!fechaStr) return ''
+          // Parsear fecha en formato YYYY-MM-DD
+        const partes = fechaStr.split('-')
+        if (partes.length !== 3) return fechaStr
+          const anio = partes[0]
+        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+        const dia = partes[2]
+          const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const mesAbreviado = meses[mes] || ''
+          return `${dia} ${mesAbreviado} ${anio}`
+    },
+    */
+    // #endregion Formateos
+    /** DEPRECATED
+     * Obtiene los calculos de financiamiento para listar
+     */
+    /*
+    getCalculos() {
+        const loader = loading(this.$vs);
+        loader.text = 'Cargando datos...';
+        let url = '/administracion/solicitud/getCalculosFinanciamiento';
+        this.NewlistCalculos = [];
+        axios.get(url).then((response) => {
+            if (response.data?.success) {
+                this.NewlistCalculos = response.data.calculos || [];
+            } else {
+                // success: false
+                const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
+                throw new Error(errorMessage);
+            }
+        }).catch((error) => {
+            console.error('Error al cargar cálculos:', error);
+            this.$vs.notification({
+                title: 'Error',
+                text: 'Error al cargar los cálculos',
+                color: 'danger'
+            });
+              let nombreMetodo = url.split('/');
+            methods.catchHandler(error, nombreMetodo[3], this.$router);
+        })
+            .finally(() => {
+                loader.close();
+            })
+    },
+    */
+    //DEPRECATED
+    // onChangeDistribucion(value) {
+    //     this.distribucion = value;
+    //     setTimeout(() => {
+    //         document.activeElement.blur();
+    //     }, 100);
+    // },
+    // #region CATÁLOGOS 📜
+    /**
+     * Obtiene el año fiscal
+     */
+    getAnio: function getAnio() {
+      var _this3 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _this3.catAnio = [];
+              url = '/administracion/usuario/getAnioFiscal';
+              _context2.next = 4;
+              return axios.get(url).then(function (response) {
+                _this3.catAnio = response.data;
+              })["catch"](function (error) {
+                console.log(error);
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this3.$router);
+              });
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      }))();
+    },
+    /**
+     * Obtiene los datos de los catálogos 📜
+     */
+    obtenerDatos: function obtenerDatos(tipo) {
+      var _this4 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var url;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              url = '/administracion/usuario/obtenerDatos';
+              _context3.next = 3;
+              return axios.get(url, {
+                params: {
+                  'tipo': tipo,
+                  'consulta': 1
+                }
+              }).then(function (response) {
+                switch (tipo) {
+                  case 1:
+                    _this4.catCargos = response.data;
+                    break;
+                  case 2:
+                    _this4.catRemitente = response.data;
+                    break;
+                  case 3:
+                    _this4.catTermino = response.data;
+                    break;
+                  case 4:
+                    _this4.cat_diasTermino = response.data;
+                    break;
+                  case 5:
+                    _this4.cat_seguimiento = response.data;
+                    break;
+                  case 6:
+                    _this4.cat_departamentos = response.data;
+                    break;
+                  case 7:
+                    _this4.cat_tipo = response.data;
+                    break;
+                  case 8:
+                    _this4.cat_estutus = response.data;
+                    break;
+                  case 9:
+                    _this4.cat_partido = response.data;
+                    break;
+                  case 11:
+                    _this4.cat_tipo_distribucion = response.data;
+                    break;
+                  default:
+                    break;
+                }
+              })["catch"](function (error) {
+                var nombreMetodo = url.split('/');
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
+              });
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
+    },
+    // #endregion CATÁLOGOS 📜
+    // #region CONSULTAS A LA BASE DE DATOS 📚
+    /** 
+     * Obtiene las distribuciones por año
+     * Los partidos politicos estan mezclados en un solo array independientemente del año
+     * @param {number} anio - El año para obtener las distribuciones
+     */
+    getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
+      var _this5 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var loader, url, _yield$axios$get, data, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              if (anio) {
+                _context4.next = 2;
+                break;
+              }
+              return _context4.abrupt("return");
+            case 2:
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this5.$vs);
+              loader.text = 'Cargando distribuciones...';
+              url = '/administracion/solicitud/getDistribucionesPorAnio';
+              _context4.prev = 5;
+              _context4.next = 8;
+              return axios.get(url, {
+                params: {
+                  anio: anio
+                }
+              });
+            case 8:
+              _yield$axios$get = _context4.sent;
+              data = _yield$axios$get.data;
+              if (data.success) {
+                debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
+                _this5.CalculosPorAnio = data.calculos;
+                _this5.distribuciones = data.distribuciones;
+                _this5.Partidos_Con_Representacion = data.partidos_con_repr;
+                _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
+                debug('🐛 ✅ Datos cargados.');
+              } else {
+                debug('🐛 ❌ Error al obtener datos.');
+              }
+              _context4.next = 18;
+              break;
+            case 13:
+              _context4.prev = 13;
+              _context4.t0 = _context4["catch"](5);
+              debug("🐛 ❌ Error al obtener distribuciones:", _context4.t0);
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this5.$router);
+            case 18:
+              _context4.prev = 18;
+              loader.close();
+              return _context4.finish(18);
+            case 21:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, null, [[5, 13, 18, 21]]);
+      }))();
+    },
+    // DEPRECATED
+    // Esta mal la referencia ya que se van a repetir los IDs
+    /*
+    actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
+        const key = `con-${idCalculo}-${idPartido}`;
+        const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
+            || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
+        const total = partido ? (partido.C_fpaop || partido.monto_2_por_ciento) : 0;
+          let parsedValue = parseFloat(valor);
+        if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
+        if (parsedValue > total) parsedValue = total;
+          this.$set(this.ajustesDiciembre, key, parsedValue);
+    },
+    */
+    /**
+     * Guarda la edición del cálculo de Ministraciones
+     */
+    guardarEdicion: function guardarEdicion() {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var loader, url, datos, response, nombreMetodo;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this6.$vs);
+              loader.text = 'Guardando edición...';
+              // Lógica para guardar edición (llamada axios)
+              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
+              datos = {
+                p_comando: 'UPDATE',
+                p_id_calculo: _this6.selectedCalculo.id
+              };
+              _context5.prev = 4;
+              _context5.next = 7;
+              return axios.post(url, datos);
+            case 7:
+              response = _context5.sent;
+              // ⇋ Se manda post aunque sea GET por el controlador
+              debug('🐛 response.data:', response.data);
+              _this6.$vs.notification({
+                color: 'success',
+                text: 'Ministración actualizada'
+              });
+              //this.getCalculos(); // refrescar lista
+              _context5.next = 17;
+              break;
+            case 12:
+              _context5.prev = 12;
+              _context5.t0 = _context5["catch"](4);
+              debug("🐛 ❌ Error al guardar edición:", _context5.t0);
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this6.$router);
+            case 17:
+              _context5.prev = 17;
+              loader.close();
+              return _context5.finish(17);
+            case 20:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5, null, [[4, 12, 17, 20]]);
+      }))();
+    },
+    guardarCambios: function guardarCambios(calculo) {
+      var _this7 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var idCalculo, partidos;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              //id del calculo seleccionado 
+              idCalculo = calculo.id_calculo;
+              debug(' 🐛 Id del calculo: ' + idCalculo);
+              partidos = _this7.Partidos_Con_Representacion.filter(function (p) {
+                return p.id_calculo === idCalculo;
+              });
+              partidos.forEach(function (partido) {
+                var _this7$ajustesDiciemb;
+                var totalFinanciamiento = partido.C_fpaop;
+                var overrideDiciembre = (_this7$ajustesDiciemb = _this7.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this7$ajustesDiciemb !== void 0 ? _this7$ajustesDiciemb : null;
+
+                //const montosMensuales = this.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre, 'con-' + partido.id_calculo + '-' + partido.id_partido, partido);
+
+                debug("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
+                montosMensuales.forEach(function (monto, index) {
+                  var nombreMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][index];
+                  if (index === 11) {
+                    // Diciembre: mostrar todos los decimales
+                    console.log("  ".concat(nombreMes, ": ").concat(monto));
+                  } else {
+                    // Mostrar monto completo, sin formatear
+                    console.log("  ".concat(nombreMes, ": ").concat(monto));
+                  }
+                });
+              });
+              _this7.descargar_disabled = false; // Habilita descargar archivo
+            case 5:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6);
+      }))();
+    },
+    /**
+     * Descarga el archivo Excel de la distribución
+     * @param DistribucionId // debe de existir un preguardado antes
+     */
+    descargarMinistraciones: function descargarMinistraciones(id) {
+      var _this8 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Generando archivo Excel...';
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id);
+      var downloadUrl = null;
+      var link = null;
+      if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
+        throw new Error('❌ No se encontro el ID de la distribución');
+      }
+      // ⇋
+      axios.get(apiUrl, {
+        responseType: 'blob',
+        method: 'GET'
+      }).then(function (response) {
+        downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+        link = document.createElement('a');
+        link.href = downloadUrl;
+        var filename = "Anexo 3. Ministraciones.xlsx";
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        _this8.$vs.notification({
+          title: 'Éxito',
+          text: 'El archivo Excel se está descargando',
+          color: 'success'
+        });
+      })["catch"](function (error) {
+        var _error$response;
+        debug('🐛 Error al descargar Excel:', error);
+        var errorMessage = 'Error al descargar Excel';
+        if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        _this8.$vs.notification({
+          title: 'Error',
+          text: errorMessage,
+          color: 'danger',
+          time: 10000
+        });
+      })["finally"](function () {
+        loader.close();
+        try {
+          if (link && link.parentNode) {
+            link.parentNode.removeChild(link); // Elimina el elemento hijo
+          }
+
+          if (downloadUrl && typeof downloadUrl === 'string') {
+            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+          }
+        } catch (e) {
+          console.error('Error al limpiar recursos:', e);
+        }
+      });
+    },
+    // #endregion CONSULTAS A LA BASE DE DATOS 📚
+    // #region FORMATEOS 🛠
+    onDecimalInput: function onDecimalInput(event, idCalculo, idPartido) {
+      // const key = `con-${idCalculo}-${idPartido}`;
+      var valor = event.target.value;
+      valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+      this.$set(this.ajustesDiciembre, key, parseFloat(valor));
+    },
+    onInputMoneda: function onInputMoneda(event, partido, prefix) {
+      var key = prefix + partido.id_calculo + '-' + partido.id_partido;
+      var valorLimpio = Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(event.target.value);
+
+      // Almacenar el valor limpio en el objeto ajustesDiciembre
+      this.$set(this.ajustesDiciembre, key, parseFloat(valorLimpio));
+      // Formatear el valor limpio a la caja de texto
+      event.target.value = Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatoMonedaMX"])(valorLimpio);
+    },
+    /*
+    * Formatea un valor numérico a moneda - Función local
+    * @param {number} value - Valor numérico a formatear
+    * @returns {string} - Valor formateado como moneda
+    */
+    formatCurrency: function formatCurrency(value) {
+      if (value === null || value === undefined || isNaN(value)) return '$0.00';
+      //Con style: 'currency', ya no es necesario truncar manualmente
+      //const num = Math.floor(parseFloat(value) * 100) / 100;
+      var num = parseFloat(value);
+      return num.toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    },
+    getStepForMonto: function getStepForMonto(monto) {
+      if (!monto || isNaN(monto)) return '0.01';
+      var parts = monto.toString().split('.');
+      if (parts.length === 2) {
+        var longitudDecimales = parts[1].length;
+        return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
+      }
+      return '1';
+    },
+    // #endregion FORMATEOS 🛠
+    /*
+    calcularMontoIgualitario30() {
+        const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
+        const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
+        return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
+    },
+    */
+    /*
+    * Formatea a moneda
+    * @param {number} valor - El valor a formatear
+    * @returns {string} - El valor formateado
+    */
+    /* DEPRECATED
+     formatoMoneda(valor) {
+         return new Intl.NumberFormat('es-MX', {
+             style: 'currency',
+             currency: 'MXN',
+             minimumFractionDigits: 2
+         }).format(valor);
+     },
+     */
+    /*
+    * Formatea a decimal
+    * @param {number} valor - El valor a formatear
+    * @returns {string} - El valor formateado
+    */
+    /* DEPRECATED
+     formatearDecimal(valor) {
+         if (!valor) return '0.00';
+         const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+         return isNaN(numero) ? '0.00' : numero.toFixed(2);
+     },
+     */
+    // #region OPERACIONES DE LA VISTA 📊
+    /**
+      * Distribuye el monto total entre los 12 meses por partido de cada cálculo
+      * Es una forma de obtener los montos distribuidos por un arreglo de partidos
+      * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
+      * @param {object} partido - Partido político con el monto de diciembre 
+      * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
+      * @param {string} key - Key para la distribución si es {con | sin}
+      * @returns {Array<number>} - Array con los montos distribuidos
+      */
+    distribuirConEditableDiciembre: function distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
+      //const key = `${prefix}-${partido.id_calculo}-${partido.id_partido}`;
+      var mensual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](totalFinanciamientoPartido).dividedBy(12); // objeto Decimal
+
+      // Validar y convertir el valor de diciembre
+      var valorDiciembre = parseFloat(partido.mintr_diciembre);
+      var esValido = !isNaN(valorDiciembre) && valorDiciembre !== 0;
+      var montoDiciembre = esValido ? valorDiciembre : mensual.toNumber();
+
+      // Actualizar estado del valor de diciembre temporal
+      partido.mintr_diciembre = montoDiciembre;
+      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+      this.$set(this.ajustesDiciembre, key, montoDiciembre);
+
+      // Retornar array con 11 meses iguales + diciembre
+      return [].concat(_toConsumableArray(Array(11).fill(mensual)), [montoDiciembre]).map(function (v) {
+        return v.toNumber ? v.toNumber() : v;
+      }); // 123.456 Decimal->toNumber()
+    },
+    /*
+     * Ajustar decimal el monto de diciembre
+     */
+    ajustarDecimal: function ajustarDecimal(partido, operacion) {
+      var ajusteUnitario = 0.01;
+
+      // Asegurar que el campo ajuste exista y sea reactivo
+      if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (partido.restado === undefined) this.$set(partido, 'restado', false);
+      if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
+      if (operacion === 'sumar') {
+        if (this.totalAjusteDecimales < 0) {
+          partido.ajuste += ajusteUnitario;
+          partido.sumado = true;
+        } else {
+          this.$vs.notification({
+            title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'danger'
+          });
+        }
+      } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+        partido.restado = true;
+      }
+    },
+    /*
+    * Ajustar decimal manualmente -> diciembre
+    */
+    ajustarDecimalManual: function ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
+      var _valorActual$toString;
+      var key = "con-".concat(idCalculo, "-").concat(idPartido); // MODIFICAR LA KEY 😵
+      var actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](valorActual || 0);
+
+      // Detectar número de decimales en el valor actual
+      var decimales = ((_valorActual$toString = valorActual.toString().split('.')[1]) === null || _valorActual$toString === void 0 ? void 0 : _valorActual$toString.length) || 0;
+      var paso = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"]('1').dividedBy(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"]('10').pow(decimales || 3)); // default 0.001
+
+      if (operacion === 'sumar') {
+        actual = actual.plus(paso);
+      } else {
+        actual = actual.minus(paso);
+        if (actual.isNegative()) actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0); // sigue evitando negativos
+      }
+
+      this.$set(this.ajustesDiciembre, key, actual.toNumber());
+      if (actual.greaterThan(total)) {
+        this.$vs.notification({
+          title: 'Atención',
+          text: 'El monto de diciembre supera el total asignado al partido.',
+          color: 'warning'
+        });
+      }
+    },
+    /**
+     * ➕ Obtiene los totales mensuales para un cálculo específico
+     * @param {number} idCalculo - ID del cálculo
+     * @returns {Array<number>} - Array con los totales mensuales
+     */
+    obtenerTotalesMensuales: function obtenerTotalesMensuales(idCalculo) {
+      var _this9 = this;
+      try {
+        var totales = Array(12).fill().map(function () {
+          return new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0);
+        });
+
+        // Se mezclan partidos con y sin representación, y se filtran por cálculo
+        var partidos = [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).filter(function (p) {
+          return p.id_calculo === idCalculo;
+        });
+        partidos.forEach(function (partido) {
+          var hasFpaop = partido.C_fpaop !== undefined;
+          var key = "".concat(hasFpaop ? 'con' : 'sin', "-").concat(partido.id_calculo, "-").concat(partido.id_partido);
+          // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
+          var total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
+          //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
+          var override = _this9.ajustesDiciembre[key];
+          var montos = _this9.distribuirConEditableDiciembre(total, partido, key);
+          montos.forEach(function (monto, i) {
+            // Precisión total
+            totales[i] = totales[i].plus(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](monto));
+          });
+        });
+
+        // Convertir a números del objeto Decimal para mostrar
+        return totales.map(function (t) {
+          return t.toNumber();
+        });
+      } catch (error) {
+        debug('🐛 ❌ Error al obtener totales mensuales:', error);
+        return [];
+      }
+    },
+    /**
+     * ➕ Obtiene el total general para un cálculo específico
+     * @param {number} id_calculo - ID del cálculo
+     * @returns {number} - Total general
+     */
+    obtenerTotalGeneral: function obtenerTotalGeneral(id_calculo) {
+      var totales = this.obtenerTotalesMensuales(id_calculo);
+      return totales.reduce(function (sum, val) {
+        return new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](sum).plus(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](val));
+      }, new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0)).toNumber();
+    },
+    // #endregion OPERACIONES DE LA VISTA 📊
+    /**
+     * ✔ Validar campos
+     * @returns {boolean}
+     */
+    /*
+    validarCampos() {
+        this.limpiarErrores();
+        if (this.anio === '') {
+            this.errorAnio = 'El campo año es obligatorio';
+            this.error = true;
+        }
+        if (this.monto30Input === '') {
+            this.errorMonto30 = 'Ingrese un monto 30% válido';
+            this.error = true;
+        }
+          if (this.monto70Input === '') {
+            this.errorMonto70 = 'Ingrese un monto 70% válido';
+            this.error = true;
+        }
+        if (this.distribucion === '') {
+            this.errorDistribucion = 'El campo distribución es obligatorio';
+            this.error = true;
+        }
+        // Validar que llenen todos los campos
+        this.Partidos_Con_Representacion.forEach(partido => {
+              if (partido.inputPorcentaje === '') {
+                partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
+                this.error = true;
+            }
+        });
+        return this.error;
+    },
+    */
+    /**
+     * 🧹 Limpia todos los campos del formulario
+     * @returns {void}
+     */
+    limpiarCampos: function limpiarCampos() {
+      this.anio = '', this.limpiarErrores();
+    },
+    /**
+     * Limpia todos los mensajes de error
+     * @returns {void}
+     */
+    limpiarErrores: function limpiarErrores() {
+      this.error = false;
+      this.errorAnio = '';
+    }
+  },
+  computed: {
+    totalAjusteDecimales: function totalAjusteDecimales() {
+      return this.Partidos_Con_Representacion.reduce(function (sum, p) {
+        return sum + (p.ajuste || 0);
+      }, 0);
+    }
+  }
+});
 
 /***/ }),
 
@@ -27962,10 +28734,7 @@ var render = function render() {
               staticStyle: {
                 "text-align": "left"
               }
-            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop,
-            // ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido],
-            //'con-' + partido.id_calculo + '-' + partido.id_partido,
-            partido), function (monto, mesIndex) {
+            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop, partido, "con-" + partido.id_calculo + "-" + partido.id_partido), function (monto, mesIndex) {
               return _c("vs-td", {
                 key: "mes-" + partido.id_calculo + "-" + partido.id_partido + "-" + mesIndex,
                 staticStyle: {
@@ -28038,10 +28807,7 @@ var render = function render() {
               staticStyle: {
                 "text-align": "left"
               }
-            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partidoS.monto_2_por_ciento,
-            // ajustesDiciembre['sin-' + partido.id_calculo + '-' + partido.id_partido],
-            //'sin-' + partidoS.id_calculo + '-' + partidoS.id_partido,
-            partidoS), function (monto, mesIndex) {
+            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partidoS.monto_2_por_ciento, partidoS, "sin-" + partidoS.id_calculo + "-" + partidoS.id_partido), function (monto, mesIndex) {
               return _c("vs-td", {
                 key: "mes-sin-" + partidoS.id_calculo + "-" + partidoS.id_partido + "-" + mesIndex,
                 staticStyle: {
@@ -238855,14 +239621,14 @@ function _userValidToEdit() {
 /*!******************************************!*\
   !*** ./resources/js/utils/formatters.js ***!
   \******************************************/
-/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMoneda, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal, limpiarNumeroInput */
+/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMonedaMX, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal, limpiarNumeroInput */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMYWithMonthName", function() { return formatDateToDMYWithMonthName; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMoneda", function() { return formatoMoneda; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMonedaMX", function() { return formatoMonedaMX; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentajeSimple", function() { return formatearPorcentajeSimple; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentaje", function() { return formatearPorcentaje; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearDecimal", function() { return formatearDecimal; });
@@ -239025,7 +239791,7 @@ var tieneFormatoMonedaValido = function tieneFormatoMonedaValido(str) {
  * formatoMoneda(null);          // "$0.00"
  * formatoMoneda("abc");         // "$0.00"
  */
-var formatoMoneda = function formatoMoneda(valor) {
+var formatoMonedaMX = function formatoMonedaMX(valor) {
   var decimales = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
   // Validación de entrada
   if (valor === null || valor === undefined || valor === '') return '$0.00';

@@ -88,10 +88,7 @@
                                     </vs-td>
                                     <!-- Genera los campos por los meses por cada partido-->
                                     <vs-td v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
-                                        partido.C_fpaop,
-                                        // ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido],
-                                        //'con-' + partido.id_calculo + '-' + partido.id_partido,
-                                         partido)"
+                                        partido.C_fpaop, partido, 'con-' + partido.id_calculo + '-' + partido.id_partido)"
                                         :key="'mes-' + partido.id_calculo + '-' + partido.id_partido + '-' + mesIndex" style="text-align: left;">
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
@@ -131,10 +128,7 @@
                                     </vs-td>
                                     <!-- Genera los campos por los meses por cada partido sin representación -->
                                     <vs-td v-for="(monto, mesIndex) in distribuirConEditableDiciembre(
-                                        partidoS.monto_2_por_ciento,
-                                        // ajustesDiciembre['sin-' + partido.id_calculo + '-' + partido.id_partido],
-                                        //'sin-' + partidoS.id_calculo + '-' + partidoS.id_partido,
-                                        partidoS)"
+                                        partidoS.monto_2_por_ciento, partidoS, 'sin-' + partidoS.id_calculo + '-' + partidoS.id_partido)"
                                         :key="'mes-sin-' + partidoS.id_calculo + '-' + partidoS.id_partido + '-' + mesIndex"
                                         style="text-align: left;">
                                         <!-- Solo diciembre (índice 11) es editable -->
@@ -270,7 +264,7 @@ export default {
             catAnio: [],
             //calculo: {}, // Se usa para cargar el cálculo seleccionado
             //montosFijos: {},
-            ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor
+            ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación
             //cat_tipo_distribucion: [],
             //distribucion: [],
             distribuciones: [],
@@ -711,27 +705,25 @@ export default {
          * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
          * @param {object} partido - Partido político con el monto de diciembre 
          * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
+         * @param {string} key - Key para la distribución si es {con | sin}
          * @returns {Array<number>} - Array con los montos distribuidos
          */
-         distribuirConEditableDiciembre(totalFinanciamientoPartido, partido) {
-            const montos = [];
-            // Convertir a Decimal para mayor precisión
-            const override = partido.mintr_diciembre !== undefined ? new Decimal(partido.mintr_diciembre) : null;
+         distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
+            //const key = `${prefix}-${partido.id_calculo}-${partido.id_partido}`;
+            const mensual = new Decimal(totalFinanciamientoPartido).dividedBy(12); // objeto Decimal
 
-            // Usa dividedBy() en lugar del operador / para evitar problemas de precisión
-            const mensual = new Decimal(totalFinanciamientoPartido).dividedBy(12);
-            // Se agrega el valor mensual de forma individual a los 11 meses
-            montos.push(...Array(11).fill(mensual));
-            // Si no tiene nada partido.mintr_diciembre, distribuir igualmente entre los 12 meses
-            if (!override || override.isNaN() || override === null || override.toNumber() === 0) {
-                // Se agregan los 12 meses
-                partido.mintr_diciembre = mensual.toNumber();
-                montos.push(partido.mintr_diciembre);
-                //debug('🐛 key: ', key, 'override: ', partido.mintr_diciembre, 'override tipo: ', typeof partido.mintr_diciembre);
-            } else { // Si hay mintr_diciembre, se agrega el monto como viene en la base
-                montos.push(partido.mintr_diciembre);
-            }
-            return montos; // 123.456 (tipo number)
+            // Validar y convertir el valor de diciembre
+            const valorDiciembre = parseFloat(partido.mintr_diciembre);
+            const esValido = !isNaN(valorDiciembre) && valorDiciembre !== 0;
+            const montoDiciembre = esValido ? valorDiciembre : mensual.toNumber();
+            
+            // Actualizar estado del valor de diciembre temporal
+            partido.mintr_diciembre = montoDiciembre;
+            //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+            this.$set(this.ajustesDiciembre, key, montoDiciembre);
+
+            // Retornar array con 11 meses iguales + diciembre
+            return [...Array(11).fill(mensual), montoDiciembre].map(v => v.toNumber ? v.toNumber() : v); // 123.456 Decimal->toNumber()
         },
        /*
         * Ajustar decimal el monto de diciembre
@@ -788,35 +780,49 @@ export default {
                 });
             }
         },
+        /**
+         * ➕ Obtiene los totales mensuales para un cálculo específico
+         * @param {number} idCalculo - ID del cálculo
+         * @returns {Array<number>} - Array con los totales mensuales
+         */
         obtenerTotalesMensuales(idCalculo) {
             try {
                 const totales = Array(12).fill().map(() => new Decimal(0));
 
+                // Se mezclan partidos con y sin representación, y se filtran por cálculo
                 const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(p => p.id_calculo === idCalculo);
 
                 partidos.forEach(partido => {
-                    const total = partido.C_fpaop || partido.monto_2_por_ciento;
-                    const key = `con-${partido.id_calculo}-${partido.id_partido}`;
+                    const hasFpaop = partido.C_fpaop !== undefined;
+                    const key = `${hasFpaop ? 'con' : 'sin'}-${partido.id_calculo}-${partido.id_partido}`;
+                    // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
+                    const total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
+                    //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
                     const override = this.ajustesDiciembre[key];
 
-                    //const montos = this.distribuirConEditableDiciembre(total, override, key, partido);
+                    const montos = this.distribuirConEditableDiciembre(total, partido, key);
                     montos.forEach((monto, i) => {
                         // Precisión total
                         totales[i] = totales[i].plus(new Decimal(monto));
                     });
                 });
 
-                // Convertir a números nativos para mostrar
+                // Convertir a números del objeto Decimal para mostrar
                 return totales.map(t => t.toNumber());
             } catch (error) {
-                debug('🐛 Error al obtener totales mensuales:', error);
+                debug('🐛 ❌ Error al obtener totales mensuales:', error);
                 return [];
             }
         },
+        /**
+         * ➕ Obtiene el total general para un cálculo específico
+         * @param {number} id_calculo - ID del cálculo
+         * @returns {number} - Total general
+         */
         obtenerTotalGeneral(id_calculo) {
             const totales = this.obtenerTotalesMensuales(id_calculo);
             return totales.reduce((sum, val) => new Decimal(sum).plus(new Decimal(val)), new Decimal(0)).toNumber();
-        }
+        },
         // #endregion OPERACIONES DE LA VISTA 📊
 
         /**
@@ -861,34 +867,6 @@ export default {
          */
         limpiarCampos() {
             this.anio = '',
-            this.monto30 = '',
-            this.monto30Input = '',
-            this.monto70 = '',
-            this.monto70Input = '',
-            //this.distribucion = [];
-            this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
-            this.descargar_disabled = true; // Deshabilita el botón de descargar
-
-            // Reiniciar valores de partidos a 0.0 si existen
-            if (this.Partidos_Con_Representacion) {
-                this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(partido => ({
-                    ...partido,
-                    porcentaje_votacion: 0.00,
-                    inputPorcentaje: '',
-                    errorPorcentajeVotacion: '',
-                    ajuste: 0.00,
-                }));
-            } else {
-                this.Partidos_Con_Representacion = [];
-            }
-            if (this.Partidos_Sin_Representacion) {
-                this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(partido => ({
-                    ...partido,
-                    D_monto_2_por_ciento: 0.00,
-                }));
-            } else {
-                this.Partidos_Sin_Representacion = [];
-            }
             this.limpiarErrores();
         },
         /**
@@ -898,12 +876,6 @@ export default {
         limpiarErrores() {
             this.error = false;
             this.errorAnio = '';
-            this.errorMonto30 = '',
-                this.errorMonto70 = '',
-                this.errorDistribucion = '';
-            this.Partidos_Con_Representacion.forEach(partido => {
-                partido.errorPorcentajeVotacion = '';
-            });
         },
     },
     computed: {
