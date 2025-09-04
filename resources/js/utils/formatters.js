@@ -2,8 +2,9 @@
 * @description Archivo de ayuda para formatear datos de la base de datos 
 * y mostrar en vistas .vue
 * @author Tony
-* @version 1.0.0
+* @version 1.2.1
 * @date 18/08/2025
+* @updated 04/09/2025
 */
 /**
  * Formatea una fecha de entrada a un formato específico con el separador indicado.
@@ -119,20 +120,75 @@ export const formatDateToDMYWithMonthName = (dateString, format = 'full') => {
     }
 }
 
+/**
+ * Valida si un string tiene formato de número con o sin símbolo de moneda
+ * @param {string} str - String a validar
+ * @returns {boolean} - true si el formato es válido
+ */
+const tieneFormatoMonedaValido = (str) => {
+    // Acepta números con/sin signo, con/sin separadores de miles, y con/sin decimales
+    const formatoMonedaRegex = /^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$/;
+    return formatoMonedaRegex.test(str);
+};
 
-/*
-* Formatea a moneda
-* @param {number} valor - El valor a formatear
-* @returns {string} - El valor formateado
-*/
-export const formatoMoneda = (valor, defaultDecimal = 2) => {
-    return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: defaultDecimal,
-    maximumFractionDigits: defaultDecimal
-    }).format(valor);
-}
+/**
+ * Formatea un número como moneda mexicana
+ * @param {number|string} valor - Valor a formatear (puede ser número o string numérico)
+ * @param {number} [decimales=2] - Número de decimales a mostrar (0-20)
+ * @returns {string} - Valor formateado como moneda mexicana
+ * @example
+ * formatoMoneda(1234.567);      // "$1,234.57"
+ * formatoMoneda("1234.567", 3); // "$1,234.567"
+ * formatoMoneda(null);          // "$0.00"
+ * formatoMoneda("abc");         // "$0.00"
+ */
+export const formatoMoneda = (valor, decimales = 2) => {
+    // Validación de entrada
+    if (valor === null || valor === undefined || valor === '') return '$0.00';
+    
+     // Si es string, validar formato y limpiar
+     if (typeof valor === 'string') {
+        // Eliminar espacios y símbolos de moneda existentes
+        const valorLimpio = valor.trim().replace(/[$\s,]/g, '');
+        
+        // Validar que sea un número válido
+        if (!tieneFormatoMonedaValido(valorLimpio) || isNaN(Number(valorLimpio))) {
+            return '$0.00';
+        }
+        // Convertir a número
+        valor = Number(valorLimpio);
+    }
+
+    const num = Number(valor);
+    if (isNaN(num)) return '$0.00';
+    
+    // Asegurar que los decimales estén en el rango permitido (0-20)
+    const decimalesAjustados = Math.min(Math.max(0, Math.floor(decimales)), 20);
+    
+    // const options = {
+    //     style: 'currency',
+    //     currency: 'MXN',
+    //     minimumFractionDigits: decimalesAjustados,
+    //     maximumFractionDigits: decimalesAjustados,
+    //     useGrouping: true
+    // };
+    
+    try {
+        const formatter = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: decimalesAjustados,
+            maximumFractionDigits: decimalesAjustados,
+            useGrouping: true
+        });
+        //return num.toLocaleString('es-MX', options);
+        return formatter.format(num);
+    } catch (error) {
+        console.error('Error al formatear moneda:', error);
+        // Fallback básico en caso de error
+        return `$${num.toFixed(decimalesAjustados)}`;
+    }
+};
 
 /* Función para formatear el porcentaje (solo formatea)
 * @param {number} valor - El valor a formatear

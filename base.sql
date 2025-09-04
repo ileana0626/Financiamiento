@@ -1641,7 +1641,8 @@ BEGIN
         cpcr.ajuste,
         cpcr.B_Ajuste_70_por_ciento,
         cpcr.C_fpaop,
-        cpcr.D_fpatov
+        cpcr.D_fpatov,
+        cpcr.mintr_diciembre
     FROM calculo_dppp c
     JOIN (
         SELECT id_calculo, SUBSTRING_INDEX(SUBSTRING_INDEX(pp_con_repr, ',', n.n), ',', -1) AS id_partido
@@ -1665,7 +1666,8 @@ BEGIN
         psr.siglas,
         psr.nombre,
         psr.logo,
-        cpsr.monto_2_por_ciento
+        cpsr.monto_2_por_ciento,
+        cpsr.mintr_diciembre
     FROM calculo_dppp c
     JOIN (
         SELECT id_calculo, SUBSTRING_INDEX(SUBSTRING_INDEX(pp_sin_repr, ',', n.n), ',', -1) AS id_partido

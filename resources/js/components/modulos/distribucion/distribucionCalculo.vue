@@ -23,7 +23,7 @@
             </div>
             <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                 <div>
-                    <vs-table :data="NewlistCalculos || []" class="tabla-ajustada">
+                    <vs-table class="tabla-ajustada">
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->
@@ -386,7 +386,6 @@
                 </vs-dialog>
             </div>
         </template>
-
     </div>
 </template>
 <script>
