@@ -166,7 +166,8 @@
 
                                     <vs-td v-for="(monto, i) in obtenerTotalesMensuales(calculo.id_calculo)"
                                         :key="'total-mes-' + i" style="text-align: left; font-weight: bold;">
-                                        {{ i === 11 ? monto : '$' + truncateTo2Decimals(monto) }}
+                                        <!-- {{ i === 11 ? monto : '$' + truncateTo2Decimals(monto) }} -->
+                                        {{ formatCurrency(monto) }}
                                     </vs-td>
                                 </vs-tr>
 
@@ -225,6 +226,7 @@
 //import { forEach } from 'lodash';
 import methods from '../../../methods';
 import { loading } from '../../../methods';
+import { limpiarNumeroInput, formatoMonedaMX as formatoMonedaLocal} from '../../../utils/formatters'; // 😉
 import { Decimal } from 'decimal.js';
 /**
  * 🐛 Función para depuración development
@@ -268,9 +270,9 @@ export default {
             catAnio: [],
             //calculo: {}, // Se usa para cargar el cálculo seleccionado
             //montosFijos: {},
-            ajustesDiciembre: {},
+            ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor
             //cat_tipo_distribucion: [],
-            distribucion: [],
+            //distribucion: [],
             distribuciones: [],
             CalculosPorAnio: [], // Se usan para listar los calculos por año
             // Validaciones
@@ -305,80 +307,18 @@ export default {
 
     },
     methods: {
-        async getAnio() {
-            this.catAnio = []
-            let url = '/administracion/usuario/getAnioFiscal'
 
-            await axios.get(url).then(response => {
-                this.catAnio = response.data
-            }).catch((error) => {
-                console.log(error)
-                let nombreMetodo = url.split('/')
-                methods.catchHandler(error, nombreMetodo[3], this.$router)
-            })
-        },
 
-        truncateTo2Decimals(value) {
+        // DEPRECATED
+        /*        truncateTo2Decimals(value) {
             if (!value) return '0.00';
             const num = parseFloat(value);
             // usa Math.floor para truncar y luego toFixed(2), es redundante
             return (Math.floor(num * 100) / 100).toFixed(2);
         },
-        onDecimalInput(event, idCalculo, idPartido) {
-            const key = `con-${idCalculo}-${idPartido}`;
-            let valor = event.target.value;
+        */
 
-            valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-            this.$set(this.ajustesDiciembre, key, parseFloat(valor));
-        },
-        formatCurrency(value) {
-            if (value === null || value === undefined || isNaN(value)) return '$0.00';
-            //Con style: 'currency', ya no es necesario truncar manualmente
-            //const num = Math.floor(parseFloat(value) * 100) / 100;
-            const num = parseFloat(value);
-            return num.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        },
-        getStepForMonto(monto) {
-            if (!monto || isNaN(monto)) return '0.01';
-
-            const parts = monto.toString().split('.');
-            if (parts.length === 2) {
-                const longitudDecimales = parts[1].length;
-                return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
-            }
-            return '1';
-        },
-        ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
-            const key = `con-${idCalculo}-${idPartido}`;
-            let actual = new Decimal(valorActual || 0);
-
-            // Detectar número de decimales en el valor actual
-            const decimales = valorActual.toString().split('.')[1]?.length || 0;
-            const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
-
-            if (operacion === 'sumar') {
-                actual = actual.plus(paso);
-            } else {
-                actual = actual.minus(paso);
-                if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
-            }
-
-            this.$set(this.ajustesDiciembre, key, actual.toNumber());
-
-            if (actual.greaterThan(total)) {
-                this.$vs.notification({
-                    title: 'Atención',
-                    text: 'El monto de diciembre supera el total asignado al partido.',
-                    color: 'warning'
-                });
-            }
-        },
+        /* DEPRECATED
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
 
@@ -395,9 +335,13 @@ export default {
 
             return `${dia} ${mesAbreviado} ${anio}`
         },
-        /**
+        */
+        // #endregion Formateos
+
+        /** DEPRECATED
          * Obtiene los calculos de financiamiento para listar
          */
+        /*
         getCalculos() {
             const loader = loading(this.$vs);
             loader.text = 'Cargando datos...';
@@ -426,12 +370,34 @@ export default {
                     loader.close();
                 })
         },
-        onChangeDistribucion(value) {
-            this.distribucion = value;
-            setTimeout(() => {
-                document.activeElement.blur();
-            }, 100);
+        */
+        //DEPRECATED
+        // onChangeDistribucion(value) {
+        //     this.distribucion = value;
+        //     setTimeout(() => {
+        //         document.activeElement.blur();
+        //     }, 100);
+        // },
+
+        // #region CATÁLOGOS 📜
+        /**
+         * Obtiene el año fiscal
+         */
+        async getAnio() {
+            this.catAnio = []
+            let url = '/administracion/usuario/getAnioFiscal'
+
+            await axios.get(url).then(response => {
+                this.catAnio = response.data
+            }).catch((error) => {
+                console.log(error)
+                let nombreMetodo = url.split('/')
+                methods.catchHandler(error, nombreMetodo[3], this.$router)
+            })
         },
+        /**
+         * Obtiene los datos de los catálogos 📜
+         */
         async obtenerDatos(tipo) {
             let url = '/administracion/usuario/obtenerDatos'
             await axios.get(url, {
@@ -480,6 +446,9 @@ export default {
 
             });
         },
+        // #endregion CATÁLOGOS 📜
+
+        // #region CONSULTAS A LA BASE DE DATOS 📚
         /** 
          * Obtiene las distribuciones por año
          * Los partidos politicos estan mezclados en un solo array independientemente del año
@@ -530,34 +499,6 @@ export default {
             this.$set(this.ajustesDiciembre, key, parsedValue);
         },
         */
-        /**
-         * Distribuye el monto total entre los 12 meses por partido de cada cálculo
-         * Es una forma de obtener los montos distribuidos por un arreglo de partidos
-         * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
-         * @param {object} partido - Partido político con el monto de diciembre 
-         * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
-         * @returns {Array<number>} - Array con los montos distribuidos
-         */
-        distribuirConEditableDiciembre(totalFinanciamientoPartido, partido) {
-            const montos = [];
-            // Convertir a Decimal para mayor precisión
-            const override = partido.mintr_diciembre !== undefined ? new Decimal(partido.mintr_diciembre) : null;
-
-            // Usa dividedBy() en lugar del operador / para evitar problemas de precisión
-            const mensual = new Decimal(totalFinanciamientoPartido).dividedBy(12);
-            // Se agrega el valor mensual de forma individual a los 11 meses
-            montos.push(...Array(11).fill(mensual));
-            // Si no tiene nada partido.mintr_diciembre, distribuir igualmente entre los 12 meses
-            if (!override || override.isNaN() || override === null || override.toNumber() === 0) {
-                // Se agregan los 12 meses
-                partido.mintr_diciembre = mensual.toNumber();
-                montos.push(partido.mintr_diciembre);
-                //debug('🐛 key: ', key, 'override: ', partido.mintr_diciembre, 'override tipo: ', typeof partido.mintr_diciembre);
-            } else { // Si hay mintr_diciembre, se agrega el monto como viene en la base
-                montos.push(partido.mintr_diciembre);
-            }
-            return montos; // 123.456 (tipo number)
-        },
 
         /**
          * Guarda la edición del cálculo de Ministraciones
@@ -680,6 +621,55 @@ export default {
                     }
                 });
         },
+        // #endregion CONSULTAS A LA BASE DE DATOS 📚
+
+        // #region FORMATEOS 🛠
+        onDecimalInput(event, idCalculo, idPartido) {
+            // const key = `con-${idCalculo}-${idPartido}`;
+            let valor = event.target.value;
+
+            valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+
+            this.$set(this.ajustesDiciembre, key, parseFloat(valor));
+        },
+        onInputMoneda(event, partido, prefix) {
+            const key = prefix + partido.id_calculo + '-' + partido.id_partido;
+            const valorLimpio = limpiarNumeroInput(event.target.value);
+
+            // Almacenar el valor limpio en el objeto ajustesDiciembre
+            this.$set(this.ajustesDiciembre, key, parseFloat(valorLimpio));
+            // Formatear el valor limpio a la caja de texto
+            event.target.value = formatoMonedaLocal(valorLimpio);
+        },
+        /*
+        * Formatea un valor numérico a moneda - Función local
+        * @param {number} value - Valor numérico a formatear
+        * @returns {string} - Valor formateado como moneda
+        */
+        formatCurrency(value) {
+            if (value === null || value === undefined || isNaN(value)) return '$0.00';
+            //Con style: 'currency', ya no es necesario truncar manualmente
+            //const num = Math.floor(parseFloat(value) * 100) / 100;
+            const num = parseFloat(value);
+            return num.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        getStepForMonto(monto) {
+            if (!monto || isNaN(monto)) return '0.01';
+
+            const parts = monto.toString().split('.');
+            if (parts.length === 2) {
+                const longitudDecimales = parts[1].length;
+                return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
+            }
+            return '1';
+        },
+        // #endregion FORMATEOS 🛠
+
         /*
         calcularMontoIgualitario30() {
             const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
@@ -687,11 +677,66 @@ export default {
             return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
         },
         */
-
         /*
-        * Ajustar decimal
+        * Formatea a moneda
+        * @param {number} valor - El valor a formatear
+        * @returns {string} - El valor formateado
         */
-        ajustarDecimal(partido, operacion) {
+       /* DEPRECATED
+        formatoMoneda(valor) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2
+            }).format(valor);
+        },
+        */
+        /*
+        * Formatea a decimal
+        * @param {number} valor - El valor a formatear
+        * @returns {string} - El valor formateado
+        */
+       /* DEPRECATED
+        formatearDecimal(valor) {
+            if (!valor) return '0.00';
+            const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
+            return isNaN(numero) ? '0.00' : numero.toFixed(2);
+        },
+        */
+
+       // #region OPERACIONES DE LA VISTA 📊
+       /**
+         * Distribuye el monto total entre los 12 meses por partido de cada cálculo
+         * Es una forma de obtener los montos distribuidos por un arreglo de partidos
+         * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
+         * @param {object} partido - Partido político con el monto de diciembre 
+         * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
+         * @returns {Array<number>} - Array con los montos distribuidos
+         */
+         distribuirConEditableDiciembre(totalFinanciamientoPartido, partido) {
+            const montos = [];
+            // Convertir a Decimal para mayor precisión
+            const override = partido.mintr_diciembre !== undefined ? new Decimal(partido.mintr_diciembre) : null;
+
+            // Usa dividedBy() en lugar del operador / para evitar problemas de precisión
+            const mensual = new Decimal(totalFinanciamientoPartido).dividedBy(12);
+            // Se agrega el valor mensual de forma individual a los 11 meses
+            montos.push(...Array(11).fill(mensual));
+            // Si no tiene nada partido.mintr_diciembre, distribuir igualmente entre los 12 meses
+            if (!override || override.isNaN() || override === null || override.toNumber() === 0) {
+                // Se agregan los 12 meses
+                partido.mintr_diciembre = mensual.toNumber();
+                montos.push(partido.mintr_diciembre);
+                //debug('🐛 key: ', key, 'override: ', partido.mintr_diciembre, 'override tipo: ', typeof partido.mintr_diciembre);
+            } else { // Si hay mintr_diciembre, se agrega el monto como viene en la base
+                montos.push(partido.mintr_diciembre);
+            }
+            return montos; // 123.456 (tipo number)
+        },
+       /*
+        * Ajustar decimal el monto de diciembre
+        */
+       ajustarDecimal(partido, operacion) {
             const ajusteUnitario = 0.01;
 
             // Asegurar que el campo ajuste exista y sea reactivo
@@ -716,27 +761,64 @@ export default {
             }
         },
         /*
-        * Formatea a moneda
-        * @param {number} valor - El valor a formatear
-        * @returns {string} - El valor formateado
+        * Ajustar decimal manualmente -> diciembre
         */
-        formatoMoneda(valor) {
-            return new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2
-            }).format(valor);
+        ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
+            const key = `con-${idCalculo}-${idPartido}`; // MODIFICAR LA KEY 😵
+            let actual = new Decimal(valorActual || 0);
+
+            // Detectar número de decimales en el valor actual
+            const decimales = valorActual.toString().split('.')[1]?.length || 0;
+            const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
+
+            if (operacion === 'sumar') {
+                actual = actual.plus(paso);
+            } else {
+                actual = actual.minus(paso);
+                if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
+            }
+
+            this.$set(this.ajustesDiciembre, key, actual.toNumber());
+
+            if (actual.greaterThan(total)) {
+                this.$vs.notification({
+                    title: 'Atención',
+                    text: 'El monto de diciembre supera el total asignado al partido.',
+                    color: 'warning'
+                });
+            }
         },
-        /*
-        * Formatea a decimal
-        * @param {number} valor - El valor a formatear
-        * @returns {string} - El valor formateado
-        */
-        formatearDecimal(valor) {
-            if (!valor) return '0.00';
-            const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-            return isNaN(numero) ? '0.00' : numero.toFixed(2);
+        obtenerTotalesMensuales(idCalculo) {
+            try {
+                const totales = Array(12).fill().map(() => new Decimal(0));
+
+                const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(p => p.id_calculo === idCalculo);
+
+                partidos.forEach(partido => {
+                    const total = partido.C_fpaop || partido.monto_2_por_ciento;
+                    const key = `con-${partido.id_calculo}-${partido.id_partido}`;
+                    const override = this.ajustesDiciembre[key];
+
+                    //const montos = this.distribuirConEditableDiciembre(total, override, key, partido);
+                    montos.forEach((monto, i) => {
+                        // Precisión total
+                        totales[i] = totales[i].plus(new Decimal(monto));
+                    });
+                });
+
+                // Convertir a números nativos para mostrar
+                return totales.map(t => t.toNumber());
+            } catch (error) {
+                debug('🐛 Error al obtener totales mensuales:', error);
+                return [];
+            }
         },
+        obtenerTotalGeneral(id_calculo) {
+            const totales = this.obtenerTotalesMensuales(id_calculo);
+            return totales.reduce((sum, val) => new Decimal(sum).plus(new Decimal(val)), new Decimal(0)).toNumber();
+        }
+        // #endregion OPERACIONES DE LA VISTA 📊
+
         /**
          * ✔ Validar campos
          * @returns {boolean}
@@ -772,17 +854,18 @@ export default {
             return this.error;
         },
         */
+       
         /**
          * 🧹 Limpia todos los campos del formulario
          * @returns {void}
          */
         limpiarCampos() {
             this.anio = '',
-                this.monto30 = '',
-                this.monto30Input = '',
-                this.monto70 = '',
-                this.monto70Input = '',
-                this.distribucion = [];
+            this.monto30 = '',
+            this.monto30Input = '',
+            this.monto70 = '',
+            this.monto70Input = '',
+            //this.distribucion = [];
             this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
             this.descargar_disabled = true; // Deshabilita el botón de descargar
 
@@ -822,36 +905,6 @@ export default {
                 partido.errorPorcentajeVotacion = '';
             });
         },
-        obtenerTotalesMensuales(idCalculo) {
-            try {
-                const totales = Array(12).fill().map(() => new Decimal(0));
-
-                const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(p => p.id_calculo === idCalculo);
-
-                partidos.forEach(partido => {
-                    const total = partido.C_fpaop || partido.monto_2_por_ciento;
-                    const key = `con-${partido.id_calculo}-${partido.id_partido}`;
-                    const override = this.ajustesDiciembre[key];
-
-                    //const montos = this.distribuirConEditableDiciembre(total, override, key, partido);
-                    montos.forEach((monto, i) => {
-                        // Precisión total
-                        totales[i] = totales[i].plus(new Decimal(monto));
-                    });
-                });
-
-                // Convertir a números nativos para mostrar
-                return totales.map(t => t.toNumber());
-            } catch (error) {
-                debug('🐛 Error al obtener totales mensuales:', error);
-                return [];
-            }
-        },
-
-        obtenerTotalGeneral(id_calculo) {
-            const totales = this.obtenerTotalesMensuales(id_calculo);
-            return totales.reduce((sum, val) => new Decimal(sum).plus(new Decimal(val)), new Decimal(0)).toNumber();
-        }
     },
     computed: {
         totalAjusteDecimales() {

@@ -1,7 +1,7 @@
 /*
 * @description Archivo de ayuda para formatear datos de la base de datos 
 * y mostrar en vistas .vue
-* @author Tony
+* @author Tony 😉
 * @version 1.2.1
 * @date 18/08/2025
 * @updated 04/09/2025
@@ -255,3 +255,50 @@ export const formatearDecimal = (valor, defaultDecimal = 2) => {
     
     return parteDecimal ? `${parteEntera}.${parteDecimal}` : parteEntera;
 }
+
+/**
+ * Limpia y valida un valor numérico de un input
+ * @param {string} valor - Valor a limpiar
+ * @returns {string} - Valor limpio y validado
+ * @example
+ * limpiarNumeroInput("$1,234.56") // "1234.56"
+ * limpiarNumeroInput("abc123.45") // "123.45"
+ * limpiarNumeroInput("12.34.56")  // "12.3456"
+ * 
+ * @example
+ * "12.34.56" → "12.3456"
+ * ".123" → "0.123"
+ * "0012.34" → "12.34"
+ * 
+ * @example
+ * methods: {
+ *     onInputMoneda(event) {
+ *         const valorLimpio = limpiarNumeroInput(event.target.value);
+ *         this.miValor = valorLimpio;
+ *         // Actualizar el valor del input
+ *         event.target.value = valorLimpio;
+ *     }
+ * }
+ * <input 
+ *     type="text" 
+ *     :value="miValor" 
+ *     @input="onInputMoneda" 
+ *     placeholder="0.00" 
+/>
+ */
+export const limpiarNumeroInput = (valor) => {
+    if (typeof valor !== 'string') return '';
+    
+    // Elimina todo excepto números y puntos
+    const soloNumerosYPunto = valor.replace(/[^0-9.]/g, '');
+    // Maneja múltiples puntos, manteniendo solo el primero
+    const partes = soloNumerosYPunto.split('.');
+    const parteEntera = partes[0] || '';
+    const parteDecimal = partes.length > 1 ? '.' + partes.slice(1).join('') : '';
+
+    // Une las partes y limpia ceros a la izquierda
+    return (parteEntera + parteDecimal)
+        .replace(/^0+(\d)/, '$1')  // Elimina ceros iniciales
+        .replace(/^\./, '0.')      // Si empieza con punto, agrega 0
+        .replace(/^$/, '0');       // Si está vacío, devuelve "0"
+};
