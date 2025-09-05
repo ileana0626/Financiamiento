@@ -1628,7 +1628,8 @@ BEGIN
 END;
 //DELIMiTER ;
 
--- nuevo 
+-- MINISTRACIONES
+
 DROP PROCEDURE IF EXISTS sp_GetDistribucionesPorAnio;
 DELIMITER //
 /*
@@ -1700,8 +1701,6 @@ BEGIN
 END;
 //
 DELIMITER ;
-
--- MINISTRACIONES
 
 DROP PROCEDURE IF EXISTS sp_Mintr_Get_Insert_Update_ministraciones_dppp;
 DELIMITER //

@@ -190,7 +190,7 @@
                                 <vs-tooltip>
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar-' + calculo.id_calculo + '_' + calculo.anio_ejercicio"
                                         @click.stop="descargar(distribucionId)" hover="true"
-                                        style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
+                                        style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled[calculo.id_calculo]">
                                         <div
                                             style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
                                             <i class="fas fa-file-download pr-2"
@@ -199,7 +199,7 @@
                                         </div>
                                     </vs-button>
                                     <template #tooltip>
-                                        <div v-if="descargar_disabled">
+                                        <div v-if="descargar_disabled[calculo.id_calculo]">
                                             Debes guardar los cambios antes de descargar
                                         </div>
                                         <div v-else>
@@ -242,7 +242,7 @@ export default {
             Partidos_Con_Representacion: [],
             Partidos_Sin_Representacion: [],
             NewlistCalculos: [],
-            distribucionId: null, // Para saber si ya se ha guardado un registro
+            //ministracionId: {}, // Para saber si ya se ha guardado un registro
             cb_ppSeleccionados: [],
             opcionSelecionadaPorcentaje: '1', //  Valor por defecto Gubernatura
             search: '',
@@ -275,7 +275,7 @@ export default {
             errorDistribucion: '',
             errorMonto30: '',
             errorMonto70: '',
-            descargar_disabled: true, // true: disabled | false: enabled
+            descargar_disabled: {}, // true: disabled | false: enabled
         }
     },
     // watch: {
@@ -444,7 +444,7 @@ export default {
 
         // #region CONSULTAS A LA BASE DE DATOS 📚
         /** 
-         * Obtiene las distribuciones por año
+         * Obtiene las distribuciones por año ✅
          * Los partidos politicos estan mezclados en un solo array independientemente del año
          * @param {number} anio - El año para obtener las distribuciones
          */
@@ -459,6 +459,7 @@ export default {
                     debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                     this.CalculosPorAnio = data.calculos;
                     this.distribuciones = data.distribuciones;
+                    // this.ministraciones = data.ministraciones;
                     this.Partidos_Con_Representacion = data.partidos_con_repr;
                     this.Partidos_Sin_Representacion = data.partidos_sin_repr;
                     debug('🐛 ✅ Datos cargados.');
@@ -466,6 +467,10 @@ export default {
                 else {
                     debug('🐛 ❌ Error al obtener datos.');
                 }
+                //Cargar ministraciones para el botón de descarga
+                this.CalculosPorAnio.forEach(calculo => {
+                    this.cargarMinistracion(calculo.id_calculo);
+                });
             } catch (error) {
                 debug("🐛 ❌ Error al obtener distribuciones:", error);
                 
@@ -477,7 +482,7 @@ export default {
             }
         },
 
-        // DEPRECATED
+        // 🚨 DEPRECATED
         // Esta mal la referencia ya que se van a repetir los IDs
         /*
         actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
@@ -493,36 +498,34 @@ export default {
             this.$set(this.ajustesDiciembre, key, parsedValue);
         },
         */
-
         /**
-         * Guarda la edición del cálculo de Ministraciones
+         * Solo verifica si existe una ministración para el cálculo y mostrar el botón de descarga ✅
+         * @param {number} id_calculo - El ID del cálculo
          */
-        async guardarEdicion() {
-            const loader = loading(this.$vs);
-            loader.text = 'Guardando edición...';
-            // Lógica para guardar edición (llamada axios)
-            let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-            let datos = {
-                p_comando: 'UPDATE',
-                p_id_calculo: this.selectedCalculo.id,
+        async cargarMinistracion(id_calculo){
+            let url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
+            const DataMinistracion = [];
+            try{
+                const response = await axios.post(url, {p_comando: 'GET', p_id_calculo: id_calculo}); // ⇋ Se manda post aunque sea GET por el controlador
+                if(response.data && response.data.success && response.data.ministracion.length > 0){
+                    // Si se quieren rescatar los totales hay que convertirlo a objeto {} y declararlo en data{...}
+                    this.DataMinistracion = response.data.ministracion[0]; // Solo con GET
+                    this.ministracionId = this.DataMinistracion.id_calculo; // Id del calculo seleccionado es de la base de datos
+                    //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
+                    this.$set(this.descargar_disabled, id_calculo, false); // Habilita descargar archivo
+                }
+                else{
+                    this.$set(this.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
+                }
             }
-            try {
-                const response = await axios.post(url, datos); // ⇋ Se manda post aunque sea GET por el controlador
-                debug('🐛 response.data:', response.data);
-                this.$vs.notification({ color: 'success', text: 'Ministración actualizada' });
-                //this.getCalculos(); // refrescar lista
-            } catch (error) {
-                debug("🐛 ❌ Error al guardar edición:", error);
+            catch (error) {
+                debug("🐛 ❌ Error al cargar datos de la ministración:", error);
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             }
-            finally {
-                loader.close();
-            }
         },
-
         /**
-         * Guarda los cambios de la ministración 
+         * Guarda los cambios de la ministración ✅
          * @param {number} id_calculo - El ID del cálculo
          */
         async guardarCambios(id_calculo) {
@@ -634,7 +637,7 @@ export default {
                 confirmButtonText: 'Aceptar'
                 })
                 this.$vs.notification({ color: 'success', text: 'Ministración guardada' + responseTotales.data.message});
-                this.descargar_disabled = false; // Habilita descargar archivo
+                this.descargar_disabled[idCalculo] = false; // Habilita descargar archivo
             }catch(error){
                 debug('🐛 Error al guardar la ministración:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar la ministración' });
@@ -684,8 +687,6 @@ export default {
                 });
             });
             */
-            
-
         },
         /**
          * Descarga el archivo Excel de la distribución
@@ -752,7 +753,7 @@ export default {
         },
         // #endregion CONSULTAS A LA BASE DE DATOS 📚
 
-        // #region FORMATEOS 🛠
+        // #region FORMATEOS 🛠 
         onDecimalInput(event, idCalculo, idPartido) {
             // const key = `con-${idCalculo}-${idPartido}`;
             let valor = event.target.value;

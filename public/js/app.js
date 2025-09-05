@@ -12349,8 +12349,7 @@ var debug = function debug() {
       Partidos_Con_Representacion: [],
       Partidos_Sin_Representacion: [],
       NewlistCalculos: [],
-      distribucionId: null,
-      // Para saber si ya se ha guardado un registro
+      //ministracionId: {}, // Para saber si ya se ha guardado un registro
       cb_ppSeleccionados: [],
       opcionSelecionadaPorcentaje: '1',
       //  Valor por defecto Gubernatura
@@ -12383,7 +12382,7 @@ var debug = function debug() {
       errorDistribucion: '',
       errorMonto30: '',
       errorMonto70: '',
-      descargar_disabled: true // true: disabled | false: enabled
+      descargar_disabled: {} // true: disabled | false: enabled
     };
   },
   // watch: {
@@ -12580,7 +12579,7 @@ var debug = function debug() {
     // #endregion CATÁLOGOS 📜
     // #region CONSULTAS A LA BASE DE DATOS 📚
     /** 
-     * Obtiene las distribuciones por año
+     * Obtiene las distribuciones por año ✅
      * Los partidos politicos estan mezclados en un solo array independientemente del año
      * @param {number} anio - El año para obtener las distribuciones
      */
@@ -12614,32 +12613,37 @@ var debug = function debug() {
                 debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                 _this5.CalculosPorAnio = data.calculos;
                 _this5.distribuciones = data.distribuciones;
+                // this.ministraciones = data.ministraciones;
                 _this5.Partidos_Con_Representacion = data.partidos_con_repr;
                 _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
                 debug('🐛 ✅ Datos cargados.');
               } else {
                 debug('🐛 ❌ Error al obtener datos.');
               }
-              _context4.next = 18;
+              //Cargar ministraciones para el botón de descarga
+              _this5.CalculosPorAnio.forEach(function (calculo) {
+                _this5.cargarMinistracion(calculo.id_calculo);
+              });
+              _context4.next = 19;
               break;
-            case 13:
-              _context4.prev = 13;
+            case 14:
+              _context4.prev = 14;
               _context4.t0 = _context4["catch"](5);
               debug("🐛 ❌ Error al obtener distribuciones:", _context4.t0);
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this5.$router);
-            case 18:
-              _context4.prev = 18;
+            case 19:
+              _context4.prev = 19;
               loader.close();
-              return _context4.finish(18);
-            case 21:
+              return _context4.finish(19);
+            case 22:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[5, 13, 18, 21]]);
+        }, _callee4, null, [[5, 14, 19, 22]]);
       }))();
     },
-    // DEPRECATED
+    // 🚨 DEPRECATED
     // Esta mal la referencia ya que se van a repetir los IDs
     /*
     actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
@@ -12654,56 +12658,53 @@ var debug = function debug() {
     },
     */
     /**
-     * Guarda la edición del cálculo de Ministraciones
+     * Solo verifica si existe una ministración para el cálculo y mostrar el botón de descarga ✅
+     * @param {number} id_calculo - El ID del cálculo
      */
-    guardarEdicion: function guardarEdicion() {
+    cargarMinistracion: function cargarMinistracion(id_calculo) {
       var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var loader, url, datos, response, nombreMetodo;
+        var url, DataMinistracion, response, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this6.$vs);
-              loader.text = 'Guardando edición...';
-              // Lógica para guardar edición (llamada axios)
-              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-              datos = {
-                p_comando: 'UPDATE',
-                p_id_calculo: _this6.selectedCalculo.id
-              };
-              _context5.prev = 4;
-              _context5.next = 7;
-              return axios.post(url, datos);
-            case 7:
+              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
+              DataMinistracion = [];
+              _context5.prev = 2;
+              _context5.next = 5;
+              return axios.post(url, {
+                p_comando: 'GET',
+                p_id_calculo: id_calculo
+              });
+            case 5:
               response = _context5.sent;
               // ⇋ Se manda post aunque sea GET por el controlador
-              debug('🐛 response.data:', response.data);
-              _this6.$vs.notification({
-                color: 'success',
-                text: 'Ministración actualizada'
-              });
-              //this.getCalculos(); // refrescar lista
-              _context5.next = 17;
+              if (response.data && response.data.success && response.data.ministracion.length > 0) {
+                // Si se quieren rescatar los totales hay que convertirlo a objeto {} y declararlo en data{...}
+                _this6.DataMinistracion = response.data.ministracion[0]; // Solo con GET
+                _this6.ministracionId = _this6.DataMinistracion.id_calculo; // Id del calculo seleccionado es de la base de datos
+                //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
+                _this6.$set(_this6.descargar_disabled, id_calculo, false); // Habilita descargar archivo
+              } else {
+                _this6.$set(_this6.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
+              }
+              _context5.next = 14;
               break;
-            case 12:
-              _context5.prev = 12;
-              _context5.t0 = _context5["catch"](4);
-              debug("🐛 ❌ Error al guardar edición:", _context5.t0);
+            case 9:
+              _context5.prev = 9;
+              _context5.t0 = _context5["catch"](2);
+              debug("🐛 ❌ Error al cargar datos de la ministración:", _context5.t0);
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this6.$router);
-            case 17:
-              _context5.prev = 17;
-              loader.close();
-              return _context5.finish(17);
-            case 20:
+            case 14:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[4, 12, 17, 20]]);
+        }, _callee5, null, [[2, 9]]);
       }))();
     },
     /**
-     * Guarda los cambios de la ministración 
+     * Guarda los cambios de la ministración ✅
      * @param {number} id_calculo - El ID del cálculo
      */
     guardarCambios: function guardarCambios(id_calculo) {
@@ -12908,7 +12909,7 @@ var debug = function debug() {
                 color: 'success',
                 text: 'Ministración guardada' + responseTotales.data.message
               });
-              _this7.descargar_disabled = false; // Habilita descargar archivo
+              _this7.descargar_disabled[idCalculo] = false; // Habilita descargar archivo
               _context6.next = 96;
               break;
             case 90:
@@ -12995,7 +12996,7 @@ var debug = function debug() {
       });
     },
     // #endregion CONSULTAS A LA BASE DE DATOS 📚
-    // #region FORMATEOS 🛠
+    // #region FORMATEOS 🛠 
     onDecimalInput: function onDecimalInput(event, idCalculo, idPartido) {
       // const key = `con-${idCalculo}-${idPartido}`;
       var valor = event.target.value;
@@ -29115,7 +29116,7 @@ var render = function render() {
       scopedSlots: _vm._u([{
         key: "tooltip",
         fn: function fn() {
-          return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
+          return [_vm.descargar_disabled[calculo.id_calculo] ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
         },
         proxy: true
       }], null, true)
@@ -29128,7 +29129,7 @@ var render = function render() {
       attrs: {
         color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
         hover: "true",
-        disabled: _vm.descargar_disabled
+        disabled: _vm.descargar_disabled[calculo.id_calculo]
       },
       on: {
         click: function click($event) {

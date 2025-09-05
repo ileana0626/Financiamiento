@@ -491,6 +491,7 @@ class SolicitudController extends Controller
             return response()->json([
                 'success' => true,
                 'id' => $id,
+                'ministracion' => $comando === 'GET' ? $response : null, // Solo con GET
                 'message' => 'Ministración actualizada exitosamente'
             ]);
         }
