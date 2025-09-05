@@ -778,7 +778,7 @@ class SolicitudController extends Controller
         if (!$request->ajax()) return redirect('/');
         
         try {
-            Log::info('Iniciando exportación de Excel para el ID: ' . $id);
+            Log::info('Iniciando exportación de Excel Ministraciones para el ID: ' . $id);
             
             if (!$id) {
                 Log::error('No se proporcionó un ID para la exportación');
@@ -788,10 +788,24 @@ class SolicitudController extends Controller
                 ], 400);
             }
 
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
             $operacion = (string) "GET"; // Nos aseguramos de que sea un string
             
             // Obtener los datos de las ministraciones
-            /*$ministraciones = DB::select('CALL sp_Distr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
+            $ministraciones = DB::select('CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
                 ?, ?, ?,
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
                     self::$useTransaction, // bandera estática,
@@ -800,15 +814,36 @@ class SolicitudController extends Controller
                     null, null, null,
                     null, null, null, null, null, null, null, null, null, null
             ]);
-            */
+            Log::info('Datos de las ministraciones obtenidos:', ['ministraciones' => $ministraciones]);
+            if (empty($ministraciones)) {
+                Log::error('No se encontró la ministración con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró la ministración solicitada'
+                ], 404);
+            }
             $ministracionesData = !empty($ministraciones) ? (array)$ministraciones[0] : [];
             
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
             $data = [
-                //'calculo' => $calculoData,
+                'calculo' => $calculoData,
                 //'distribucion' => $distribucionData,
                 'ministraciones' => $ministracionesData,
-                //'partidos_sin_rep' => $partidosSinRep,
-                //'partidos_con_rep' => $partidosConRep
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
             ];
             Log::info('Datos preparados para la exportación:', $data);
 

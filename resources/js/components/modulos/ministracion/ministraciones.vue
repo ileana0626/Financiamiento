@@ -93,7 +93,7 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <input type="text" :value="partido.mintr_diciembre" class="form-control" 
+                                                <input type="text" :value="formatCurrency(partido.mintr_diciembre)" class="form-control" 
                                                     :key="'txbD_Con-' + partido.id_calculo + '-' + partido.id_partido"
                                                     style="width: 100%;"
                                                     @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)" />
@@ -189,7 +189,7 @@
                             <div class="d-flex justify-content-center">
                                 <vs-tooltip>
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar-' + calculo.id_calculo + '_' + calculo.anio_ejercicio"
-                                        @click.stop="descargar(distribucionId)" hover="true"
+                                        @click.stop="descargarMinistraciones(calculo.id_calculo)" hover="true"
                                         style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled[calculo.id_calculo]">
                                         <div
                                             style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
@@ -456,7 +456,7 @@ export default {
             try {
                 const { data } = await axios.get(url, { params: { anio } });
                 if (data.success) {
-                    debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
+                    //debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                     this.CalculosPorAnio = data.calculos;
                     this.distribuciones = data.distribuciones;
                     // this.ministraciones = data.ministraciones;
@@ -467,10 +467,19 @@ export default {
                 else {
                     debug('🐛 ❌ Error al obtener datos.');
                 }
+
                 //Cargar ministraciones para el botón de descarga
-                this.CalculosPorAnio.forEach(calculo => {
-                    this.cargarMinistracion(calculo.id_calculo);
-                });
+                // this.CalculosPorAnio.forEach(calculo => {
+                //     this.cargarMinistracion(calculo.id_calculo);
+                // });
+
+                //Cargar ministraciones para el botón de descarga
+                await Promise.all(
+                    this.CalculosPorAnio.map(calculo => 
+                        this.cargarMinistracion(calculo.id_calculo)
+                    )
+                );
+                //debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
             } catch (error) {
                 debug("🐛 ❌ Error al obtener distribuciones:", error);
                 
@@ -517,6 +526,7 @@ export default {
                 else{
                     this.$set(this.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
                 }
+                // debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
             }
             catch (error) {
                 debug("🐛 ❌ Error al cargar datos de la ministración:", error);
@@ -722,7 +732,7 @@ export default {
                     });
                 })
                 .catch(error => {
-                    debug('🐛 Error al descargar Excel:', error);
+                    debug('🔴 Error al descargar Excel:', error);
 
                     let errorMessage = 'Error al descargar Excel';
                     if (error.response?.data?.message) {

@@ -12610,7 +12610,7 @@ var debug = function debug() {
               _yield$axios$get = _context4.sent;
               data = _yield$axios$get.data;
               if (data.success) {
-                debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
+                //debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                 _this5.CalculosPorAnio = data.calculos;
                 _this5.distribuciones = data.distribuciones;
                 // this.ministraciones = data.ministraciones;
@@ -12620,27 +12620,35 @@ var debug = function debug() {
               } else {
                 debug('🐛 ❌ Error al obtener datos.');
               }
+
               //Cargar ministraciones para el botón de descarga
-              _this5.CalculosPorAnio.forEach(function (calculo) {
-                _this5.cargarMinistracion(calculo.id_calculo);
-              });
-              _context4.next = 19;
+              // this.CalculosPorAnio.forEach(calculo => {
+              //     this.cargarMinistracion(calculo.id_calculo);
+              // });
+
+              //Cargar ministraciones para el botón de descarga
+              _context4.next = 13;
+              return Promise.all(_this5.CalculosPorAnio.map(function (calculo) {
+                return _this5.cargarMinistracion(calculo.id_calculo);
+              }));
+            case 13:
+              _context4.next = 20;
               break;
-            case 14:
-              _context4.prev = 14;
+            case 15:
+              _context4.prev = 15;
               _context4.t0 = _context4["catch"](5);
               debug("🐛 ❌ Error al obtener distribuciones:", _context4.t0);
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this5.$router);
-            case 19:
-              _context4.prev = 19;
+            case 20:
+              _context4.prev = 20;
               loader.close();
-              return _context4.finish(19);
-            case 22:
+              return _context4.finish(20);
+            case 23:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[5, 14, 19, 22]]);
+        }, _callee4, null, [[5, 15, 20, 23]]);
       }))();
     },
     // 🚨 DEPRECATED
@@ -12688,6 +12696,7 @@ var debug = function debug() {
               } else {
                 _this6.$set(_this6.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
               }
+              // debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
               _context5.next = 14;
               break;
             case 9:
@@ -12967,7 +12976,7 @@ var debug = function debug() {
         });
       })["catch"](function (error) {
         var _error$response;
-        debug('🐛 Error al descargar Excel:', error);
+        debug('🔴 Error al descargar Excel:', error);
         var errorMessage = 'Error al descargar Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
@@ -28945,7 +28954,7 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: partido.mintr_diciembre
+                  value: _vm.formatCurrency(partido.mintr_diciembre)
                 },
                 on: {
                   input: function input($event) {
@@ -29134,7 +29143,7 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.stopPropagation();
-          return _vm.descargar(_vm.distribucionId);
+          return _vm.descargarMinistraciones(calculo.id_calculo);
         }
       }
     }, [_c("div", {
