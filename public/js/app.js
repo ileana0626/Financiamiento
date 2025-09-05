@@ -4785,6 +4785,11 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4792,11 +4797,6 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
 function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
@@ -5032,59 +5032,7 @@ var debug = function debug() {
      * Abre el dialogo para editar la distribución
      * @param {Object} calculo_tr - El calculo seleccionado
      */
-    abrirDialog: function abrirDialog(calculo_tr) {
-      var _this5 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
-      var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
-      this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
-      this.datosCalculoSeleccionado = {};
-      this.Partidos_Sin_Representacion = [];
-      this.Partidos_Con_Representacion = [];
-      this.distribucionId = null; // resetea cada que se abra el Dialog
-      this.limpiarCampos(); // 🧹
-      this.active = true; // activa el modal
-      loader.text = 'Cargando datos...';
-      //Obtener los datos principales del Cálculo Financiero
-      axios.get(url, {
-        params: {
-          'id': calculo_tr.id
-        }
-      }).then(function (response) {
-        var _response$data3;
-        debug('🐛 Datos recibidos:', response.data);
-        if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
-          //Obtenemos los datos de los partidos politicos
-          _this5.Partidos_Sin_Representacion = response.data.Partidos_Sin_Representacion;
-          _this5.Partidos_Con_Representacion = response.data.Partidos_Con_Representacion.map(function (p) {
-            return _objectSpread(_objectSpread({}, p), {}, {
-              ajuste: 0,
-              // valor temporal para el input
-              inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
-              // Variable temporarl en el Front
-              errorPorcentajeVotacion: '' // Variable temporarl en el Front
-            });
-          });
-        } else {
-          var _response$data4;
-          // success: false
-          var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
-          throw new Error(errorMessage);
-        }
-        // Cargando datos de Distribución
-        _this5.cargarDistribucion();
-      })["catch"](function (error) {
-        console.error('Error al cargar detalles del cálculo', error);
-        _this5.$vs.notification({
-          title: 'Error',
-          text: 'Error al cargar los detalles del cálculo',
-          color: 'danger'
-        });
-        var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
-      })["finally"](function () {
-        loader.close();
-      });
-    },
+    abrirDialog: function abrirDialog(calculo_tr) {},
     onChangeDistribucion: function onChangeDistribucion(value) {
       this.distribucion = value;
       setTimeout(function () {
@@ -5092,7 +5040,7 @@ var debug = function debug() {
       }, 100);
     },
     obtenerDatos: function obtenerDatos(tipo) {
-      var _this6 = this;
+      var _this5 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var url;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -5108,41 +5056,41 @@ var debug = function debug() {
               }).then(function (response) {
                 switch (tipo) {
                   case 1:
-                    _this6.catCargos = response.data;
+                    _this5.catCargos = response.data;
                     break;
                   case 2:
-                    _this6.catRemitente = response.data;
+                    _this5.catRemitente = response.data;
                     break;
                   case 3:
-                    _this6.catTermino = response.data;
+                    _this5.catTermino = response.data;
                     break;
                   case 4:
-                    _this6.cat_diasTermino = response.data;
+                    _this5.cat_diasTermino = response.data;
                     break;
                   case 5:
-                    _this6.cat_seguimiento = response.data;
+                    _this5.cat_seguimiento = response.data;
                     break;
                   case 6:
-                    _this6.cat_departamentos = response.data;
+                    _this5.cat_departamentos = response.data;
                     break;
                   case 7:
-                    _this6.cat_tipo = response.data;
+                    _this5.cat_tipo = response.data;
                     break;
                   case 8:
-                    _this6.cat_estutus = response.data;
+                    _this5.cat_estutus = response.data;
                     break;
                   case 9:
-                    _this6.cat_partido = response.data;
+                    _this5.cat_partido = response.data;
                     break;
                   case 11:
-                    _this6.cat_tipo_distribucion = response.data;
+                    _this5.cat_tipo_distribucion = response.data;
                     break;
                   default:
                     break;
                 }
               })["catch"](function (error) {
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
               });
             case 3:
             case "end":
@@ -5152,7 +5100,7 @@ var debug = function debug() {
       }))();
     },
     getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
-      var _this7 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         var _yield$axios$get, data;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -5175,10 +5123,10 @@ var debug = function debug() {
               _yield$axios$get = _context4.sent;
               data = _yield$axios$get.data;
               if (data.success) {
-                _this7.CalculosPorAnio = data.calculos;
-                _this7.distribuciones = data.distribuciones;
-                _this7.Partidos_Con_Representacion = data.partidos_con_repr;
-                _this7.Partidos_Sin_Representacion = data.partidos_sin_repr;
+                _this6.CalculosPorAnio = data.calculos;
+                _this6.distribuciones = data.distribuciones;
+                _this6.Partidos_Con_Representacion = data.partidos_con_repr;
+                _this6.Partidos_Sin_Representacion = data.partidos_sin_repr;
               }
               _context4.next = 13;
               break;
@@ -5207,14 +5155,14 @@ var debug = function debug() {
       this.$set(this.ajustesDiciembre, key, parsedValue);
     },
     inicializarMontosFijos: function inicializarMontosFijos() {
-      var _this8 = this;
+      var _this7 = this;
       [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).forEach(function (partido) {
         var key = "con-".concat(partido.id_calculo, "-").concat(partido.id_partido);
-        if (!_this8.montosFijos[key]) {
+        if (!_this7.montosFijos[key]) {
           var _total = partido.C_fpaop || partido.monto_2_por_ciento;
           // Asignar los primeros 11 meses igual: (total / 12) cada uno
           var mensual = _total / 12;
-          _this8.$set(_this8.montosFijos, key, Array(11).fill(mensual));
+          _this7.$set(_this7.montosFijos, key, Array(11).fill(mensual));
         }
       });
     },
@@ -5240,17 +5188,17 @@ var debug = function debug() {
       });
     },
     guardarEdicion: function guardarEdicion() {
-      var _this9 = this;
+      var _this8 = this;
       // Lógica para guardar edición (llamada axios)
       axios.put("/api/calculos/".concat(this.selectedCalculo.id), this.selectedCalculo).then(function () {
-        _this9.$vs.notification({
+        _this8.$vs.notification({
           color: 'success',
           text: 'Cálculo actualizado'
         });
-        _this9.dialog = false;
-        _this9.getCalculos(); // refrescar lista
+        _this8.dialog = false;
+        _this8.getCalculos(); // refrescar lista
       })["catch"](function () {
-        _this9.$vs.notification({
+        _this8.$vs.notification({
           color: 'danger',
           text: 'Error al guardar'
         });
@@ -5260,19 +5208,19 @@ var debug = function debug() {
      * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
      */
     cargarDistribucion: function cargarDistribucion() {
-      var _this10 = this;
+      var _this9 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var loader, url, datos, response, _this10$DataDistribuc, _this10$distribucionI, nombreMetodo;
+        var loader, url, datos, response, _this9$DataDistribuci, _this9$distribucionId, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
               // ✅
-              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this10.$vs);
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this9.$vs);
               loader.text = 'Cargando distribución...';
               url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
               datos = {
                 p_comando: 'GET',
-                p_id_calculo: _this10.selectedCalculo.id
+                p_id_calculo: _this9.selectedCalculo.id
               };
               _context5.prev = 4;
               _context5.next = 7;
@@ -5286,25 +5234,25 @@ var debug = function debug() {
                 _context5.next = 24;
                 break;
               }
-              _this10.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-              _this10.distribucionId = _this10.DataDistribucion.id_calculo;
+              _this9.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+              _this9.distribucionId = _this9.DataDistribucion.id_calculo;
               // Empieza a cargar los datos guardados
-              _this10.anio = _this10.DataDistribucion.anio_ejercicio; // asigna año
-              if ((_this10$DataDistribuc = _this10.DataDistribucion) !== null && _this10$DataDistribuc !== void 0 && _this10$DataDistribuc.tipo_distribucion) {
-                _this10.distribucion = _this10.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
+              _this9.anio = _this9.DataDistribucion.anio_ejercicio; // asigna año
+              if ((_this9$DataDistribuci = _this9.DataDistribucion) !== null && _this9$DataDistribuci !== void 0 && _this9$DataDistribuci.tipo_distribucion) {
+                _this9.distribucion = _this9.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
                   return !isNaN(item);
                 });
               }
-              _this10.monto30Input = _this10.formatoMoneda(_this10.DataDistribucion.monto_30_por_ciento);
-              _this10.monto30 = _this10.DataDistribucion.monto_30_por_ciento;
-              _this10.monto70Input = _this10.formatoMoneda(_this10.DataDistribucion.monto_70_por_ciento);
-              _this10.monto70 = _this10.DataDistribucion.monto_70_por_ciento;
-              _this10.opcionSelecionadaPorcentaje = String(_this10.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
-              _this10.$nextTick(function () {
-                debug('🐛 Factor de porcentaje: ', _this10.factorCalculo, 'Opción seleccionada: ', _this10.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this10.opcionSelecionadaPorcentaje));
+              _this9.monto30Input = _this9.formatoMoneda(_this9.DataDistribucion.monto_30_por_ciento);
+              _this9.monto30 = _this9.DataDistribucion.monto_30_por_ciento;
+              _this9.monto70Input = _this9.formatoMoneda(_this9.DataDistribucion.monto_70_por_ciento);
+              _this9.monto70 = _this9.DataDistribucion.monto_70_por_ciento;
+              _this9.opcionSelecionadaPorcentaje = String(_this9.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
+              _this9.$nextTick(function () {
+                debug('🐛 Factor de porcentaje: ', _this9.factorCalculo, 'Opción seleccionada: ', _this9.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this9.opcionSelecionadaPorcentaje));
               });
-              if (((_this10$distribucionI = _this10.distribucionId) !== null && _this10$distribucionI !== void 0 ? _this10$distribucionI : null) !== null) {
-                _this10.descargar_disabled = false;
+              if (((_this9$distribucionId = _this9.distribucionId) !== null && _this9$distribucionId !== void 0 ? _this9$distribucionId : null) !== null) {
+                _this9.descargar_disabled = false;
               }
               debug('✅ Distribución cargada.');
               _context5.next = 26;
@@ -5319,13 +5267,13 @@ var debug = function debug() {
               _context5.prev = 28;
               _context5.t0 = _context5["catch"](4);
               console.error('Error al cargar distribución', _context5.t0);
-              _this10.$vs.notification({
+              _this9.$vs.notification({
                 title: 'Error',
                 text: 'Error al cargar la distribución',
                 color: 'danger'
               });
               nombreMetodo = url.split('/');
-              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this10.$router);
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this9.$router);
             case 34:
               _context5.prev = 34;
               loader.close();
@@ -5338,7 +5286,7 @@ var debug = function debug() {
       }))();
     },
     guardarCambios: function guardarCambios(calculo) {
-      var _this11 = this;
+      var _this10 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         var idCalculo, partidos;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
@@ -5347,14 +5295,14 @@ var debug = function debug() {
               //id del calculo seleccionado 
               idCalculo = calculo.id_calculo;
               console.log('Id del calculo: ' + idCalculo);
-              partidos = _this11.Partidos_Con_Representacion.filter(function (p) {
+              partidos = _this10.Partidos_Con_Representacion.filter(function (p) {
                 return p.id_calculo === idCalculo;
               });
               partidos.forEach(function (partido) {
-                var _this11$ajustesDiciem;
+                var _this10$ajustesDiciem;
                 var totalFinanciamiento = partido.C_fpaop;
-                var overrideDiciembre = (_this11$ajustesDiciem = _this11.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this11$ajustesDiciem !== void 0 ? _this11$ajustesDiciem : null;
-                var montosMensuales = _this11.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
+                var overrideDiciembre = (_this10$ajustesDiciem = _this10.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this10$ajustesDiciem !== void 0 ? _this10$ajustesDiciem : null;
+                var montosMensuales = _this10.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
                 console.log("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
                 montosMensuales.forEach(function (monto, index) {
                   var nombreMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][index];
@@ -5478,7 +5426,7 @@ var debug = function debug() {
      * @param DistribucionId // debe de existir un preguardado antes
      */
     descargarDistribucion: function descargarDistribucion(id) {
-      var _this12 = this;
+      var _this11 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
       var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
@@ -5499,7 +5447,7 @@ var debug = function debug() {
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
-        _this12.$vs.notification({
+        _this11.$vs.notification({
           title: 'Éxito',
           text: 'El archivo Excel se está descargando',
           color: 'success'
@@ -5513,7 +5461,7 @@ var debug = function debug() {
         } else if (error.message) {
           errorMessage = error.message;
         }
-        _this12.$vs.notification({
+        _this11.$vs.notification({
           title: 'Error',
           text: errorMessage,
           color: 'danger',
@@ -5602,16 +5550,16 @@ var debug = function debug() {
     * los cálculos aplicados a las columnas antes de Guardar
     */
     AlmacenarCalculos_Partidos: function AlmacenarCalculos_Partidos() {
-      var _this13 = this;
+      var _this12 = this;
       this.Partidos_Con_Representacion.forEach(function (partido) {
-        partido.A_30_por_ciento = _this13.calcularMontoIgualitario30();
-        partido.B_70_por_ciento = _this13.calcularMontoProporcionalB(partido.porcentaje_votacion);
-        partido.B_Ajuste_70_por_ciento = _this13.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-        partido.C_fpaop = _this13.calcularMontoC(partido);
-        partido.D_fpatov = _this13.calcularMontoD(partido);
+        partido.A_30_por_ciento = _this12.calcularMontoIgualitario30();
+        partido.B_70_por_ciento = _this12.calcularMontoProporcionalB(partido.porcentaje_votacion);
+        partido.B_Ajuste_70_por_ciento = _this12.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
+        partido.C_fpaop = _this12.calcularMontoC(partido);
+        partido.D_fpatov = _this12.calcularMontoD(partido);
       });
       this.Partidos_Sin_Representacion.forEach(function (partido) {
-        partido.D_monto_2_por_ciento = _this13.calcularMontoD_ppsr(partido);
+        partido.D_monto_2_por_ciento = _this12.calcularMontoD_ppsr(partido);
       });
     },
     /*
@@ -5672,7 +5620,7 @@ var debug = function debug() {
      * @returns {boolean}
      */
     validarCampos: function validarCampos() {
-      var _this14 = this;
+      var _this13 = this;
       this.limpiarErrores();
       if (this.anio === '') {
         this.errorAnio = 'El campo año es obligatorio';
@@ -5694,7 +5642,7 @@ var debug = function debug() {
       this.Partidos_Con_Representacion.forEach(function (partido) {
         if (partido.inputPorcentaje === '') {
           partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-          _this14.error = true;
+          _this13.error = true;
         }
       });
       return this.error;
@@ -5745,7 +5693,7 @@ var debug = function debug() {
       });
     },
     obtenerTotalesMensuales: function obtenerTotalesMensuales(idCalculo) {
-      var _this15 = this;
+      var _this14 = this;
       var totales = Array(12).fill().map(function () {
         return new Decimal(0);
       });
@@ -5755,8 +5703,8 @@ var debug = function debug() {
       partidos.forEach(function (partido) {
         var total = partido.C_fpaop || partido.monto_2_por_ciento;
         var key = "con-".concat(partido.id_calculo, "-").concat(partido.id_partido);
-        var override = _this15.ajustesDiciembre[key];
-        var montos = _this15.distribuirConEditableDiciembre(total, override, key);
+        var override = _this14.ajustesDiciembre[key];
+        var montos = _this14.distribuirConEditableDiciembre(total, override, key);
         montos.forEach(function (monto, i) {
           // Precisión total
           totales[i] = totales[i].plus(new Decimal(monto));
@@ -21252,7 +21200,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n          " + _vm._s(_vm.errorAnio) + "\n        ")];
+        return [_vm._v("\n                            " + _vm._s(_vm.errorAnio) + "\n                        ")];
       },
       proxy: true
     } : null], null, true),
@@ -21270,329 +21218,153 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n          " + _vm._s(item.anio) + "\n        ")]);
-  })], 2) : _vm._e()], 1)]), _vm._v(" "), _vm.CalculosPorAnio.length > 0 ? _c("div", {
-    staticClass: "mt-4"
-  }, _vm._l(_vm.CalculosPorAnio, function (calculo, index) {
-    return _c("div", {
-      key: "calculo-" + index,
-      staticClass: "mb-5"
-    }, [_c("div", {
-      staticClass: "d-flex align-items-center gap-2"
-    }, [_c("span", {
-      staticClass: "material-symbols-rounded"
-    }, [_vm._v("receipt_long")]), _vm._v(" "), _c("h5", {
-      staticClass: "mb-0"
-    }, [_vm._v("\n        ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n        ")])]), _vm._v(" "), _c("vs-table", {
-      staticClass: "tabla-ajustada mt-3",
-      scopedSlots: _vm._u([{
-        key: "thead",
-        fn: function fn() {
-          return [_c("vs-tr", [_c("vs-th", {
+    }, [_vm._v("\n                            " + _vm._s(item.anio) + "\n                        ")]);
+  })], 2) : _vm._e()], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "card-body container-fluid",
+    staticStyle: {
+      "background-color": "var(--iee-white)"
+    }
+  }, [_c("vs-table", {
+    staticClass: "tabla-ajustada",
+    scopedSlots: _vm._u([{
+      key: "thead",
+      fn: function fn() {
+        return [_c("vs-tr", [_c("vs-th", [_vm._v("ID Cálculo")]), _vm._v(" "), _c("vs-th", [_vm._v("Año fiscal")]), _vm._v(" "), _c("vs-th", [_vm._v("Fecha de publicación")]), _vm._v(" "), _c("vs-th", [_vm._v("Monto 30%")]), _vm._v(" "), _c("vs-th", [_vm._v("Monto 70%")]), _vm._v(" "), _c("vs-th", [_vm._v("Total asignado")]), _vm._v(" "), _c("vs-th", [_vm._v("\n                                Acciones\n                            ")])], 1)];
+      },
+      proxy: true
+    }, {
+      key: "tbody",
+      fn: function fn() {
+        return _vm._l(_vm.CalculosPorAnio, function (calculo, i) {
+          return _c("vs-tr", {
+            key: "calculo-resumen-".concat(i)
+          }, [_c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(calculo.id_calculo))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(calculo.anio_ejercicio))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(_vm.formatoFecha(calculo.fecha_publicacion)))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(_vm.formatoMoneda(calculo.monto_30_por_ciento)))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(_vm.formatoMoneda(calculo.monto_70_por_ciento)))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight"
+          }, [_vm._v(_vm._s(_vm.formatoMoneda(calculo.total_asignado)))]), _vm._v(" "), _c("vs-td", {
+            staticClass: "tableRowHeight text-center"
+          }, [_c("div", {
             staticStyle: {
-              "text-align": "left"
+              width: "100%",
+              display: "flex",
+              "justify-content": "center"
             }
-          }, [_vm._v("Emblema")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Total Financiamiento")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Enero")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Febrero")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Marzo")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Abril")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Mayo")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Junio")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Julio")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Agosto")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Septiembre")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Octubre")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left"
-            }
-          }, [_vm._v("Noviembre")]), _vm._v(" "), _c("vs-th", {
-            staticStyle: {
-              "text-align": "left",
-              width: "10%"
-            }
-          }, [_vm._v("Diciembre")])], 1)];
-        },
-        proxy: true
-      }, {
-        key: "tbody",
-        fn: function fn() {
-          return [_vm._l(_vm.Partidos_Con_Representacion.filter(function (p) {
-            return p.id_calculo === calculo.id_calculo;
-          }), function (partido, i) {
-            return _c("vs-tr", {
-              key: "con-" + partido.id_calculo + "-" + partido.id_partido
-            }, [_c("vs-td", [_c("img", {
-              staticClass: "img-fluid rounded",
-              staticStyle: {
-                "max-width": "40px",
-                "max-height": "40px"
-              },
-              attrs: {
-                src: "/img/logos/" + partido.logo,
-                alt: partido.siglas,
-                onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-              }
-            })]), _vm._v(" "), _c("vs-td", {
-              staticStyle: {
-                "text-align": "left"
-              }
-            }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n            ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop, _vm.ajustesDiciembre["con-" + partido.id_calculo + "-" + partido.id_partido], "con-" + partido.id_calculo + "-" + partido.id_partido), function (monto, mesIndex) {
-              return _c("vs-td", {
-                key: "mes-" + partido.id_calculo + "-" + partido.id_partido + "-" + mesIndex,
-                staticStyle: {
-                  "text-align": "left"
-                }
-              }, [mesIndex === 11 ? [_c("div", {
-                staticClass: "d-flex align-items-center"
-              }, [_c("input", {
-                staticClass: "form-control",
-                staticStyle: {
-                  width: "100%"
-                },
-                attrs: {
-                  type: "text"
-                },
-                domProps: {
-                  value: monto
-                },
-                on: {
-                  input: function input($event) {
-                    return _vm.onDecimalInput($event, partido.id_calculo, partido.id_partido);
-                  }
-                }
-              }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
-              }, [_c("button", {
-                staticClass: "btn btn-sm p-0",
-                attrs: {
-                  type: "button"
-                },
-                on: {
-                  click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partido.id_calculo, partido.id_partido, monto);
-                  }
-                }
-              }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
-                staticClass: "btn btn-sm p-0",
-                attrs: {
-                  type: "button"
-                },
-                on: {
-                  click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partido.id_calculo, partido.id_partido, monto);
-                  }
-                }
-              }, [_vm._v("▼")])])])] : [_vm._v("\n    " + _vm._s(_vm.formatCurrency(monto)) + "\n  ")]], 2);
-            })], 2);
-          }), _vm._v(" "), _c("hr", {
+          }, [_c("vs-button", {
             attrs: {
-              width: "100%"
-            }
-          }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion.filter(function (p) {
-            return p.id_calculo === calculo.id_calculo;
-          }), function (partidoS, i) {
-            return _c("vs-tr", {
-              key: "sin-" + partidoS.id_calculo + "-" + partidoS.id_partido
-            }, [_c("vs-td", [_c("img", {
-              staticClass: "img-fluid rounded",
-              staticStyle: {
-                "max-width": "40px",
-                "max-height": "40px"
-              },
-              attrs: {
-                src: "/img/logos/" + partidoS.logo,
-                alt: partidoS.siglas,
-                onerror: "this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"
-              }
-            })]), _vm._v(" "), _c("vs-td", {
-              staticStyle: {
-                "text-align": "left"
-              }
-            }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n            ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partidoS.monto_2_por_ciento, _vm.ajustesDiciembre["con-" + partidoS.id_calculo + "-" + partidoS.id_partido]), function (monto, mesIndex) {
-              return _c("vs-td", {
-                key: "mes-sin-" + partidoS.id_calculo + "-" + partidoS.id_partido + "-" + mesIndex,
-                staticStyle: {
-                  "text-align": "left"
-                }
-              }, [mesIndex === 11 ? [_c("div", {
-                staticClass: "d-flex align-items-center"
-              }, [_c("input", {
-                staticClass: "form-control",
-                staticStyle: {
-                  width: "100%"
-                },
-                attrs: {
-                  type: "text"
-                },
-                domProps: {
-                  value: monto
-                },
-                on: {
-                  input: function input($event) {
-                    return _vm.onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido);
-                  }
-                }
-              }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
-              }, [_c("button", {
-                staticClass: "btn btn-sm p-0",
-                attrs: {
-                  type: "button"
-                },
-                on: {
-                  click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partidoS.id_calculo, partidoS.id_partido, monto);
-                  }
-                }
-              }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
-                staticClass: "btn btn-sm p-0",
-                attrs: {
-                  type: "button"
-                },
-                on: {
-                  click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partidoS.id_calculo, partidoS.id_partido, monto);
-                  }
-                }
-              }, [_vm._v("▼")])])])] : [_vm._v("\n                " + _vm._s(mesIndex === 11 ? _vm.formatCurrency(monto) : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]], 2);
-            })], 2);
-          }), _vm._v(" "), _c("vs-tr", {
-            key: "fila-total-mensual"
-          }, [_c("vs-td", {
-            staticStyle: {
-              "font-weight": "bold"
-            }
-          }, [_vm._v("Totales")]), _vm._v(" "), _c("vs-td"), _vm._v(" "), _vm._l(_vm.obtenerTotalesMensuales(calculo.id_calculo), function (monto, i) {
-            return _c("vs-td", {
-              key: "total-mes-" + i,
-              staticStyle: {
-                "text-align": "left",
-                "font-weight": "bold"
-              }
-            }, [_vm._v("\n                " + _vm._s(i === 11 ? monto : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]);
-          })], 2), _vm._v(" "), _c("vs-tr", {
-            key: "fila-total-general"
-          }, [_c("vs-td", {
-            staticStyle: {
-              "font-weight": "bold"
-            }
-          }, [_vm._v("Total General")]), _vm._v(" "), _c("vs-td"), _vm._v(" "), _c("vs-td", {
-            staticStyle: {
-              "text-align": "left",
-              "font-weight": "bold"
+              icon: "",
+              color: "danger",
+              size: "small",
+              title: "Distribuir"
             },
-            attrs: {
-              colspan: "12"
+            on: {
+              click: function click($event) {
+                return _vm.abrirDialog(_vm.tr);
+              }
             }
-          }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(_vm.obtenerTotalGeneral(calculo.id_calculo))) + "\n            ")])], 1)];
-        },
-        proxy: true
-      }], null, true)
-    }), _vm._v(" "), _c("div", {
-      staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
-    }, [_c("div", {
-      staticClass: "d-flex justify-content-center"
-    }, [_c("vs-button", {
-      key: "guardar" + _vm.darkMode,
-      staticStyle: {
-        padding: "0.20rem",
-        "font-size": "1rem"
+          }, [_c("i", {
+            staticClass: "fas fa-pencil-alt"
+          })])], 1)])], 1);
+        });
       },
-      attrs: {
-        color: !!_vm.darkMode ? "#f5f5f5" : "#1a2e35"
+      proxy: true
+    }, {
+      key: "notFound",
+      fn: function fn() {
+        return [_c("div", {
+          staticClass: "d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4"
+        }, [_c("img", {
+          staticClass: "imgNoData",
+          staticStyle: {
+            width: "30%"
+          },
+          attrs: {
+            src: __webpack_require__(/*! ../modulos/ver/images/no_data.webp */ "./resources/js/components/modulos/ver/images/no_data.webp"),
+            alt: "Sin resultados"
+          }
+        }), _vm._v(" "), _c("span", {
+          staticClass: "noDataTitle"
+        }, [_vm._v("¡Sin Datos!")])])];
       },
-      on: {
-        click: function click($event) {
-          $event.stopPropagation();
-          return _vm.guardarCambios(calculo);
-        }
+      proxy: true
+    }])
+  }), _vm._v(" "), _c("div", {
+    staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("vs-button", {
+    key: "guardar" + _vm.darkMode,
+    staticStyle: {
+      padding: "0.20rem",
+      "font-size": "1rem"
+    },
+    attrs: {
+      color: !!_vm.darkMode ? "#f5f5f5" : "#1a2e35"
+    },
+    on: {
+      click: function click($event) {
+        $event.stopPropagation();
+        return _vm.guardarCambios(_vm.calculo);
       }
-    }, [_c("div", {
-      staticStyle: {
-        color: "var(--btn-txt-color)",
-        "font-weight": "700"
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-save pr-2",
-      staticStyle: {
-        "font-size": "0.8125rem !important"
-      }
-    }), _vm._v("\n                                            Guardar\n                                        ")])])], 1), _vm._v(" "), _c("div", {
-      staticClass: "d-flex justify-content-center"
-    }, [_c("vs-tooltip", {
-      scopedSlots: _vm._u([{
-        key: "tooltip",
-        fn: function fn() {
-          return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                            Debes guardar los cambios antes de descargar\n                                        ")]) : _c("div", [_vm._v("\n                                            Descargar distribución\n                                        ")])];
-        },
-        proxy: true
-      }], null, true)
-    }, [_c("vs-button", {
-      key: "descargar" + _vm.darkMode,
-      staticStyle: {
-        padding: "0.20rem",
-        "font-size": "1rem"
+    }
+  }, [_c("div", {
+    staticStyle: {
+      color: "var(--btn-txt-color)",
+      "font-weight": "700"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-save pr-2",
+    staticStyle: {
+      "font-size": "0.8125rem !important"
+    }
+  }), _vm._v("\n                                Guardar\n                            ")])])], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("vs-tooltip", {
+    scopedSlots: _vm._u([{
+      key: "tooltip",
+      fn: function fn() {
+        return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                    Debes guardar los cambios antes de descargar\n                                ")]) : _c("div", [_vm._v("\n                                    Descargar distribución\n                                ")])];
       },
-      attrs: {
-        color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
-        hover: "true",
-        disabled: _vm.descargar_disabled
-      },
-      on: {
-        click: function click($event) {
-          $event.stopPropagation();
-          return _vm.descargar(_vm.distribucionId);
-        }
+      proxy: true
+    }])
+  }, [_c("vs-button", {
+    key: "descargar" + _vm.darkMode,
+    staticStyle: {
+      padding: "0.20rem",
+      "font-size": "1rem"
+    },
+    attrs: {
+      color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
+      hover: "true",
+      disabled: _vm.descargar_disabled
+    },
+    on: {
+      click: function click($event) {
+        $event.stopPropagation();
+        return _vm.descargar(_vm.distribucionId);
       }
-    }, [_c("div", {
-      staticStyle: {
-        color: "var(--btn-txt-color)",
-        "font-weight": "700",
-        display: "flex",
-        "align-items": "center"
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-file-download pr-2",
-      staticStyle: {
-        "font-size": "0.8125rem !important"
-      }
-    }), _vm._v("\n                                            Descargar\n                                        ")])])], 1)], 1)])], 1);
-  }), 0) : _vm._e()])])]);
+    }
+  }, [_c("div", {
+    staticStyle: {
+      color: "var(--btn-txt-color)",
+      "font-weight": "700",
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-file-download pr-2",
+    staticStyle: {
+      "font-size": "0.8125rem !important"
+    }
+  }), _vm._v("\n                                    Descargar\n                                ")])])], 1)], 1)])], 1)])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -45382,7 +45154,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
 
 // exports
 

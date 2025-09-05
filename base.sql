@@ -92,7 +92,6 @@ CREATE TABLE IF NOT EXISTS `cat_permiso` (
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla admin.cat_permiso: ~30 rows (aproximadamente)
-/*DELETE FROM `cat_permiso`;*/
 INSERT INTO `cat_permiso` (`idPermiso`, `slug`, `nombre`, `created_at`, `updated_at`) VALUES
 	(1, 'dashboard.index', 'Dashboard', '2023-06-30 19:41:14', '2023-06-30 19:41:15'),
 	(2, 'faq.index', 'FAQ', '2023-07-05 18:59:00', '2023-07-05 18:59:03'),
@@ -125,7 +124,9 @@ INSERT INTO `cat_permiso` (`idPermiso`, `slug`, `nombre`, `created_at`, `updated
 	(29, 'updatePersonal.index', 'Editar Datos del Personal', '2024-12-16 21:28:16', '2024-12-16 21:28:17'),
 	(30, 'updatePersonalStatus.index', 'Editar Estado del Personal', '2024-12-16 21:29:05', '2024-12-16 21:29:06'),
     (31, 'distribucion.captura', 'Captura Distribucion', '2025-08-19 21:29:05', '2025-08-19 21:29:06'),
-    (32, 'ministracion.captura', 'Captura Ministraciones', '2025-08-22 21:29:05', '2025-08-22 21:29:06');
+    (32, 'ministracion.captura', 'Captura Ministraciones', '2025-08-22 21:29:05', '2025-08-22 21:29:06'),
+    (33, 'financiamientop.captura', 'Captura Financiamiento publico', '2025-08-22 21:29:05', '2025-08-22 21:29:06');
+    
 
 -- Volcando estructura para tabla admin.cat_rol
 CREATE TABLE IF NOT EXISTS `cat_rol` (
@@ -250,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `permiso_has_rol` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla admin.permiso_has_rol: ~80 rows (aproximadamente)
-/*DELETE FROM `permiso_has_rol`;*/
+/*drop table permiso_has_rol;*/
 INSERT INTO `permiso_has_rol` (`idPERMISO`, `idROL`) VALUES
 	(1, 1),
 	(2, 1),
@@ -277,6 +278,7 @@ INSERT INTO `permiso_has_rol` (`idPERMISO`, `idROL`) VALUES
 	(30, 1),
     (31, 1),
     (32, 1),
+    (33, 1),
 	(1, 2),
 	(2, 2),
 	(3, 2),
