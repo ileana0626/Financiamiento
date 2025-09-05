@@ -539,8 +539,8 @@ export default {
             //Preparamos los datos para guardar
             let totalesMensuales = this.obtenerTotalesMensuales(idCalculo);
             let granTotal = this.obtenerTotalGeneral(idCalculo);
-            debug(' 🐛 Id del totalesMensuales: ' + JSON.stringify(totalesMensuales));
-            debug(' 🐛 Id del granTotal: ' + granTotal);
+            debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
+            debug(' 🐛 GranTotal: ' + granTotal);
             try{
                 //Actualizamos los totales
                 let datos = {

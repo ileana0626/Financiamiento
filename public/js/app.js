@@ -12727,8 +12727,8 @@ var debug = function debug() {
               }); //Preparamos los datos para guardar
               totalesMensuales = _this7.obtenerTotalesMensuales(idCalculo);
               granTotal = _this7.obtenerTotalGeneral(idCalculo);
-              debug(' 🐛 Id del totalesMensuales: ' + JSON.stringify(totalesMensuales));
-              debug(' 🐛 Id del granTotal: ' + granTotal);
+              debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
+              debug(' 🐛 GranTotal: ' + granTotal);
               _context6.prev = 11;
               //Actualizamos los totales
               datos = {
