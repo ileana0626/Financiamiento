@@ -12307,9 +12307,10 @@ __webpack_require__.r(__webpack_exports__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
@@ -12701,44 +12702,235 @@ var debug = function debug() {
         }, _callee5, null, [[4, 12, 17, 20]]);
       }))();
     },
-    guardarCambios: function guardarCambios(calculo) {
+    /**
+     * Guarda los cambios de la ministración 
+     * @param {number} id_calculo - El ID del cálculo
+     */
+    guardarCambios: function guardarCambios(id_calculo) {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        var idCalculo, partidos;
+        var loader, url, idCalculo, partidosConRepr, partidosSinRepr, totalesMensuales, granTotal, datos, responseTotales, errorMessage, p_tipoPartido, _iterator, _step, partido, responsePartidos, _errorMessage, _iterator2, _step2, _partido, _responsePartidos, _errorMessage2, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              //id del calculo seleccionado 
-              idCalculo = calculo.id_calculo;
-              debug(' 🐛 Id del calculo: ' + idCalculo);
-              partidos = _this7.Partidos_Con_Representacion.filter(function (p) {
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this7.$vs);
+              loader.text = 'Guardando cambios...';
+              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp'; //id del calculo seleccionado 
+              idCalculo = id_calculo;
+              debug(' 🐛 ✨ Id del calculo: ' + idCalculo);
+              // Obtener los partidos con representación y sin representación de un cálculo
+              partidosConRepr = _this7.Partidos_Con_Representacion.filter(function (p) {
                 return p.id_calculo === idCalculo;
               });
-              partidos.forEach(function (partido) {
-                var _this7$ajustesDiciemb;
-                var totalFinanciamiento = partido.C_fpaop;
-                var overrideDiciembre = (_this7$ajustesDiciemb = _this7.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this7$ajustesDiciemb !== void 0 ? _this7$ajustesDiciemb : null;
-
-                //const montosMensuales = this.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre, 'con-' + partido.id_calculo + '-' + partido.id_partido, partido);
-
-                debug("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
-                montosMensuales.forEach(function (monto, index) {
-                  var nombreMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][index];
-                  if (index === 11) {
-                    // Diciembre: mostrar todos los decimales
-                    console.log("  ".concat(nombreMes, ": ").concat(monto));
-                  } else {
-                    // Mostrar monto completo, sin formatear
-                    console.log("  ".concat(nombreMes, ": ").concat(monto));
-                  }
-                });
+              partidosSinRepr = _this7.Partidos_Sin_Representacion.filter(function (p) {
+                return p.id_calculo === idCalculo;
+              }); //Preparamos los datos para guardar
+              totalesMensuales = _this7.obtenerTotalesMensuales(idCalculo);
+              granTotal = _this7.obtenerTotalGeneral(idCalculo);
+              debug(' 🐛 Id del totalesMensuales: ' + JSON.stringify(totalesMensuales));
+              debug(' 🐛 Id del granTotal: ' + granTotal);
+              _context6.prev = 11;
+              //Actualizamos los totales
+              datos = {
+                p_comando: "INSERT",
+                // INSERT, UPDATE
+                p_id_calculo: idCalculo,
+                p_totales_mensuales_enero: totalesMensuales[0],
+                p_totales_mensuales_febrero: totalesMensuales[1],
+                p_totales_mensuales_marzo: totalesMensuales[2],
+                p_totales_mensuales_abril: totalesMensuales[3],
+                p_totales_mensuales_mayo: totalesMensuales[4],
+                p_totales_mensuales_junio: totalesMensuales[5],
+                p_totales_mensuales_julio: totalesMensuales[6],
+                p_totales_mensuales_agosto: totalesMensuales[7],
+                p_totales_mensuales_septiembre: totalesMensuales[8],
+                p_totales_mensuales_octubre: totalesMensuales[9],
+                p_totales_mensuales_noviembre: totalesMensuales[10],
+                p_totales_mensuales_diciembre: totalesMensuales[11],
+                p_gran_total: granTotal
+              };
+              _context6.next = 15;
+              return axios.post(url, datos);
+            case 15:
+              responseTotales = _context6.sent;
+              if (!(!responseTotales || !responseTotales.data)) {
+                _context6.next = 18;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 18:
+              if (!(responseTotales.status !== 200)) {
+                _context6.next = 20;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(responseTotales.status, " ").concat(responseTotales.statusText));
+            case 20:
+              if (responseTotales.data.success) {
+                _context6.next = 23;
+                break;
+              }
+              errorMessage = responseTotales.data.message || 'Error desconocido al guardar la ministración';
+              throw new Error(errorMessage);
+            case 23:
+              if (!responseTotales.data.success) {
+                _context6.next = 27;
+                break;
+              }
+              debug(' 🐛 🌠 Id del responseTotales: ' + JSON.stringify(responseTotales.data.id));
+              _context6.next = 28;
+              break;
+            case 27:
+              throw new Error(responseTotales.data.message);
+            case 28:
+              // Actualizamos cada campo del partido político por separado
+              p_tipoPartido = 'CON';
+              url = '/administracion/solicitud/Mintr_Update_Partidos';
+              _iterator = _createForOfIteratorHelper(partidosConRepr);
+              _context6.prev = 31;
+              _iterator.s();
+            case 33:
+              if ((_step = _iterator.n()).done) {
+                _context6.next = 49;
+                break;
+              }
+              partido = _step.value;
+              _context6.next = 37;
+              return axios.post(url, {
+                // ⇋ UPDATE Partidos Con Representación
+                p_id_calculo: idCalculo,
+                p_id_partido: partido.id_partido,
+                p_tipo_partido: p_tipoPartido,
+                p_mintr_diciembre: partido.mintr_diciembre
+              });
+            case 37:
+              responsePartidos = _context6.sent;
+              if (!(!responsePartidos || !responsePartidos.data)) {
+                _context6.next = 40;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 40:
+              if (!(responsePartidos.status !== 200)) {
+                _context6.next = 42;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
+            case 42:
+              if (responsePartidos.data.success) {
+                _context6.next = 45;
+                break;
+              }
+              _errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
+              throw new Error(_errorMessage);
+            case 45:
+              debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
+              debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
+            case 47:
+              _context6.next = 33;
+              break;
+            case 49:
+              _context6.next = 54;
+              break;
+            case 51:
+              _context6.prev = 51;
+              _context6.t0 = _context6["catch"](31);
+              _iterator.e(_context6.t0);
+            case 54:
+              _context6.prev = 54;
+              _iterator.f();
+              return _context6.finish(54);
+            case 57:
+              p_tipoPartido = 'SIN';
+              _iterator2 = _createForOfIteratorHelper(partidosSinRepr);
+              _context6.prev = 59;
+              _iterator2.s();
+            case 61:
+              if ((_step2 = _iterator2.n()).done) {
+                _context6.next = 77;
+                break;
+              }
+              _partido = _step2.value;
+              _context6.next = 65;
+              return axios.post(url, {
+                // ⇋ UPDATE Partidos Sin Representación
+                p_id_calculo: idCalculo,
+                p_id_partido: _partido.id_partido,
+                p_tipo_partido: p_tipoPartido,
+                p_mintr_diciembre: _partido.mintr_diciembre
+              });
+            case 65:
+              _responsePartidos = _context6.sent;
+              if (!(!_responsePartidos || !_responsePartidos.data)) {
+                _context6.next = 68;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 68:
+              if (!(_responsePartidos.status !== 200)) {
+                _context6.next = 70;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
+            case 70:
+              if (_responsePartidos.data.success) {
+                _context6.next = 73;
+                break;
+              }
+              _errorMessage2 = _responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
+              throw new Error(_errorMessage2);
+            case 73:
+              debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(_responsePartidos.data.ids));
+              debug(' 🐛 📌 Id del partido: ' + _partido.id_partido, 'Mintr Diciembre: ' + _partido.mintr_diciembre);
+            case 75:
+              _context6.next = 61;
+              break;
+            case 77:
+              _context6.next = 82;
+              break;
+            case 79:
+              _context6.prev = 79;
+              _context6.t1 = _context6["catch"](59);
+              _iterator2.e(_context6.t1);
+            case 82:
+              _context6.prev = 82;
+              _iterator2.f();
+              return _context6.finish(82);
+            case 85:
+              // Notificación de éxito
+              Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+              });
+              _this7.$vs.notification({
+                color: 'success',
+                text: 'Ministración guardada' + responseTotales.data.message
               });
               _this7.descargar_disabled = false; // Habilita descargar archivo
-            case 5:
+              _context6.next = 96;
+              break;
+            case 90:
+              _context6.prev = 90;
+              _context6.t2 = _context6["catch"](11);
+              debug('🐛 Error al guardar la ministración:', _context6.t2);
+              _this7.$vs.notification({
+                title: 'Error',
+                color: 'danger',
+                text: 'Error al guardar la ministración'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context6.t2, nombreMetodo[3], _this7.$router);
+            case 96:
+              _context6.prev = 96;
+              loader.close();
+              return _context6.finish(96);
+            case 99:
             case "end":
               return _context6.stop();
           }
-        }, _callee6);
+        }, _callee6, null, [[11, 90, 96, 99], [31, 51, 54, 57], [59, 79, 82, 85]]);
       }))();
     },
     /**
@@ -28825,11 +29017,11 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: partidoS.mintr_diciembre
+                  value: _vm.formatCurrency(partidoS.mintr_diciembre)
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido);
+                    return _vm.onInputMoneda(_vm.event, partidoS.id_calculo, partidoS.id_partido, "sin");
                   }
                 }
               }), _vm._v(" "), _c("div", {

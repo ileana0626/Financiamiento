@@ -134,10 +134,10 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <input type="text" :value="partidoS.mintr_diciembre" class="form-control" 
+                                                <input type="text" :value="formatCurrency(partidoS.mintr_diciembre)" class="form-control" 
                                                     :key="'txbD_Sin-' + partidoS.id_calculo + '-' + partidoS.id_partido"
                                                     style="width: 100%;"
-                                                    @input="onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido)" />
+                                                    @input=" onInputMoneda(event, partidoS.id_calculo, partidoS.id_partido, 'sin')"/>
                                                 <div class="d-flex flex-column ms-1">
                                                     <button type="button" class="btn btn-sm p-0"
                                                         @click="ajustarDecimalManual('sumar', partidoS.id_calculo, partidoS.id_partido, monto)">▲</button>
@@ -520,14 +520,147 @@ export default {
                 loader.close();
             }
         },
-        async guardarCambios(calculo) {
 
+        /**
+         * Guarda los cambios de la ministración 
+         * @param {number} id_calculo - El ID del cálculo
+         */
+        async guardarCambios(id_calculo) {
+            const loader = loading(this.$vs);
+            loader.text = 'Guardando cambios...';
+            let url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
             //id del calculo seleccionado 
-            const idCalculo = calculo.id_calculo;
-            debug(' 🐛 Id del calculo: ' + idCalculo);
-            const partidos = this.Partidos_Con_Representacion.filter(p => p.id_calculo === idCalculo);
+            const idCalculo = id_calculo;
+            debug(' 🐛 ✨ Id del calculo: ' + idCalculo);
+            // Obtener los partidos con representación y sin representación de un cálculo
+            const partidosConRepr = this.Partidos_Con_Representacion.filter(p => p.id_calculo === idCalculo);
+            const partidosSinRepr = this.Partidos_Sin_Representacion.filter(p => p.id_calculo === idCalculo);
 
-            partidos.forEach(partido => {
+            //Preparamos los datos para guardar
+            let totalesMensuales = this.obtenerTotalesMensuales(idCalculo);
+            let granTotal = this.obtenerTotalGeneral(idCalculo);
+            debug(' 🐛 Id del totalesMensuales: ' + JSON.stringify(totalesMensuales));
+            debug(' 🐛 Id del granTotal: ' + granTotal);
+            try{
+                //Actualizamos los totales
+                let datos = {
+                    p_comando: "INSERT", // INSERT, UPDATE
+                    p_id_calculo: idCalculo,
+                    p_totales_mensuales_enero: totalesMensuales[0],
+                    p_totales_mensuales_febrero: totalesMensuales[1],
+                    p_totales_mensuales_marzo: totalesMensuales[2],
+                    p_totales_mensuales_abril: totalesMensuales[3],
+                    p_totales_mensuales_mayo: totalesMensuales[4],
+                    p_totales_mensuales_junio: totalesMensuales[5],
+                    p_totales_mensuales_julio: totalesMensuales[6],
+                    p_totales_mensuales_agosto: totalesMensuales[7],
+                    p_totales_mensuales_septiembre: totalesMensuales[8],
+                    p_totales_mensuales_octubre: totalesMensuales[9],
+                    p_totales_mensuales_noviembre: totalesMensuales[10],
+                    p_totales_mensuales_diciembre: totalesMensuales[11],
+                    p_gran_total: granTotal,
+                }
+                const responseTotales = await axios.post(url, datos); // ⇋ UPDATE Totales
+                // ✔ Validamos que la respuesta sea exitosa
+                if (!responseTotales || !responseTotales.data) {
+                    throw new Error('La respuesta del servidor no es válida');
+                }
+                if (responseTotales.status !== 200) {
+                    throw new Error(`Error en la petición: ${responseTotales.status} ${responseTotales.statusText}`);
+                }
+                if (!responseTotales.data.success) {
+                    const errorMessage = responseTotales.data.message || 'Error desconocido al guardar la ministración';
+                    throw new Error(errorMessage);
+                }
+                if(responseTotales.data.success){
+                    debug(' 🐛 🌠 Id del responseTotales: ' + JSON.stringify(responseTotales.data.id));
+                }
+                else{
+                    throw new Error(responseTotales.data.message);
+                }
+                
+                // Actualizamos cada campo del partido político por separado
+                let p_tipoPartido = 'CON';
+                url = '/administracion/solicitud/Mintr_Update_Partidos';
+                for (let partido of partidosConRepr) {
+                    let responsePartidos = await axios.post(url, { // ⇋ UPDATE Partidos Con Representación
+                        p_id_calculo: idCalculo,
+                        p_id_partido: partido.id_partido,
+                        p_tipo_partido: p_tipoPartido,
+                        p_mintr_diciembre: partido.mintr_diciembre,
+                    });
+                    // ✔ Validamos que la respuesta sea exitosa 
+                    if (!responsePartidos || !responsePartidos.data) {
+                        throw new Error('La respuesta del servidor no es válida');
+                    }
+                    if (responsePartidos.status !== 200) {
+                        throw new Error(`Error en la petición: ${responsePartidos.status} ${responsePartidos.statusText}`);
+                    }
+                    if (!responsePartidos.data.success) {
+                        const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
+                        throw new Error(errorMessage);
+                    }
+                    debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
+                    debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
+                }
+                p_tipoPartido = 'SIN';
+                for (let partido of partidosSinRepr) {
+                    let responsePartidos = await axios.post(url, { // ⇋ UPDATE Partidos Sin Representación
+                        p_id_calculo: idCalculo,
+                        p_id_partido: partido.id_partido,
+                        p_tipo_partido: p_tipoPartido,
+                        p_mintr_diciembre: partido.mintr_diciembre,
+                    });
+                    // ✔ Validamos que la respuesta sea exitosa 
+                    if (!responsePartidos || !responsePartidos.data) {
+                        throw new Error('La respuesta del servidor no es válida');
+                    }
+                    if (responsePartidos.status !== 200) {
+                        throw new Error(`Error en la petición: ${responsePartidos.status} ${responsePartidos.statusText}`);
+                    }
+                    if (!responsePartidos.data.success) {
+                        const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
+                        throw new Error(errorMessage);
+                    }
+                    debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(responsePartidos.data.ids));
+                    debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
+                }
+                // Notificación de éxito
+                Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+                })
+                this.$vs.notification({ color: 'success', text: 'Ministración guardada' + responseTotales.data.message});
+                this.descargar_disabled = false; // Habilita descargar archivo
+            }catch(error){
+                debug('🐛 Error al guardar la ministración:', error);
+                this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar la ministración' });
+
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            } finally {
+                loader.close();
+            }
+            /*
+            totalesMensuales.forEach((monto, index) => {
+            const nombreMes = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ][index];
+
+            if (index === 11) {
+                // Diciembre: mostrar todos los decimales
+                debug(`  ${nombreMes}: ${monto}`);
+            } else {
+                // Mostrar monto completo, sin formatear
+                debug(`  ${nombreMes}: ${monto}`);
+            }
+            */
+            /*
+            partidosConRepr.forEach(partido => {
                 const totalFinanciamiento = partido.C_fpaop;
                 const overrideDiciembre = this.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] ?? null;
 
@@ -535,7 +668,7 @@ export default {
 
                 debug(`\n📌 Partido: ${partido.siglas}`);
 
-                montosMensuales.forEach((monto, index) => {
+                totalesMensuales.forEach((monto, index) => {
                     const nombreMes = [
                         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -543,14 +676,16 @@ export default {
 
                     if (index === 11) {
                         // Diciembre: mostrar todos los decimales
-                        console.log(`  ${nombreMes}: ${monto}`);
+                        debug(`  ${nombreMes}: ${monto}`);
                     } else {
                         // Mostrar monto completo, sin formatear
-                        console.log(`  ${nombreMes}: ${monto}`);
+                        debug(`  ${nombreMes}: ${monto}`);
                     }
                 });
             });
-            this.descargar_disabled = false; // Habilita descargar archivo
+            */
+            
+
         },
         /**
          * Descarga el archivo Excel de la distribución
