@@ -805,7 +805,7 @@ class SolicitudController extends Controller
             $operacion = (string) "GET"; // Nos aseguramos de que sea un string
             
             // Obtener los datos de las ministraciones
-            $ministraciones = DB::select('CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
+            $ministracion = DB::select('CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
                 ?, ?, ?,
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
                     self::$useTransaction, // bandera estática,
@@ -814,15 +814,15 @@ class SolicitudController extends Controller
                     null, null, null,
                     null, null, null, null, null, null, null, null, null, null
             ]);
-            Log::info('Datos de las ministraciones obtenidos:', ['ministraciones' => $ministraciones]);
-            if (empty($ministraciones)) {
+            Log::info('Datos de la ministración obtenidos:', ['ministracion' => $ministracion]);
+            if (empty($ministracion)) {
                 Log::error('No se encontró la ministración con ID: ' . $id);
                 return response()->json([
                     'success' => false,
                     'message' => 'No se encontró la ministración solicitada'
                 ], 404);
             }
-            $ministracionesData = !empty($ministraciones) ? (array)$ministraciones[0] : [];
+            $ministracionData = !empty($ministracion) ? (array)$ministracion[0] : [];
             
             // Obtener los partidos políticos (con y sin representación)
             $pdo = DB::connection()->getPdo();
@@ -841,7 +841,7 @@ class SolicitudController extends Controller
             $data = [
                 'calculo' => $calculoData,
                 //'distribucion' => $distribucionData,
-                'ministraciones' => $ministracionesData,
+                'ministracion' => $ministracionData,
                 'partidos_sin_rep' => $partidosSinRep,
                 'partidos_con_rep' => $partidosConRep
             ];
