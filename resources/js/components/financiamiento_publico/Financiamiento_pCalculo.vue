@@ -11,7 +11,7 @@
                             </router-link>
                         </li>
                         <li class="breadActive">
-                            <span>Ministraciones</span>
+                            <span>Financiamiento Privado</span>
                         </li>
                     </ul>
                 </div>
@@ -20,7 +20,7 @@
 
         <div class="row col-md-11 col-10 mx-auto card-info">
             <div class="card-header d-flex justify-content-between align-items-center container-fluid">
-                <h3 class="card-title font-weight-bold">Ministraciones</h3>
+                <h3 class="card-title font-weight-bold">Financiamiento Privado</h3>
             </div>
 
             <!-- tablas de partidos del calculo seleccionado-->
@@ -42,86 +42,156 @@
                         </vs-select>
                     </div>
                 </div>
-
-
                 <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                     <!-- Partidos con representación -->
-                    <vs-table class="tabla-ajustada">
+                    <vs-table class="tabla-ajustada sin-bordes">
                         <template #thead>
                             <vs-tr>
-                                <vs-th>ID Cálculo</vs-th>
-                                <vs-th>Año fiscal</vs-th>
-                                <vs-th>Fecha de publicación</vs-th>
-                                <vs-th>Monto 30%</vs-th>
-                                <vs-th>Monto 70%</vs-th>
-                                <vs-th>Total asignado</vs-th>
-                                <vs-th>
-                                    Acciones
-                                </vs-th>
+                            <vs-th>ID Cálculo</vs-th>
+                            <vs-th>Año fiscal</vs-th>
+                            <vs-th>Fecha de publicación</vs-th>
+                            <vs-th>Acciones</vs-th>
                             </vs-tr>
                         </template>
+
                         <template #tbody>
-                            <vs-tr v-for="(calculo, i) in CalculosPorAnio" :key="`calculo-resumen-${i}`">
-                                <vs-td class="tableRowHeight">{{ calculo.id_calculo }}</vs-td>
-                                <vs-td class="tableRowHeight">{{ calculo.anio_ejercicio }}</vs-td>
-                                <vs-td class="tableRowHeight">{{ formatoFecha(calculo.fecha_publicacion) }}</vs-td>
-                                <vs-td class="tableRowHeight">{{ formatoMoneda(calculo.monto_30_por_ciento) }}</vs-td>
-                                <vs-td class="tableRowHeight">{{ formatoMoneda(calculo.monto_70_por_ciento) }}</vs-td>
-                                <vs-td class="tableRowHeight">{{ formatoMoneda(calculo.total_asignado) }}</vs-td>
-                                <vs-td class="tableRowHeight text-center">
-                                    <div style="width: 100%; display: flex; justify-content: center;">
-                                        <vs-button icon color="danger" size="small" @click="abrirDialog(tr)"
-                                            title="Distribuir">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </vs-button>
-                                    </div>
-                                </vs-td>
+                            <vs-tr
+                            v-for="(calculo, i) in CalculosPorAnio"
+                            :key="`calculo-resumen-${i}`"
+                            >
+                            <vs-td>{{ calculo.id_calculo }}</vs-td>
+                            <vs-td>{{ calculo.anio_ejercicio }}</vs-td>
+                            <vs-td>{{ formatoFecha(calculo.fecha_publicacion) }}</vs-td>
+                            <vs-td class="text-center">
+                                <vs-button
+                                icon
+                                color="danger"
+                                size="small"
+                                @click="abrirDialog(calculo)"
+                                title="Distribuir"
+                                >
+                                <i class="fas fa-pencil-alt"></i>
+                                </vs-button>
+                            </vs-td>
                             </vs-tr>
                         </template>
+
+                        <!-- Estado vacío -->
                         <template #notFound>
-                            <div
-                                class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
-                                <img src="../modulos/ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados"
-                                    class="imgNoData">
-                                <span class="noDataTitle">¡Sin Datos!</span>
+                            <div class="noDataContainer">
+                            <img
+                                src="../modulos/ver/images/no_data.webp"
+                                class="imgNoData"
+                                alt="Sin resultados"
+                            />
+                            <span class="noDataTitle">¡Sin Datos!</span>
                             </div>
                         </template>
-                    </vs-table>
+                        </vs-table>
 
-                    <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
-                        <div class="d-flex justify-content-center">
-                            <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar' + darkMode"
-                                @click.stop="guardarCambios(calculo)" style="padding: 0.20rem; font-size: 1rem;">
-                                <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                    <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
-                                    Guardar
+                          <!-- formularios -->
+        <template>
+            <div class="center">
+                <vs-dialog v-model="active" overflow-hidden width="90%">
+                    <!-- HEADER -->
+                    <template #header>
+                        <h4 class="not-margin">Distribución del cálculo</h4>
+                    </template>
+
+                    <div class="px-4">
+                        <!-- Formulario principal -->
+                        <div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h5>Financiamiento privado</h5>
                                 </div>
-                            </vs-button>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <vs-tooltip>
-                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar' + darkMode"
-                                    @click.stop="descargar(distribucionId)" hover="true"
-                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
-                                    <div
-                                        style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
-                                        <i class="fas fa-file-download pr-2"
-                                            style="font-size: 0.8125rem !important;"></i>
-                                        Descargar
-                                    </div>
-                                </vs-button>
-                                <template #tooltip>
-                                    <div v-if="descargar_disabled">
-                                        Debes guardar los cambios antes de descargar
-                                    </div>
-                                    <div v-else>
-                                        Descargar distribución
-                                    </div>
+                               
+                            </div>
+                            <!-- Tabla de distribución -->
+                            <vs-table class="mt-4">
+                                <template #thead>
+                                    <vs-tr class="partidos-header-row">
+                                        <vs-th></vs-th>
+                                        <vs-th></vs-th>
+                                        <vs-th v-for="(partido, i) in Partidos_Con_Representacion" 
+                                                :key="'head-' + i" 
+                                                class="partido-col">
+                                            <div class="partido-header">
+                                            <img :src="'/img/logos/' + partido.logo"
+                                                :alt="partido.siglas"
+                                                class="logo-partido"
+                                                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"/>
+                                            <span class="siglas">{{ partido.siglas }}</span>
+                                            </div>
+                                        </vs-th>
+                                        <vs-th v-for="(partidoS, i) in Partidos_Sin_Representacion" 
+                                                :key="'headS-' + i" 
+                                                class="partido-col">
+                                            <div class="partido-header">
+                                            <img :src="'/img/logos/' + partidoS.logo"
+                                                :alt="partidoS.siglas"
+                                                class="logo-partido"
+                                                onerror="this.onerror=null; this.src='/img/logos/NOT_FOUND_SMALL.webp'"/>
+                                            <span class="siglas">{{ partidoS.siglas }}</span>
+                                            </div>
+                                        </vs-th>
+                                        </vs-tr>
+                                        <vs-tr>
+                                            <vs-th>
+                                                <span>texto</span>
+                                            </vs-th>
+                                        </vs-tr>
                                 </template>
-                            </vs-tooltip>
+                                <template #tbody>
+                                   <!--  -->
+                                </template>
+                            </vs-table>
+                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
+                                    @click.stop="limpiarCampos"
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                                        </div>
+                                    </vs-button>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'guardar'+darkMode" 
+                                    @click.stop="guardarDistribucion" 
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Guardar
+                                        </div>
+                                    </vs-button>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <vs-tooltip>
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
+                                    @click.stop="descargarDistribucion(distribucionId)" hover="true"
+                                    style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
+                                            <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Descargar
+                                        </div>
+                                    </vs-button>
+                                    <template #tooltip>
+                                        <div v-if="descargar_disabled">
+                                            Debes guardar los cambios antes de descargar
+                                        </div>
+                                        <div v-else>
+                                            Descargar distribución
+                                        </div>
+                                    </template>
+                                    </vs-tooltip>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
+                </vs-dialog>
+            </div>
+        </template>
                 </div>
             </div>
         </div>
@@ -161,6 +231,7 @@ export default {
             // Dialog
             active: false,
             anio: '',
+            id: null,
             monto30Input: '',
             monto30: '',
             monto70: '',
@@ -331,7 +402,59 @@ export default {
          * @param {Object} calculo_tr - El calculo seleccionado
          */
         abrirDialog(calculo_tr) {
+            const loader = loading(this.$vs);
+            let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
+            this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+            this.datosCalculoSeleccionado = {};
+            this.Partidos_Sin_Representacion = [];
+            this.Partidos_Con_Representacion = [];
+            this.distribucionId = null; // resetea cada que se abra el Dialog
+            this.limpiarCampos(); // 🧹
+            this.active = true; // activa el modal
+            loader.text = 'Cargando datos...';
+            //Obtener los datos principales del Cálculo Financiero
+            axios.get(url, {
+                params: {
+                    'id': calculo_tr.id_calculo
+                }
+            }).then(response => {
+                debug('🐛 Datos recibidos:', response.data);
+                if (response.status === 200 && response.data?.success) {
+                    //Obtenemos los datos de los partidos politicos
+                    this.Partidos_Sin_Representacion = response.data.partidosSinRep;
+                    console.log(this.Partidos_Con_Representacion);
+                    this.Partidos_Con_Representacion = response.data.partidosConRep.map(p => ({
+                        ...p,
+                        ajuste: 0,
+                        sumado: false,
+                        restado: false,
+                        // valor temporal para el input
+                        inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
 
+                        // Variable temporarl en el Front
+                        errorPorcentajeVotacion: '' // Variable temporarl en el Front
+                    }));
+                } else {
+                    // success: false
+                    const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
+                    throw new Error(errorMessage);
+                }
+                // Cargando datos de Distribución
+               
+            }).catch((error) => {
+                console.error('Error al cargar detalles del cálculo', error);
+                this.$vs.notification({
+                    title: 'Error',
+                    text: 'Error al cargar los detalles del cálculo',
+                    color: 'danger'
+                });
+                
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            })
+            .finally(() => {
+                loader.close();
+            })
         },
         onChangeDistribucion(value) {
             this.distribucion = value;
@@ -399,119 +522,6 @@ export default {
                 }
             } catch (error) {
                 console.error("Error al obtener distribuciones:", error);
-            }
-        },
-        actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
-            const key = `con-${idCalculo}-${idPartido}`;
-            const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
-                || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
-            const total = partido ? (partido.C_fpaop || partido.monto_2_por_ciento) : 0;
-
-            let parsedValue = parseFloat(valor);
-            if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
-            if (parsedValue > total) parsedValue = total;
-
-            this.$set(this.ajustesDiciembre, key, parsedValue);
-        },
-        inicializarMontosFijos() {
-            [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].forEach(partido => {
-                const key = `con-${partido.id_calculo}-${partido.id_partido}`;
-                if (!this.montosFijos[key]) {
-                    const total = partido.C_fpaop || partido.monto_2_por_ciento;
-                    // Asignar los primeros 11 meses igual: (total / 12) cada uno
-                    const mensual = total / 12;
-                    this.$set(this.montosFijos, key, Array(11).fill(mensual));
-                }
-            });
-        },
-        distribuirConEditableDiciembre(montoTotal, overrideDiciembre, key) {
-            const montos = [];
-            const override = overrideDiciembre !== undefined ? new Decimal(overrideDiciembre) : null;
-
-            // Si no hay montos fijos, inicializarlos
-            if (!this.montosFijos[key]) {
-                this.inicializarMontosFijos();
-            }
-
-            if (!override || override.isNaN()) {
-                const mensual = new Decimal(montoTotal).dividedBy(12);
-                montos.push(...Array(11).fill(mensual));
-                montos.push(mensual);
-            } else {
-                const fijoMensual = (new Decimal(montoTotal).minus(override)).dividedBy(11);
-                montos.push(...Array(11).fill(fijoMensual));
-                montos.push(override);
-            }
-
-            return montos.map(m => m.toNumber());
-
-        },
-        guardarEdicion() {
-            // Lógica para guardar edición (llamada axios)
-            axios.put(`/api/calculos/${this.selectedCalculo.id}`, this.selectedCalculo)
-                .then(() => {
-                    this.$vs.notification({ color: 'success', text: 'Cálculo actualizado' });
-                    this.dialog = false;
-                    this.getCalculos(); // refrescar lista
-                }).catch(() => {
-                    this.$vs.notification({ color: 'danger', text: 'Error al guardar' });
-                });
-        },
-        /**
-         * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
-         */
-        async cargarDistribucion() { // ✅
-            const loader = loading(this.$vs);
-            loader.text = 'Cargando distribución...';
-            let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-            let datos = {
-                p_comando: 'GET',
-                p_id_calculo: this.selectedCalculo.id
-            }
-            try {
-                const response = await axios.post(url, datos); // ⇋ Se manda post aunque sea GET por el controlador
-                debug('🐛 response.data:', response.data);
-                // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
-                if (response.data && response.data.success && response.data.distribucion.length > 0) {
-                    this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-                    this.distribucionId = this.DataDistribucion.id_calculo;
-                    // Empieza a cargar los datos guardados
-                    this.anio = this.DataDistribucion.anio_ejercicio; // asigna año
-                    if (this.DataDistribucion?.tipo_distribucion) {
-                        this.distribucion = this.DataDistribucion.tipo_distribucion
-                            .split(',')
-                            .map(Number)
-                            .filter(item => !isNaN(item));
-                    }
-                    this.monto30Input = this.formatoMoneda(this.DataDistribucion.monto_30_por_ciento);
-                    this.monto30 = this.DataDistribucion.monto_30_por_ciento;
-                    this.monto70Input = this.formatoMoneda(this.DataDistribucion.monto_70_por_ciento);
-                    this.monto70 = this.DataDistribucion.monto_70_por_ciento;
-                    this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
-                    this.$nextTick(() => {
-                        debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
-                    });
-                    if ((this.distribucionId ?? null) !== null) {
-                        this.descargar_disabled = false;
-                    }
-                    debug('✅ Distribución cargada.');
-                } else {
-                    debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
-                    return;
-                }
-            } catch (error) {
-                console.error('Error al cargar distribución', error);
-                this.$vs.notification({
-                    title: 'Error',
-                    text: 'Error al cargar la distribución',
-                    color: 'danger'
-                });
-
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3], this.$router);
-            }
-            finally {
-                loader.close();
             }
         },
         async guardarCambios(calculo) {
@@ -653,71 +663,7 @@ export default {
          * Descarga el archivo Excel de la distribución
          * @param DistribucionId // debe de existir un preguardado antes
          */
-        descargarDistribucion(id) {
-            const loader = loading(this.$vs);
-            loader.text = 'Generando archivo Excel...';
-            const apiUrl = `/administracion/solicitud/exportarFinanciamientoDistribucionExcel/${id}`;
-            let downloadUrl = null;
-            let link = null;
-
-            if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
-                throw new Error('❌ No se encontro el ID de la distribución');
-            }
-            // ⇋
-            axios.get(apiUrl, {
-                responseType: 'blob',
-                method: 'GET',
-            })
-                .then(response => {
-                    downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-                    link = document.createElement('a');
-                    link.href = downloadUrl;
-                    const filename = `Anexo 2. Distribución.xlsx`;
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    this.$vs.notification({
-                        title: 'Éxito',
-                        text: 'El archivo Excel se está descargando',
-                        color: 'success'
-                    });
-                })
-                .catch(error => {
-                    debug('🐛 Error al descargar Excel:', error);
-
-                    let errorMessage = 'Error al descargar Excel';
-                    if (error.response?.data?.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    this.$vs.notification({
-                        title: 'Error',
-                        text: errorMessage,
-                        color: 'danger',
-                        time: 10000
-                    });
-                })
-                .finally(() => {
-                    loader.close();
-                    try {
-                        if (link && link.parentNode) {
-                            link.parentNode.removeChild(link); // Elimina el elemento hijo
-                        }
-                        if (downloadUrl && typeof downloadUrl === 'string') {
-                            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
-                        }
-                    } catch (e) {
-                        console.error('Error al limpiar recursos:', e);
-                    }
-                });
-        },
-        calcularMontoIgualitario30() {
-            const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
-            const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
-            return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
-        },
-
+        
         ajustarDecimal(partido, operacion) {
             const ajusteUnitario = 0.01;
 
@@ -737,61 +683,6 @@ export default {
             } else if (operacion === 'restar') {
                 partido.ajuste -= ajusteUnitario;
             }
-        },
-        /*
-        * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
-        * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
-         */
-        calcularMontoProporcionalB(porcentajePartido) {
-            const porcentaje = parseFloat(porcentajePartido);
-            const totalPorcentajes = this.sumaTotalPorcentajes;
-            const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
-
-            if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            return (monto * porcentaje) / totalPorcentajes;
-        },
-        calcularMontoBConAjuste(porcentajePartido, ajuste) {
-            const base = this.calcularMontoProporcionalB(porcentajePartido);
-            return base + (ajuste || 0);
-        },
-        calcularMontoC(partido) {
-            const montoA = parseFloat(this.calcularMontoIgualitario30());
-            const montoB = parseFloat(this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste));
-
-            // Verificar si los valores son números válidos
-            if (isNaN(montoA) || isNaN(montoB)) {
-                console.error('C. Valores inválidos:', {
-                    montoA,
-                    montoB,
-                    porcentaje: partido.porcentaje_votacion,
-                    ajuste: partido.ajuste
-                });
-                return 0; // O algún valor por defecto
-            }
-
-            return montoA + montoB;
-        },
-        calcularMontoD(partido) {
-            return this.calcularMontoC(partido) * this.factorCalculo;
-        },
-        calcularMontoD_ppsr(partido) {
-            return partido.monto_2_por_ciento * this.factorCalculo;
-        },
-        /*
-        * Almacena temporalmente en los Objetos de los partidos,
-        * los cálculos aplicados a las columnas antes de Guardar
-        */
-        AlmacenarCalculos_Partidos() {
-            this.Partidos_Con_Representacion.forEach(partido => {
-                partido.A_30_por_ciento = this.calcularMontoIgualitario30();
-                partido.B_70_por_ciento = this.calcularMontoProporcionalB(partido.porcentaje_votacion);
-                partido.B_Ajuste_70_por_ciento = this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-                partido.C_fpaop = this.calcularMontoC(partido);
-                partido.D_fpatov = this.calcularMontoD(partido);
-            });
-            this.Partidos_Sin_Representacion.forEach(partido => {
-                partido.D_monto_2_por_ciento = this.calcularMontoD_ppsr(partido);
-            });
         },
         /*
         * Formatea a moneda
@@ -929,31 +820,6 @@ export default {
             this.Partidos_Con_Representacion.forEach(partido => {
                 partido.errorPorcentajeVotacion = '';
             });
-        },
-        obtenerTotalesMensuales(idCalculo) {
-            const totales = Array(12).fill().map(() => new Decimal(0));
-
-            const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(p => p.id_calculo === idCalculo);
-
-            partidos.forEach(partido => {
-                const total = partido.C_fpaop || partido.monto_2_por_ciento;
-                const key = `con-${partido.id_calculo}-${partido.id_partido}`;
-                const override = this.ajustesDiciembre[key];
-
-                const montos = this.distribuirConEditableDiciembre(total, override, key);
-                montos.forEach((monto, i) => {
-                    // Precisión total
-                    totales[i] = totales[i].plus(new Decimal(monto));
-                });
-            });
-
-            // Convertir a números nativos para mostrar
-            return totales.map(t => t.toNumber());
-        },
-
-        obtenerTotalGeneral(id_calculo) {
-            const totales = this.obtenerTotalesMensuales(id_calculo);
-            return totales.reduce((sum, val) => new Decimal(sum).plus(new Decimal(val)), new Decimal(0)).toNumber();
         }
     },
     computed: {
@@ -965,89 +831,63 @@ export default {
 </script>
 
 <style>
-.tabla-ajustada {
-    width: 100% !important;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-    table-layout: fixed !important;
-    border-collapse: collapse;
+/* Quita bordes de la tabla */
+.sin-bordes ::v-deep(.vs-table__tr),
+.sin-bordes ::v-deep(.vs-table__td),
+.sin-bordes ::v-deep(.vs-table__th) {
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.vs-table__content {
-    justify-content: flex-start !important;
+/* Mantiene ancho fijo para evitar que se mueva */
+.tabla-ajustada ::v-deep(.vs-table__th),
+.tabla-ajustada ::v-deep(.vs-table__td) {
+  min-width: 150px; /* ajusta según necesites */
+  text-align: center;
 }
 
-.vs-table__th {
-    text-align: center !important;
-    font-size: 12px;
-    padding: 10px;
+/* Imagen y mensaje cuando no hay datos */
+.noDataContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.imgNoData {
+  width: 180px;
+  max-width: 40%;
+}
+.noDataTitle {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: #888;
 }
 
-.vs-checkbox--checked .vs-checkbox__check {
-    background-color: #1E90FF !important;
-    /* azul visible */
-    border-color: #1E90FF !important;
+.partidos-header-row {
+  display: flex !important;              /* fuerza flexbox en la fila */
+  justify-content: space-around;         /* reparte equitativamente */
+  align-items: center;
+  width: 100%;
 }
 
-.vs-checkbox__label {
-    color: #000 !important;
-    /* asegura que el texto no se vea gris */
+.partido-col {
+  flex: 1;                               /* cada partido ocupa el mismo espacio */
+  text-align: center !important;
 }
 
-.vs-checkbox--checked .vs-checkbox__label {
-    font-weight: bold;
+.partido-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.disabled-bold .vs-input {
-    font-weight: bold;
-    color: #000;
-    /* Negro fuerte */
+.logo-partido {
+  width: 60px;  /* puedes ajustar tamaño */
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 5px;
 }
 
-.dialog-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-}
-
-.dialog-table th,
-.dialog-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.dialog-table th {
-    background-color: var(--iee-white);
-    font-weight: bold;
-}
-
-.custom-dialog {
-    width: 90vw;
-    /* o un valor fijo como 800px */
-    max-width: 1000px;
-    padding: 20px;
-}
-
-/* Seleccion de filas Ajuste de decimales*/
-.vs-table--tbody-table tr.vs-table--tr-selected {
-    background-color: rgba(var(--vs-primary), 0.1);
-}
-
-
-/* Estilo para el borde del checkbox cuando NO está marcado */
-.vs-checkbox .vs-checkbox__check {
-    border: 2px solid #000 !important;
-    background: transparent !important;
-}
-
-/* Estilo para el checkbox cuando ESTÁ marcado */
-.vs-checkbox--checked .vs-checkbox__check {
-    background-color: #1E90FF !important;
-    border-color: #1E90FF !important;
-}
-
-/* Asegurar que el borde sea visible en el hover */
-.vs-checkbox:hover .vs-checkbox__check {
-    border-color: #1E90FF !important;
-}
 </style>
