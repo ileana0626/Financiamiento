@@ -27,7 +27,7 @@
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->
-                                <vs-th style="background-color: var(--iee-white);">
+                                <vs-th style="background-color: var(--iee-white); width: 200px;">
                                     Año fiscal
                                 </vs-th>
                                 <vs-th style="background-color: var(--iee-white);">
@@ -69,7 +69,6 @@
                                 </vs-td>
                                 <vs-td class="tableRowHeight text-center">
                                     <div style="width: 100%; display: flex; justify-content: center;">
-                                
                                         <vs-button icon color="danger" size="small" @click="abrirDialog(tr)"
                                             title="Distribuir">
                                             <i class="fas fa-pencil-alt"></i>
@@ -80,10 +79,10 @@
                         </template>
                         <template #notFound>
                             <div
-                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
-                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
-                                    <span class="noDataTitle">¡Sin Datos!</span>
-                                    </div>
+                                class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                                <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                                <span class="noDataTitle">¡Sin Datos!</span>
+                            </div>
                         </template>
                         <template #footer>
                             <vs-pagination v-model="page" color="dark"
@@ -935,7 +934,7 @@ export default {
                     this.$vs.notification({
                     title: 'Aviso',
                     text: 'Primero debes restar a otro partido antes de sumar.',
-                    color: 'danger'
+                    color: 'warning'
                     });
                 }
             } else if (operacion === 'restar') {

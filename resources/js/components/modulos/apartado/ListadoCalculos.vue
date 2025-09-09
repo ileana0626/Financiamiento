@@ -139,10 +139,10 @@
                     </template>
                     <template #notFound>
                         <div
-                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
-                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
-                                    <span class="noDataTitle">¡Sin Datos!</span>
-                                    </div>
+                            class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                            <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                            <span class="noDataTitle">¡Sin Datos!</span>
+                        </div>
                     </template>
                     <template #footer>
                         <vs-pagination v-model="page" color="dark"

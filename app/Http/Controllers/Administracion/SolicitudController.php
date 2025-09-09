@@ -449,7 +449,7 @@ class SolicitudController extends Controller
 
                  // Si ya existe, cambiamos el comando INSERT a UPDATE
                  $comando = $existe ? "UPDATE" : "INSERT";
-                 //Log::info('Ministraciones -> Comando: ' . $comando);
+                 Log::info('Ministraciones -> Comando: ' . $comando);
             } // else -> el comando es 'GET', se rellenan los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
             
             $ministracion = $request->all();
@@ -637,7 +637,7 @@ class SolicitudController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al exportar el reporte de financiamiento', [
+            Log::error('Error al exportar el reporte de cálculo', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
@@ -748,7 +748,7 @@ class SolicitudController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al exportar el reporte de financiamiento', [
+            Log::error('Error al exportar el reporte de distribución', [
                 'error' => $e->getMessage(),
                 //'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
@@ -853,7 +853,7 @@ class SolicitudController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al exportar el reporte de financiamiento', [
+            Log::error('Error al exportar el reporte de ministración', [
                 'error' => $e->getMessage(),
                 //'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),

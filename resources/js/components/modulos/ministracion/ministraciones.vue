@@ -264,7 +264,7 @@ export default {
             catAnio: [],
             //calculo: {}, // Se usa para cargar el cálculo seleccionado
             //montosFijos: {},
-            ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación
+            //ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación -- DEPRECATED
             //cat_tipo_distribucion: [],
             //distribucion: [],
             distribuciones: [],
@@ -457,7 +457,7 @@ export default {
                     this.Partidos_Con_Representacion = data.partidos_con_repr;
                     this.Partidos_Sin_Representacion = data.partidos_sin_repr;
 
-                    // Inicializar ajustesDiciembre, esta variable indica si se resto o se sumo
+                    // Inicializar ajusteDiciembre, esta variable indica si se resto o se sumo
                     // Usar $set para que Vue detecte los cambios y sean reactivos
                     this.Partidos_Con_Representacion.map(partido =>
                         this.$set(partido, 'ajusteDiciembre', 0.0),
@@ -819,7 +819,8 @@ export default {
             });
         },
 
-        // NO SE OCUPA
+        // NO SE OCUPA - DEPRECATED
+        /*
         getStepForMonto(monto) {
             if (!monto || isNaN(monto)) return '0.01';
 
@@ -830,6 +831,8 @@ export default {
             }
             return '1';
         },
+        */
+
         // #endregion FORMATEOS 🛠
 
        // #region OPERACIONES DE LA VISTA 📊
@@ -839,7 +842,7 @@ export default {
          * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
          * @param {object} partido - Partido político con el monto de diciembre 
          * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
-         * @param {string} key - Key para la distribución si es {con | sin}
+         * @param {string} key - Key para la distribución si es {con | sin} -- DEPRECATED
          * @returns {Array<number>} - Array con los montos distribuidos
          */
          distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
@@ -854,7 +857,7 @@ export default {
             // Actualizar estado del valor de diciembre temporal
             partido.mintr_diciembre = montoDiciembre;
             //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
-            this.$set(this.ajustesDiciembre, key, montoDiciembre);
+            //this.$set(this.ajustesDiciembre, key, montoDiciembre); -- DEPRECATED
 
             // Retornar array con 11 meses iguales + diciembre
             return [...Array(11).fill(mensual), montoDiciembre].map(v => v.toNumber ? v.toNumber() : v); // 123.456 Decimal->toNumber()
@@ -921,7 +924,7 @@ export default {
                     this.$vs.notification({
                         title: 'Atención',
                         text: 'Primero debes restar a otro partido antes de sumar.',
-                        color: 'danger'
+                        color: 'warning'
                     });
                 }
             } else if (operacion === 'restar') { //Permite restar siempre para tener que sumarle a otro partido

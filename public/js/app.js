@@ -11991,7 +11991,7 @@ var debug = function debug() {
           this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'danger'
+            color: 'warning'
           });
         }
       } else if (operacion === 'restar') {
@@ -12365,8 +12365,7 @@ var debug = function debug() {
       catAnio: [],
       //calculo: {}, // Se usa para cargar el cálculo seleccionado
       //montosFijos: {},
-      ajustesDiciembre: {},
-      // como un objeto para almacenar pares clave-valor para partidos con y sin representación
+      //ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación -- DEPRECATED
       //cat_tipo_distribucion: [],
       //distribucion: [],
       distribuciones: [],
@@ -12610,7 +12609,7 @@ var debug = function debug() {
                 _this5.Partidos_Con_Representacion = data.partidos_con_repr;
                 _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
 
-                // Inicializar ajustesDiciembre, esta variable indica si se resto o se sumo
+                // Inicializar ajusteDiciembre, esta variable indica si se resto o se sumo
                 // Usar $set para que Vue detecte los cambios y sean reactivos
                 _this5.Partidos_Con_Representacion.map(function (partido) {
                   return _this5.$set(partido, 'ajusteDiciembre', 0.0);
@@ -13058,16 +13057,18 @@ var debug = function debug() {
         maximumFractionDigits: 2
       });
     },
-    // NO SE OCUPA
-    getStepForMonto: function getStepForMonto(monto) {
-      if (!monto || isNaN(monto)) return '0.01';
-      var parts = monto.toString().split('.');
-      if (parts.length === 2) {
-        var longitudDecimales = parts[1].length;
-        return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
-      }
-      return '1';
+    // NO SE OCUPA - DEPRECATED
+    /*
+    getStepForMonto(monto) {
+        if (!monto || isNaN(monto)) return '0.01';
+          const parts = monto.toString().split('.');
+        if (parts.length === 2) {
+            const longitudDecimales = parts[1].length;
+            return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
+        }
+        return '1';
     },
+    */
     // #endregion FORMATEOS 🛠
     // #region OPERACIONES DE LA VISTA 📊
     /**
@@ -13076,7 +13077,7 @@ var debug = function debug() {
       * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
       * @param {object} partido - Partido político con el monto de diciembre 
       * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
-      * @param {string} key - Key para la distribución si es {con | sin}
+      * @param {string} key - Key para la distribución si es {con | sin} -- DEPRECATED
       * @returns {Array<number>} - Array con los montos distribuidos
       */
     distribuirConEditableDiciembre: function distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
@@ -13091,7 +13092,7 @@ var debug = function debug() {
       // Actualizar estado del valor de diciembre temporal
       partido.mintr_diciembre = montoDiciembre;
       //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
-      this.$set(this.ajustesDiciembre, key, montoDiciembre);
+      //this.$set(this.ajustesDiciembre, key, montoDiciembre); -- DEPRECATED
 
       // Retornar array con 11 meses iguales + diciembre
       return [].concat(_toConsumableArray(Array(11).fill(mensual)), [montoDiciembre]).map(function (v) {
@@ -13158,7 +13159,7 @@ var debug = function debug() {
           this.$vs.notification({
             title: 'Atención',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'danger'
+            color: 'warning'
           });
         }
       } else if (operacion === 'restar') {
@@ -28152,7 +28153,8 @@ var render = function render() {
       fn: function fn() {
         return [_c("vs-tr", [_c("vs-th", {
           staticStyle: {
-            "background-color": "var(--iee-white)"
+            "background-color": "var(--iee-white)",
+            width: "200px"
           }
         }, [_vm._v("\n                                Año fiscal\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {

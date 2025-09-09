@@ -1422,7 +1422,9 @@ BEGIN
 	-- Retornamos los partidos sin representación
 	SELECT cat_psr.siglas, cat_psr.nombre, cat_psr.logo, 
 		psr.id_calculo, psr.id_partido, psr.monto_2_por_ciento,
-        psr.D_monto_2_por_ciento
+        psr.D_monto_2_por_ciento,
+        -- Datos de Ministraciones
+        psr.mintr_diciembre
 		FROM calculo_partido_sin_repr psr 
         INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
         WHERE psr.id_calculo = p_id_calculo;
@@ -1430,7 +1432,9 @@ BEGIN
 	SELECT cat_pcr.siglas, cat_pcr.nombre, cat_pcr.logo,
 		-- Se agregar los campos del apartado de distribución y de Partido con representación
 		pcr.id_calculo, pcr.id_partido, pcr.porcentaje_votacion, pcr.ajuste,
-        pcr.A_30_por_ciento, pcr.B_70_por_ciento, pcr.B_Ajuste_70_por_ciento, pcr.C_fpaop, D_fpatov
+        pcr.A_30_por_ciento, pcr.B_70_por_ciento, pcr.B_Ajuste_70_por_ciento, pcr.C_fpaop, D_fpatov,
+        -- Datos de Ministraciones
+        pcr.mintr_diciembre
 		FROM calculo_partido_con_repr pcr
 		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id 
 		WHERE pcr.id_calculo = p_id_calculo;
@@ -1471,6 +1475,8 @@ DELIMITER //
 * @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
 * @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
 * @param p_id_dist
+* @example
+* CALL admin.sp_Distr_Get_Insert_Update_distribucion_dppp(0, 'UPDATE', 1, 2025, '1,2', 123213, 123123, 1, 0, 0, 0, 246336, 123168, 341176.797, 170588.3985, 5875.12797);
 */
 CREATE PROCEDURE sp_Distr_Get_Insert_Update_distribucion_dppp(
 	IN p_use_transaction BOOLEAN,
@@ -1710,7 +1716,8 @@ DELIMITER //
 * @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
 * @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
 * @example 
-*	CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(true, 'GET', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(true, 'GET', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(0, 'UPDATE', 1, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.85099999, 4232218.212);
 */
 CREATE PROCEDURE sp_Mintr_Get_Insert_Update_ministraciones_dppp(
 	IN p_use_transaction BOOLEAN,
@@ -1767,7 +1774,8 @@ BEGIN
 				total_enero = p_total_enero, total_febrero = p_total_febrero, total_marzo = p_total_marzo, total_abril = p_total_abril, total_mayo = p_total_mayo, 
 				total_junio = p_total_junio, total_julio = p_total_julio, total_agosto = p_total_agosto, total_septiembre = p_total_septiembre, total_octubre = p_total_octubre,
 				total_noviembre = p_total_noviembre, total_diciembre = p_total_diciembre,
-                gran_total = p_gran_total;
+                gran_total = p_gran_total
+                WHERE id_calculo = p_id_calculo;
 			SELECT p_id_calculo AS id; -- Solo para retornar el ID
 		END IF;
     ELSEIF p_comando = 'GET' THEN
