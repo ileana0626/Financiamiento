@@ -358,7 +358,7 @@ class SolicitudController extends Controller
 
                  // Si ya existe, cambiamos el comando INSERT a UPDATE
                  $comando = $existe ? "UPDATE" : "INSERT";
-            } // else -> el comando es 'GET', rellena los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
+            } // else -> el comando es 'GET', se rellenan los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
 
 
             //$id = $request->input('id', null); // Valor por defecto null
@@ -428,6 +428,153 @@ class SolicitudController extends Controller
         }
     }
     
+
+    /**
+     * Actualiza los totales de las Ministraciones
+     * @param Request $request, totales mensuales y gran total
+     * @return void
+     */
+    public function Mintr_Get_Insert_Update_ministraciones_dppp(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+            
+            $comando = $request->input('p_comando', null);
+            if ($comando === "UPDATE" || $comando === "INSERT") {
+                 // Verificar si ya existe un registro para este cálculo
+                 $existe = DB::table('ministraciones_dppp')
+                 ->where('id_calculo', $request->input('p_id_calculo'))
+                 ->exists();
+
+                 // Si ya existe, cambiamos el comando INSERT a UPDATE
+                 $comando = $existe ? "UPDATE" : "INSERT";
+                 Log::info('Ministraciones -> Comando: ' . $comando);
+            } // else -> el comando es 'GET', se rellenan los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
+            
+            $ministracion = $request->all();
+            $response = DB::select('CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $comando,
+                $ministracion['p_id_calculo'] ?? null,
+                $ministracion['p_totales_mensuales_enero'] ?? null,
+                $ministracion['p_totales_mensuales_febrero'] ?? null,
+                $ministracion['p_totales_mensuales_marzo'] ?? null,
+                $ministracion['p_totales_mensuales_abril'] ?? null,
+                $ministracion['p_totales_mensuales_mayo'] ?? null,
+                $ministracion['p_totales_mensuales_junio'] ?? null,
+                $ministracion['p_totales_mensuales_julio'] ?? null,
+                $ministracion['p_totales_mensuales_agosto'] ?? null,
+                $ministracion['p_totales_mensuales_septiembre'] ?? null,
+                $ministracion['p_totales_mensuales_octubre'] ?? null,
+                $ministracion['p_totales_mensuales_noviembre'] ?? null,
+                $ministracion['p_totales_mensuales_diciembre'] ?? null,
+                $ministracion['p_gran_total'] ?? null
+            ]);
+            DB::commit();
+
+            $id = null;
+            // en 'GET' no se obtiene el ID
+            if($comando === 'UPDATE' || $comando === 'INSERT'){
+                $id = !empty($response) ? $response[0]->id : null;
+                Log::info('Ministraciones -> ID obtenido:', ['id' => $id, 'comando' => $comando]);
+            }
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Ministraciones -> Consulta SQL ejecutada:', $queryLog);
+
+            // Verificar si hubo un error en el procedimiento almacenado
+            if (isset($response[0]->error) && $response[0]->error) {
+                throw new \Exception($response[0]->mensaje ?? 'Error en el procedimiento almacenado');
+            }
+            return response()->json([
+                'success' => true,
+                'id' => $id,
+                'ministracion' => $comando === 'GET' ? $response : null, // Solo con GET
+                'message' => 'Ministración actualizada exitosamente'
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar totales', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                //'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar los totales',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
+    /**
+     * Apartado de Ministraciones
+     * Actualiza los partidos políticos con y sin representación
+     * @param id_calculo: ID del cálculo
+     * @param id_partido: ID del partido político
+     * @param p_tipo_Partido: {CON | SIN}
+     * @param p_mintr_diciembre: Monto del ministrado en diciembre
+     * @return json ids de los partidos políticos actualizados
+     */
+    public function Mintr_Update_Partidos(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        try{
+            DB::beginTransaction();
+            DB::enableQueryLog();
+             // Obtener el objeto partido completo
+            $partido = $request->all();
+
+            // Llamar al procedimiento almacenado
+            $response = DB::select('CALL sp_Mintr_Update_Partidos(?, ?, ?, ?, ?)', [
+                self::$useTransaction, // bandera estática
+                $partido['p_id_calculo'] ?? null,
+                $partido['p_id_partido'] ?? null,
+                $partido['p_tipo_partido'] ?? null,
+                $partido['p_mintr_diciembre'] ?? null
+            ]);
+            Log::info('Consulta SQL ejecutada:', $response);
+            DB::commit();
+            
+            // Obtener el ID del primer resultado
+            $ids = !empty($response) ? $response[0]->ids : null; // String desde el sp_
+
+            // Obtener y loguear la consulta
+            $queryLog = DB::getQueryLog();
+            Log::info('Ministraciones -> Consulta SQL ejecutada:', $queryLog);
+            
+            // Verificar si hubo un error en el procedimiento almacenado
+            if (isset($response[0]->error) && $response[0]->error) {
+                throw new \Exception($response[0]->mensaje ?? 'Error en el procedimiento almacenado');
+            }
+
+            return response()->json([
+                'success' => true,
+                'ids' => $ids,
+                'message' => 'Partido actualizado correctamente',
+                //'data' => $result[0] ?? null
+            ]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            Log::error('Error al actualizar partido', [
+                'error' => $e->getMessage(),
+                'errorCode' => $e->getCode()
+                //'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el partido',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
+
     /**
      * Exporta el reporte de Anexo 1. Cálculo Financiamiento a Excel
      *
@@ -490,7 +637,7 @@ class SolicitudController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al exportar el reporte de financiamiento', [
+            Log::error('Error al exportar el reporte de cálculo', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
@@ -601,7 +748,112 @@ class SolicitudController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al exportar el reporte de financiamiento', [
+            Log::error('Error al exportar el reporte de distribución', [
+                'error' => $e->getMessage(),
+                //'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    //'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+    
+    /**
+     * Exporta el reporte de Anexo 3. Ministraciones de Financiamiento a Excel
+     *
+     * @param $id Id del cálculo o distribución
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarFinanciamientoMinistracionesExcel(Request $request, $id = null)
+    {
+        if (!$request->ajax()) return redirect('/');
+        
+        try {
+            Log::info('Iniciando exportación de Excel Ministraciones para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
+            $operacion = (string) "GET"; // Nos aseguramos de que sea un string
+            
+            // Obtener los datos de las ministraciones
+            $ministracion = DB::select('CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(?, ?, ?,
+                ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
+                    self::$useTransaction, // bandera estática,
+                    $operacion,
+                    $id,
+                    null, null, null,
+                    null, null, null, null, null, null, null, null, null, null
+            ]);
+            Log::info('Datos de la ministración obtenidos:', ['ministracion' => $ministracion]);
+            if (empty($ministracion)) {
+                Log::error('No se encontró la ministración con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró la ministración solicitada'
+                ], 404);
+            }
+            $ministracionData = !empty($ministracion) ? (array)$ministracion[0] : [];
+            
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            $data = [
+                'calculo' => $calculoData,
+                //'distribucion' => $distribucionData,
+                'ministracion' => $ministracionData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+            Log::info('Datos preparados para la exportación:', $data);
+
+            $filename = date('Y-m-d') . '_Anexo_3_Ministraciones' . '.xlsx';
+            return (new \App\Exports\FinanciamientoMinistracionesExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de ministración', [
                 'error' => $e->getMessage(),
                 //'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
@@ -716,8 +968,6 @@ class SolicitudController extends Controller
             // throw new \ErrorException("No se ha podido registrar la información, inténtelo más tarde." . $errorCode);
         }
     }
-
-
 
 
     public function setRegistrarCalculo(Request $request){

@@ -1,9 +1,10 @@
 /*
 * @description Archivo de ayuda para formatear datos de la base de datos 
 * y mostrar en vistas .vue
-* @author Tony
-* @version 1.0.0
+* @author Tony 😉
+* @version 1.2.1
 * @date 18/08/2025
+* @updated 04/09/2025
 */
 /**
  * Formatea una fecha de entrada a un formato específico con el separador indicado.
@@ -119,20 +120,75 @@ export const formatDateToDMYWithMonthName = (dateString, format = 'full') => {
     }
 }
 
+/**
+ * Valida si un string tiene formato de número con o sin símbolo de moneda
+ * @param {string} str - String a validar
+ * @returns {boolean} - true si el formato es válido
+ */
+const tieneFormatoMonedaValido = (str) => {
+    // Acepta números con/sin signo, con/sin separadores de miles, y con/sin decimales
+    const formatoMonedaRegex = /^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$/;
+    return formatoMonedaRegex.test(str);
+};
 
-/*
-* Formatea a moneda
-* @param {number} valor - El valor a formatear
-* @returns {string} - El valor formateado
-*/
-export const formatoMoneda = (valor, defaultDecimal = 2) => {
-    return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: defaultDecimal,
-    maximumFractionDigits: defaultDecimal
-    }).format(valor);
-}
+/**
+ * Formatea un número como moneda mexicana
+ * @param {number|string} valor - Valor a formatear (puede ser número o string numérico)
+ * @param {number} [decimales=2] - Número de decimales a mostrar (0-20)
+ * @returns {string} - Valor formateado como moneda mexicana
+ * @example
+ * formatoMoneda(1234.567);      // "$1,234.57"
+ * formatoMoneda("1234.567", 3); // "$1,234.567"
+ * formatoMoneda(null);          // "$0.00"
+ * formatoMoneda("abc");         // "$0.00"
+ */
+export const formatoMonedaMX = (valor, decimales = 2) => {
+    // Validación de entrada
+    if (valor === null || valor === undefined || valor === '') return '$0.00';
+    
+     // Si es string, validar formato y limpiar
+     if (typeof valor === 'string') {
+        // Eliminar espacios y símbolos de moneda existentes
+        const valorLimpio = valor.trim().replace(/[$\s,]/g, '');
+        
+        // Validar que sea un número válido
+        if (!tieneFormatoMonedaValido(valorLimpio) || isNaN(Number(valorLimpio))) {
+            return '$0.00';
+        }
+        // Convertir a número
+        valor = Number(valorLimpio);
+    }
+
+    const num = Number(valor);
+    if (isNaN(num)) return '$0.00';
+    
+    // Asegurar que los decimales estén en el rango permitido (0-20)
+    const decimalesAjustados = Math.min(Math.max(0, Math.floor(decimales)), 20);
+    
+    // const options = {
+    //     style: 'currency',
+    //     currency: 'MXN',
+    //     minimumFractionDigits: decimalesAjustados,
+    //     maximumFractionDigits: decimalesAjustados,
+    //     useGrouping: true
+    // };
+    
+    try {
+        const formatter = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: decimalesAjustados,
+            maximumFractionDigits: decimalesAjustados,
+            useGrouping: true
+        });
+        //return num.toLocaleString('es-MX', options);
+        return formatter.format(num);
+    } catch (error) {
+        console.error('Error al formatear moneda:', error);
+        // Fallback básico en caso de error
+        return `$${num.toFixed(decimalesAjustados)}`;
+    }
+};
 
 /* Función para formatear el porcentaje (solo formatea)
 * @param {number} valor - El valor a formatear
@@ -199,3 +255,50 @@ export const formatearDecimal = (valor, defaultDecimal = 2) => {
     
     return parteDecimal ? `${parteEntera}.${parteDecimal}` : parteEntera;
 }
+
+/**
+ * Limpia y valida un valor numérico de un input
+ * @param {string} valor - Valor a limpiar
+ * @returns {string} - Valor limpio y validado
+ * @example
+ * limpiarNumeroInput("$1,234.56") // "1234.56"
+ * limpiarNumeroInput("abc123.45") // "123.45"
+ * limpiarNumeroInput("12.34.56")  // "12.3456"
+ * 
+ * @example
+ * "12.34.56" → "12.3456"
+ * ".123" → "0.123"
+ * "0012.34" → "12.34"
+ * 
+ * @example
+ * methods: {
+ *     onInputMoneda(event) {
+ *         const valorLimpio = limpiarNumeroInput(event.target.value);
+ *         this.miValor = valorLimpio;
+ *         // Actualizar el valor del input
+ *         event.target.value = valorLimpio;
+ *     }
+ * }
+ * <input 
+ *     type="text" 
+ *     :value="miValor" 
+ *     @input="onInputMoneda" 
+ *     placeholder="0.00" 
+/>
+ */
+export const limpiarNumeroInput = (valor) => {
+    if (typeof valor !== 'string') return '';
+    
+    // Elimina todo excepto números y puntos
+    const soloNumerosYPunto = valor.replace(/[^0-9.]/g, '');
+    // Maneja múltiples puntos, manteniendo solo el primero
+    const partes = soloNumerosYPunto.split('.');
+    const parteEntera = partes[0] || '';
+    const parteDecimal = partes.length > 1 ? '.' + partes.slice(1).join('') : '';
+
+    // Une las partes y limpia ceros a la izquierda
+    return (parteEntera + parteDecimal)
+        .replace(/^0+(\d)/, '$1')  // Elimina ceros iniciales
+        .replace(/^\./, '0.')      // Si empieza con punto, agrega 0
+        .replace(/^$/, '0');       // Si está vacío, devuelve "0"
+};

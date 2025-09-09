@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 
 
 -- Volcando estructura para tabla admin.permiso_has_rol
-drop table permiso_has_rol;
+DROP TABLE IF EXISTS permiso_has_rol;
 CREATE TABLE IF NOT EXISTS `permiso_has_rol` (
   `idPERMISO` int NOT NULL,
   `idROL` int NOT NULL,
@@ -576,6 +576,7 @@ CREATE TABLE calculo_partido_sin_repr (
     id_partido INT NOT NULL,
     monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
     D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo',
+    mintr_diciembre DECIMAL(30,15) NULL COMMENT 'Ministraciones - <<diciembre>> campo de ajuste de décimas de centavo',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -595,7 +596,7 @@ CREATE TABLE calculo_partido_con_repr (
     B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Total de B. 70% conforme al % de votación después del ajuste',
     C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades ordinarias permanentes (A+B)',
     D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades tendientes a la obtención del voto (D=C*Factor%)',
-    
+    mintr_diciembre DECIMAL(30,15) NULL COMMENT 'Ministraciones - <<diciembre>> campo de ajuste de décimas de centavo',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -645,10 +646,17 @@ CREATE TABLE distribucion_dppp(
 		ON DELETE RESTRICT
 );
 
+
+DROP TABlE IF EXISTS ministraciones_dppp;
+/*
+* @table Tabla de ministraciones para Financiamiento
+* @description Personal de la DPPP
+*/
 CREATE TABLE ministraciones_dppp (
-    id_ministracion INT PRIMARY KEY AUTO_INCREMENT,
-    id_distribucion INT NOT NULL,
-    total_financiamiento DECIMAL(30,15),
+    -- id_ministracion INT PRIMARY KEY AUTO_INCREMENT,
+    -- id_calculo INT NOT NULL COMMENT 'Id ligado a un cálculo y distribución',
+    id_calculo INT NOT NULL COMMENT 'Id ligado a un cálculo y distribución',
+    -- total_financiamiento DECIMAL(30,15) COMMENT 'Total de Financiamiento público para actividades ordinarias permanentes, por cada partido político.',
     total_enero DECIMAL(30,15),
     total_febrero DECIMAL(30,15),
     total_marzo DECIMAL(30,15),
@@ -660,7 +668,11 @@ CREATE TABLE ministraciones_dppp (
     total_septiembre DECIMAL(30,15),
     total_octubre DECIMAL(30,15),
     total_noviembre DECIMAL(30,15),
-    total_diciembre DECIMAL(30,15)
+    total_diciembre DECIMAL(30,15),
+    gran_total DECIMAL(30,15) COMMENT 'es la suma de todos los totales',
+	PRIMARY KEY (id_calculo),
+	FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
+		ON DELETE RESTRICT
 );
 
 /* FIN TABLAS */
@@ -1412,7 +1424,9 @@ BEGIN
 	-- Retornamos los partidos sin representación
 	SELECT cat_psr.siglas, cat_psr.nombre, cat_psr.logo, 
 		psr.id_calculo, psr.id_partido, psr.monto_2_por_ciento,
-        psr.D_monto_2_por_ciento
+        psr.D_monto_2_por_ciento,
+        -- Datos de Ministraciones
+        psr.mintr_diciembre
 		FROM calculo_partido_sin_repr psr 
         INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
         WHERE psr.id_calculo = p_id_calculo;
@@ -1420,7 +1434,9 @@ BEGIN
 	SELECT cat_pcr.siglas, cat_pcr.nombre, cat_pcr.logo,
 		-- Se agregar los campos del apartado de distribución y de Partido con representación
 		pcr.id_calculo, pcr.id_partido, pcr.porcentaje_votacion, pcr.ajuste,
-        pcr.A_30_por_ciento, pcr.B_70_por_ciento, pcr.B_Ajuste_70_por_ciento, pcr.C_fpaop, D_fpatov
+        pcr.A_30_por_ciento, pcr.B_70_por_ciento, pcr.B_Ajuste_70_por_ciento, pcr.C_fpaop, D_fpatov,
+        -- Datos de Ministraciones
+        pcr.mintr_diciembre
 		FROM calculo_partido_con_repr pcr
 		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id 
 		WHERE pcr.id_calculo = p_id_calculo;
@@ -1450,7 +1466,7 @@ BEGIN
 END;
 //DELIMITER ;
 
-use admin;
+-- use admin;
  
 DROP PROCEDURE IF EXISTS sp_Distr_Get_Insert_Update_distribucion_dppp;
 DELIMITER //
@@ -1461,6 +1477,8 @@ DELIMITER //
 * @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
 * @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
 * @param p_id_dist
+* @example
+* CALL admin.sp_Distr_Get_Insert_Update_distribucion_dppp(0, 'UPDATE', 1, 2025, '1,2', 123213, 123123, 1, 0, 0, 0, 246336, 123168, 341176.797, 170588.3985, 5875.12797);
 */
 CREATE PROCEDURE sp_Distr_Get_Insert_Update_distribucion_dppp(
 	IN p_use_transaction BOOLEAN,
@@ -1618,10 +1636,13 @@ BEGIN
 END;
 //DELIMiTER ;
 
--- nuevo 
+-- MINISTRACIONES
+
 DROP PROCEDURE IF EXISTS sp_GetDistribucionesPorAnio;
 DELIMITER //
-
+/*
+* @example CALL sp_GetDistribucionesPorAnio(2025);
+*/
 CREATE PROCEDURE sp_GetDistribucionesPorAnio(IN p_anio INT)
 BEGIN
     -- 1. Todos los cálculos de ese año
@@ -1644,7 +1665,8 @@ BEGIN
         cpcr.ajuste,
         cpcr.B_Ajuste_70_por_ciento,
         cpcr.C_fpaop,
-        cpcr.D_fpatov
+        cpcr.D_fpatov,
+        cpcr.mintr_diciembre
     FROM calculo_dppp c
     JOIN (
         SELECT id_calculo, SUBSTRING_INDEX(SUBSTRING_INDEX(pp_con_repr, ',', n.n), ',', -1) AS id_partido
@@ -1668,7 +1690,8 @@ BEGIN
         psr.siglas,
         psr.nombre,
         psr.logo,
-        cpsr.monto_2_por_ciento
+        cpsr.monto_2_por_ciento,
+        cpsr.mintr_diciembre
     FROM calculo_dppp c
     JOIN (
         SELECT id_calculo, SUBSTRING_INDEX(SUBSTRING_INDEX(pp_sin_repr, ',', n.n), ',', -1) AS id_partido
@@ -1688,10 +1711,146 @@ END;
 //
 DELIMITER ;
 
-use admin;
+DROP PROCEDURE IF EXISTS sp_Mintr_Get_Insert_Update_ministraciones_dppp;
+DELIMITER //
+/*
+* @name Obtener o actualizar los datos del apartado de Ministraciones
+* @description
+* @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
+* @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
+* @example 
+* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(true, 'GET', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(0, 'UPDATE', 1, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.85099999, 4232218.212);
+*/
+CREATE PROCEDURE sp_Mintr_Get_Insert_Update_ministraciones_dppp(
+	IN p_use_transaction BOOLEAN,
+    IN p_comando VARCHAR(6),
+	IN p_id_calculo INT UNSIGNED, -- Primary key
+    -- IN p_total_financiamiento DECIMAL (30,15), 
+	IN p_total_enero DECIMAL (30,15), 
+    IN p_total_febrero DECIMAL (30,15),
+    IN p_total_marzo DECIMAL (30,15), 
+    IN p_total_abril DECIMAL (30,15), 
+    IN p_total_mayo DECIMAL (30,15),
+    IN p_total_junio DECIMAL (30,15),
+    IN p_total_julio DECIMAL (30,15),
+    IN p_total_agosto DECIMAL (30,15),
+    IN p_total_septiembre DECIMAL (30,15), 
+    IN p_total_octubre DECIMAL (30,15),
+    IN p_total_noviembre DECIMAL (30,15), 
+    IN p_total_diciembre DECIMAL (30,15),
+    IN p_gran_total DECIMAL (30,15)
+)
+BEGIN
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+    -- Inicia transacción si está habilitado
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+    -- Inicia las consulta
+    IF p_comando = 'INSERT' OR p_comando = 'UPDATE' THEN
+		-- Verificar si ya existe un registro con el ID: p_id_calculo
+		SET @record_count = (SELECT COUNT(*) FROM ministraciones_dppp WHERE id_calculo = p_id_calculo);
+        IF @record_count = 0 THEN -- Si No existe 'INSERT'
+			INSERT INTO ministraciones_dppp(id_calculo, -- total_financiamiento, 
+				total_enero, total_febrero, total_marzo, total_abril, total_mayo, 
+				total_junio, total_julio, total_agosto, total_septiembre, total_octubre,
+				total_noviembre, total_diciembre,
+                gran_total
+				) VALUES
+                (p_id_calculo, -- p_total_financiamiento, 
+				p_total_enero, p_total_febrero, p_total_marzo, p_total_abril, p_total_mayo, 
+				p_total_junio, p_total_julio, total_agosto, p_total_septiembre, p_total_octubre,
+				p_total_noviembre, p_total_diciembre,
+                p_gran_total);
+			SELECT p_id_calculo AS id; -- Solo para retornar el ID
+        ELSE -- Si existe 'UPDATE'
+			UPDATE ministraciones_dppp SET id_calculo = p_id_calculo, -- total_financiamiento = p_total_financiamiento, 
+				total_enero = p_total_enero, total_febrero = p_total_febrero, total_marzo = p_total_marzo, total_abril = p_total_abril, total_mayo = p_total_mayo, 
+				total_junio = p_total_junio, total_julio = p_total_julio, total_agosto = p_total_agosto, total_septiembre = p_total_septiembre, total_octubre = p_total_octubre,
+				total_noviembre = p_total_noviembre, total_diciembre = p_total_diciembre,
+                gran_total = p_gran_total
+                WHERE id_calculo = p_id_calculo;
+			SELECT p_id_calculo AS id; -- Solo para retornar el ID
+		END IF;
+    ELSEIF p_comando = 'GET' THEN
+		SELECT id_calculo, -- total_financiamiento, 
+			total_enero, total_febrero, total_marzo, total_abril, total_mayo, 
+			total_junio, total_julio, total_agosto, total_septiembre, total_octubre,
+			total_noviembre, total_diciembre,
+            gran_total
+			FROM ministraciones_dppp WHERE id_calculo = p_id_calculo;
+	END IF;
+    -- Termina la consulta
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;
+//DELIMITER ;
 
-call sp_GetDistribucionesPorAnio(2025);
+DROP PROCEDURE IF EXISTS sp_Mintr_Update_Partidos;
+DELIMITER //
+/*
+* @name Actualizar datos de distribución para Partidos Politicos Con y Sin Representación en el Congreso
+* @description Actualiza un dato en común de los partidos <<p_mintr_diciembre>>
+* @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
+* @
+* @example
+*/
+CREATE PROCEDURE sp_Mintr_Update_Partidos(
+    IN p_use_transaction BOOLEAN,
+	IN p_id_calculo INT UNSIGNED,
+    IN p_id_partido INT UNSIGNED,
+    IN p_tipo_partido ENUM('CON','SIN'),
+    IN p_mintr_diciembre DECIMAL (30,15)
+)
+BEGIN
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+	
+    -- Validar tipo de partido
+    IF p_tipo_partido NOT IN ('CON', 'SIN') THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El parámetro tipo_Partido debe ser "CON" o "SIN"';
+    END IF;
+    
+    -- Inicia transacción si está habilitado
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
 
+    -- Empieza la sentencia para actualizar
+	IF p_tipo_partido = 'CON' THEN
+		UPDATE calculo_partido_con_repr SET mintr_diciembre = p_mintr_diciembre
+			WHERE id_calculo = p_id_calculo AND id_partido = p_id_partido;
+	ELSEIF p_tipo_partido = 'SIN' THEN
+		UPDATE calculo_partido_sin_repr SET mintr_diciembre =  p_mintr_diciembre
+			WHERE id_calculo = p_id_calculo AND id_partido = p_id_partido;
+	END IF;
+    SELECT concat(p_tipo_partido, ' -> C:', p_id_calculo,'_P:', p_id_partido) AS 'ids';
+    
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;
+//DELIMITER ;
+
+-- FIN MINISTRACIONES
 /* FIN PROCEDURE */
 
 

@@ -23,11 +23,11 @@
             </div>
             <div class="card-body container-fluid" style="background-color: var(--iee-white);">
                 <div>
-                    <vs-table v-if="NewlistCalculos && NewlistCalculos.length" class="tabla-ajustada">
+                    <vs-table class="tabla-ajustada">
                         <template #thead>
                             <vs-tr>
                                 <!-- 1 -->
-                                <vs-th style="background-color: var(--iee-white);">
+                                <vs-th style="background-color: var(--iee-white); width: 200px;">
                                     Año fiscal
                                 </vs-th>
                                 <vs-th style="background-color: var(--iee-white);">
@@ -69,7 +69,6 @@
                                 </vs-td>
                                 <vs-td class="tableRowHeight text-center">
                                     <div style="width: 100%; display: flex; justify-content: center;">
-                                
                                         <vs-button icon color="danger" size="small" @click="abrirDialog(tr)"
                                             title="Distribuir">
                                             <i class="fas fa-pencil-alt"></i>
@@ -80,10 +79,10 @@
                         </template>
                         <template #notFound>
                             <div
-                                    class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
-                                    <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
-                                    <span class="noDataTitle">¡Sin Datos!</span>
-                                    </div>
+                                class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                                <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                                <span class="noDataTitle">¡Sin Datos!</span>
+                            </div>
                         </template>
                         <template #footer>
                             <vs-pagination v-model="page" color="dark"
@@ -386,7 +385,6 @@
                 </vs-dialog>
             </div>
         </template>
-
     </div>
 </template>
 <script>
@@ -929,19 +927,19 @@ export default {
             if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
 
             if (operacion === 'sumar') {
-            if (this.totalAjusteDecimales < 0) {
-                partido.ajuste += ajusteUnitario;
-                partido.sumado = true;
-            } else {
-                this.$vs.notification({
-                title: 'Aviso',
-                text: 'Primero debes restar a otro partido antes de sumar.',
-                color: 'danger'
-                });
-            }
+                if (this.totalAjusteDecimales < 0) {
+                    partido.ajuste += ajusteUnitario;
+                    partido.sumado = true;
+                } else {
+                    this.$vs.notification({
+                    title: 'Aviso',
+                    text: 'Primero debes restar a otro partido antes de sumar.',
+                    color: 'warning'
+                    });
+                }
             } else if (operacion === 'restar') {
-            partido.ajuste -= ajusteUnitario;
-            partido.restado = true;
+                partido.ajuste -= ajusteUnitario;
+                partido.restado = true;
             }
         },
         /*
@@ -1148,6 +1146,9 @@ export default {
                 return total + (isNaN(valor) ? 0 : valor);
             }, 0);//.toFixed(2);
         },
+        /*
+        * Retorna la Sumatoria de los ajustes de los partidos con representación en el Congreso
+        */
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
         },

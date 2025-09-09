@@ -12713,7 +12713,7 @@ var debug = function debug() {
           this.$vs.notification({
             title: 'Aviso',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'danger'
+            color: 'warning'
           });
         }
       } else if (operacion === 'restar') {
@@ -12919,6 +12919,9 @@ var debug = function debug() {
         return total + (isNaN(valor) ? 0 : valor);
       }, 0); //.toFixed(2);
     },
+    /*
+    * Retorna la Sumatoria de los ajustes de los partidos con representación en el Congreso
+    */
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
         return sum + (p.ajuste || 0);
@@ -13023,18 +13026,17 @@ var debug = function debug() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_formatters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/formatters */ "./resources/js/utils/formatters.js");
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! decimal.js */ "./node_modules/decimal.js/decimal.js");
+/* harmony import */ var decimal_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(decimal_js__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regeneratorRuntime() { "use strict"; var r = _regenerator(), e = r.m(_regeneratorRuntime), t = (Object.getPrototypeOf ? Object.getPrototypeOf(e) : e.__proto__).constructor; function n(r) { var e = "function" == typeof r && r.constructor; return !!e && (e === t || "GeneratorFunction" === (e.displayName || e.name)); } var o = { "throw": 1, "return": 2, "break": 3, "continue": 3 }; function a(r) { var e, t; return function (n) { e || (e = { stop: function stop() { return t(n.a, 2); }, "catch": function _catch() { return n.v; }, abrupt: function abrupt(r, e) { return t(n.a, o[r], e); }, delegateYield: function delegateYield(r, o, a) { return e.resultName = o, t(n.d, _regeneratorValues(r), a); }, finish: function finish(r) { return t(n.f, r); } }, t = function t(r, _t, o) { n.p = e.prev, n.n = e.next; try { return r(_t, o); } finally { e.next = n.n; } }), e.resultName && (e[e.resultName] = n.v, e.resultName = void 0), e.sent = n.v, e.next = n.n; try { return r.call(this, e); } finally { n.p = e.prev, n.n = e.next; } }; } return (_regeneratorRuntime = function _regeneratorRuntime() { return { wrap: function wrap(e, t, n, o) { return r.w(a(e), t, n, o && o.reverse()); }, isGeneratorFunction: n, mark: r.m, awrap: function awrap(r, e) { return new _OverloadYield(r, e); }, AsyncIterator: _regeneratorAsyncIterator, async: function async(r, e, t, o, u) { return (n(e) ? _regeneratorAsyncGen : _regeneratorAsync)(a(r), e, t, o, u); }, keys: _regeneratorKeys, values: _regeneratorValues }; })(); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
 function _regeneratorKeys(e) { var n = Object(e), r = []; for (var t in n) r.unshift(t); return function e() { for (; r.length;) if ((t = r.pop()) in n) return e.value = t, e.done = !1, e; return e.done = !0, e; }; }
@@ -13048,6 +13050,8 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 //import { forEach } from 'lodash';
 
+
+ // 😉
 
 /**
  * 🐛 Función para depuración development
@@ -13070,49 +13074,38 @@ var debug = function debug() {
       Partidos_Con_Representacion: [],
       Partidos_Sin_Representacion: [],
       NewlistCalculos: [],
-      distribucionId: null,
-      // Para saber si ya se ha guardado un registro
-      cb_ppSeleccionados: [],
-      opcionSelecionadaPorcentaje: '1',
-      //  Valor por defecto Gubernatura
+      //ministracionId: {}, // Para saber si ya se ha guardado un registro
       search: '',
       page: 1,
       max: 10,
       // Dialog
       active: false,
       anio: '',
-      monto30Input: '',
-      monto30: '',
-      monto70: '',
-      monto70Input: '',
       colors: [{
         color: 'warn'
       }],
       catAnio: [],
-      calculo: {},
-      montosFijos: {},
-      ajustesDiciembre: {},
-      cat_tipo_distribucion: [],
-      distribucion: [],
+      //calculo: {}, // Se usa para cargar el cálculo seleccionado
+      //montosFijos: {},
+      //ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación -- DEPRECATED
+      //cat_tipo_distribucion: [],
+      //distribucion: [],
       distribuciones: [],
       CalculosPorAnio: [],
+      // Se usan para listar los calculos por año
       // Validaciones
       error: false,
       errorAnio: '',
-      errorDistribucion: '',
-      errorMonto30: '',
-      errorMonto70: '',
-      descargar_disabled: true // true: disabled | false: enabled
+      descargar_disabled: {} // true: disabled | false: enabled
     };
   },
-
-  watch: {
-    anio: function anio(newAnio) {
-      if (newAnio) {
-        this.getDistribucionesPorAnio(newAnio);
-      }
-    }
-  },
+  // watch: {
+  //     anio(newAnio) {
+  //         if (newAnio) {
+  //             this.getDistribucionesPorAnio(newAnio);
+  //         }
+  //     }
+  // },
   created: function created() {
     var _this = this;
     EventBus.$on('darkMode', function (data) {
@@ -13129,14 +13122,12 @@ var debug = function debug() {
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _this2.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
-            _this2.getCalculos();
-            _context.next = 4;
+            _context.next = 2;
             return _this2.getAnio();
-          case 4:
-            _context.next = 6;
+          case 2:
+            _context.next = 4;
             return _this2.obtenerDatos(11);
-          case 6:
+          case 4:
           case "end":
             return _context.stop();
         }
@@ -13144,6 +13135,74 @@ var debug = function debug() {
     }))();
   },
   methods: {
+    /**
+     * Trunca un número a 2 decimales
+     * @param {number} value - Valor numérico a truncar
+     * @returns {string} - Valor truncado a 2 decimales
+     */
+    truncateTo2Decimals: function truncateTo2Decimals(value) {
+      if (!value && value !== 0) return '0.00';
+      var num = Number(value); // (falla si hay caracteres no numéricos)
+      return (Math.trunc(num * 100) / 100).toFixed(2);
+    },
+    /* DEPRECATED
+    formatoFecha(fechaStr) {
+        if (!fechaStr) return ''
+          // Parsear fecha en formato YYYY-MM-DD
+        const partes = fechaStr.split('-')
+        if (partes.length !== 3) return fechaStr
+          const anio = partes[0]
+        const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
+        const dia = partes[2]
+          const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+        const mesAbreviado = meses[mes] || ''
+          return `${dia} ${mesAbreviado} ${anio}`
+    },
+    */
+    // #endregion Formateos
+    /** DEPRECATED
+     * Obtiene los calculos de financiamiento para listar
+     */
+    /*
+    getCalculos() {
+        const loader = loading(this.$vs);
+        loader.text = 'Cargando datos...';
+        let url = '/administracion/solicitud/getCalculosFinanciamiento';
+        this.NewlistCalculos = [];
+        axios.get(url).then((response) => {
+            if (response.data?.success) {
+                this.NewlistCalculos = response.data.calculos || [];
+            } else {
+                // success: false
+                const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
+                throw new Error(errorMessage);
+            }
+        }).catch((error) => {
+            console.error('Error al cargar cálculos:', error);
+            this.$vs.notification({
+                title: 'Error',
+                text: 'Error al cargar los cálculos',
+                color: 'danger'
+            });
+              let nombreMetodo = url.split('/');
+            methods.catchHandler(error, nombreMetodo[3], this.$router);
+        })
+            .finally(() => {
+                loader.close();
+            })
+    },
+    */
+    //DEPRECATED
+    // onChangeDistribucion(value) {
+    //     this.distribucion = value;
+    //     setTimeout(() => {
+    //         document.activeElement.blur();
+    //     }, 100);
+    // },
+    // #region CATÁLOGOS 📜
+    /**
+     * Obtiene el año fiscal
+     */
     getAnio: function getAnio() {
       var _this3 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
@@ -13168,169 +13227,11 @@ var debug = function debug() {
         }, _callee2);
       }))();
     },
-    truncateTo2Decimals: function truncateTo2Decimals(value) {
-      if (!value) return '0.00';
-      var num = parseFloat(value);
-      return (Math.floor(num * 100) / 100).toFixed(2);
-    },
-    onDecimalInput: function onDecimalInput(event, idCalculo, idPartido) {
-      var key = "con-".concat(idCalculo, "-").concat(idPartido);
-      var valor = event.target.value;
-      valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-      this.$set(this.ajustesDiciembre, key, parseFloat(valor));
-    },
-    formatCurrency: function formatCurrency(value) {
-      if (value === null || value === undefined || isNaN(value)) return '$0.00';
-      var num = Math.floor(parseFloat(value) * 100) / 100;
-      return num.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    },
-    getStepForMonto: function getStepForMonto(monto) {
-      if (!monto || isNaN(monto)) return '0.01';
-      var parts = monto.toString().split('.');
-      if (parts.length === 2) {
-        var longitudDecimales = parts[1].length;
-        return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
-      }
-      return '1';
-    },
-    ajustarDecimalManual: function ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
-      var _valorActual$toString;
-      var key = "con-".concat(idCalculo, "-").concat(idPartido);
-      var actual = new Decimal(valorActual || 0);
-
-      // Detectar número de decimales en el valor actual
-      var decimales = ((_valorActual$toString = valorActual.toString().split('.')[1]) === null || _valorActual$toString === void 0 ? void 0 : _valorActual$toString.length) || 0;
-      var paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
-
-      if (operacion === 'sumar') {
-        actual = actual.plus(paso);
-      } else {
-        actual = actual.minus(paso);
-        if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
-      }
-
-      this.$set(this.ajustesDiciembre, key, actual.toNumber());
-      if (actual.greaterThan(total)) {
-        this.$vs.notification({
-          title: 'Atención',
-          text: 'El monto de diciembre supera el total asignado al partido.',
-          color: 'warning'
-        });
-      }
-    },
-    formatoFecha: function formatoFecha(fechaStr) {
-      if (!fechaStr) return '';
-
-      // Parsear fecha en formato YYYY-MM-DD
-      var partes = fechaStr.split('-');
-      if (partes.length !== 3) return fechaStr;
-      var anio = partes[0];
-      var mes = parseInt(partes[1], 10) - 1; // Meses van de 0 a 11
-      var dia = partes[2];
-      var meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
-      var mesAbreviado = meses[mes] || '';
-      return "".concat(dia, " ").concat(mesAbreviado, " ").concat(anio);
-    },
     /**
-     * Obtiene los calculos de financiamiento para listar
+     * Obtiene los datos de los catálogos 📜
      */
-    getCalculos: function getCalculos() {
-      var _this4 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
-      loader.text = 'Cargando datos...';
-      var url = '/administracion/solicitud/getCalculosFinanciamiento';
-      this.NewlistCalculos = [];
-      axios.get(url).then(function (response) {
-        var _response$data;
-        if ((_response$data = response.data) !== null && _response$data !== void 0 && _response$data.success) {
-          _this4.NewlistCalculos = response.data.calculos || [];
-        } else {
-          var _response$data2;
-          // success: false
-          var errorMessage = ((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || 'Error en la respuesta del servidor';
-          throw new Error(errorMessage);
-        }
-      })["catch"](function (error) {
-        console.error('Error al cargar cálculos:', error);
-        _this4.$vs.notification({
-          title: 'Error',
-          text: 'Error al cargar los cálculos',
-          color: 'danger'
-        });
-        var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
-      })["finally"](function () {
-        loader.close();
-      });
-    },
-    /**
-     * Abre el dialogo para editar la distribución
-     * @param {Object} calculo_tr - El calculo seleccionado
-     */
-    abrirDialog: function abrirDialog(calculo_tr) {
-      var _this5 = this;
-      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
-      var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
-      this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
-      this.datosCalculoSeleccionado = {};
-      this.Partidos_Sin_Representacion = [];
-      this.Partidos_Con_Representacion = [];
-      this.distribucionId = null; // resetea cada que se abra el Dialog
-      this.limpiarCampos(); // 🧹
-      this.active = true; // activa el modal
-      loader.text = 'Cargando datos...';
-      //Obtener los datos principales del Cálculo Financiero
-      axios.get(url, {
-        params: {
-          'id': calculo_tr.id
-        }
-      }).then(function (response) {
-        var _response$data3;
-        debug('🐛 Datos recibidos:', response.data);
-        if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
-          //Obtenemos los datos de los partidos politicos
-          _this5.Partidos_Sin_Representacion = response.data.Partidos_Sin_Representacion;
-          _this5.Partidos_Con_Representacion = response.data.Partidos_Con_Representacion.map(function (p) {
-            return _objectSpread(_objectSpread({}, p), {}, {
-              ajuste: 0,
-              // valor temporal para el input
-              inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
-              // Variable temporarl en el Front
-              errorPorcentajeVotacion: '' // Variable temporarl en el Front
-            });
-          });
-        } else {
-          var _response$data4;
-          // success: false
-          var errorMessage = ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.message) || 'Error en la respuesta del servidor';
-          throw new Error(errorMessage);
-        }
-        // Cargando datos de Distribución
-        _this5.cargarDistribucion();
-      })["catch"](function (error) {
-        console.error('Error al cargar detalles del cálculo', error);
-        _this5.$vs.notification({
-          title: 'Error',
-          text: 'Error al cargar los detalles del cálculo',
-          color: 'danger'
-        });
-        var nombreMetodo = url.split('/');
-        _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this5.$router);
-      })["finally"](function () {
-        loader.close();
-      });
-    },
-    onChangeDistribucion: function onChangeDistribucion(value) {
-      this.distribucion = value;
-      setTimeout(function () {
-        document.activeElement.blur();
-      }, 100);
-    },
     obtenerDatos: function obtenerDatos(tipo) {
-      var _this6 = this;
+      var _this4 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var url;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -13346,41 +13247,41 @@ var debug = function debug() {
               }).then(function (response) {
                 switch (tipo) {
                   case 1:
-                    _this6.catCargos = response.data;
+                    _this4.catCargos = response.data;
                     break;
                   case 2:
-                    _this6.catRemitente = response.data;
+                    _this4.catRemitente = response.data;
                     break;
                   case 3:
-                    _this6.catTermino = response.data;
+                    _this4.catTermino = response.data;
                     break;
                   case 4:
-                    _this6.cat_diasTermino = response.data;
+                    _this4.cat_diasTermino = response.data;
                     break;
                   case 5:
-                    _this6.cat_seguimiento = response.data;
+                    _this4.cat_seguimiento = response.data;
                     break;
                   case 6:
-                    _this6.cat_departamentos = response.data;
+                    _this4.cat_departamentos = response.data;
                     break;
                   case 7:
-                    _this6.cat_tipo = response.data;
+                    _this4.cat_tipo = response.data;
                     break;
                   case 8:
-                    _this6.cat_estutus = response.data;
+                    _this4.cat_estutus = response.data;
                     break;
                   case 9:
-                    _this6.cat_partido = response.data;
+                    _this4.cat_partido = response.data;
                     break;
                   case 11:
-                    _this6.cat_tipo_distribucion = response.data;
+                    _this4.cat_tipo_distribucion = response.data;
                     break;
                   default:
                     break;
                 }
               })["catch"](function (error) {
                 var nombreMetodo = url.split('/');
-                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this6.$router);
+                _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(error, nombreMetodo[3], _this4.$router);
               });
             case 3:
             case "end":
@@ -13389,10 +13290,17 @@ var debug = function debug() {
         }, _callee3);
       }))();
     },
+    // #endregion CATÁLOGOS 📜
+    // #region CONSULTAS A LA BASE DE DATOS 📚
+    /** 
+     * Obtiene las distribuciones por año ✅
+     * Los partidos politicos estan mezclados en un solo array independientemente del año
+     * @param {number} anio - El año para obtener las distribuciones
+     */
     getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
-      var _this7 = this;
+      var _this5 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var _yield$axios$get, data;
+        var loader, url, _yield$axios$get, data, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
@@ -13402,324 +13310,377 @@ var debug = function debug() {
               }
               return _context4.abrupt("return");
             case 2:
-              _context4.prev = 2;
-              _context4.next = 5;
-              return axios.get('/administracion/solicitud/getDistribucionesPorAnio', {
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this5.$vs);
+              loader.text = 'Cargando distribuciones...';
+              url = '/administracion/solicitud/getDistribucionesPorAnio';
+              _context4.prev = 5;
+              _context4.next = 8;
+              return axios.get(url, {
                 params: {
                   anio: anio
                 }
               });
-            case 5:
+            case 8:
               _yield$axios$get = _context4.sent;
               data = _yield$axios$get.data;
               if (data.success) {
-                _this7.CalculosPorAnio = data.calculos;
-                _this7.distribuciones = data.distribuciones;
-                _this7.Partidos_Con_Representacion = data.partidos_con_repr;
-                _this7.Partidos_Sin_Representacion = data.partidos_sin_repr;
+                //debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
+                _this5.CalculosPorAnio = data.calculos;
+                _this5.distribuciones = data.distribuciones;
+                // this.ministraciones = data.ministraciones;
+                _this5.Partidos_Con_Representacion = data.partidos_con_repr;
+                _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
+
+                // Inicializar ajusteDiciembre, esta variable indica si se resto o se sumo
+                // Usar $set para que Vue detecte los cambios y sean reactivos
+                _this5.Partidos_Con_Representacion.map(function (partido) {
+                  return _this5.$set(partido, 'ajusteDiciembre', 0.0);
+                }
+                //this.$set(partido, 'mintr_diciembre', 0.0)
+                );
+
+                _this5.Partidos_Sin_Representacion.map(function (partido) {
+                  return _this5.$set(partido, 'ajusteDiciembre', 0.0);
+                }
+                //this.$set(partido, 'mintr_diciembre', 0.0)
+                );
+
+                debug('🐛 ✅ Datos cargados.');
+              } else {
+                debug('🐛 ❌ Error al obtener datos.');
               }
+
+              //Cargar ministraciones para el botón de descarga
+              // this.CalculosPorAnio.forEach(calculo => {
+              //     this.cargarMinistracion(calculo.id_calculo);
+              // });
+
+              //Cargar ministraciones para el botón de descarga
               _context4.next = 13;
-              break;
-            case 10:
-              _context4.prev = 10;
-              _context4.t0 = _context4["catch"](2);
-              console.error("Error al obtener distribuciones:", _context4.t0);
+              return Promise.all(_this5.CalculosPorAnio.map(function (calculo) {
+                return _this5.cargarMinistracion(calculo.id_calculo);
+              }));
             case 13:
+              _context4.next = 20;
+              break;
+            case 15:
+              _context4.prev = 15;
+              _context4.t0 = _context4["catch"](5);
+              debug("🐛 ❌ Error al obtener distribuciones:", _context4.t0);
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this5.$router);
+            case 20:
+              _context4.prev = 20;
+              loader.close();
+              return _context4.finish(20);
+            case 23:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[2, 10]]);
+        }, _callee4, null, [[5, 15, 20, 23]]);
       }))();
     },
-    actualizarAjusteDiciembre: function actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
-      var key = "con-".concat(idCalculo, "-").concat(idPartido);
-      var partido = this.Partidos_Con_Representacion.find(function (p) {
-        return p.id_calculo === idCalculo && p.id_partido === idPartido;
-      }) || this.Partidos_Sin_Representacion.find(function (p) {
-        return p.id_calculo === idCalculo && p.id_partido === idPartido;
-      });
-      var total = partido ? partido.C_fpaop || partido.monto_2_por_ciento : 0;
-      var parsedValue = parseFloat(valor);
-      if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
-      if (parsedValue > total) parsedValue = total;
-      this.$set(this.ajustesDiciembre, key, parsedValue);
+    // 🚨 DEPRECATED
+    // Esta mal la referencia ya que se van a repetir los IDs
+    /*
+    actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
+        const key = `con-${idCalculo}-${idPartido}`;
+        const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
+            || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
+        const total = partido ? (partido.C_fpaop || partido.monto_2_por_ciento) : 0;
+          let parsedValue = parseFloat(valor);
+        if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
+        if (parsedValue > total) parsedValue = total;
+          this.$set(this.ajustesDiciembre, key, parsedValue);
     },
-    inicializarMontosFijos: function inicializarMontosFijos() {
-      var _this8 = this;
-      [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).forEach(function (partido) {
-        var key = "con-".concat(partido.id_calculo, "-").concat(partido.id_partido);
-        if (!_this8.montosFijos[key]) {
-          var _total = partido.C_fpaop || partido.monto_2_por_ciento;
-          // Asignar los primeros 11 meses igual: (total / 12) cada uno
-          var mensual = _total / 12;
-          _this8.$set(_this8.montosFijos, key, Array(11).fill(mensual));
-        }
-      });
-    },
-    distribuirConEditableDiciembre: function distribuirConEditableDiciembre(montoTotal, overrideDiciembre, key) {
-      var montos = [];
-      var override = overrideDiciembre !== undefined ? new Decimal(overrideDiciembre) : null;
-
-      // Si no hay montos fijos, inicializarlos
-      if (!this.montosFijos[key]) {
-        this.inicializarMontosFijos();
-      }
-      if (!override || override.isNaN()) {
-        var mensual = new Decimal(montoTotal).dividedBy(12);
-        montos.push.apply(montos, _toConsumableArray(Array(11).fill(mensual)));
-        montos.push(mensual);
-      } else {
-        var fijoMensual = new Decimal(montoTotal).minus(override).dividedBy(11);
-        montos.push.apply(montos, _toConsumableArray(Array(11).fill(fijoMensual)));
-        montos.push(override);
-      }
-      return montos.map(function (m) {
-        return m.toNumber();
-      });
-    },
-    guardarEdicion: function guardarEdicion() {
-      var _this9 = this;
-      // Lógica para guardar edición (llamada axios)
-      axios.put("/api/calculos/".concat(this.selectedCalculo.id), this.selectedCalculo).then(function () {
-        _this9.$vs.notification({
-          color: 'success',
-          text: 'Cálculo actualizado'
-        });
-        _this9.dialog = false;
-        _this9.getCalculos(); // refrescar lista
-      })["catch"](function () {
-        _this9.$vs.notification({
-          color: 'danger',
-          text: 'Error al guardar'
-        });
-      });
-    },
+    */
     /**
-     * Función para cargar las opciones de Distribución después de cargar los datos de Cálculo
+     * Solo verifica si existe una ministración para el cálculo y mostrar el botón de descarga ✅
+     * @param {number} id_calculo - El ID del cálculo
      */
-    cargarDistribucion: function cargarDistribucion() {
-      var _this10 = this;
+    cargarMinistracion: function cargarMinistracion(id_calculo) {
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var loader, url, datos, response, _this10$DataDistribuc, _this10$distribucionI, nombreMetodo;
+        var url, DataMinistracion, response, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              // ✅
-              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this10.$vs);
-              loader.text = 'Cargando distribución...';
-              url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-              datos = {
+              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
+              DataMinistracion = [];
+              _context5.prev = 2;
+              _context5.next = 5;
+              return axios.post(url, {
                 p_comando: 'GET',
-                p_id_calculo: _this10.selectedCalculo.id
-              };
-              _context5.prev = 4;
-              _context5.next = 7;
-              return axios.post(url, datos);
-            case 7:
+                p_id_calculo: id_calculo
+              });
+            case 5:
               response = _context5.sent;
               // ⇋ Se manda post aunque sea GET por el controlador
-              debug('🐛 response.data:', response.data);
-              // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
-              if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
-                _context5.next = 24;
-                break;
+              if (response.data && response.data.success && response.data.ministracion.length > 0) {
+                // Si se quieren rescatar los totales hay que convertirlo a objeto {} y declararlo en data{...}
+                _this6.DataMinistracion = response.data.ministracion[0]; // Solo con GET
+                _this6.ministracionId = _this6.DataMinistracion.id_calculo; // Id del calculo seleccionado es de la base de datos
+                //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
+                _this6.$set(_this6.descargar_disabled, id_calculo, false); // Habilita descargar archivo
+              } else {
+                _this6.$set(_this6.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
               }
-              _this10.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-              _this10.distribucionId = _this10.DataDistribucion.id_calculo;
-              // Empieza a cargar los datos guardados
-              _this10.anio = _this10.DataDistribucion.anio_ejercicio; // asigna año
-              if ((_this10$DataDistribuc = _this10.DataDistribucion) !== null && _this10$DataDistribuc !== void 0 && _this10$DataDistribuc.tipo_distribucion) {
-                _this10.distribucion = _this10.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
-                  return !isNaN(item);
-                });
-              }
-              _this10.monto30Input = _this10.formatoMoneda(_this10.DataDistribucion.monto_30_por_ciento);
-              _this10.monto30 = _this10.DataDistribucion.monto_30_por_ciento;
-              _this10.monto70Input = _this10.formatoMoneda(_this10.DataDistribucion.monto_70_por_ciento);
-              _this10.monto70 = _this10.DataDistribucion.monto_70_por_ciento;
-              _this10.opcionSelecionadaPorcentaje = String(_this10.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
-              _this10.$nextTick(function () {
-                debug('🐛 Factor de porcentaje: ', _this10.factorCalculo, 'Opción seleccionada: ', _this10.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this10.opcionSelecionadaPorcentaje));
-              });
-              if (((_this10$distribucionI = _this10.distribucionId) !== null && _this10$distribucionI !== void 0 ? _this10$distribucionI : null) !== null) {
-                _this10.descargar_disabled = false;
-              }
-              debug('✅ Distribución cargada.');
-              _context5.next = 26;
+              // debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
+              _context5.next = 14;
               break;
-            case 24:
-              debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
-              return _context5.abrupt("return");
-            case 26:
-              _context5.next = 34;
-              break;
-            case 28:
-              _context5.prev = 28;
-              _context5.t0 = _context5["catch"](4);
-              console.error('Error al cargar distribución', _context5.t0);
-              _this10.$vs.notification({
-                title: 'Error',
-                text: 'Error al cargar la distribución',
-                color: 'danger'
-              });
+            case 9:
+              _context5.prev = 9;
+              _context5.t0 = _context5["catch"](2);
+              debug("🐛 ❌ Error al cargar datos de la ministración:", _context5.t0);
               nombreMetodo = url.split('/');
-              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this10.$router);
-            case 34:
-              _context5.prev = 34;
-              loader.close();
-              return _context5.finish(34);
-            case 37:
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this6.$router);
+            case 14:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[4, 28, 34, 37]]);
+        }, _callee5, null, [[2, 9]]);
       }))();
     },
-    guardarCambios: function guardarCambios(calculo) {
-      var _this11 = this;
+    /**
+     * Guarda los cambios de la ministración ✅
+     * @param {number} id_calculo - El ID del cálculo
+     */
+    guardarCambios: function guardarCambios(id_calculo) {
+      var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        var idCalculo, partidos;
+        var loader, url, idCalculo, partidosConRepr, partidosSinRepr, totalesMensuales, granTotal, datos, responseTotales, errorMessage, p_tipoPartido, _iterator, _step, partido, responsePartidos, _errorMessage, _iterator2, _step2, _partido, _responsePartidos, _errorMessage2, nombreMetodo;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              //id del calculo seleccionado 
-              idCalculo = calculo.id_calculo;
-              console.log('Id del calculo: ' + idCalculo);
-              partidos = _this11.Partidos_Con_Representacion.filter(function (p) {
+              loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this7.$vs);
+              loader.text = 'Guardando cambios...';
+              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp'; //id del calculo seleccionado 
+              idCalculo = id_calculo;
+              debug(' 🐛 ✨ Id del calculo: ' + idCalculo);
+              // Obtener los partidos con representación y sin representación de un cálculo
+              partidosConRepr = _this7.Partidos_Con_Representacion.filter(function (p) {
                 return p.id_calculo === idCalculo;
               });
-              partidos.forEach(function (partido) {
-                var _this11$ajustesDiciem;
-                var totalFinanciamiento = partido.C_fpaop;
-                var overrideDiciembre = (_this11$ajustesDiciem = _this11.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido]) !== null && _this11$ajustesDiciem !== void 0 ? _this11$ajustesDiciem : null;
-                var montosMensuales = _this11.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre);
-                console.log("\n\uD83D\uDCCC Partido: ".concat(partido.siglas));
-                montosMensuales.forEach(function (monto, index) {
-                  var nombreMes = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][index];
-                  if (index === 11) {
-                    // Diciembre: mostrar todos los decimales
-                    console.log("  ".concat(nombreMes, ": ").concat(monto));
-                  } else {
-                    // Mostrar monto completo, sin formatear
-                    console.log("  ".concat(nombreMes, ": ").concat(monto));
-                  }
-                });
+              partidosSinRepr = _this7.Partidos_Sin_Representacion.filter(function (p) {
+                return p.id_calculo === idCalculo;
+              }); //Preparamos los datos para guardar
+              totalesMensuales = _this7.obtenerTotalesMensuales(idCalculo);
+              granTotal = _this7.obtenerTotalGeneral(idCalculo);
+              debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
+              debug(' 🐛 GranTotal: ' + granTotal);
+              _context6.prev = 11;
+              //Actualizamos los totales
+              datos = {
+                p_comando: "INSERT",
+                // INSERT, UPDATE
+                p_id_calculo: idCalculo,
+                p_totales_mensuales_enero: totalesMensuales[0],
+                p_totales_mensuales_febrero: totalesMensuales[1],
+                p_totales_mensuales_marzo: totalesMensuales[2],
+                p_totales_mensuales_abril: totalesMensuales[3],
+                p_totales_mensuales_mayo: totalesMensuales[4],
+                p_totales_mensuales_junio: totalesMensuales[5],
+                p_totales_mensuales_julio: totalesMensuales[6],
+                p_totales_mensuales_agosto: totalesMensuales[7],
+                p_totales_mensuales_septiembre: totalesMensuales[8],
+                p_totales_mensuales_octubre: totalesMensuales[9],
+                p_totales_mensuales_noviembre: totalesMensuales[10],
+                p_totales_mensuales_diciembre: totalesMensuales[11],
+                p_gran_total: granTotal
+              };
+              _context6.next = 15;
+              return axios.post(url, datos);
+            case 15:
+              responseTotales = _context6.sent;
+              if (!(!responseTotales || !responseTotales.data)) {
+                _context6.next = 18;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 18:
+              if (!(responseTotales.status !== 200)) {
+                _context6.next = 20;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(responseTotales.status, " ").concat(responseTotales.statusText));
+            case 20:
+              if (responseTotales.data.success) {
+                _context6.next = 23;
+                break;
+              }
+              errorMessage = responseTotales.data.message || 'Error desconocido al guardar la ministración';
+              throw new Error(errorMessage);
+            case 23:
+              if (!responseTotales.data.success) {
+                _context6.next = 27;
+                break;
+              }
+              debug(' 🐛 🌠 Id del responseTotales: ' + JSON.stringify(responseTotales.data.id));
+              _context6.next = 28;
+              break;
+            case 27:
+              throw new Error(responseTotales.data.message);
+            case 28:
+              // Actualizamos cada campo del partido político por separado
+              p_tipoPartido = 'CON';
+              url = '/administracion/solicitud/Mintr_Update_Partidos';
+              _iterator = _createForOfIteratorHelper(partidosConRepr);
+              _context6.prev = 31;
+              _iterator.s();
+            case 33:
+              if ((_step = _iterator.n()).done) {
+                _context6.next = 49;
+                break;
+              }
+              partido = _step.value;
+              _context6.next = 37;
+              return axios.post(url, {
+                // ⇋ UPDATE Partidos Con Representación
+                p_id_calculo: idCalculo,
+                p_id_partido: partido.id_partido,
+                p_tipo_partido: p_tipoPartido,
+                p_mintr_diciembre: partido.mintr_diciembre
               });
-            case 4:
+            case 37:
+              responsePartidos = _context6.sent;
+              if (!(!responsePartidos || !responsePartidos.data)) {
+                _context6.next = 40;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 40:
+              if (!(responsePartidos.status !== 200)) {
+                _context6.next = 42;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
+            case 42:
+              if (responsePartidos.data.success) {
+                _context6.next = 45;
+                break;
+              }
+              _errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
+              throw new Error(_errorMessage);
+            case 45:
+              debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
+              debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
+            case 47:
+              _context6.next = 33;
+              break;
+            case 49:
+              _context6.next = 54;
+              break;
+            case 51:
+              _context6.prev = 51;
+              _context6.t0 = _context6["catch"](31);
+              _iterator.e(_context6.t0);
+            case 54:
+              _context6.prev = 54;
+              _iterator.f();
+              return _context6.finish(54);
+            case 57:
+              p_tipoPartido = 'SIN';
+              _iterator2 = _createForOfIteratorHelper(partidosSinRepr);
+              _context6.prev = 59;
+              _iterator2.s();
+            case 61:
+              if ((_step2 = _iterator2.n()).done) {
+                _context6.next = 77;
+                break;
+              }
+              _partido = _step2.value;
+              _context6.next = 65;
+              return axios.post(url, {
+                // ⇋ UPDATE Partidos Sin Representación
+                p_id_calculo: idCalculo,
+                p_id_partido: _partido.id_partido,
+                p_tipo_partido: p_tipoPartido,
+                p_mintr_diciembre: _partido.mintr_diciembre
+              });
+            case 65:
+              _responsePartidos = _context6.sent;
+              if (!(!_responsePartidos || !_responsePartidos.data)) {
+                _context6.next = 68;
+                break;
+              }
+              throw new Error('La respuesta del servidor no es válida');
+            case 68:
+              if (!(_responsePartidos.status !== 200)) {
+                _context6.next = 70;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
+            case 70:
+              if (_responsePartidos.data.success) {
+                _context6.next = 73;
+                break;
+              }
+              _errorMessage2 = _responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
+              throw new Error(_errorMessage2);
+            case 73:
+              debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(_responsePartidos.data.ids));
+              debug(' 🐛 📌 Id del partido: ' + _partido.id_partido, 'Mintr Diciembre: ' + _partido.mintr_diciembre);
+            case 75:
+              _context6.next = 61;
+              break;
+            case 77:
+              _context6.next = 82;
+              break;
+            case 79:
+              _context6.prev = 79;
+              _context6.t1 = _context6["catch"](59);
+              _iterator2.e(_context6.t1);
+            case 82:
+              _context6.prev = 82;
+              _iterator2.f();
+              return _context6.finish(82);
+            case 85:
+              // Notificación de éxito
+              Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Datos guardados correctamente',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+              });
+              _this7.$vs.notification({
+                color: 'success',
+                text: 'Ministración guardada' + responseTotales.data.message
+              });
+              _this7.descargar_disabled[idCalculo] = false; // Habilita descargar archivo
+              _context6.next = 96;
+              break;
+            case 90:
+              _context6.prev = 90;
+              _context6.t2 = _context6["catch"](11);
+              debug('🐛 Error al guardar la ministración:', _context6.t2);
+              _this7.$vs.notification({
+                title: 'Error',
+                color: 'danger',
+                text: 'Error al guardar la ministración'
+              });
+              nombreMetodo = url.split('/');
+              _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context6.t2, nombreMetodo[3], _this7.$router);
+            case 96:
+              _context6.prev = 96;
+              loader.close();
+              return _context6.finish(96);
+            case 99:
             case "end":
               return _context6.stop();
           }
-        }, _callee6);
+        }, _callee6, null, [[11, 90, 96, 99], [31, 51, 54, 57], [59, 79, 82, 85]]);
       }))();
     },
-    /* const loader = loading(this.$vs);
-    loader.text = 'Guardando datos...';
-    let url = '/administracion/solicitud/Distr_Get_Insert_Update_distribucion_dppp';
-      let datos = {
-        p_comando: "INSERT", // INSERT, UPDATE
-        p_id_calculo: this.selectedCalculo.id,
-        p_anio_ejercicio: this.anio, //valor manual
-        p_tipo_distribucion: this.distribucion.join(','), // "1,2,3" - valor manual
-        p_monto_30_por_ciento: this.monto30, //valor manual
-        p_monto_70_por_ciento: this.monto70, //valor manual
-        p_tipoPorcentaje: this.opcionSelecionadaPorcentaje, //valor manual
-        p_subtotal_A_30_por_ciento: 0,
-        p_subtotal_B_70_por_ciento: 0,
-        p_subtotal_B_Ajuste_70_por_ciento: 0,
-        p_subtotal_C_fpaop: this.subtotalC_ConRepresentacion,
-        p_subtotal_D_fpatov: this.subtotalD_ConRepresentacion,
-        p_subtotal_2_por_ciento_fpaop_ppsr: this.subtotalMonto2PorCiento,
-        p_subtotal_D_2_por_ciento_ppsr: this.subtotalMonto2PorCientoD,
-        p_subtotal_D_candidatura: this.candidatura,
-    };
-    this.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
-    console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion, this.Partidos_Sin_Representacion);
-    try {
-        // Actualizar distribución
-        if (this.distribucionId) {
-            const response = await axios.post(url, datos); // ⇋ UPDATE
-            
-            if (response.data && response.data.success) {
-                this.distribucionId = response.data.id; // || this.distribucionId;
-                debug('🐛 Update response.data.id:', response.data.id);
-            } else {
-                const errorMsg = response.data?.message || 'Error al actualizar la distribución';
-                throw new Error(errorMsg);
-            }
-        } else { // Guardar distribución
-            const response = await axios.post(url, datos); // ⇋ INSERT
-            
-            if (response.data && response.data.success) {
-                this.distribucionId = response.data.id;
-                debug('🐛 Insert response.data.id:', response.data.id);
-                
-            } else {
-                const errorMsg = response.data?.message || 'Error al guardar la distribución';
-                throw new Error(errorMsg);
-            }
-        }
-        url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
-        // Actualizamos la tabla de partidos políticos con representación
-        // Crear un array de promesas
-        //const promesas = this.Partidos_Con_Representacion.map(async partido => {
-        for (const partido of this.Partidos_Con_Representacion) {
-            try {
-            const response = await axios.post(url, partido); // ⇋
-            if (response.data && response.data.ids) {
-                //debug('🐛 response.data.ids:', response.data.ids);
-            }
-            } catch (error) {
-                this.$vs.notification({ 
-                    color: 'danger', 
-                    text: `Error al actualizar ${partido.siglas}` 
-                });
-                throw error;
-            }
-        }
-        url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
-        for (const partido of this.Partidos_Sin_Representacion) {
-            try {
-            const response = await axios.post(url, partido); // ⇋
-            if (response.data && response.data.ids) {
-                //debug('🐛 response.data.ids:', response.data.ids);
-            }
-            } catch (error) {
-                this.$vs.notification({ 
-                    color: 'danger', 
-                    text: `Error al actualizar ${partido.siglas}` 
-                });
-                throw error;
-            }
-        }
-          // Notificación de éxito
-        Swal.fire({
-        icon: 'success',
-        title: '¡Éxito!',
-        text: 'Datos guardados correctamente',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-        })
-        // Habilita descargar archivo
-        //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
-        debug('🐛 this.distribucionId: ', this.distribucionId);
-        this.descargar_disabled = false;
-    } catch (error) {
-        console.error('Error al guardar:', error);
-        this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
-          let nombreMetodo = url.split('/');
-        methods.catchHandler(error, nombreMetodo[3], this.$router);
-    } finally {
-        loader.close();
-    } */
     /**
      * Descarga el archivo Excel de la distribución
      * @param DistribucionId // debe de existir un preguardado antes
      */
-    descargarDistribucion: function descargarDistribucion(id) {
-      var _this12 = this;
+    descargarMinistraciones: function descargarMinistraciones(id) {
+      var _this8 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
-      var apiUrl = "/administracion/solicitud/exportarFinanciamientoDistribucionExcel/".concat(id);
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id);
       var downloadUrl = null;
       var link = null;
       if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
@@ -13733,25 +13694,25 @@ var debug = function debug() {
         downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
         link = document.createElement('a');
         link.href = downloadUrl;
-        var filename = "Anexo 2. Distribuci\xF3n.xlsx";
+        var filename = "Anexo 3. Ministraciones.xlsx";
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
-        _this12.$vs.notification({
+        _this8.$vs.notification({
           title: 'Éxito',
           text: 'El archivo Excel se está descargando',
           color: 'success'
         });
       })["catch"](function (error) {
         var _error$response;
-        debug('🐛 Error al descargar Excel:', error);
+        debug('🔴 Error al descargar Excel:', error);
         var errorMessage = 'Error al descargar Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
         } else if (error.message) {
           errorMessage = error.message;
         }
-        _this12.$vs.notification({
+        _this8.$vs.notification({
           title: 'Error',
           text: errorMessage,
           color: 'danger',
@@ -13772,203 +13733,273 @@ var debug = function debug() {
         }
       });
     },
-    calcularMontoIgualitario30: function calcularMontoIgualitario30() {
-      var monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
-      var totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
-      return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
+    // #endregion CONSULTAS A LA BASE DE DATOS 📚
+    // #region FORMATEOS 🔧🛠
+    // DEPRECATED
+    // onDecimalInput(event, idCalculo, idPartido) {
+    //     // const key = `con-${idCalculo}-${idPartido}`;
+    //     let valor = event.target.value;
+    //     valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    //     this.$set(this.ajustesDiciembre, key, parseFloat(valor));
+    // },
+    /*
+    * Formatea un valor numérico a moneda - Función local 💰
+    * @param {Event} event - Evento del input
+    * @param {object} partido - Partido político con el monto de diciembre
+    * @param {string} prefix - Prefijo para la key {con | sin}
+    */
+    onInputMoneda: function onInputMoneda(event, partido, prefix) {
+      //Generamos la key con los datos del partido
+      var key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+      // Limpia el valor del input | quita los caracteres no numéricos
+      var valorLimpio = parseFloat(Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(event.target.value));
+
+      // Almacena el valor limpio en el objeto ajustesDiciembre
+      //this.$set(this.ajustesDiciembre, key, valorLimpio); // DEPRECATED
+      partido.mintr_diciembre = valorLimpio; // Almacena el valor limpio en el objeto partido
+
+      // Formatear el valor limpio y mostrarlo en la caja de texto
+      //event.target.value = formatoMonedaLocal(valorLimpio); // Por si se quiere formatear
+      event.target.value = valorLimpio;
     },
+    /**
+     * Formatea un valor numérico a moneda - Función local
+     * @param {number} value - Valor numérico a formatear
+     * @returns {string} - Valor formateado como moneda
+     */
+    formatCurrency: function formatCurrency(value) {
+      if (value === null || value === undefined || isNaN(value)) return '$0.00';
+      //Con style: 'currency', ya no es necesario truncar manualmente
+      //const num = Math.floor(parseFloat(value) * 100) / 100;
+      var num = parseFloat(value);
+      return num.toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    },
+    // NO SE OCUPA - DEPRECATED
+    /*
+    getStepForMonto(monto) {
+        if (!monto || isNaN(monto)) return '0.01';
+          const parts = monto.toString().split('.');
+        if (parts.length === 2) {
+            const longitudDecimales = parts[1].length;
+            return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
+        }
+        return '1';
+    },
+    */
+    // #endregion FORMATEOS 🛠
+    // #region OPERACIONES DE LA VISTA 📊
+    /**
+      * Distribuye el monto total entre los 12 meses por partido de cada cálculo
+      * Es una forma de obtener los montos distribuidos por un arreglo de partidos
+      * @param {number} totalFinanciamientoPartido - TOTAL FINANCIAMIENTO A DISTRIBUIR por partido
+      * @param {object} partido - Partido político con el monto de diciembre 
+      * partido.mintr_diciembre -> para asegurarse de que se asigna la cantidad al partido
+      * @param {string} key - Key para la distribución si es {con | sin} -- DEPRECATED
+      * @returns {Array<number>} - Array con los montos distribuidos
+      */
+    distribuirConEditableDiciembre: function distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
+      //const key = `${prefix}-${partido.id_calculo}-${partido.id_partido}`;
+      var mensual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](totalFinanciamientoPartido).dividedBy(12); // objeto Decimal
+
+      // Validar y convertir el valor de diciembre
+      var valorDiciembre = parseFloat(partido.mintr_diciembre);
+      var esValido = !isNaN(valorDiciembre) && valorDiciembre !== 0;
+      var montoDiciembre = esValido ? valorDiciembre : mensual.toNumber();
+
+      // Actualizar estado del valor de diciembre temporal
+      partido.mintr_diciembre = montoDiciembre;
+      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+      //this.$set(this.ajustesDiciembre, key, montoDiciembre); -- DEPRECATED
+
+      // Retornar array con 11 meses iguales + diciembre
+      return [].concat(_toConsumableArray(Array(11).fill(mensual)), [montoDiciembre]).map(function (v) {
+        return v.toNumber ? v.toNumber() : v;
+      }); // 123.456 Decimal->toNumber()
+    },
+    /* SOLO DE REFERENCIA - DEPRECATED
+     * Ajustar decimal el monto de diciembre
+     */
     ajustarDecimal: function ajustarDecimal(partido, operacion) {
       var ajusteUnitario = 0.01;
 
       // Asegurar que el campo ajuste exista y sea reactivo
       if (partido.ajuste === undefined) this.$set(partido, 'ajuste', 0);
+      if (partido.restado === undefined) this.$set(partido, 'restado', false);
+      if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
       if (operacion === 'sumar') {
         if (this.totalAjusteDecimales < 0) {
           partido.ajuste += ajusteUnitario;
+          partido.sumado = true;
         } else {
           this.$vs.notification({
             title: 'Aviso',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'danger'
+          });
+        }
+      } else if (operacion === 'restar') {
+        partido.ajuste -= ajusteUnitario;
+        partido.restado = true;
+      }
+    },
+    /*
+    * Ajustar decimal manualmente -> diciembre
+    * @param {string} operacion - Operación a realizar ('sumar' | 'restar')
+    * @param {object} partido - Partido político con el monto de diciembre y el id_calculo id_partido
+    * @param {string} prefix - Prefijo para la key {con | sin}
+    */
+    ajustarDecimalManual: function ajustarDecimalManual(operacion, partido, prefix) {
+      var ajusteUnitario = 0.01;
+      //const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+      var actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](parseFloat(partido.mintr_diciembre));
+      // Asegurar que el campo ajuste exista y sea reactivo
+      //if (partido.ajusteDiciembre === undefined) this.$set(partido, 'ajusteDiciembre', 0.0);
+
+      // Detectar número de decimales en el valor actual 
+      // Toma la parte decimal (después del punto) y obtiene la longitud de los decimales
+      //const decimales = partido.mintr_diciembre.toString().split('.')[1]?.length || 0;
+
+      // Divide 1 entre 10 elevado al número de decimales detectados
+      // Por ejemplo, si el valor actual tiene 2 decimales, el paso será 0.01
+      // decimales = 2 → 10^2 = 100
+      // Si el valor actual tiene 0 decimales, el paso será 0.001
+      //const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
+
+      if (operacion === 'sumar') {
+        // Si totalAjusteDecimalesCalculo es negativo se puede sumar a otro partido
+        if (this.totalAjusteDecimalesCalculo(partido.id_calculo) < 0) {
+          actual = actual.plus(ajusteUnitario);
+          partido.ajusteDiciembre += ajusteUnitario;
+          partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
+        } else {
+          this.$vs.notification({
+            title: 'Atención',
             text: 'Primero debes restar a otro partido antes de sumar.',
             color: 'warning'
           });
         }
       } else if (operacion === 'restar') {
-        partido.ajuste -= ajusteUnitario;
+        //Permite restar siempre para tener que sumarle a otro partido
+        actual = actual.minus(ajusteUnitario);
+        partido.ajusteDiciembre -= ajusteUnitario;
+        partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
       }
     },
-    /*
-    * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
-    * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+    /**
+     * Obtiene el total de ajustes de decimales para un cálculo específico
+     * @param {number} idCalculo - ID del cálculo
+     * @returns {number} - Total de ajustes de decimales
      */
-    calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
-      var porcentaje = parseFloat(porcentajePartido);
-      var totalPorcentajes = this.sumaTotalPorcentajes;
-      var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
-
-      if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-      return monto * porcentaje / totalPorcentajes;
+    totalAjusteDecimalesCalculo: function totalAjusteDecimalesCalculo(idCalculo) {
+      var suma = 0;
+      // Obtiene los partidos con representación y sin representación para el cálculo específico
+      var partidos = [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).filter(function (p) {
+        return p.id_calculo === idCalculo;
+      });
+      // Obtiene el total de ajustes de decimales para el cálculo específico
+      partidos.forEach(function (p) {
+        suma += p.ajusteDiciembre;
+      });
+      return suma;
     },
-    calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
-      var base = this.calcularMontoProporcionalB(porcentajePartido);
-      return base + (ajuste || 0);
-    },
-    calcularMontoC: function calcularMontoC(partido) {
-      var montoA = parseFloat(this.calcularMontoIgualitario30());
-      var montoB = parseFloat(this.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste));
-
-      // Verificar si los valores son números válidos
-      if (isNaN(montoA) || isNaN(montoB)) {
-        console.error('C. Valores inválidos:', {
-          montoA: montoA,
-          montoB: montoB,
-          porcentaje: partido.porcentaje_votacion,
-          ajuste: partido.ajuste
+    /**
+     * ➕ Obtiene los totales mensuales para un cálculo específico
+     * @param {number} idCalculo - ID del cálculo
+     * @returns {Array<number>} - Array con los totales mensuales
+     */
+    obtenerTotalesMensuales: function obtenerTotalesMensuales(idCalculo) {
+      var _this9 = this;
+      try {
+        var totales = Array(12).fill().map(function () {
+          return new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0);
         });
-        return 0; // O algún valor por defecto
+
+        // Se mezclan partidos con y sin representación, y se filtran por cálculo
+        var partidos = [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).filter(function (p) {
+          return p.id_calculo === idCalculo;
+        });
+        partidos.forEach(function (partido) {
+          var hasFpaop = partido.C_fpaop !== undefined;
+          var key = "".concat(hasFpaop ? 'con' : 'sin', "-").concat(partido.id_calculo, "-").concat(partido.id_partido);
+          // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
+          var total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
+          //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
+
+          //const override = this.ajustesDiciembre[key]; // No se ocupa
+
+          var montos = _this9.distribuirConEditableDiciembre(total, partido, key);
+          montos.forEach(function (monto, i) {
+            // Precisión total
+            totales[i] = totales[i].plus(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](monto));
+          });
+        });
+
+        // Convertir a números del objeto Decimal para mostrar
+        return totales.map(function (t) {
+          return t.toNumber();
+        });
+      } catch (error) {
+        debug('🐛 ❌ Error al obtener totales mensuales:', error);
+        return [];
       }
-
-      return montoA + montoB;
     },
-    calcularMontoD: function calcularMontoD(partido) {
-      return this.calcularMontoC(partido) * this.factorCalculo;
+    /**
+     * ➕ Obtiene el total general para un cálculo específico
+     * @param {number} id_calculo - ID del cálculo
+     * @returns {number} - Total general
+     */
+    obtenerTotalGeneral: function obtenerTotalGeneral(id_calculo) {
+      var totales = this.obtenerTotalesMensuales(id_calculo);
+      return totales.reduce(function (sum, val) {
+        return new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](sum).plus(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](val));
+      }, new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0)).toNumber();
     },
-    calcularMontoD_ppsr: function calcularMontoD_ppsr(partido) {
-      return partido.monto_2_por_ciento * this.factorCalculo;
-    },
-    /*
-    * Almacena temporalmente en los Objetos de los partidos,
-    * los cálculos aplicados a las columnas antes de Guardar
-    */
-    AlmacenarCalculos_Partidos: function AlmacenarCalculos_Partidos() {
-      var _this13 = this;
-      this.Partidos_Con_Representacion.forEach(function (partido) {
-        partido.A_30_por_ciento = _this13.calcularMontoIgualitario30();
-        partido.B_70_por_ciento = _this13.calcularMontoProporcionalB(partido.porcentaje_votacion);
-        partido.B_Ajuste_70_por_ciento = _this13.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste);
-        partido.C_fpaop = _this13.calcularMontoC(partido);
-        partido.D_fpatov = _this13.calcularMontoD(partido);
-      });
-      this.Partidos_Sin_Representacion.forEach(function (partido) {
-        partido.D_monto_2_por_ciento = _this13.calcularMontoD_ppsr(partido);
-      });
-    },
-    /*
-    * Formatea a moneda
-    * @param {number} valor - El valor a formatear
-    * @returns {string} - El valor formateado
-    */
-    formatoMoneda: function formatoMoneda(valor) {
-      return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-        minimumFractionDigits: 2
-      }).format(valor);
-    },
-    /* Función para formatear el porcentaje (solo formatea)
-    * @param {number} valor - El valor a formatear
-    * @returns {string} - El valor formateado
-    */
-    formatearPorcentaje: function formatearPorcentaje(valor) {
-      if (!valor) return '0.00000 %';
-      var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-      return isNaN(numero) ? '0.00000 %' : numero.toFixed(5) + ' %';
-    },
-    /*
-    * Formatea a decimal
-    * @param {number} valor - El valor a formatear
-    * @returns {string} - El valor formateado
-    */
-    formatearDecimal: function formatearDecimal(valor) {
-      if (!valor) return '0.00';
-      var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-      return isNaN(numero) ? '0.00' : numero.toFixed(2);
-    },
-    /*
-    * Formatea el porcentaje del partido
-    * @param {Object} partido - El objeto del partido político
-    * @returns {void}
-    */
-    onBlurPorcentaje: function onBlurPorcentaje(partido) {
-      var valorCrudo = partido.inputPorcentaje;
-      if (!valorCrudo) {
-        partido.inputPorcentaje = ''; // input vacío, no mostrar nada
-        partido.porcentaje_votacion = 0;
-        return;
-      }
-
-      // Obtener número completo del input
-      var valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
-
-      // Guardar valor completo para los cálculos
-      partido.porcentaje_votacion = isNaN(valorNumerico) ? 0 : valorNumerico;
-
-      // Mostrar solo dos decimales en el input, pero sin perder precisión interna
-      partido.inputPorcentaje = isNaN(valorNumerico) ? '' : valorNumerico.toFixed(2) + ' %';
-    },
+    // #endregion OPERACIONES DE LA VISTA 📊
     /**
      * ✔ Validar campos
      * @returns {boolean}
      */
-    validarCampos: function validarCampos() {
-      var _this14 = this;
-      this.limpiarErrores();
-      if (this.anio === '') {
-        this.errorAnio = 'El campo año es obligatorio';
-        this.error = true;
-      }
-      if (this.monto30Input === '') {
-        this.errorMonto30 = 'Ingrese un monto 30% válido';
-        this.error = true;
-      }
-      if (this.monto70Input === '') {
-        this.errorMonto70 = 'Ingrese un monto 70% válido';
-        this.error = true;
-      }
-      if (this.distribucion === '') {
-        this.errorDistribucion = 'El campo distribución es obligatorio';
-        this.error = true;
-      }
-      // Validar que llenen todos los campos
-      this.Partidos_Con_Representacion.forEach(function (partido) {
-        if (partido.inputPorcentaje === '') {
-          partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-          _this14.error = true;
+    /*
+    validarCampos() {
+        this.limpiarErrores();
+        if (this.anio === '') {
+            this.errorAnio = 'El campo año es obligatorio';
+            this.error = true;
         }
-      });
-      return this.error;
+        if (this.monto30Input === '') {
+            this.errorMonto30 = 'Ingrese un monto 30% válido';
+            this.error = true;
+        }
+          if (this.monto70Input === '') {
+            this.errorMonto70 = 'Ingrese un monto 70% válido';
+            this.error = true;
+        }
+        if (this.distribucion === '') {
+            this.errorDistribucion = 'El campo distribución es obligatorio';
+            this.error = true;
+        }
+        // Validar que llenen todos los campos
+        this.Partidos_Con_Representacion.forEach(partido => {
+              if (partido.inputPorcentaje === '') {
+                partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
+                this.error = true;
+            }
+        });
+        return this.error;
     },
+    */
     /**
      * 🧹 Limpia todos los campos del formulario
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
-      this.anio = '', this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.monto70Input = '', this.distribucion = [];
-      this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
-      this.descargar_disabled = true; // Deshabilita el botón de descargar
-
-      // Reiniciar valores de partidos a 0.0 si existen
-      if (this.Partidos_Con_Representacion) {
-        this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(function (partido) {
-          return _objectSpread(_objectSpread({}, partido), {}, {
-            porcentaje_votacion: 0.00,
-            inputPorcentaje: '',
-            errorPorcentajeVotacion: '',
-            ajuste: 0.00
-          });
-        });
-      } else {
-        this.Partidos_Con_Representacion = [];
-      }
-      if (this.Partidos_Sin_Representacion) {
-        this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(function (partido) {
-          return _objectSpread(_objectSpread({}, partido), {}, {
-            D_monto_2_por_ciento: 0.00
-          });
-        });
-      } else {
-        this.Partidos_Sin_Representacion = [];
-      }
-      this.limpiarErrores();
+      this.anio = '', this.limpiarErrores();
     },
     /**
      * Limpia todos los mensajes de error
@@ -13977,43 +14008,10 @@ var debug = function debug() {
     limpiarErrores: function limpiarErrores() {
       this.error = false;
       this.errorAnio = '';
-      this.errorMonto30 = '', this.errorMonto70 = '', this.errorDistribucion = '';
-      this.Partidos_Con_Representacion.forEach(function (partido) {
-        partido.errorPorcentajeVotacion = '';
-      });
-    },
-    obtenerTotalesMensuales: function obtenerTotalesMensuales(idCalculo) {
-      var _this15 = this;
-      var totales = Array(12).fill().map(function () {
-        return new Decimal(0);
-      });
-      var partidos = [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).filter(function (p) {
-        return p.id_calculo === idCalculo;
-      });
-      partidos.forEach(function (partido) {
-        var total = partido.C_fpaop || partido.monto_2_por_ciento;
-        var key = "con-".concat(partido.id_calculo, "-").concat(partido.id_partido);
-        var override = _this15.ajustesDiciembre[key];
-        var montos = _this15.distribuirConEditableDiciembre(total, override, key);
-        montos.forEach(function (monto, i) {
-          // Precisión total
-          totales[i] = totales[i].plus(new Decimal(monto));
-        });
-      });
-
-      // Convertir a números nativos para mostrar
-      return totales.map(function (t) {
-        return t.toNumber();
-      });
-    },
-    obtenerTotalGeneral: function obtenerTotalGeneral(id_calculo) {
-      var totales = this.obtenerTotalesMensuales(id_calculo);
-      return totales.reduce(function (sum, val) {
-        return new Decimal(sum).plus(new Decimal(val));
-      }, new Decimal(0)).toNumber();
     }
   },
   computed: {
+    // Solo referencia - DEPRECATED
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
         return sum + (p.ajuste || 0);
@@ -29225,14 +29223,15 @@ var render = function render() {
     staticStyle: {
       "background-color": "var(--iee-white)"
     }
-  }, [_c("div", [_vm.NewlistCalculos && _vm.NewlistCalculos.length ? _c("vs-table", {
+  }, [_c("div", [_c("vs-table", {
     staticClass: "tabla-ajustada",
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
         return [_c("vs-tr", [_c("vs-th", {
           staticStyle: {
-            "background-color": "var(--iee-white)"
+            "background-color": "var(--iee-white)",
+            width: "200px"
           }
         }, [_vm._v("\n                                Año fiscal\n                            ")]), _vm._v(" "), _c("vs-th", {
           staticStyle: {
@@ -29345,8 +29344,8 @@ var render = function render() {
         })];
       },
       proxy: true
-    }], null, false, 2022392001)
-  }) : _vm._e()], 1)])]), _vm._v(" "), [_c("div", {
+    }])
+  })], 1)])]), _vm._v(" "), [_c("div", {
     staticClass: "center"
   }, [_c("vs-dialog", {
     attrs: {
@@ -29921,7 +29920,7 @@ var render = function render() {
     scopedSlots: _vm._u([_vm.errorAnio.length > 0 ? {
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n          " + _vm._s(_vm.errorAnio) + "\n        ")];
+        return [_vm._v("\n                            " + _vm._s(_vm.errorAnio) + "\n                        ")];
       },
       proxy: true
     } : null], null, true),
@@ -29939,7 +29938,7 @@ var render = function render() {
         label: item.anio,
         value: item.anio
       }
-    }, [_vm._v("\n          " + _vm._s(item.anio) + "\n        ")]);
+    }, [_vm._v("\n                            " + _vm._s(item.anio) + "\n                        ")]);
   })], 2) : _vm._e()], 1)]), _vm._v(" "), _vm.CalculosPorAnio.length > 0 ? _c("div", {
     staticClass: "mt-4"
   }, _vm._l(_vm.CalculosPorAnio, function (calculo, index) {
@@ -29952,7 +29951,7 @@ var render = function render() {
       staticClass: "material-symbols-rounded"
     }, [_vm._v("receipt_long")]), _vm._v(" "), _c("h5", {
       staticClass: "mb-0"
-    }, [_vm._v("\n        ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n        ")])]), _vm._v(" "), _c("vs-table", {
+    }, [_vm._v("\n                            ID Cálculo: " + _vm._s(calculo.id_calculo) + " - Año: " + _vm._s(calculo.anio_ejercicio) + "\n                        ")])]), _vm._v(" "), _c("vs-table", {
       staticClass: "tabla-ajustada mt-3",
       scopedSlots: _vm._u([{
         key: "thead",
@@ -30040,7 +30039,7 @@ var render = function render() {
               staticStyle: {
                 "text-align": "left"
               }
-            }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n            ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop, _vm.ajustesDiciembre["con-" + partido.id_calculo + "-" + partido.id_partido], "con-" + partido.id_calculo + "-" + partido.id_partido), function (monto, mesIndex) {
+            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partido.C_fpaop, partido, "con-" + partido.id_calculo + "-" + partido.id_partido), function (monto, mesIndex) {
               return _c("vs-td", {
                 key: "mes-" + partido.id_calculo + "-" + partido.id_partido + "-" + mesIndex,
                 staticStyle: {
@@ -30049,7 +30048,12 @@ var render = function render() {
               }, [mesIndex === 11 ? [_c("div", {
                 staticClass: "d-flex align-items-center"
               }, [_c("input", {
+                key: "txbD_Con-" + partido.id_calculo + "-" + partido.id_partido,
                 staticClass: "form-control",
+                "class": {
+                  "text-success": partido.ajusteDiciembre > 0,
+                  "text-danger": partido.ajusteDiciembre < 0
+                },
                 staticStyle: {
                   width: "100%"
                 },
@@ -30057,15 +30061,18 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: monto
+                  value: partido.mintr_diciembre
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onDecimalInput($event, partido.id_calculo, partido.id_partido);
+                    return _vm.onInputMoneda($event, partido, "con");
                   }
                 }
               }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
+                staticClass: "d-flex flex-column ms-1",
+                staticStyle: {
+                  "margin-left": "5px"
+                }
               }, [_c("button", {
                 staticClass: "btn btn-sm p-0",
                 attrs: {
@@ -30073,7 +30080,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partido.id_calculo, partido.id_partido, monto);
+                    return _vm.ajustarDecimalManual("sumar", partido, "con");
                   }
                 }
               }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
@@ -30083,10 +30090,10 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partido.id_calculo, partido.id_partido, monto);
+                    return _vm.ajustarDecimalManual("restar", partido, "con");
                   }
                 }
-              }, [_vm._v("▼")])])])] : [_vm._v("\n    " + _vm._s(_vm.formatCurrency(monto)) + "\n  ")]], 2);
+              }, [_vm._v("▼")])])])] : [_vm._v("\n                                        " + _vm._s(_vm.formatCurrency(monto)) + "\n                                    ")]], 2);
             })], 2);
           }), _vm._v(" "), _c("hr", {
             attrs: {
@@ -30112,7 +30119,7 @@ var render = function render() {
               staticStyle: {
                 "text-align": "left"
               }
-            }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n            ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partidoS.monto_2_por_ciento, _vm.ajustesDiciembre["con-" + partidoS.id_calculo + "-" + partidoS.id_partido]), function (monto, mesIndex) {
+            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n                                ")]), _vm._v(" "), _vm._l(_vm.distribuirConEditableDiciembre(partidoS.monto_2_por_ciento, partidoS, "sin-" + partidoS.id_calculo + "-" + partidoS.id_partido), function (monto, mesIndex) {
               return _c("vs-td", {
                 key: "mes-sin-" + partidoS.id_calculo + "-" + partidoS.id_partido + "-" + mesIndex,
                 staticStyle: {
@@ -30121,7 +30128,12 @@ var render = function render() {
               }, [mesIndex === 11 ? [_c("div", {
                 staticClass: "d-flex align-items-center"
               }, [_c("input", {
+                key: "txbD_Sin-" + partidoS.id_calculo + "-" + partidoS.id_partido,
                 staticClass: "form-control",
+                "class": {
+                  "text-success": partidoS.ajusteDiciembre > 0,
+                  "text-danger": partidoS.ajusteDiciembre < 0
+                },
                 staticStyle: {
                   width: "100%"
                 },
@@ -30129,15 +30141,18 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: monto
+                  value: partidoS.mintr_diciembre
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onDecimalInput($event, partidoS.id_calculo, partidoS.id_partido);
+                    return _vm.onInputMoneda(_vm.event, partidoS, "sin");
                   }
                 }
               }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
+                staticClass: "d-flex flex-column ms-1",
+                staticStyle: {
+                  "margin-left": "5px"
+                }
               }, [_c("button", {
                 staticClass: "btn btn-sm p-0",
                 attrs: {
@@ -30145,7 +30160,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partidoS.id_calculo, partidoS.id_partido, monto);
+                    return _vm.ajustarDecimalManual("sumar", partidoS, "sin");
                   }
                 }
               }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
@@ -30155,10 +30170,10 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partidoS.id_calculo, partidoS.id_partido, monto);
+                    return _vm.ajustarDecimalManual("restar", partidoS, "sin");
                   }
                 }
-              }, [_vm._v("▼")])])])] : [_vm._v("\n                " + _vm._s(mesIndex === 11 ? _vm.formatCurrency(monto) : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]], 2);
+              }, [_vm._v("▼")])])])] : [_vm._v("\n                                        " + _vm._s(_vm.formatCurrency(monto)) + "\n                                    ")]], 2);
             })], 2);
           }), _vm._v(" "), _c("vs-tr", {
             key: "fila-total-mensual"
@@ -30173,7 +30188,7 @@ var render = function render() {
                 "text-align": "left",
                 "font-weight": "bold"
               }
-            }, [_vm._v("\n                " + _vm._s(i === 11 ? monto : "$" + _vm.truncateTo2Decimals(monto)) + "\n            ")]);
+            }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(monto)) + "\n                                ")]);
           })], 2), _vm._v(" "), _c("vs-tr", {
             key: "fila-total-general"
           }, [_c("vs-td", {
@@ -30188,7 +30203,7 @@ var render = function render() {
             attrs: {
               colspan: "12"
             }
-          }, [_vm._v("\n                " + _vm._s(_vm.formatCurrency(_vm.obtenerTotalGeneral(calculo.id_calculo))) + "\n            ")])], 1)];
+          }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(_vm.obtenerTotalGeneral(calculo.id_calculo))) + "\n                                ")])], 1)];
         },
         proxy: true
       }], null, true)
@@ -30197,7 +30212,7 @@ var render = function render() {
     }, [_c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("vs-button", {
-      key: "guardar" + _vm.darkMode,
+      key: "guardar-" + calculo.id_calculo + "_" + calculo.anio_ejercicio,
       staticStyle: {
         padding: "0.20rem",
         "font-size": "1rem"
@@ -30208,7 +30223,7 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.stopPropagation();
-          return _vm.guardarCambios(calculo);
+          return _vm.guardarCambios(calculo.id_calculo);
         }
       }
     }, [_c("div", {
@@ -30221,18 +30236,18 @@ var render = function render() {
       staticStyle: {
         "font-size": "0.8125rem !important"
       }
-    }), _vm._v("\n                                            Guardar\n                                        ")])])], 1), _vm._v(" "), _c("div", {
+    }), _vm._v("\n                                    Guardar\n                                ")])])], 1), _vm._v(" "), _c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("vs-tooltip", {
       scopedSlots: _vm._u([{
         key: "tooltip",
         fn: function fn() {
-          return [_vm.descargar_disabled ? _c("div", [_vm._v("\n                                            Debes guardar los cambios antes de descargar\n                                        ")]) : _c("div", [_vm._v("\n                                            Descargar distribución\n                                        ")])];
+          return [_vm.descargar_disabled[calculo.id_calculo] ? _c("div", [_vm._v("\n                                        Debes guardar los cambios antes de descargar\n                                    ")]) : _c("div", [_vm._v("\n                                        Descargar distribución\n                                    ")])];
         },
         proxy: true
       }], null, true)
     }, [_c("vs-button", {
-      key: "descargar" + _vm.darkMode,
+      key: "descargar-" + calculo.id_calculo + "_" + calculo.anio_ejercicio,
       staticStyle: {
         padding: "0.20rem",
         "font-size": "1rem"
@@ -30240,12 +30255,12 @@ var render = function render() {
       attrs: {
         color: !!_vm.darkMode ? "#f5f5f5" : "#a5904a",
         hover: "true",
-        disabled: _vm.descargar_disabled
+        disabled: _vm.descargar_disabled[calculo.id_calculo]
       },
       on: {
         click: function click($event) {
           $event.stopPropagation();
-          return _vm.descargar(_vm.distribucionId);
+          return _vm.descargarMinistraciones(calculo.id_calculo);
         }
       }
     }, [_c("div", {
@@ -30260,7 +30275,7 @@ var render = function render() {
       staticStyle: {
         "font-size": "0.8125rem !important"
       }
-    }), _vm._v("\n                                            Descargar\n                                        ")])])], 1)], 1)])], 1);
+    }), _vm._v("\n                                        Descargar\n                                    ")])])], 1)], 1)])], 1);
   }), 0) : _vm._e()])])]);
 };
 var staticRenderFns = [function () {
@@ -45183,7 +45198,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
+exports.push([module.i, "\n.tabla-ajustada {\r\n    width: 100% !important;\r\n    margin-left: 0 !important;\r\n    padding-left: 0 !important;\r\n    table-layout: fixed !important;\r\n    border-collapse: collapse;\n}\n.vs-table__content {\r\n    justify-content: flex-start !important;\n}\n.vs-table__th {\r\n    text-align: center !important;\r\n    font-size: 12px;\r\n    padding: 10px;\n}\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    /* azul visible */\r\n    border-color: #1E90FF !important;\n}\n.vs-checkbox__label {\r\n    color: #000 !important;\r\n    /* asegura que el texto no se vea gris */\n}\n.vs-checkbox--checked .vs-checkbox__label {\r\n    font-weight: bold;\n}\n.disabled-bold .vs-input {\r\n    font-weight: bold;\r\n    color: #000;\r\n    /* Negro fuerte */\n}\n.dialog-table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    text-align: center;\n}\n.dialog-table th,\r\n.dialog-table td {\r\n    border: 1px solid #ddd;\r\n    padding: 8px;\n}\n.dialog-table th {\r\n    background-color: var(--iee-white);\r\n    font-weight: bold;\n}\n.custom-dialog {\r\n    width: 90vw;\r\n    /* o un valor fijo como 800px */\r\n    max-width: 1000px;\r\n    padding: 20px;\n}\r\n\r\n/* Seleccion de filas Ajuste de decimales*/\n.vs-table--tbody-table tr.vs-table--tr-selected {\r\n    background-color: rgba(var(--vs-primary), 0.1);\n}\r\n\r\n\r\n/* Estilo para el borde del checkbox cuando NO está marcado */\n.vs-checkbox .vs-checkbox__check {\r\n    border: 2px solid #000 !important;\r\n    background: transparent !important;\n}\r\n\r\n/* Estilo para el checkbox cuando ESTÁ marcado */\n.vs-checkbox--checked .vs-checkbox__check {\r\n    background-color: #1E90FF !important;\r\n    border-color: #1E90FF !important;\n}\r\n\r\n/* Asegurar que el borde sea visible en el hover */\n.vs-checkbox:hover .vs-checkbox__check {\r\n    border-color: #1E90FF !important;\n}\r\n", ""]);
 
 // exports
 
@@ -241092,17 +241107,18 @@ function _userValidToEdit() {
 /*!******************************************!*\
   !*** ./resources/js/utils/formatters.js ***!
   \******************************************/
-/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMoneda, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal */
+/*! exports provided: formatDateToDMY, formatDateToDMYWithMonthName, formatoMonedaMX, formatearPorcentajeSimple, formatearPorcentaje, formatearDecimal, limpiarNumeroInput */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMY", function() { return formatDateToDMY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDateToDMYWithMonthName", function() { return formatDateToDMYWithMonthName; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMoneda", function() { return formatoMoneda; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatoMonedaMX", function() { return formatoMonedaMX; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentajeSimple", function() { return formatearPorcentajeSimple; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearPorcentaje", function() { return formatearPorcentaje; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatearDecimal", function() { return formatearDecimal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "limpiarNumeroInput", function() { return limpiarNumeroInput; });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -241112,9 +241128,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /*
 * @description Archivo de ayuda para formatear datos de la base de datos 
 * y mostrar en vistas .vue
-* @author Tony
-* @version 1.0.0
+* @author Tony 😉
+* @version 1.2.1
 * @date 18/08/2025
+* @updated 04/09/2025
 */
 /**
  * Formatea una fecha de entrada a un formato específico con el separador indicado.
@@ -241238,19 +241255,74 @@ var formatDateToDMYWithMonthName = function formatDateToDMYWithMonthName(dateStr
   }
 };
 
-/*
-* Formatea a moneda
-* @param {number} valor - El valor a formatear
-* @returns {string} - El valor formateado
-*/
-var formatoMoneda = function formatoMoneda(valor) {
-  var defaultDecimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: defaultDecimal,
-    maximumFractionDigits: defaultDecimal
-  }).format(valor);
+/**
+ * Valida si un string tiene formato de número con o sin símbolo de moneda
+ * @param {string} str - String a validar
+ * @returns {boolean} - true si el formato es válido
+ */
+var tieneFormatoMonedaValido = function tieneFormatoMonedaValido(str) {
+  // Acepta números con/sin signo, con/sin separadores de miles, y con/sin decimales
+  var formatoMonedaRegex = /^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$/;
+  return formatoMonedaRegex.test(str);
+};
+
+/**
+ * Formatea un número como moneda mexicana
+ * @param {number|string} valor - Valor a formatear (puede ser número o string numérico)
+ * @param {number} [decimales=2] - Número de decimales a mostrar (0-20)
+ * @returns {string} - Valor formateado como moneda mexicana
+ * @example
+ * formatoMoneda(1234.567);      // "$1,234.57"
+ * formatoMoneda("1234.567", 3); // "$1,234.567"
+ * formatoMoneda(null);          // "$0.00"
+ * formatoMoneda("abc");         // "$0.00"
+ */
+var formatoMonedaMX = function formatoMonedaMX(valor) {
+  var decimales = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  // Validación de entrada
+  if (valor === null || valor === undefined || valor === '') return '$0.00';
+
+  // Si es string, validar formato y limpiar
+  if (typeof valor === 'string') {
+    // Eliminar espacios y símbolos de moneda existentes
+    var valorLimpio = valor.trim().replace(/[$\s,]/g, '');
+
+    // Validar que sea un número válido
+    if (!tieneFormatoMonedaValido(valorLimpio) || isNaN(Number(valorLimpio))) {
+      return '$0.00';
+    }
+    // Convertir a número
+    valor = Number(valorLimpio);
+  }
+  var num = Number(valor);
+  if (isNaN(num)) return '$0.00';
+
+  // Asegurar que los decimales estén en el rango permitido (0-20)
+  var decimalesAjustados = Math.min(Math.max(0, Math.floor(decimales)), 20);
+
+  // const options = {
+  //     style: 'currency',
+  //     currency: 'MXN',
+  //     minimumFractionDigits: decimalesAjustados,
+  //     maximumFractionDigits: decimalesAjustados,
+  //     useGrouping: true
+  // };
+
+  try {
+    var formatter = new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: decimalesAjustados,
+      maximumFractionDigits: decimalesAjustados,
+      useGrouping: true
+    });
+    //return num.toLocaleString('es-MX', options);
+    return formatter.format(num);
+  } catch (error) {
+    console.error('Error al formatear moneda:', error);
+    // Fallback básico en caso de error
+    return "$".concat(num.toFixed(decimalesAjustados));
+  }
 };
 
 /* Función para formatear el porcentaje (solo formatea)
@@ -241317,6 +241389,52 @@ var formatearDecimal = function formatearDecimal(valor) {
   return parteDecimal ? "".concat(parteEntera, ".").concat(parteDecimal) : parteEntera;
 };
 
+/**
+ * Limpia y valida un valor numérico de un input
+ * @param {string} valor - Valor a limpiar
+ * @returns {string} - Valor limpio y validado
+ * @example
+ * limpiarNumeroInput("$1,234.56") // "1234.56"
+ * limpiarNumeroInput("abc123.45") // "123.45"
+ * limpiarNumeroInput("12.34.56")  // "12.3456"
+ * 
+ * @example
+ * "12.34.56" → "12.3456"
+ * ".123" → "0.123"
+ * "0012.34" → "12.34"
+ * 
+ * @example
+ * methods: {
+ *     onInputMoneda(event) {
+ *         const valorLimpio = limpiarNumeroInput(event.target.value);
+ *         this.miValor = valorLimpio;
+ *         // Actualizar el valor del input
+ *         event.target.value = valorLimpio;
+ *     }
+ * }
+ * <input 
+ *     type="text" 
+ *     :value="miValor" 
+ *     @input="onInputMoneda" 
+ *     placeholder="0.00" 
+/>
+ */
+var limpiarNumeroInput = function limpiarNumeroInput(valor) {
+  if (typeof valor !== 'string') return '';
+
+  // Elimina todo excepto números y puntos
+  var soloNumerosYPunto = valor.replace(/[^0-9.]/g, '');
+  // Maneja múltiples puntos, manteniendo solo el primero
+  var partes = soloNumerosYPunto.split('.');
+  var parteEntera = partes[0] || '';
+  var parteDecimal = partes.length > 1 ? '.' + partes.slice(1).join('') : '';
+
+  // Une las partes y limpia ceros a la izquierda
+  return (parteEntera + parteDecimal).replace(/^0+(\d)/, '$1') // Elimina ceros iniciales
+  .replace(/^\./, '0.') // Si empieza con punto, agrega 0
+  .replace(/^$/, '0'); // Si está vacío, devuelve "0"
+};
+
 /***/ }),
 
 /***/ 0:
@@ -241326,7 +241444,7 @@ var formatearDecimal = function formatearDecimal(valor) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
