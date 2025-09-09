@@ -42,8 +42,7 @@
                         </vs-select>
                     </div>
                 </div>
-                <div class="card-body container-fluid" style="background-color: var(--iee-white);">
-                    <!-- Partidos con representación -->
+                <div >
                     <vs-table class="tabla-ajustada sin-bordes">
                         <template #thead>
                             <vs-tr>
@@ -62,16 +61,15 @@
                             <vs-td>{{ calculo.id_calculo }}</vs-td>
                             <vs-td>{{ calculo.anio_ejercicio }}</vs-td>
                             <vs-td>{{ formatoFecha(calculo.fecha_publicacion) }}</vs-td>
-                            <vs-td class="text-center">
-                                <vs-button
+                            <vs-td class="acciones-cell">
+                            <vs-button
                                 icon
                                 color="danger"
                                 size="small"
                                 @click="abrirDialog(calculo)"
-                                title="Distribuir"
-                                >
+                            >
                                 <i class="fas fa-pencil-alt"></i>
-                                </vs-button>
+                            </vs-button>
                             </vs-td>
                             </vs-tr>
                         </template>
@@ -95,27 +93,20 @@
                 <vs-dialog v-model="active" overflow-hidden width="90%">
                     <!-- HEADER -->
                     <template #header>
-                        <h4 class="not-margin">Distribución del cálculo</h4>
+                        <h4 class="not-margin">Financiamiento privado</h4>
                     </template>
 
-                    <div class="px-4">
-                        <!-- Formulario principal -->
+                    <div>
                         <div>
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <h5>Financiamiento privado</h5>
-                                </div>
-                               
-                            </div>
-                            <!-- Tabla de distribución -->
-                            <vs-table class="mt-4">
+                            <vs-table>
                                 <template #thead>
-                                    <vs-tr class="partidos-header-row">
-                                        <vs-th></vs-th>
-                                        <vs-th></vs-th>
-                                        <vs-th v-for="(partido, i) in Partidos_Con_Representacion" 
-                                                :key="'head-' + i" 
-                                                class="partido-col">
+                                    <vs-tr class="fila-flex fila-header">
+                                        <vs-th class="col-desc"></vs-th>
+
+                                        <!-- Partidos con representación -->
+                                        <vs-th v-for="(partido, i) in Partidos_Con_Representacion"
+                                                :key="'head-' + i"
+                                                class="col-partido">
                                             <div class="partido-header">
                                             <img :src="'/img/logos/' + partido.logo"
                                                 :alt="partido.siglas"
@@ -124,9 +115,11 @@
                                             <span class="siglas">{{ partido.siglas }}</span>
                                             </div>
                                         </vs-th>
-                                        <vs-th v-for="(partidoS, i) in Partidos_Sin_Representacion" 
-                                                :key="'headS-' + i" 
-                                                class="partido-col">
+
+                                        <!-- Partidos sin representación -->
+                                        <vs-th v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                                :key="'headS-' + i"
+                                                class="col-partido">
                                             <div class="partido-header">
                                             <img :src="'/img/logos/' + partidoS.logo"
                                                 :alt="partidoS.siglas"
@@ -136,14 +129,57 @@
                                             </div>
                                         </vs-th>
                                         </vs-tr>
-                                        <vs-tr>
-                                            <vs-th>
-                                                <span>texto</span>
-                                            </vs-th>
-                                        </vs-tr>
                                 </template>
                                 <template #tbody>
-                                   <!--  -->
+                                   <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Financiamiento público para actividades ordinarias permanentes
+                                    </vs-td>
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'row1-' + i"
+                                            class="col-partido monto">
+                                        {{ formatCurrency(partido.C_fpaop) }}
+                                    </vs-td>
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'row1s-' + i"
+                                            class="col-partido monto">
+                                        {{ formatCurrency(partidoS.monto_2_por_ciento) }}
+                                    </vs-td>
+                                    </vs-tr>
+
+                                    <!-- limite de financiamiento privado-->
+                                     <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Límite de financiamiento privado
+                                    </vs-td>
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'row1-' + i"
+                                            class="col-partido monto">
+                                        {{ limite(partido.C_fpaop) }}
+                                    </vs-td>
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'row1s-' + i"
+                                            class="col-partido monto">
+                                        {{ limite(partidoS.monto_2_por_ciento) }}
+                                    </vs-td>
+                                    </vs-tr>
+
+                                     <!-- Aportaciones en dinero y/o en especie de personas militantes-->
+                                     <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Aportaciones en dinero y/o en especie de personas militantes
+                                    </vs-td>
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'row1-' + i"
+                                            class="col-partido monto">
+                                        {{ aportaciones(partido.C_fpaop) }}
+                                    </vs-td>
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'row1s-' + i"
+                                            class="col-partido monto">
+                                        {{ aportaciones(partidoS.monto_2_por_ciento) }}
+                                    </vs-td>
+                                    </vs-tr>
                                 </template>
                             </vs-table>
                             <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4">
@@ -308,12 +344,7 @@ export default {
             this.$set(this.ajustesDiciembre, key, parseFloat(valor));
         },
         formatCurrency(value) {
-            if (value === null || value === undefined || isNaN(value)) return '$0.00';
-            const num = Math.floor(parseFloat(value) * 100) / 100;
-            return num.toLocaleString('es-MX', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         },
         getStepForMonto(monto) {
             if (!monto || isNaN(monto)) return '0.01';
@@ -554,6 +585,16 @@ export default {
                     }
                 });
             });
+        },
+        limite (valor) {
+            const resultado = valor * 0.50;
+            const resultadoConvertido = this.formatCurrency(resultado);
+            return resultadoConvertido;
+        },
+        aportaciones (valor) {
+            const resultado = valor * 0.20;
+            const resultadoConvertido = this.formatCurrency(resultado);
+            return resultadoConvertido;
         },
 
 
@@ -839,11 +880,43 @@ export default {
   box-shadow: none !important;
 }
 
-/* Mantiene ancho fijo para evitar que se mueva */
+
 .tabla-ajustada ::v-deep(.vs-table__th),
 .tabla-ajustada ::v-deep(.vs-table__td) {
-  min-width: 150px; /* ajusta según necesites */
-  text-align: center;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+/* Ajustar ancho de columnas específicas */
+.tabla-ajustada ::v-deep(.vs-table__th:nth-child(1)),
+.tabla-ajustada ::v-deep(.vs-table__td:nth-child(1)) {
+  width: 80px !important;   /* ID más compacto */
+}
+
+.tabla-ajustada ::v-deep(.vs-table__th:last-child),
+.tabla-ajustada ::v-deep(.vs-table__td:last-child) {
+  width: 120px !important;  /* Acciones un poco más fijas */
+  text-align: center !important;
+}
+
+.tabla-ajustada .vs-button[icon] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+/* Ícono dentro del botón */
+.tabla-ajustada .vs-button[icon] i {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  line-height: 0 !important; /* evita espacio extra vertical */
+  height: 100% !important;
 }
 
 /* Imagen y mensaje cuando no hay datos */
@@ -864,30 +937,33 @@ export default {
   color: #888;
 }
 
-.partidos-header-row {
-  display: flex !important;              /* fuerza flexbox en la fila */
-  justify-content: space-around;         /* reparte equitativamente */
+.fila-flex {
+  display: flex !important;
   align-items: center;
-  width: 100%;
 }
 
-.partido-col {
-  flex: 1;                               /* cada partido ocupa el mismo espacio */
-  text-align: center !important;
+/* 1ª columna (texto): ancho fijo */
+.fila-flex .col-desc,
+.fila-flex .vs-table__th.col-desc,
+.fila-flex .vs-table__td.col-desc {
+  flex: 0 0 320px !important;   /* ajusta 320px al gusto */
+  max-width: 320px !important;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
-.partido-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* columnas de partidos: ocupan el resto por igual */
+.fila-flex .col-partido,
+.fila-flex .vs-table__th.col-partido,
+.fila-flex .vs-table__td.col-partido {
+  flex: 1 1 0 !important;
+  text-align: center;
 }
 
-.logo-partido {
-  width: 60px;  /* puedes ajustar tamaño */
-  height: 60px;
-  object-fit: contain;
-  margin-bottom: 5px;
-}
+/* estética opcional */
+.partido-header { display:flex; flex-direction:column; align-items:center; }
+.logo-partido   { width:60px; height:60px; object-fit:contain; margin-bottom:5px; }
+.monto          { text-align:right; padding-right:8px; } /* o center si prefieres */
+.fila-header    { background:#f4f6f8; border-radius:12px; }
 
 </style>

@@ -4937,12 +4937,7 @@ var debug = function debug() {
       this.$set(this.ajustesDiciembre, key, parseFloat(valor));
     },
     formatCurrency: function formatCurrency(value) {
-      if (value === null || value === undefined || isNaN(value)) return '$0.00';
-      var num = Math.floor(parseFloat(value) * 100) / 100;
-      return num.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
+      return '$' + parseFloat(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
     getStepForMonto: function getStepForMonto(monto) {
       if (!monto || isNaN(monto)) return '0.01';
@@ -5226,6 +5221,16 @@ var debug = function debug() {
           }
         }, _callee5);
       }))();
+    },
+    limite: function limite(valor) {
+      var resultado = valor * 0.50;
+      var resultadoConvertido = this.formatCurrency(resultado);
+      return resultadoConvertido;
+    },
+    aportaciones: function aportaciones(valor) {
+      var resultado = valor * 0.20;
+      var resultadoConvertido = this.formatCurrency(resultado);
+      return resultadoConvertido;
     },
     /* const loader = loading(this.$vs);
     loader.text = 'Guardando datos...';
@@ -20976,12 +20981,7 @@ var render = function render() {
         value: item.anio
       }
     }, [_vm._v("\n                            " + _vm._s(item.anio) + "\n                        ")]);
-  })], 2) : _vm._e()], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "card-body container-fluid",
-    staticStyle: {
-      "background-color": "var(--iee-white)"
-    }
-  }, [_c("vs-table", {
+  })], 2) : _vm._e()], 1)]), _vm._v(" "), _c("div", [_c("vs-table", {
     staticClass: "tabla-ajustada sin-bordes",
     scopedSlots: _vm._u([{
       key: "thead",
@@ -20996,13 +20996,12 @@ var render = function render() {
           return _c("vs-tr", {
             key: "calculo-resumen-".concat(i)
           }, [_c("vs-td", [_vm._v(_vm._s(calculo.id_calculo))]), _vm._v(" "), _c("vs-td", [_vm._v(_vm._s(calculo.anio_ejercicio))]), _vm._v(" "), _c("vs-td", [_vm._v(_vm._s(_vm.formatoFecha(calculo.fecha_publicacion)))]), _vm._v(" "), _c("vs-td", {
-            staticClass: "text-center"
+            staticClass: "acciones-cell"
           }, [_c("vs-button", {
             attrs: {
               icon: "",
               color: "danger",
-              size: "small",
-              title: "Distribuir"
+              size: "small"
             },
             on: {
               click: function click($event) {
@@ -21044,7 +21043,7 @@ var render = function render() {
       fn: function fn() {
         return [_c("h4", {
           staticClass: "not-margin"
-        }, [_vm._v("Distribución del cálculo")])];
+        }, [_vm._v("Financiamiento privado")])];
       },
       proxy: true
     }]),
@@ -21055,23 +21054,18 @@ var render = function render() {
       },
       expression: "active"
     }
-  }, [_vm._v(" "), _c("div", {
-    staticClass: "px-4"
-  }, [_c("div", [_c("div", {
-    staticClass: "row mt-4"
-  }, [_c("div", {
-    staticClass: "col-12"
-  }, [_c("h5", [_vm._v("Financiamiento privado")])])]), _vm._v(" "), _c("vs-table", {
-    staticClass: "mt-4",
+  }, [_vm._v(" "), _c("div", [_c("div", [_c("vs-table", {
     scopedSlots: _vm._u([{
       key: "thead",
       fn: function fn() {
         return [_c("vs-tr", {
-          staticClass: "partidos-header-row"
-        }, [_c("vs-th"), _vm._v(" "), _c("vs-th"), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          staticClass: "fila-flex fila-header"
+        }, [_c("vs-th", {
+          staticClass: "col-desc"
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-th", {
             key: "head-" + i,
-            staticClass: "partido-col"
+            staticClass: "col-partido"
           }, [_c("div", {
             staticClass: "partido-header"
           }, [_c("img", {
@@ -21087,7 +21081,7 @@ var render = function render() {
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-th", {
             key: "headS-" + i,
-            staticClass: "partido-col"
+            staticClass: "col-partido"
           }, [_c("div", {
             staticClass: "partido-header"
           }, [_c("img", {
@@ -21100,13 +21094,55 @@ var render = function render() {
           }), _vm._v(" "), _c("span", {
             staticClass: "siglas"
           }, [_vm._v(_vm._s(partidoS.siglas))])])]);
-        })], 2), _vm._v(" "), _c("vs-tr", [_c("vs-th", [_c("span", [_vm._v("texto")])])], 1)];
+        })], 2)];
       },
       proxy: true
     }, {
       key: "tbody",
       fn: function fn() {
-        return undefined;
+        return [_c("vs-tr", {
+          staticClass: "fila-flex"
+        }, [_c("vs-td", {
+          staticClass: "col-desc"
+        }, [_vm._v("\n                                    Financiamiento público para actividades ordinarias permanentes\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          return _c("vs-td", {
+            key: "row1-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partido.C_fpaop)) + "\n                                ")]);
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
+          return _c("vs-td", {
+            key: "row1s-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(partidoS.monto_2_por_ciento)) + "\n                                ")]);
+        })], 2), _vm._v(" "), _c("vs-tr", {
+          staticClass: "fila-flex"
+        }, [_c("vs-td", {
+          staticClass: "col-desc"
+        }, [_vm._v("\n                                    Límite de financiamiento privado\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          return _c("vs-td", {
+            key: "row1-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.limite(partido.C_fpaop)) + "\n                                ")]);
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
+          return _c("vs-td", {
+            key: "row1s-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.limite(partidoS.monto_2_por_ciento)) + "\n                                ")]);
+        })], 2), _vm._v(" "), _c("vs-tr", {
+          staticClass: "fila-flex"
+        }, [_c("vs-td", {
+          staticClass: "col-desc"
+        }, [_vm._v("\n                                    Aportaciones en dinero y/o en especie de personas militantes\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          return _c("vs-td", {
+            key: "row1-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.aportaciones(partido.C_fpaop)) + "\n                                ")]);
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
+          return _c("vs-td", {
+            key: "row1s-" + i,
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.aportaciones(partidoS.monto_2_por_ciento)) + "\n                                ")]);
+        })], 2)];
       },
       proxy: true
     }])
@@ -44995,7 +45031,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\r\n/* Quita bordes de la tabla */\n.sin-bordes ::v-deep(.vs-table__tr),\r\n.sin-bordes ::v-deep(.vs-table__td),\r\n.sin-bordes ::v-deep(.vs-table__th) {\r\n  border: none !important;\r\n  box-shadow: none !important;\n}\r\n\r\n/* Mantiene ancho fijo para evitar que se mueva */\n.tabla-ajustada ::v-deep(.vs-table__th),\r\n.tabla-ajustada ::v-deep(.vs-table__td) {\r\n  min-width: 150px; /* ajusta según necesites */\r\n  text-align: center;\n}\r\n\r\n/* Imagen y mensaje cuando no hay datos */\n.noDataContainer {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  justify-content: center;\r\n  padding: 2rem;\n}\n.imgNoData {\r\n  width: 180px;\r\n  max-width: 40%;\n}\n.noDataTitle {\r\n  margin-top: 1rem;\r\n  font-weight: 500;\r\n  color: #888;\n}\n.partidos-header-row {\r\n  display: flex !important;              /* fuerza flexbox en la fila */\r\n  justify-content: space-around;         /* reparte equitativamente */\r\n  align-items: center;\r\n  width: 100%;\n}\n.partido-col {\r\n  flex: 1;                               /* cada partido ocupa el mismo espacio */\r\n  text-align: center !important;\n}\n.partido-header {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  justify-content: center;\n}\n.logo-partido {\r\n  width: 60px;  /* puedes ajustar tamaño */\r\n  height: 60px;\r\n  object-fit: contain;\r\n  margin-bottom: 5px;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\r\n/* Quita bordes de la tabla */\n.sin-bordes ::v-deep(.vs-table__tr),\r\n.sin-bordes ::v-deep(.vs-table__td),\r\n.sin-bordes ::v-deep(.vs-table__th) {\r\n  border: none !important;\r\n  box-shadow: none !important;\n}\n.tabla-ajustada ::v-deep(.vs-table__th),\r\n.tabla-ajustada ::v-deep(.vs-table__td) {\r\n  text-align: center !important;\r\n  vertical-align: middle !important;\n}\r\n\r\n/* Ajustar ancho de columnas específicas */\n.tabla-ajustada ::v-deep(.vs-table__th:nth-child(1)),\r\n.tabla-ajustada ::v-deep(.vs-table__td:nth-child(1)) {\r\n  width: 80px !important;   /* ID más compacto */\n}\n.tabla-ajustada ::v-deep(.vs-table__th:last-child),\r\n.tabla-ajustada ::v-deep(.vs-table__td:last-child) {\r\n  width: 120px !important;  /* Acciones un poco más fijas */\r\n  text-align: center !important;\n}\n.tabla-ajustada .vs-button[icon] {\r\n  display: flex !important;\r\n  align-items: center !important;\r\n  justify-content: center !important;\r\n  padding: 0 !important;\r\n  border-radius: 50% !important;\r\n  width: 36px !important;\r\n  height: 36px !important;\n}\r\n\r\n/* Ícono dentro del botón */\n.tabla-ajustada .vs-button[icon] i {\r\n  display: flex !important;\r\n  align-items: center !important;\r\n  justify-content: center !important;\r\n  font-size: 16px !important;\r\n  line-height: 0 !important; /* evita espacio extra vertical */\r\n  height: 100% !important;\n}\r\n\r\n/* Imagen y mensaje cuando no hay datos */\n.noDataContainer {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  justify-content: center;\r\n  padding: 2rem;\n}\n.imgNoData {\r\n  width: 180px;\r\n  max-width: 40%;\n}\n.noDataTitle {\r\n  margin-top: 1rem;\r\n  font-weight: 500;\r\n  color: #888;\n}\n.fila-flex {\r\n  display: flex !important;\r\n  align-items: center;\n}\r\n\r\n/* 1ª columna (texto): ancho fijo */\n.fila-flex .col-desc,\r\n.fila-flex .vs-table__th.col-desc,\r\n.fila-flex .vs-table__td.col-desc {\r\n  flex: 0 0 320px !important;   /* ajusta 320px al gusto */\r\n  max-width: 320px !important;\r\n  white-space: normal;\r\n  word-wrap: break-word;\n}\r\n\r\n/* columnas de partidos: ocupan el resto por igual */\n.fila-flex .col-partido,\r\n.fila-flex .vs-table__th.col-partido,\r\n.fila-flex .vs-table__td.col-partido {\r\n  flex: 1 1 0 !important;\r\n  text-align: center;\n}\r\n\r\n/* estética opcional */\n.partido-header { display:flex; flex-direction:column; align-items:center;\n}\n.logo-partido   { width:60px; height:60px; object-fit:contain; margin-bottom:5px;\n}\n.monto          { text-align:right; padding-right:8px;\n} /* o center si prefieres */\n.fila-header    { background:#f4f6f8; border-radius:12px;\n}\r\n\r\n", ""]);
 
 // exports
 
