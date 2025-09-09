@@ -148,7 +148,7 @@
                                     </vs-tr>
 
                                     <!-- limite de financiamiento privado-->
-                                     <vs-tr class="fila-flex">
+                                    <vs-tr class="fila-flex">
                                     <vs-td class="col-desc">
                                         Límite de financiamiento privado
                                     </vs-td>
@@ -178,6 +178,80 @@
                                             :key="'row1s-' + i"
                                             class="col-partido monto">
                                         {{ aportaciones(partidoS.monto_2_por_ciento) }}
+                                    </vs-td>
+                                    </vs-tr>
+                                    <!-- Tope de gastos para la elección presidencial inmediata anterior-->
+                                     <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Tope de gastos para la elección presidencial inmediata anterior
+                                    </vs-td>
+                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'topeCR-'+(partido.id||i)" class="col-partido monto">
+                                        <vs-input 
+                                        v-model.number="topesConRep[i]" 
+                                        placeholder="0.00"
+                                         />
+                                    </vs-td>
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'topeSR-'+(partidoS.id||i)" class="col-partido monto">
+                                        <vs-input 
+                                        v-model.number="topesSinRep[i]" 
+                                        placeholder="0.00" />
+                                    </vs-td>
+                                    </vs-tr>
+                                    <!-- Aportaciones en dinero o en especie de personas simpatizantes-->
+                                    <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Aportaciones en dinero o en especie de personas simpatizantes
+                                    </vs-td>
+
+                                    <!-- Partidos con representación -->
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'apCR-'+(partido.id||i)" class="col-partido monto">
+                                        {{ formatCurrency(aportacionSimpatizantes(topesConRep[i])) }}
+                                    </vs-td>
+
+                                    <!-- Partidos sin representación -->
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'apSR-'+(partidoS.id||i)" class="col-partido monto">
+                                        {{ formatCurrency(aportacionSimpatizantes(topesSinRep[i])) }}
+                                    </vs-td>
+                                    </vs-tr>
+                                    <!-- Tope de gastos para la elección inmediata anterior de Gubernatura del Estado-->
+                                     <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Tope de gastos para la elección inmediata anterior de Gubernatura del Estado
+                                    </vs-td>
+                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'topeCR-'+(partido.id||i)" class="col-partido monto">
+                                        <vs-input 
+                                        v-model.number="topesConRepGobernatura[i]" 
+                                        placeholder="0.00"
+                                         />
+                                    </vs-td>
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'topeSR-'+(partidoS.id||i)" class="col-partido monto">
+                                        <vs-input 
+                                        v-model.number="topesSinRepGobernatura[i]" 
+                                        placeholder="0.00" />
+                                    </vs-td>
+                                    </vs-tr>
+                                    <!-- Aportaciones en dinero que realice cada persona simpatizante-->
+                                    <vs-tr class="fila-flex">
+                                    <vs-td class="col-desc">
+                                        Aportaciones en dinero que realice cada persona simpatizante
+                                    </vs-td>
+
+                                    <!-- Partidos con representación -->
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'apCR-'+(partido.id||i)" class="col-partido monto">
+                                        {{ formatCurrency(aportacionDinero(topesConRepGobernatura[i])) }}
+                                    </vs-td>
+
+                                    <!-- Partidos sin representación -->
+                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                            :key="'apSR-'+(partidoS.id||i)" class="col-partido monto">
+                                        {{ formatCurrency(aportacionDinero(topesSinRepGobernatura[i])) }}
                                     </vs-td>
                                     </vs-tr>
                                 </template>
@@ -268,10 +342,10 @@ export default {
             active: false,
             anio: '',
             id: null,
-            monto30Input: '',
-            monto30: '',
-            monto70: '',
-            monto70Input: '',
+            topesConRep: [],
+            topesSinRep: [],
+            topesConRepGobernatura: [],
+            topesSinRepGobernatura: [],
             colors: [
                 {
                     color: 'warn'
@@ -300,6 +374,14 @@ export default {
             if (newAnio) {
                 this.getDistribucionesPorAnio(newAnio);
             }
+        },
+        Partidos_Con_Representacion: {
+            immediate: true,
+            handler(list){ this.topesConRep = list.map(() => 0) }
+        },
+        Partidos_Sin_Representacion: {
+            immediate: true,
+            handler(list){ this.topesSinRep = list.map(() => 0) }
         }
     },
     created() {
@@ -596,7 +678,14 @@ export default {
             const resultadoConvertido = this.formatCurrency(resultado);
             return resultadoConvertido;
         },
-
+        aportacionSimpatizantes(tope) {
+            if (!tope) return 0;
+            return tope * 0.005;
+        },
+        aportacionDinero(tope) {
+            if (!tope) return 0;
+            return tope * 0.005;
+        },
 
         /* const loader = loading(this.$vs);
         loader.text = 'Guardando datos...';
