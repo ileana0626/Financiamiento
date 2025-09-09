@@ -12197,6 +12197,9 @@ var debug = function debug() {
         return total + (isNaN(valor) ? 0 : valor);
       }, 0); //.toFixed(2);
     },
+    /*
+    * Retorna la Sumatoria de los ajustes de los partidos con representación en el Congreso
+    */
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
         return sum + (p.ajuste || 0);
@@ -12350,19 +12353,12 @@ var debug = function debug() {
       Partidos_Sin_Representacion: [],
       NewlistCalculos: [],
       //ministracionId: {}, // Para saber si ya se ha guardado un registro
-      cb_ppSeleccionados: [],
-      opcionSelecionadaPorcentaje: '1',
-      //  Valor por defecto Gubernatura
       search: '',
       page: 1,
       max: 10,
       // Dialog
       active: false,
       anio: '',
-      monto30Input: '',
-      monto30: '',
-      monto70: '',
-      monto70Input: '',
       colors: [{
         color: 'warn'
       }],
@@ -12379,9 +12375,6 @@ var debug = function debug() {
       // Validaciones
       error: false,
       errorAnio: '',
-      errorDistribucion: '',
-      errorMonto30: '',
-      errorMonto70: '',
       descargar_disabled: {} // true: disabled | false: enabled
     };
   },
@@ -12408,14 +12401,12 @@ var debug = function debug() {
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            _this2.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
-            //this.getCalculos();
-            _context.next = 3;
+            _context.next = 2;
             return _this2.getAnio();
-          case 3:
-            _context.next = 5;
+          case 2:
+            _context.next = 4;
             return _this2.obtenerDatos(11);
-          case 5:
+          case 4:
           case "end":
             return _context.stop();
         }
@@ -12423,14 +12414,16 @@ var debug = function debug() {
     }))();
   },
   methods: {
-    // DEPRECATED
-    /*        truncateTo2Decimals(value) {
-        if (!value) return '0.00';
-        const num = parseFloat(value);
-        // usa Math.floor para truncar y luego toFixed(2), es redundante
-        return (Math.floor(num * 100) / 100).toFixed(2);
+    /**
+     * Trunca un número a 2 decimales
+     * @param {number} value - Valor numérico a truncar
+     * @returns {string} - Valor truncado a 2 decimales
+     */
+    truncateTo2Decimals: function truncateTo2Decimals(value) {
+      if (!value && value !== 0) return '0.00';
+      var num = Number(value); // (falla si hay caracteres no numéricos)
+      return (Math.trunc(num * 100) / 100).toFixed(2);
     },
-    */
     /* DEPRECATED
     formatoFecha(fechaStr) {
         if (!fechaStr) return ''
@@ -12616,6 +12609,21 @@ var debug = function debug() {
                 // this.ministraciones = data.ministraciones;
                 _this5.Partidos_Con_Representacion = data.partidos_con_repr;
                 _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
+
+                // Inicializar ajustesDiciembre, esta variable indica si se resto o se sumo
+                // Usar $set para que Vue detecte los cambios y sean reactivos
+                _this5.Partidos_Con_Representacion.map(function (partido) {
+                  return _this5.$set(partido, 'ajusteDiciembre', 0.0);
+                }
+                //this.$set(partido, 'mintr_diciembre', 0.0)
+                );
+
+                _this5.Partidos_Sin_Representacion.map(function (partido) {
+                  return _this5.$set(partido, 'ajusteDiciembre', 0.0);
+                }
+                //this.$set(partido, 'mintr_diciembre', 0.0)
+                );
+
                 debug('🐛 ✅ Datos cargados.');
               } else {
                 debug('🐛 ❌ Error al obtener datos.');
@@ -13005,27 +13013,39 @@ var debug = function debug() {
       });
     },
     // #endregion CONSULTAS A LA BASE DE DATOS 📚
-    // #region FORMATEOS 🛠 
-    onDecimalInput: function onDecimalInput(event, idCalculo, idPartido) {
-      // const key = `con-${idCalculo}-${idPartido}`;
-      var valor = event.target.value;
-      valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-      this.$set(this.ajustesDiciembre, key, parseFloat(valor));
-    },
-    onInputMoneda: function onInputMoneda(event, partido, prefix) {
-      var key = prefix + partido.id_calculo + '-' + partido.id_partido;
-      var valorLimpio = Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(event.target.value);
-
-      // Almacenar el valor limpio en el objeto ajustesDiciembre
-      this.$set(this.ajustesDiciembre, key, parseFloat(valorLimpio));
-      // Formatear el valor limpio a la caja de texto
-      event.target.value = Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatoMonedaMX"])(valorLimpio);
-    },
+    // #region FORMATEOS 🔧🛠
+    // DEPRECATED
+    // onDecimalInput(event, idCalculo, idPartido) {
+    //     // const key = `con-${idCalculo}-${idPartido}`;
+    //     let valor = event.target.value;
+    //     valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    //     this.$set(this.ajustesDiciembre, key, parseFloat(valor));
+    // },
     /*
-    * Formatea un valor numérico a moneda - Función local
-    * @param {number} value - Valor numérico a formatear
-    * @returns {string} - Valor formateado como moneda
+    * Formatea un valor numérico a moneda - Función local 💰
+    * @param {Event} event - Evento del input
+    * @param {object} partido - Partido político con el monto de diciembre
+    * @param {string} prefix - Prefijo para la key {con | sin}
     */
+    onInputMoneda: function onInputMoneda(event, partido, prefix) {
+      //Generamos la key con los datos del partido
+      var key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+      // Limpia el valor del input | quita los caracteres no numéricos
+      var valorLimpio = parseFloat(Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(event.target.value));
+
+      // Almacena el valor limpio en el objeto ajustesDiciembre
+      //this.$set(this.ajustesDiciembre, key, valorLimpio); // DEPRECATED
+      partido.mintr_diciembre = valorLimpio; // Almacena el valor limpio en el objeto partido
+
+      // Formatear el valor limpio y mostrarlo en la caja de texto
+      //event.target.value = formatoMonedaLocal(valorLimpio); // Por si se quiere formatear
+      event.target.value = valorLimpio;
+    },
+    /**
+     * Formatea un valor numérico a moneda - Función local
+     * @param {number} value - Valor numérico a formatear
+     * @returns {string} - Valor formateado como moneda
+     */
     formatCurrency: function formatCurrency(value) {
       if (value === null || value === undefined || isNaN(value)) return '$0.00';
       //Con style: 'currency', ya no es necesario truncar manualmente
@@ -13038,6 +13058,7 @@ var debug = function debug() {
         maximumFractionDigits: 2
       });
     },
+    // NO SE OCUPA
     getStepForMonto: function getStepForMonto(monto) {
       if (!monto || isNaN(monto)) return '0.01';
       var parts = monto.toString().split('.');
@@ -13048,39 +13069,6 @@ var debug = function debug() {
       return '1';
     },
     // #endregion FORMATEOS 🛠
-    /*
-    calcularMontoIgualitario30() {
-        const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
-        const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
-        return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
-    },
-    */
-    /*
-    * Formatea a moneda
-    * @param {number} valor - El valor a formatear
-    * @returns {string} - El valor formateado
-    */
-    /* DEPRECATED
-     formatoMoneda(valor) {
-         return new Intl.NumberFormat('es-MX', {
-             style: 'currency',
-             currency: 'MXN',
-             minimumFractionDigits: 2
-         }).format(valor);
-     },
-     */
-    /*
-    * Formatea a decimal
-    * @param {number} valor - El valor a formatear
-    * @returns {string} - El valor formateado
-    */
-    /* DEPRECATED
-     formatearDecimal(valor) {
-         if (!valor) return '0.00';
-         const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-         return isNaN(numero) ? '0.00' : numero.toFixed(2);
-     },
-     */
     // #region OPERACIONES DE LA VISTA 📊
     /**
       * Distribuye el monto total entre los 12 meses por partido de cada cálculo
@@ -13110,7 +13098,7 @@ var debug = function debug() {
         return v.toNumber ? v.toNumber() : v;
       }); // 123.456 Decimal->toNumber()
     },
-    /*
+    /* SOLO DE REFERENCIA - DEPRECATED
      * Ajustar decimal el monto de diciembre
      */
     ajustarDecimal: function ajustarDecimal(partido, operacion) {
@@ -13138,31 +13126,64 @@ var debug = function debug() {
     },
     /*
     * Ajustar decimal manualmente -> diciembre
+    * @param {string} operacion - Operación a realizar ('sumar' | 'restar')
+    * @param {object} partido - Partido político con el monto de diciembre y el id_calculo id_partido
+    * @param {string} prefix - Prefijo para la key {con | sin}
     */
-    ajustarDecimalManual: function ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
-      var _valorActual$toString;
-      var key = "con-".concat(idCalculo, "-").concat(idPartido); // MODIFICAR LA KEY 😵
-      var actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](valorActual || 0);
+    ajustarDecimalManual: function ajustarDecimalManual(operacion, partido, prefix) {
+      var ajusteUnitario = 0.01;
+      //const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+      var actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](parseFloat(partido.mintr_diciembre));
+      // Asegurar que el campo ajuste exista y sea reactivo
+      //if (partido.ajusteDiciembre === undefined) this.$set(partido, 'ajusteDiciembre', 0.0);
 
-      // Detectar número de decimales en el valor actual
-      var decimales = ((_valorActual$toString = valorActual.toString().split('.')[1]) === null || _valorActual$toString === void 0 ? void 0 : _valorActual$toString.length) || 0;
-      var paso = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"]('1').dividedBy(new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"]('10').pow(decimales || 3)); // default 0.001
+      // Detectar número de decimales en el valor actual 
+      // Toma la parte decimal (después del punto) y obtiene la longitud de los decimales
+      //const decimales = partido.mintr_diciembre.toString().split('.')[1]?.length || 0;
+
+      // Divide 1 entre 10 elevado al número de decimales detectados
+      // Por ejemplo, si el valor actual tiene 2 decimales, el paso será 0.01
+      // decimales = 2 → 10^2 = 100
+      // Si el valor actual tiene 0 decimales, el paso será 0.001
+      //const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
 
       if (operacion === 'sumar') {
-        actual = actual.plus(paso);
-      } else {
-        actual = actual.minus(paso);
-        if (actual.isNegative()) actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](0); // sigue evitando negativos
+        // Si totalAjusteDecimalesCalculo es negativo se puede sumar a otro partido
+        if (this.totalAjusteDecimalesCalculo(partido.id_calculo) < 0) {
+          actual = actual.plus(ajusteUnitario);
+          partido.ajusteDiciembre += ajusteUnitario;
+          partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
+        } else {
+          this.$vs.notification({
+            title: 'Atención',
+            text: 'Primero debes restar a otro partido antes de sumar.',
+            color: 'danger'
+          });
+        }
+      } else if (operacion === 'restar') {
+        //Permite restar siempre para tener que sumarle a otro partido
+        actual = actual.minus(ajusteUnitario);
+        partido.ajusteDiciembre -= ajusteUnitario;
+        partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
       }
-
-      this.$set(this.ajustesDiciembre, key, actual.toNumber());
-      if (actual.greaterThan(total)) {
-        this.$vs.notification({
-          title: 'Atención',
-          text: 'El monto de diciembre supera el total asignado al partido.',
-          color: 'warning'
-        });
-      }
+    },
+    /**
+     * Obtiene el total de ajustes de decimales para un cálculo específico
+     * @param {number} idCalculo - ID del cálculo
+     * @returns {number} - Total de ajustes de decimales
+     */
+    totalAjusteDecimalesCalculo: function totalAjusteDecimalesCalculo(idCalculo) {
+      var suma = 0;
+      // Obtiene los partidos con representación y sin representación para el cálculo específico
+      var partidos = [].concat(_toConsumableArray(this.Partidos_Con_Representacion), _toConsumableArray(this.Partidos_Sin_Representacion)).filter(function (p) {
+        return p.id_calculo === idCalculo;
+      });
+      // Obtiene el total de ajustes de decimales para el cálculo específico
+      partidos.forEach(function (p) {
+        suma += p.ajusteDiciembre;
+      });
+      return suma;
     },
     /**
      * ➕ Obtiene los totales mensuales para un cálculo específico
@@ -13186,7 +13207,9 @@ var debug = function debug() {
           // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
           var total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
           //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
-          var override = _this9.ajustesDiciembre[key];
+
+          //const override = this.ajustesDiciembre[key]; // No se ocupa
+
           var montos = _this9.distribuirConEditableDiciembre(total, partido, key);
           montos.forEach(function (monto, i) {
             // Precisión total
@@ -13265,6 +13288,7 @@ var debug = function debug() {
     }
   },
   computed: {
+    // Solo referencia - DEPRECATED
     totalAjusteDecimales: function totalAjusteDecimales() {
       return this.Partidos_Con_Representacion.reduce(function (sum, p) {
         return sum + (p.ajuste || 0);
@@ -28947,6 +28971,10 @@ var render = function render() {
               }, [_c("input", {
                 key: "txbD_Con-" + partido.id_calculo + "-" + partido.id_partido,
                 staticClass: "form-control",
+                "class": {
+                  "text-success": partido.ajusteDiciembre > 0,
+                  "text-danger": partido.ajusteDiciembre < 0
+                },
                 staticStyle: {
                   width: "100%"
                 },
@@ -28954,15 +28982,18 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: _vm.formatCurrency(partido.mintr_diciembre)
+                  value: partido.mintr_diciembre
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onDecimalInput($event, partido.id_calculo, partido.id_partido);
+                    return _vm.onInputMoneda($event, partido, "con");
                   }
                 }
               }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
+                staticClass: "d-flex flex-column ms-1",
+                staticStyle: {
+                  "margin-left": "5px"
+                }
               }, [_c("button", {
                 staticClass: "btn btn-sm p-0",
                 attrs: {
@@ -28970,7 +29001,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partido.id_calculo, partido.id_partido, monto);
+                    return _vm.ajustarDecimalManual("sumar", partido, "con");
                   }
                 }
               }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
@@ -28980,7 +29011,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partido.id_calculo, partido.id_partido, monto);
+                    return _vm.ajustarDecimalManual("restar", partido, "con");
                   }
                 }
               }, [_vm._v("▼")])])])] : [_vm._v("\n                                        " + _vm._s(_vm.formatCurrency(monto)) + "\n                                    ")]], 2);
@@ -29020,6 +29051,10 @@ var render = function render() {
               }, [_c("input", {
                 key: "txbD_Sin-" + partidoS.id_calculo + "-" + partidoS.id_partido,
                 staticClass: "form-control",
+                "class": {
+                  "text-success": partidoS.ajusteDiciembre > 0,
+                  "text-danger": partidoS.ajusteDiciembre < 0
+                },
                 staticStyle: {
                   width: "100%"
                 },
@@ -29027,15 +29062,18 @@ var render = function render() {
                   type: "text"
                 },
                 domProps: {
-                  value: _vm.formatCurrency(partidoS.mintr_diciembre)
+                  value: partidoS.mintr_diciembre
                 },
                 on: {
                   input: function input($event) {
-                    return _vm.onInputMoneda(_vm.event, partidoS.id_calculo, partidoS.id_partido, "sin");
+                    return _vm.onInputMoneda(_vm.event, partidoS, "sin");
                   }
                 }
               }), _vm._v(" "), _c("div", {
-                staticClass: "d-flex flex-column ms-1"
+                staticClass: "d-flex flex-column ms-1",
+                staticStyle: {
+                  "margin-left": "5px"
+                }
               }, [_c("button", {
                 staticClass: "btn btn-sm p-0",
                 attrs: {
@@ -29043,7 +29081,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("sumar", partidoS.id_calculo, partidoS.id_partido, monto);
+                    return _vm.ajustarDecimalManual("sumar", partidoS, "sin");
                   }
                 }
               }, [_vm._v("▲")]), _vm._v(" "), _c("button", {
@@ -29053,7 +29091,7 @@ var render = function render() {
                 },
                 on: {
                   click: function click($event) {
-                    return _vm.ajustarDecimalManual("restar", partidoS.id_calculo, partidoS.id_partido, monto);
+                    return _vm.ajustarDecimalManual("restar", partidoS, "sin");
                   }
                 }
               }, [_vm._v("▼")])])])] : [_vm._v("\n                                        " + _vm._s(_vm.formatCurrency(monto)) + "\n                                    ")]], 2);

@@ -928,19 +928,19 @@ export default {
             if (partido.sumado === undefined) this.$set(partido, 'sumado', false);
 
             if (operacion === 'sumar') {
-            if (this.totalAjusteDecimales < 0) {
-                partido.ajuste += ajusteUnitario;
-                partido.sumado = true;
-            } else {
-                this.$vs.notification({
-                title: 'Aviso',
-                text: 'Primero debes restar a otro partido antes de sumar.',
-                color: 'danger'
-                });
-            }
+                if (this.totalAjusteDecimales < 0) {
+                    partido.ajuste += ajusteUnitario;
+                    partido.sumado = true;
+                } else {
+                    this.$vs.notification({
+                    title: 'Aviso',
+                    text: 'Primero debes restar a otro partido antes de sumar.',
+                    color: 'danger'
+                    });
+                }
             } else if (operacion === 'restar') {
-            partido.ajuste -= ajusteUnitario;
-            partido.restado = true;
+                partido.ajuste -= ajusteUnitario;
+                partido.restado = true;
             }
         },
         /*
@@ -1147,6 +1147,9 @@ export default {
                 return total + (isNaN(valor) ? 0 : valor);
             }, 0);//.toFixed(2);
         },
+        /*
+        * Retorna la Sumatoria de los ajustes de los partidos con representación en el Congreso
+        */
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
         },

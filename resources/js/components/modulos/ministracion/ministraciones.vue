@@ -93,15 +93,18 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <input type="text" :value="formatCurrency(partido.mintr_diciembre)" class="form-control" 
+                                                <!-- <span :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"></span>
+                                                {{partido.mintr_diciembre}} -->
+                                                <input type="text" :value="partido.mintr_diciembre" class="form-control" 
                                                     :key="'txbD_Con-' + partido.id_calculo + '-' + partido.id_partido"
+                                                    :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"
                                                     style="width: 100%;"
-                                                    @input="onDecimalInput($event, partido.id_calculo, partido.id_partido)" />
-                                                <div class="d-flex flex-column ms-1">
+                                                    @input="onInputMoneda($event, partido, 'con')" />
+                                                <div class="d-flex flex-column ms-1" style="margin-left: 5px;">
                                                     <button type="button" class="btn btn-sm p-0"
-                                                        @click="ajustarDecimalManual('sumar', partido.id_calculo, partido.id_partido, monto)">▲</button>
+                                                        @click="ajustarDecimalManual('sumar', partido, 'con')">▲</button>
                                                     <button type="button" class="btn btn-sm p-0"
-                                                        @click="ajustarDecimalManual('restar', partido.id_calculo, partido.id_partido, monto)">▼</button>
+                                                        @click="ajustarDecimalManual('restar', partido, 'con')">▼</button>
                                                 </div>
                                             </div>
                                         </template>
@@ -134,15 +137,18 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <input type="text" :value="formatCurrency(partidoS.mintr_diciembre)" class="form-control" 
+                                                <!-- <span :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"></span>
+                                                {{partidoS.mintr_diciembre}} -->
+                                                <input type="text" :value="partidoS.mintr_diciembre" class="form-control" 
                                                     :key="'txbD_Sin-' + partidoS.id_calculo + '-' + partidoS.id_partido"
+                                                    :class="{ 'text-success': partidoS.ajusteDiciembre > 0, 'text-danger': partidoS.ajusteDiciembre < 0 }"
                                                     style="width: 100%;"
-                                                    @input=" onInputMoneda(event, partidoS.id_calculo, partidoS.id_partido, 'sin')"/>
-                                                <div class="d-flex flex-column ms-1">
+                                                    @input=" onInputMoneda(event, partidoS, 'sin')"/>
+                                                <div class="d-flex flex-column ms-1" style="margin-left: 5px;">
                                                     <button type="button" class="btn btn-sm p-0"
-                                                        @click="ajustarDecimalManual('sumar', partidoS.id_calculo, partidoS.id_partido, monto)">▲</button>
+                                                        @click="ajustarDecimalManual('sumar', partidoS, 'sin')">▲</button>
                                                     <button type="button" class="btn btn-sm p-0"
-                                                        @click="ajustarDecimalManual('restar', partidoS.id_calculo, partidoS.id_partido, monto)">▼</button>
+                                                        @click="ajustarDecimalManual('restar', partidoS, 'sin')">▼</button>
                                                 </div>
                                             </div>
                                         </template>
@@ -243,18 +249,12 @@ export default {
             Partidos_Sin_Representacion: [],
             NewlistCalculos: [],
             //ministracionId: {}, // Para saber si ya se ha guardado un registro
-            cb_ppSeleccionados: [],
-            opcionSelecionadaPorcentaje: '1', //  Valor por defecto Gubernatura
             search: '',
             page: 1,
             max: 10,
             // Dialog
             active: false,
             anio: '',
-            monto30Input: '',
-            monto30: '',
-            monto70: '',
-            monto70Input: '',
             colors: [
                 {
                     color: 'warn'
@@ -272,9 +272,6 @@ export default {
             // Validaciones
             error: false,
             errorAnio: '',
-            errorDistribucion: '',
-            errorMonto30: '',
-            errorMonto70: '',
             descargar_disabled: {}, // true: disabled | false: enabled
         }
     },
@@ -293,24 +290,21 @@ export default {
         EventBus.$off('darkMode');
     },
     async mounted() {
-
-        this.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
         //this.getCalculos();
         await this.getAnio();
         await this.obtenerDatos(11);
-
     },
     methods: {
-
-
-        // DEPRECATED
-        /*        truncateTo2Decimals(value) {
-            if (!value) return '0.00';
-            const num = parseFloat(value);
-            // usa Math.floor para truncar y luego toFixed(2), es redundante
-            return (Math.floor(num * 100) / 100).toFixed(2);
+        /**
+         * Trunca un número a 2 decimales
+         * @param {number} value - Valor numérico a truncar
+         * @returns {string} - Valor truncado a 2 decimales
+         */
+        truncateTo2Decimals(value) {
+            if (!value && value !== 0) return '0.00';
+            const num = Number(value); // (falla si hay caracteres no numéricos)
+            return (Math.trunc(num * 100) / 100).toFixed(2);
         },
-        */
 
         /* DEPRECATED
         formatoFecha(fechaStr) {
@@ -462,6 +456,18 @@ export default {
                     // this.ministraciones = data.ministraciones;
                     this.Partidos_Con_Representacion = data.partidos_con_repr;
                     this.Partidos_Sin_Representacion = data.partidos_sin_repr;
+
+                    // Inicializar ajustesDiciembre, esta variable indica si se resto o se sumo
+                    // Usar $set para que Vue detecte los cambios y sean reactivos
+                    this.Partidos_Con_Representacion.map(partido =>
+                        this.$set(partido, 'ajusteDiciembre', 0.0),
+                        //this.$set(partido, 'mintr_diciembre', 0.0)
+                    );
+                    this.Partidos_Sin_Representacion.map(partido =>
+                        this.$set(partido, 'ajusteDiciembre', 0.0),
+                        //this.$set(partido, 'mintr_diciembre', 0.0)
+                    );
+
                     debug('🐛 ✅ Datos cargados.');
                 }
                 else {
@@ -717,75 +723,89 @@ export default {
                 responseType: 'blob',
                 method: 'GET',
             })
-                .then(response => {
-                    downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-                    link = document.createElement('a');
-                    link.href = downloadUrl;
-                    const filename = `Anexo 3. Ministraciones.xlsx`;
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    this.$vs.notification({
-                        title: 'Éxito',
-                        text: 'El archivo Excel se está descargando',
-                        color: 'success'
-                    });
-                })
-                .catch(error => {
-                    debug('🔴 Error al descargar Excel:', error);
-
-                    let errorMessage = 'Error al descargar Excel';
-                    if (error.response?.data?.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    this.$vs.notification({
-                        title: 'Error',
-                        text: errorMessage,
-                        color: 'danger',
-                        time: 10000
-                    });
-                })
-                .finally(() => {
-                    loader.close();
-                    try {
-                        if (link && link.parentNode) {
-                            link.parentNode.removeChild(link); // Elimina el elemento hijo
-                        }
-                        if (downloadUrl && typeof downloadUrl === 'string') {
-                            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
-                        }
-                    } catch (e) {
-                        console.error('Error al limpiar recursos:', e);
-                    }
+            .then(response => {
+                downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+                link = document.createElement('a');
+                link.href = downloadUrl;
+                const filename = `Anexo 3. Ministraciones.xlsx`;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                this.$vs.notification({
+                    title: 'Éxito',
+                    text: 'El archivo Excel se está descargando',
+                    color: 'success'
                 });
+            })
+            .catch(error => {
+                debug('🔴 Error al descargar Excel:', error);
+
+                let errorMessage = 'Error al descargar Excel';
+                if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                this.$vs.notification({
+                    title: 'Error',
+                    text: errorMessage,
+                    color: 'danger',
+                    time: 10000
+                });
+            })
+            .finally(() => {
+                loader.close();
+                try {
+                    if (link && link.parentNode) {
+                        link.parentNode.removeChild(link); // Elimina el elemento hijo
+                    }
+                    if (downloadUrl && typeof downloadUrl === 'string') {
+                        window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+                    }
+                } catch (e) {
+                    console.error('Error al limpiar recursos:', e);
+                }
+            });
         },
         // #endregion CONSULTAS A LA BASE DE DATOS 📚
 
-        // #region FORMATEOS 🛠 
-        onDecimalInput(event, idCalculo, idPartido) {
-            // const key = `con-${idCalculo}-${idPartido}`;
-            let valor = event.target.value;
+        // #region FORMATEOS 🔧🛠
 
-            valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+        // DEPRECATED
+        // onDecimalInput(event, idCalculo, idPartido) {
+        //     // const key = `con-${idCalculo}-${idPartido}`;
+        //     let valor = event.target.value;
 
-            this.$set(this.ajustesDiciembre, key, parseFloat(valor));
-        },
-        onInputMoneda(event, partido, prefix) {
-            const key = prefix + partido.id_calculo + '-' + partido.id_partido;
-            const valorLimpio = limpiarNumeroInput(event.target.value);
+        //     valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 
-            // Almacenar el valor limpio en el objeto ajustesDiciembre
-            this.$set(this.ajustesDiciembre, key, parseFloat(valorLimpio));
-            // Formatear el valor limpio a la caja de texto
-            event.target.value = formatoMonedaLocal(valorLimpio);
-        },
+        //     this.$set(this.ajustesDiciembre, key, parseFloat(valor));
+        // },
+
         /*
-        * Formatea un valor numérico a moneda - Función local
-        * @param {number} value - Valor numérico a formatear
-        * @returns {string} - Valor formateado como moneda
+        * Formatea un valor numérico a moneda - Función local 💰
+        * @param {Event} event - Evento del input
+        * @param {object} partido - Partido político con el monto de diciembre
+        * @param {string} prefix - Prefijo para la key {con | sin}
         */
+        onInputMoneda(event, partido, prefix) {
+            //Generamos la key con los datos del partido
+            const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+            // Limpia el valor del input | quita los caracteres no numéricos
+            const valorLimpio = parseFloat(limpiarNumeroInput(event.target.value));
+
+            // Almacena el valor limpio en el objeto ajustesDiciembre
+            //this.$set(this.ajustesDiciembre, key, valorLimpio); // DEPRECATED
+            partido.mintr_diciembre = valorLimpio; // Almacena el valor limpio en el objeto partido
+
+            // Formatear el valor limpio y mostrarlo en la caja de texto
+            //event.target.value = formatoMonedaLocal(valorLimpio); // Por si se quiere formatear
+            event.target.value = valorLimpio;
+        },
+        /**
+         * Formatea un valor numérico a moneda - Función local
+         * @param {number} value - Valor numérico a formatear
+         * @returns {string} - Valor formateado como moneda
+         */
         formatCurrency(value) {
             if (value === null || value === undefined || isNaN(value)) return '$0.00';
             //Con style: 'currency', ya no es necesario truncar manualmente
@@ -798,6 +818,8 @@ export default {
                 maximumFractionDigits: 2
             });
         },
+
+        // NO SE OCUPA
         getStepForMonto(monto) {
             if (!monto || isNaN(monto)) return '0.01';
 
@@ -809,40 +831,6 @@ export default {
             return '1';
         },
         // #endregion FORMATEOS 🛠
-
-        /*
-        calcularMontoIgualitario30() {
-            const monto = parseFloat(this.monto30); // parcea  el valor del input a decimal
-            const totalPartidos = this.selectedCalculo.num_pp_con_repr || this.Partidos_Con_Representacion.length;
-            return isNaN(monto) || totalPartidos === 0 ? 0 : monto / totalPartidos;
-        },
-        */
-        /*
-        * Formatea a moneda
-        * @param {number} valor - El valor a formatear
-        * @returns {string} - El valor formateado
-        */
-       /* DEPRECATED
-        formatoMoneda(valor) {
-            return new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2
-            }).format(valor);
-        },
-        */
-        /*
-        * Formatea a decimal
-        * @param {number} valor - El valor a formatear
-        * @returns {string} - El valor formateado
-        */
-       /* DEPRECATED
-        formatearDecimal(valor) {
-            if (!valor) return '0.00';
-            const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-            return isNaN(numero) ? '0.00' : numero.toFixed(2);
-        },
-        */
 
        // #region OPERACIONES DE LA VISTA 📊
        /**
@@ -871,7 +859,8 @@ export default {
             // Retornar array con 11 meses iguales + diciembre
             return [...Array(11).fill(mensual), montoDiciembre].map(v => v.toNumber ? v.toNumber() : v); // 123.456 Decimal->toNumber()
         },
-       /*
+
+       /* SOLO DE REFERENCIA - DEPRECATED
         * Ajustar decimal el monto de diciembre
         */
        ajustarDecimal(partido, operacion) {
@@ -900,31 +889,62 @@ export default {
         },
         /*
         * Ajustar decimal manualmente -> diciembre
+        * @param {string} operacion - Operación a realizar ('sumar' | 'restar')
+        * @param {object} partido - Partido político con el monto de diciembre y el id_calculo id_partido
+        * @param {string} prefix - Prefijo para la key {con | sin}
         */
-        ajustarDecimalManual(operacion, idCalculo, idPartido, valorActual) {
-            const key = `con-${idCalculo}-${idPartido}`; // MODIFICAR LA KEY 😵
-            let actual = new Decimal(valorActual || 0);
+        ajustarDecimalManual(operacion, partido, prefix) {
+            const ajusteUnitario = 0.01;
+            //const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
+            //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
+            let actual = new Decimal(parseFloat(partido.mintr_diciembre));
+            // Asegurar que el campo ajuste exista y sea reactivo
+            //if (partido.ajusteDiciembre === undefined) this.$set(partido, 'ajusteDiciembre', 0.0);
 
-            // Detectar número de decimales en el valor actual
-            const decimales = valorActual.toString().split('.')[1]?.length || 0;
-            const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
+            // Detectar número de decimales en el valor actual 
+            // Toma la parte decimal (después del punto) y obtiene la longitud de los decimales
+            //const decimales = partido.mintr_diciembre.toString().split('.')[1]?.length || 0;
+            
+            // Divide 1 entre 10 elevado al número de decimales detectados
+            // Por ejemplo, si el valor actual tiene 2 decimales, el paso será 0.01
+            // decimales = 2 → 10^2 = 100
+            // Si el valor actual tiene 0 decimales, el paso será 0.001
+            //const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
 
             if (operacion === 'sumar') {
-                actual = actual.plus(paso);
-            } else {
-                actual = actual.minus(paso);
-                if (actual.isNegative()) actual = new Decimal(0); // sigue evitando negativos
+                // Si totalAjusteDecimalesCalculo es negativo se puede sumar a otro partido
+                if (this.totalAjusteDecimalesCalculo(partido.id_calculo) < 0){
+                    actual = actual.plus(ajusteUnitario);
+                    partido.ajusteDiciembre += ajusteUnitario;
+                    partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
+                }else{
+                    this.$vs.notification({
+                        title: 'Atención',
+                        text: 'Primero debes restar a otro partido antes de sumar.',
+                        color: 'danger'
+                    });
+                }
+            } else if (operacion === 'restar') { //Permite restar siempre para tener que sumarle a otro partido
+                actual = actual.minus(ajusteUnitario);
+                partido.ajusteDiciembre -= ajusteUnitario;
+                partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
             }
-
-            this.$set(this.ajustesDiciembre, key, actual.toNumber());
-
-            if (actual.greaterThan(total)) {
-                this.$vs.notification({
-                    title: 'Atención',
-                    text: 'El monto de diciembre supera el total asignado al partido.',
-                    color: 'warning'
-                });
-            }
+        },
+        /**
+         * Obtiene el total de ajustes de decimales para un cálculo específico
+         * @param {number} idCalculo - ID del cálculo
+         * @returns {number} - Total de ajustes de decimales
+         */
+         totalAjusteDecimalesCalculo(idCalculo){
+            let suma = 0;
+            // Obtiene los partidos con representación y sin representación para el cálculo específico
+            const partidos = [...this.Partidos_Con_Representacion, ...this.Partidos_Sin_Representacion].filter(
+                p => p.id_calculo === idCalculo);
+            // Obtiene el total de ajustes de decimales para el cálculo específico
+            partidos.forEach(p => {
+                suma += p.ajusteDiciembre;
+            });
+            return suma;
         },
         /**
          * ➕ Obtiene los totales mensuales para un cálculo específico
@@ -944,7 +964,8 @@ export default {
                     // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
                     const total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
                     //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
-                    const override = this.ajustesDiciembre[key];
+
+                    //const override = this.ajustesDiciembre[key]; // No se ocupa
 
                     const montos = this.distribuirConEditableDiciembre(total, partido, key);
                     montos.forEach((monto, i) => {
@@ -1025,6 +1046,7 @@ export default {
         },
     },
     computed: {
+        // Solo referencia - DEPRECATED
         totalAjusteDecimales() {
             return this.Partidos_Con_Representacion.reduce((sum, p) => sum + (p.ajuste || 0), 0);
         }
