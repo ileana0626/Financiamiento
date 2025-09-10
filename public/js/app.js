@@ -4989,6 +4989,36 @@ var debug = function debug() {
         });
       }
     },
+    quitarFormato: function quitarFormato(index, tipo) {
+      if (tipo === 'con') {
+        var valor = this.topesConRepGobernatura[index];
+        if (typeof valor === 'string') {
+          this.topesConRepGobernatura[index] = valor.replace(/[^0-9.]/g, '');
+        }
+      } else {
+        var _valor = this.topesSinRepGobernatura[index];
+        if (typeof _valor === 'string') {
+          this.topesSinRepGobernatura[index] = _valor.replace(/[^0-9.]/g, '');
+        }
+      }
+    },
+    aplicarFormato: function aplicarFormato(index, tipo) {
+      var valor = tipo === 'con' ? this.topesConRepGobernatura[index] : this.topesSinRepGobernatura[index];
+      var numero = parseFloat(valor);
+      if (!isNaN(numero)) {
+        var formateado = numero.toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        if (tipo === 'con') {
+          this.topesConRepGobernatura.splice(index, 1, formateado);
+        } else {
+          this.topesSinRepGobernatura.splice(index, 1, formateado);
+        }
+      }
+    },
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
 
@@ -21174,7 +21204,7 @@ var render = function render() {
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
-              placeholder: "0.00"
+              placeholder: "$0.00"
             },
             model: {
               value: _vm.topesConRep[i],
@@ -21190,7 +21220,7 @@ var render = function render() {
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
-              placeholder: "0.00"
+              placeholder: "$0.00"
             },
             model: {
               value: _vm.topesSinRep[i],
@@ -21224,7 +21254,15 @@ var render = function render() {
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
-              placeholder: "0.00"
+              placeholder: "$0.00"
+            },
+            on: {
+              focus: function focus($event) {
+                return _vm.quitarFormato(i, "con");
+              },
+              blur: function blur($event) {
+                return _vm.aplicarFormato(i, "con");
+              }
             },
             model: {
               value: _vm.topesConRepGobernatura[i],
@@ -21240,7 +21278,15 @@ var render = function render() {
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
-              placeholder: "0.00"
+              placeholder: "$0.00"
+            },
+            on: {
+              focus: function focus($event) {
+                return _vm.quitarFormato(i, "con");
+              },
+              blur: function blur($event) {
+                return _vm.aplicarFormato(i, "con");
+              }
             },
             model: {
               value: _vm.topesSinRepGobernatura[i],
@@ -21255,6 +21301,20 @@ var render = function render() {
         }, [_c("vs-td", {
           staticClass: "col-desc"
         }, [_vm._v("\n                                    Aportaciones en dinero que realice cada persona simpatizante\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
+          return _c("vs-td", {
+            key: "apCR-" + (partido.id || i),
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionDinero(_vm.topesConRepGobernatura[i]))) + "\n                                ")]);
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
+          return _c("vs-td", {
+            key: "apSR-" + (partidoS.id || i),
+            staticClass: "col-partido monto"
+          }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionDinero(_vm.topesSinRepGobernatura[i]))) + "\n                                ")]);
+        })], 2), _vm._v(" "), _c("vs-tr", {
+          staticClass: "fila-flex"
+        }, [_c("vs-td", {
+          staticClass: "col-desc"
+        }, [_vm._v("\n                                    Financiamiento por rendimientos financieros de los partidos políticos\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-td", {
             key: "apCR-" + (partido.id || i),
             staticClass: "col-partido monto"
