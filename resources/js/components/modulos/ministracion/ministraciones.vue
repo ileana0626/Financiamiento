@@ -436,7 +436,7 @@ export default {
         },
         // #endregion CATÁLOGOS 📜
 
-        // #region CONSULTAS A LA BASE DE DATOS 📚
+       
         /** 
          * Obtiene las distribuciones por año ✅
          * Los partidos politicos estan mezclados en un solo array independientemente del año
@@ -706,17 +706,17 @@ export default {
         },
         /**
          * Descarga el archivo Excel de la distribución
-         * @param DistribucionId // debe de existir un preguardado antes
+         * @param id_calculo // debe de existir un preguardado antes
          */
-        descargarMinistraciones(id) {
+        descargarMinistraciones(id_calculo) {
             const loader = loading(this.$vs);
             loader.text = 'Generando archivo Excel...';
-            const apiUrl = `/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/${id}`;
+            const apiUrl = `/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/${id_calculo}`;
             let downloadUrl = null;
             let link = null;
 
-            if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
-                throw new Error('❌ No se encontro el ID de la distribución');
+            if (this.id_calculo ? null : this.id_calculo === null || this.id_calculo === 0) {
+                throw new Error('❌ No se encontro el ID de la ministración');
             }
             // ⇋
             axios.get(apiUrl, {

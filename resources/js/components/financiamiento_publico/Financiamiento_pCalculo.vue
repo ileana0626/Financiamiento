@@ -205,7 +205,7 @@
                                 <div class="d-flex justify-content-center">
                                     <vs-tooltip>
                                     <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'descargar'+darkMode" 
-                                    @click.stop="descargarDistribucion(distribucionId)" hover="true"
+                                    @click.stop="descargarFinanciamientoPrivado(selectedCalculo.id_calculo)" hover="true"
                                     style="padding: 0.20rem; font-size: 1rem;" :disabled="descargar_disabled">
                                         <div style="color: var(--btn-txt-color); font-weight: 700; display: flex; align-items: center;">
                                             <i class="fas fa-file-download pr-2" style="font-size: 0.8125rem !important;"></i>
@@ -700,10 +700,6 @@ export default {
         } finally {
             loader.close();
         } */
-        /**
-         * Descarga el archivo Excel de la distribución
-         * @param DistribucionId // debe de existir un preguardado antes
-         */
         
         ajustarDecimal(partido, operacion) {
             const ajusteUnitario = 0.01;
@@ -824,7 +820,7 @@ export default {
                 this.monto70Input = '',
                 this.distribucion = [];
             this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
-            this.descargar_disabled = true; // Deshabilita el botón de descargar
+            this.descargar_disabled = false; // Deshabilita el botón de descargar
 
             // Reiniciar valores de partidos a 0.0 si existen
             if (this.Partidos_Con_Representacion) {
@@ -861,7 +857,73 @@ export default {
             this.Partidos_Con_Representacion.forEach(partido => {
                 partido.errorPorcentajeVotacion = '';
             });
-        }
+        },
+
+        // #region CONSULTAS A LA BASE DE DATOS 📚
+        /**
+         * Descarga el archivo Excel de la distribución
+         * @param DistribucionId // debe de existir un preguardado antes
+         */
+         descargarFinanciamientoPrivado(id_calculo) {
+            const loader = loading(this.$vs);
+            loader.text = 'Generando archivo Excel...';
+            const apiUrl = `/administracion/solicitud/exportarFinanciamientoPrivadoExcel/${id_calculo}`;
+            let downloadUrl = null;
+            let link = null;
+
+            if (this.id_calculo ? null : this.id_calculo === null || this.id_calculo === 0) {
+                throw new Error('❌ No se encontro el ID de la financiamiento privado');
+            }
+            // ⇋
+            axios.get(apiUrl, {
+                responseType: 'blob',
+                method: 'GET',
+            })
+            .then(response => {
+                downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+                link = document.createElement('a');
+                link.href = downloadUrl;
+                const filename = `Anexo 4. Financiamiento Privado.xlsx`;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                this.$vs.notification({
+                    title: 'Éxito',
+                    text: 'El archivo Excel se está descargando',
+                    color: 'success'
+                });
+            })
+            .catch(error => {
+                debug('🔴 Error al descargar Excel:', error);
+
+                let errorMessage = 'Error al descargar Excel';
+                if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                this.$vs.notification({
+                    title: 'Error',
+                    text: errorMessage,
+                    color: 'danger',
+                    time: 10000
+                });
+            })
+            .finally(() => {
+                loader.close();
+                try {
+                    if (link && link.parentNode) {
+                        link.parentNode.removeChild(link); // Elimina el elemento hijo
+                    }
+                    if (downloadUrl && typeof downloadUrl === 'string') {
+                        window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+                    }
+                } catch (e) {
+                    console.error('Error al limpiar recursos:', e);
+                }
+            });
+        },
+        // #endregion CONSULTAS A LA BASE DE DATOS 📚
     },
     computed: {
         totalAjusteDecimales() {

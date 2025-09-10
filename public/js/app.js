@@ -5331,10 +5331,6 @@ var debug = function debug() {
     } finally {
         loader.close();
     } */
-    /**
-     * Descarga el archivo Excel de la distribución
-     * @param DistribucionId // debe de existir un preguardado antes
-     */
     ajustarDecimal: function ajustarDecimal(partido, operacion) {
       var ajusteUnitario = 0.01;
 
@@ -5446,7 +5442,7 @@ var debug = function debug() {
     limpiarCampos: function limpiarCampos() {
       this.anio = '', this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.monto70Input = '', this.distribucion = [];
       this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
-      this.descargar_disabled = true; // Deshabilita el botón de descargar
+      this.descargar_disabled = false; // Deshabilita el botón de descargar
 
       // Reiniciar valores de partidos a 0.0 si existen
       if (this.Partidos_Con_Representacion) {
@@ -5483,7 +5479,69 @@ var debug = function debug() {
       this.Partidos_Con_Representacion.forEach(function (partido) {
         partido.errorPorcentajeVotacion = '';
       });
-    }
+    },
+    // #region CONSULTAS A LA BASE DE DATOS 📚
+    /**
+     * Descarga el archivo Excel de la distribución
+     * @param DistribucionId // debe de existir un preguardado antes
+     */
+    descargarFinanciamientoPrivado: function descargarFinanciamientoPrivado(id_calculo) {
+      var _this10 = this;
+      var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
+      loader.text = 'Generando archivo Excel...';
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoPrivadoExcel/".concat(id_calculo);
+      var downloadUrl = null;
+      var link = null;
+      if (this.id_calculo ? null : this.id_calculo === null || this.id_calculo === 0) {
+        throw new Error('❌ No se encontro el ID de la financiamiento privado');
+      }
+      // ⇋
+      axios.get(apiUrl, {
+        responseType: 'blob',
+        method: 'GET'
+      }).then(function (response) {
+        downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+        link = document.createElement('a');
+        link.href = downloadUrl;
+        var filename = "Anexo 4. Financiamiento Privado.xlsx";
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        _this10.$vs.notification({
+          title: 'Éxito',
+          text: 'El archivo Excel se está descargando',
+          color: 'success'
+        });
+      })["catch"](function (error) {
+        var _error$response;
+        debug('🔴 Error al descargar Excel:', error);
+        var errorMessage = 'Error al descargar Excel';
+        if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        _this10.$vs.notification({
+          title: 'Error',
+          text: errorMessage,
+          color: 'danger',
+          time: 10000
+        });
+      })["finally"](function () {
+        loader.close();
+        try {
+          if (link && link.parentNode) {
+            link.parentNode.removeChild(link); // Elimina el elemento hijo
+          }
+
+          if (downloadUrl && typeof downloadUrl === 'string') {
+            window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+          }
+        } catch (e) {
+          console.error('Error al limpiar recursos:', e);
+        }
+      });
+    } // #endregion CONSULTAS A LA BASE DE DATOS 📚
   },
   computed: {
     totalAjusteDecimales: function totalAjusteDecimales() {
@@ -13291,7 +13349,6 @@ var debug = function debug() {
       }))();
     },
     // #endregion CATÁLOGOS 📜
-    // #region CONSULTAS A LA BASE DE DATOS 📚
     /** 
      * Obtiene las distribuciones por año ✅
      * Los partidos politicos estan mezclados en un solo array independientemente del año
@@ -13674,17 +13731,17 @@ var debug = function debug() {
     },
     /**
      * Descarga el archivo Excel de la distribución
-     * @param DistribucionId // debe de existir un preguardado antes
+     * @param id_calculo // debe de existir un preguardado antes
      */
-    descargarMinistraciones: function descargarMinistraciones(id) {
+    descargarMinistraciones: function descargarMinistraciones(id_calculo) {
       var _this8 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
-      var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id);
+      var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id_calculo);
       var downloadUrl = null;
       var link = null;
-      if (this.distribucionId ? null : this.distribucionId === null || this.distribucionId === 0) {
-        throw new Error('❌ No se encontro el ID de la distribución');
+      if (this.id_calculo ? null : this.id_calculo === null || this.id_calculo === 0) {
+        throw new Error('❌ No se encontro el ID de la ministración');
       }
       // ⇋
       axios.get(apiUrl, {
@@ -21224,7 +21281,7 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.stopPropagation();
-        return _vm.descargarDistribucion(_vm.distribucionId);
+        return _vm.descargarFinanciamientoPrivado(_vm.selectedCalculo.id_calculo);
       }
     }
   }, [_c("div", {

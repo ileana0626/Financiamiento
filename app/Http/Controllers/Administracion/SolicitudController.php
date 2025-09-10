@@ -770,7 +770,7 @@ class SolicitudController extends Controller
     /**
      * Exporta el reporte de Anexo 3. Ministraciones de Financiamiento a Excel
      *
-     * @param $id Id del cálculo o distribución
+     * @param $id Id del cálculo o ministración
      * @return \Maatwebsite\Excel\BinaryFileResponse
      */
     public function exportarFinanciamientoMinistracionesExcel(Request $request, $id = null)
@@ -854,6 +854,111 @@ class SolicitudController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error al exportar el reporte de ministración', [
+                'error' => $e->getMessage(),
+                //'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar el reporte: ' . $e->getMessage(),
+                'error_details' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    //'trace' => $e->getTraceAsString()
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Exporta el reporte de Anexo 4. Financiamiento Privado a Excel
+     *
+     * @param $id Id del cálculo o financiamiento privado
+     * @return \Maatwebsite\Excel\BinaryFileResponse
+     */
+    public function exportarFinanciamientoPrivadoExcel(Request $request, $id = null)
+    {
+        if (!$request->ajax()) return redirect('/');
+        
+        try {
+            Log::info('Iniciando exportación de Excel Financiamiento Privado para el ID: ' . $id);
+            
+            if (!$id) {
+                Log::error('No se proporcionó un ID para la exportación');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID no proporcionado para la exportación'
+                ], 400);
+            }
+
+            // Obtener los datos del cálculo
+            $calculo = DB::select('call sp_get_calculo_completo(?)', [$id]);
+            //Log::info('Datos del cálculo obtenidos:', ['calculo' => $calculo]);
+            
+            if (empty($calculo)) {
+                Log::error('No se encontró el cálculo con ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontró el cálculo solicitado'
+                ], 404);
+            }
+            // Procesar los datos correctamente
+            $calculoData = !empty($calculo) ? (array)$calculo[0] : [];
+
+            $operacion = (string) "GET"; // Nos aseguramos de que sea un string
+            
+            // Obtener los datos de las ministraciones
+            // $finPrivado = DB::select('CALL sp_FinPriv_Get_Insert_Update_financiamiento_privado_dppp(?, ?, ?,
+            //     ?, ?, ?,
+            //     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [
+            //         self::$useTransaction, // bandera estática,
+            //         $operacion,
+            //         $id,
+            //         null, null, null,
+            //         null, null, null, null, null, null, null, null, null, null
+            // ]);
+            //Log::info('Datos del financiamiento privado obtenidos:', ['finPrivado' => $finPrivado]);
+            //if (empty($finPrivado)) {
+            //    Log::error('No se encontró el financiamiento privado con ID: ' . $id);
+            //    return response()->json([
+            //        'success' => false,
+            //        'message' => 'No se encontró el financiamiento privado solicitado'
+            //    ], 404);
+            //}
+            //$finPrivadoData = !empty($finPrivado) ? (array)$finPrivado[0] : []; // Checa si el array no está vacío
+            
+            // Obtener los partidos políticos (con y sin representación)
+            $pdo = DB::connection()->getPdo();
+            $stmt = $pdo->prepare('CALL sp_get_Partidos_Calculo_porId(?)');
+            $stmt->execute([$id]);
+            
+            // Obtener el primer conjunto de resultados (partidos sin representación)
+            $partidosSinRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            // Avanzar al siguiente conjunto de resultados
+            $stmt->nextRowset();
+            
+            // Obtener el segundo conjunto de resultados (partidos con representación)
+            $partidosConRep = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+            $data = [
+                'calculo' => $calculoData,
+                //'distribucion' => $distribucionData,
+                //'fin_Privado' => $finPrivadoData,
+                'partidos_sin_rep' => $partidosSinRep,
+                'partidos_con_rep' => $partidosConRep
+            ];
+            Log::info('Datos preparados para la exportación:', $data);
+
+            $filename = date('Y-m-d') . '_Anexo_4_FinanciamientoPrivado' . '.xlsx';
+            return (new \App\Exports\FinanciamientoPrivadoExport($data))
+            ->download($filename, \Maatwebsite\Excel\Excel::XLSX, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al exportar el reporte de financiamiento privado', [
                 'error' => $e->getMessage(),
                 //'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
