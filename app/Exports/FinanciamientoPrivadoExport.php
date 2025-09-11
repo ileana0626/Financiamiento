@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 //use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Mockery\Undefined;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
@@ -247,23 +248,73 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
     {
         $col = $colInit;
         
-        $partidos = [...$this->datos['partidos_con_rep'],...$this->datos['partidos_sin_rep']]; 
+        $partidos = [...$this->datos['partidos_con_rep'],...$this->datos['partidos_sin_rep']]; // mezcla los arreglos
 
         // Encabezados, logos de los partidos
         foreach ($partidos as $key => $partido) {
             $row = $rowInit;
+            // ***** Logo *****
             //$sheet->setCellValue($col . $row, $partido->siglas); // Siglas
             $sheet->getColumnDimension($col)->setWidth(20);
             $this->procesarLogo($sheet, $col, $row, $partido);
             $sheet->getStyle($col . $row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFAE8700'); // Color #AE8700 
-            $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1);
-            $sheet->getColumnDimension($col)->setWidth(2);
-            $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1);
+            
+
+            // ***** Financiamiento público para actividades ordinarias permanentes *****
+            $row = $row + 2; // Avanza 2 filas
+            $value = $partido->C_fpaop ?? $partido->monto_2_por_ciento ?? 'Valor no disponible';
+            $sheet->setCellValue($col . $row, $value);
+            if (isset($partido->C_fpaop) && $partido->C_fpaop !== null) {
+                $value = $partido->C_fpaop;
+            } elseif (isset($partido->monto_2_por_ciento)) {
+                $value = $partido->monto_2_por_ciento;
+            } else {
+                $value = 'Valor no disponible';
+            }
+            $sheet->setCellValue($col . $row, $value); // Asignamos el valor de Financiamiento público
+             // Aplicar formato de moneda
+             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+        
+            // ***** 1. El límite de financiamiento privado de los institutos políticos
+            $row = $row + 2;
+            $sheet->setCellValue($col . $row, $partido->finpriv_limite_finPrivado ?? 'Valor no disponible');
+            // Aplicar formato de moneda
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+            
+            // ***** 2. Las aportaciones en dinero y/o en especie de personas militantes
+            $row = $row + 2;
+            $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_militantes ?? 'Valor no disponible');
+            // Aplicar formato de moneda
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+
+            // ***** 3. Las aportaciones en dinero o en especie de personas simpatizantes
+            $row = $row + 2;
+            $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_simpPres ?? 'Valor no disponible');
+            // Aplicar formato de moneda
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+            
+            // ***** 4. Las aportaciones que en dinero realice cada persona simpatizante
+            $row = $row + 2;
+            $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_simpGuber ?? 'Valor no disponible');
+            // Aplicar formato de moneda
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+
+            // ***** 5.  El financiamiento por rendimientos financieros de los partidos políticos
+            $row = $row + 2;
+            $sheet->setCellValue($col . $row, $partido->finpriv_rendimientos ?? 'Valor no disponible');
+            // Aplicar formato de moneda
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+            
+            // Avanzamos a la siguiente columna
+            $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1); // avanza una columna
+            $sheet->getColumnDimension($col)->setWidth(2); // asigna un ancho de 2 caracteres a la columna
+            $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1); // avanza una columna
         }
         // foreach ($this->datos['partidos_sin_rep'] as $key => $partido) {
         //     $sheet->setCellValue('C' . ($key + 5), $partido->l);
         // }
     }
+
 
     /**
      * Procesa el logo de un partido político

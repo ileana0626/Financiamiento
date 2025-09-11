@@ -41,11 +41,13 @@ Se actualizan los partidos políticos con y sin representación
 ```sql
 -- Ejecutar ALTER TABLE si no se va a cargar las tablas de los partidos políticos
 ALTER TABLE calculo_partido_con_repr ADD COLUMN finpriv_limite_finPrivado DECIMAL(30,15) NULL COMMENT '1. El límite de financiamiento privado de los institutos políticos';
+ALTER TABLE calculo_partido_con_repr ADD COLUMN finpriv_aportaciones_militantes DECIMAL(30,15) NULL COMMENT '2. Aportaciones en dinero y/o en especie de personas militantes';
 ALTER TABLE calculo_partido_con_repr ADD COLUMN finpriv_aportaciones_simpPres DECIMAL(30,15) NULL COMMENT '3. Las aportaciones de personas simpatizantes, elección Presidencial';
 ALTER TABLE calculo_partido_con_repr ADD COLUMN finpriv_aportaciones_simpGuber DECIMAL(30,15) NULL COMMENT '4. Las aportaciones de personas simpatizantes, elección a la Gubernatura';
 ALTER TABLE calculo_partido_con_repr ADD COLUMN finpriv_rendimientos DECIMAL(30,15) NULL COMMENT '5. El financiamiento por rendimientos financieros de los partidos políticos';
 
 ALTER TABLE calculo_partido_sin_repr ADD COLUMN finpriv_limite_finPrivado DECIMAL(30,15) NULL COMMENT '1. El límite de financiamiento privado de los institutos políticos';
+ALTER TABLE calculo_partido_sin_repr ADD COLUMN finpriv_aportaciones_militantes DECIMAL(30,15) NULL COMMENT '2. Aportaciones en dinero y/o en especie de personas militantes';
 ALTER TABLE calculo_partido_sin_repr ADD COLUMN finpriv_aportaciones_simpPres DECIMAL(30,15) NULL COMMENT '3. Las aportaciones de personas simpatizantes, elección Presidencial';
 ALTER TABLE calculo_partido_sin_repr ADD COLUMN finpriv_aportaciones_simpGuber DECIMAL(30,15) NULL COMMENT '4. Las aportaciones de personas simpatizantes, elección a la Gubernatura';
 ALTER TABLE calculo_partido_sin_repr ADD COLUMN finpriv_rendimientos DECIMAL(30,15) NULL COMMENT '5. El financiamiento por rendimientos financieros de los partidos políticos';
