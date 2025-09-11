@@ -4840,6 +4840,10 @@ var debug = function debug() {
       id: null,
       topesConRep: [],
       topesSinRep: [],
+      focused: {
+        arr: null,
+        index: null
+      },
       topesConRepGobernatura: [],
       topesSinRepGobernatura: [],
       colors: [{
@@ -4868,22 +4872,6 @@ var debug = function debug() {
       if (newAnio) {
         this.getDistribucionesPorAnio(newAnio);
       }
-    },
-    Partidos_Con_Representacion: {
-      immediate: true,
-      handler: function handler(list) {
-        this.topesConRep = list.map(function () {
-          return 0;
-        });
-      }
-    },
-    Partidos_Sin_Representacion: {
-      immediate: true,
-      handler: function handler(list) {
-        this.topesSinRep = list.map(function () {
-          return 0;
-        });
-      }
     }
   },
   created: function created() {
@@ -4910,6 +4898,8 @@ var debug = function debug() {
             _context.next = 6;
             return _this2.obtenerDatos(11);
           case 6:
+            _this2.inicializarTopes();
+          case 7:
           case "end":
             return _context.stop();
         }
@@ -4989,35 +4979,44 @@ var debug = function debug() {
         });
       }
     },
-    quitarFormato: function quitarFormato(index, tipo) {
-      if (tipo === 'con') {
-        var valor = this.topesConRepGobernatura[index];
-        if (typeof valor === 'string') {
-          this.topesConRepGobernatura[index] = valor.replace(/[^0-9.]/g, '');
-        }
-      } else {
-        var _valor = this.topesSinRepGobernatura[index];
-        if (typeof _valor === 'string') {
-          this.topesSinRepGobernatura[index] = _valor.replace(/[^0-9.]/g, '');
-        }
-      }
+    updateValue: function updateValue(arr, index, val) {
+      if (!this[arr]) this.$set(this, arr, []); // inicializa el array si no existe
+
+      // Si viene de un input nativo (event) toma target.value, si es vs-input ya es el valor
+      var rawValue = val && val.target ? val.target.value : val;
+      var clean = String(rawValue || '').replace(/[^0-9.]/g, '');
+      this.$set(this[arr], index, clean ? parseFloat(clean) : null);
     },
-    aplicarFormato: function aplicarFormato(index, tipo) {
-      var valor = tipo === 'con' ? this.topesConRepGobernatura[index] : this.topesSinRepGobernatura[index];
-      var numero = parseFloat(valor);
-      if (!isNaN(numero)) {
-        var formateado = numero.toLocaleString('es-MX', {
-          style: 'currency',
-          currency: 'MXN',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-        if (tipo === 'con') {
-          this.topesConRepGobernatura.splice(index, 1, formateado);
-        } else {
-          this.topesSinRepGobernatura.splice(index, 1, formateado);
-        }
+    formatInput: function formatInput(arrayName, index) {
+      var value = this[arrayName][index];
+      if (this.focused.arr === arrayName && this.focused.index === index) {
+        return value !== null && value !== void 0 ? value : ''; // mostrar crudo en focus
       }
+
+      if (value == null || isNaN(value)) return '';
+      return value.toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+        minimumFractionDigits: 2
+      });
+    },
+    setFocus: function setFocus(arrayName, index) {
+      this.focused = {
+        arr: arrayName,
+        index: index
+      };
+    },
+    clearFocus: function clearFocus() {
+      this.focused = {
+        arr: null,
+        index: null
+      };
+    },
+    inicializarTopes: function inicializarTopes() {
+      this.topesConRep = new Array(this.Partidos_Con_Representacion.length).fill(null);
+      this.topesConRepGobernatura = new Array(this.Partidos_Con_Representacion.length).fill(null);
+      this.topesSinRep = new Array(this.Partidos_Sin_Representacion.length).fill(null);
+      this.topesSinRepGobernatura = new Array(this.Partidos_Sin_Representacion.length).fill(null);
     },
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
@@ -5498,7 +5497,7 @@ var debug = function debug() {
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
-      this.anio = '', this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.monto70Input = '', this.distribucion = [];
+      this.monto30 = '', this.monto30Input = '', this.monto70 = '', this.topesSinRep = '', this.topesConRep = [];
       this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
       this.descargar_disabled = true; // Deshabilita el botón de descargar
 
@@ -21200,34 +21199,40 @@ var render = function render() {
           staticClass: "col-desc"
         }, [_vm._v("\n                                    Tope de gastos para la elección presidencial inmediata anterior\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-td", {
-            key: "topeCR-" + (partido.id || i),
+            key: "topeConRep-" + partido.id + "-" + i,
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
+              value: _vm.formatInput("topesConRep", i),
               placeholder: "$0.00"
             },
-            model: {
-              value: _vm.topesConRep[i],
-              callback: function callback($$v) {
-                _vm.$set(_vm.topesConRep, i, _vm._n($$v));
+            on: {
+              input: function input($event) {
+                return _vm.updateValue("topesConRep", i, $event);
               },
-              expression: "topesConRep[i]"
+              focus: function focus($event) {
+                return _vm.setFocus("topesConRep", i);
+              },
+              blur: _vm.clearFocus
             }
           })], 1);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
-            key: "topeSR-" + (partidoS.id || i),
+            key: "topeSinRep-" + partidoS.id + "-" + i,
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
+              value: _vm.formatInput("topesSinRep", i),
               placeholder: "$0.00"
             },
-            model: {
-              value: _vm.topesSinRep[i],
-              callback: function callback($$v) {
-                _vm.$set(_vm.topesSinRep, i, _vm._n($$v));
+            on: {
+              input: function input($event) {
+                return _vm.updateValue("topesSinRep", i, $event);
               },
-              expression: "topesSinRep[i]"
+              focus: function focus($event) {
+                return _vm.setFocus("topesSinRep", i);
+              },
+              blur: _vm.clearFocus
             }
           })], 1);
         })], 2), _vm._v(" "), _c("vs-tr", {
@@ -21236,12 +21241,12 @@ var render = function render() {
           staticClass: "col-desc"
         }, [_vm._v("\n                                    Aportaciones en dinero o en especie de personas simpatizantes\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-td", {
-            key: "apCR-" + (partido.id || i),
+            key: "apCR-" + partido.id + "-" + i,
             staticClass: "col-partido monto"
           }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionSimpatizantes(_vm.topesConRep[i]))) + "\n                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
-            key: "apSR-" + (partidoS.id || i),
+            key: "apSR-" + partidoS.id + "-" + i,
             staticClass: "col-partido monto"
           }, [_vm._v("\n                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionSimpatizantes(_vm.topesSinRep[i]))) + "\n                                ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
@@ -21250,50 +21255,40 @@ var render = function render() {
           staticClass: "col-desc"
         }, [_vm._v("\n                                    Tope de gastos para la elección inmediata anterior de Gubernatura del Estado\n                                ")]), _vm._v(" "), _vm._l(_vm.Partidos_Con_Representacion, function (partido, i) {
           return _c("vs-td", {
-            key: "topeCR-" + (partido.id || i),
+            key: "topeConRepGob-" + (partido.id || i),
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
+              value: _vm.formatInput("topesConRepGobernatura", i),
               placeholder: "$0.00"
             },
             on: {
+              input: function input($event) {
+                return _vm.updateValue("topesConRepGobernatura", i, $event);
+              },
               focus: function focus($event) {
-                return _vm.quitarFormato(i, "con");
+                return _vm.setFocus("topesConRepGobernatura", i);
               },
-              blur: function blur($event) {
-                return _vm.aplicarFormato(i, "con");
-              }
-            },
-            model: {
-              value: _vm.topesConRepGobernatura[i],
-              callback: function callback($$v) {
-                _vm.$set(_vm.topesConRepGobernatura, i, _vm._n($$v));
-              },
-              expression: "topesConRepGobernatura[i]"
+              blur: _vm.clearFocus
             }
           })], 1);
-        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
+        }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partido, i) {
           return _c("vs-td", {
-            key: "topeSR-" + (partidoS.id || i),
+            key: "topeSinRepGob-" + (partido.id || i),
             staticClass: "col-partido monto"
           }, [_c("vs-input", {
             attrs: {
+              value: _vm.formatInput("topesSinRepGobernatura", i),
               placeholder: "$0.00"
             },
             on: {
+              input: function input($event) {
+                return _vm.updateValue("topesSinRepGobernatura", i, $event);
+              },
               focus: function focus($event) {
-                return _vm.quitarFormato(i, "con");
+                return _vm.setFocus("topesSinRepGobernatura", i);
               },
-              blur: function blur($event) {
-                return _vm.aplicarFormato(i, "con");
-              }
-            },
-            model: {
-              value: _vm.topesSinRepGobernatura[i],
-              callback: function callback($$v) {
-                _vm.$set(_vm.topesSinRepGobernatura, i, _vm._n($$v));
-              },
-              expression: "topesSinRepGobernatura[i]"
+              blur: _vm.clearFocus
             }
           })], 1);
         })], 2), _vm._v(" "), _c("vs-tr", {

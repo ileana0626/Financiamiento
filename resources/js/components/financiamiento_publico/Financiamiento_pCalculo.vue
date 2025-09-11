@@ -185,18 +185,27 @@
                                     <vs-td class="col-desc">
                                         Tope de gastos para la elección presidencial inmediata anterior
                                     </vs-td>
-                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                            :key="'topeCR-'+(partido.id||i)" class="col-partido monto">
-                                        <vs-input 
-                                        v-model.number="topesConRep[i]" 
-                                        placeholder="$0.00"
-                                         />
-                                    </vs-td>
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                            :key="'topeConRep-' + partido.id + '-' + i"
+                                            class="col-partido monto">
+                                        <vs-input
+                                            :value="formatInput('topesConRep', i)"
+                                            @input="updateValue('topesConRep', i, $event)" 
+                                            @focus="setFocus('topesConRep', i)"
+                                            @blur="clearFocus"
+                                            placeholder="$0.00"
+                                        />
+                                        </vs-td>
                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                            :key="'topeSR-'+(partidoS.id||i)" class="col-partido monto">
-                                        <vs-input 
-                                        v-model.number="topesSinRep[i]" 
-                                        placeholder="$0.00" />
+                                        :key="'topeSinRep-' + partidoS.id + '-' + i"
+                                        class="col-partido monto">
+                                    <vs-input
+                                        :value="formatInput('topesSinRep', i)"
+                                        @input="updateValue('topesSinRep', i, $event)" 
+                                        @focus="setFocus('topesSinRep', i)"
+                                        @blur="clearFocus"
+                                        placeholder="$0.00"
+                                    />
                                     </vs-td>
                                     </vs-tr>
                                     <!-- Aportaciones en dinero o en especie de personas simpatizantes-->
@@ -207,13 +216,15 @@
 
                                     <!-- Partidos con representación -->
                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                            :key="'apCR-'+(partido.id||i)" class="col-partido monto">
+                                            :key="'apCR-'+ partido.id + '-' + i"
+                                            class="col-partido monto">
                                         {{ formatCurrency(aportacionSimpatizantes(topesConRep[i])) }}
                                     </vs-td>
 
                                     <!-- Partidos sin representación -->
                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                            :key="'apSR-'+(partidoS.id||i)" class="col-partido monto">
+                                            :key="'apSR-'+ partidoS.id + '-' + i" 
+                                            class="col-partido monto">
                                         {{ formatCurrency(aportacionSimpatizantes(topesSinRep[i])) }}
                                     </vs-td>
                                     </vs-tr>
@@ -222,22 +233,27 @@
                                     <vs-td class="col-desc">
                                         Tope de gastos para la elección inmediata anterior de Gubernatura del Estado
                                     </vs-td>
-                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                            :key="'topeCR-'+(partido.id||i)" class="col-partido monto">
-                                        <vs-input 
-                                        v-model.number="topesConRepGobernatura[i]" 
-                                        @focus="quitarFormato(i, 'con')"
-                                        @blur="aplicarFormato(i, 'con')"
+                                    <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                        :key="'topeConRepGob-'+(partido.id||i)" 
+                                        class="col-partido monto">
+                                    <vs-input
+                                        :value="formatInput('topesConRepGobernatura', i)"
+                                        @input="updateValue('topesConRepGobernatura', i, $event)" 
+                                        @focus="setFocus('topesConRepGobernatura', i)"
+                                        @blur="clearFocus"
                                         placeholder="$0.00"
-                                         />
+                                    />
                                     </vs-td>
-                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                            :key="'topeSR-'+(partidoS.id||i)" class="col-partido monto">
-                                        <vs-input 
-                                        v-model.number="topesSinRepGobernatura[i]" 
-                                        @focus="quitarFormato(i, 'con')"
-                                        @blur="aplicarFormato(i, 'con')"
-                                        placeholder="$0.00" />
+                                    <vs-td v-for="(partido, i) in Partidos_Sin_Representacion"
+                                        :key="'topeSinRepGob-'+(partido.id||i)" 
+                                        class="col-partido monto">
+                                    <vs-input
+                                        :value="formatInput('topesSinRepGobernatura', i)"
+                                        @input="updateValue('topesSinRepGobernatura', i, $event)" 
+                                        @focus="setFocus('topesSinRepGobernatura', i)"
+                                        @blur="clearFocus"
+                                        placeholder="$0.00"
+                                    />
                                     </vs-td>
                                     </vs-tr>
                                     <!-- Aportaciones en dinero que realice cada persona simpatizante-->
@@ -366,6 +382,7 @@ export default {
             id: null,
             topesConRep: [],
             topesSinRep: [],
+            focused: { arr: null, index: null },
             topesConRepGobernatura: [],
             topesSinRepGobernatura: [],
             colors: [
@@ -396,14 +413,6 @@ export default {
             if (newAnio) {
                 this.getDistribucionesPorAnio(newAnio);
             }
-        },
-        Partidos_Con_Representacion: {
-            immediate: true,
-            handler(list){ this.topesConRep = list.map(() => 0) }
-        },
-        Partidos_Sin_Representacion: {
-            immediate: true,
-            handler(list){ this.topesSinRep = list.map(() => 0) }
         }
     },
     created() {
@@ -419,6 +428,7 @@ export default {
         this.getCalculos();
         await this.getAnio();
         await this.obtenerDatos(11);
+        this.inicializarTopes();
 
     },
     methods: {
@@ -485,42 +495,38 @@ export default {
                 });
             }
         },
-        quitarFormato(index, tipo) {
-            if (tipo === 'con') {
-            let valor = this.topesConRepGobernatura[index];
-            if (typeof valor === 'string') {
-                this.topesConRepGobernatura[index] = valor.replace(/[^0-9.]/g, '');
-            }
-            } else {
-            let valor = this.topesSinRepGobernatura[index];
-            if (typeof valor === 'string') {
-                this.topesSinRepGobernatura[index] = valor.replace(/[^0-9.]/g, '');
-            }
-            }
+        updateValue(arr, index, val) {
+            if (!this[arr]) this.$set(this, arr, []); // inicializa el array si no existe
+            
+            // Si viene de un input nativo (event) toma target.value, si es vs-input ya es el valor
+            const rawValue = (val && val.target) ? val.target.value : val;
+
+            const clean = String(rawValue || '').replace(/[^0-9.]/g, '');
+            this.$set(this[arr], index, clean ? parseFloat(clean) : null);
         },
-
-        aplicarFormato(index, tipo) {
-            let valor =
-            tipo === 'con'
-                ? this.topesConRepGobernatura[index]
-                : this.topesSinRepGobernatura[index];
-
-            let numero = parseFloat(valor);
-
-            if (!isNaN(numero)) {
-            let formateado = numero.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
+        formatInput(arrayName, index) {
+            const value = this[arrayName][index];
+            if (this.focused.arr === arrayName && this.focused.index === index) {
+            return value ?? ''; // mostrar crudo en focus
+            }
+            if (value == null || isNaN(value)) return '';
+            return value.toLocaleString('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 2
             });
-
-            if (tipo === 'con') {
-                this.topesConRepGobernatura.splice(index, 1, formateado);
-            } else {
-                this.topesSinRepGobernatura.splice(index, 1, formateado);
-            }
-            }
+        },
+        setFocus(arrayName, index) {
+            this.focused = { arr: arrayName, index };
+        },
+        clearFocus() {
+            this.focused = { arr: null, index: null };
+        },
+        inicializarTopes() {
+            this.topesConRep = new Array(this.Partidos_Con_Representacion.length).fill(null);
+            this.topesConRepGobernatura = new Array(this.Partidos_Con_Representacion.length).fill(null);
+            this.topesSinRep = new Array(this.Partidos_Sin_Representacion.length).fill(null);
+            this.topesSinRepGobernatura = new Array(this.Partidos_Sin_Representacion.length).fill(null);
         },
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
@@ -965,12 +971,11 @@ export default {
          * @returns {void}
          */
         limpiarCampos() {
-            this.anio = '',
                 this.monto30 = '',
                 this.monto30Input = '',
                 this.monto70 = '',
-                this.monto70Input = '',
-                this.distribucion = [];
+                this.topesSinRep = '',
+                this.topesConRep = [];
             this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
             this.descargar_disabled = true; // Deshabilita el botón de descargar
 
