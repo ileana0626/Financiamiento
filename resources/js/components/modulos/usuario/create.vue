@@ -4,9 +4,6 @@
             <!-- Breadcrumb (navegacion) -->
             <div class="float-sm-right mr-5">
                 <ul class="breadcrumb">
-                    <!-- <li>
-                        <a href="/">Inicio</a>
-                    </li> -->
                     <li>
                         <a href="/usuario">Administración</a>
                     </li>
@@ -21,22 +18,15 @@
                 </ul>
             </div>
         </div>
-        <div class="content container-fluid">
-            <div class="card-body">
-                <div class="container-fluid">
-                    <div class="card card-info">
-                        <div class="card-header">
-                            <h3 class="card-title"> Registro de un nuevo usuario </h3>
-                            <div class="card-tools">
-                                <router-link class="btn btn-flat btn-sm btn-nuevos" :to="'/usuario'"
-                                    style=" color : white !important ;">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-arrow-left pr-2"></i> <span> Regresar </span>
-                                    </div>
-                                </router-link>
-                            </div>
-                        </div>
-                        <div class="card-body">
+        <div class="px-3 px-md-5 container-fluid">
+            <div class="mx-3 mt-5 mt-md-4">
+                <!--Todo el contenido principal de la vista irá dentro de este div-->
+                <div class="card-info">
+                    <div class="card-header d-flex">
+                        <h3 class="card-title font-weight-bold"> Registro de un nuevo usuario </h3>
+            </div>
+        </div>
+        <div class="card-body container-fluid" style="background-color: var(--iee-white) !important;">
                             <form class="container-fluid" role="form">
                                 <div class="row">
                                     <div class="col-md-6 pr-lg-5">
@@ -46,6 +36,11 @@
                                                 <vs-input :state="(error) ? 'danger' : ''" type="text"
                                                     placeholder="Nombre(s)" v-model="fillCrearUsuario.cPrimerNombre">
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorNombre.length > 0">
+                                                        {{ errorNombre }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -57,6 +52,11 @@
                                                     placeholder="Apellido Paterno"
                                                     v-model="fillCrearUsuario.cSegundoNombre">
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorApellidoP.length > 0">
+                                                        {{ errorApellidoP }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -67,6 +67,11 @@
                                                 <vs-input danger :state="(error) ? 'danger' : ''" type="text"
                                                     placeholder="Apellido Materno" v-model="fillCrearUsuario.cApellido">
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorApellidoM.length > 0">
+                                                        {{ errorApellidoM }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -77,6 +82,11 @@
                                                 <vs-input danger :state="(error) ? 'danger' : ''" type="text"
                                                     placeholder="Usuario" v-model="fillCrearUsuario.cUsuario">
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorUsuario.length > 0">
+                                                        {{ errorUsuario }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -91,6 +101,11 @@
                                                         Correo electrónico inválido
                                                     </template>
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorCorreo.length > 0">
+                                                        {{ errorCorreo }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -105,127 +120,103 @@
                                                         La contraseña debe de tener al menos 8 caracteres
                                                     </template>
                                                 </vs-input>
+                                                <div class="danger-message">
+                                                    <template v-if="errorContraseña.length > 0">
+                                                        {{ errorContraseña }}
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6 pr-lg-5">
                                         <div class="form-group col">
-                                            <label class="row col-form-label">Rol</label>
-                                            <div class="row">
-                                                <el-select v-model="fillCrearUsuario.nIdRol"
-                                                    placeholder="Seleccione un Rol">
-                                                    <el-option v-for="item in listaRoles" :key="item.id"
-                                                        :label="item.name" :value="item.id">{{ item.name }}</el-option>
-                                                </el-select>
-                                            </div>
+                                            <label class="row col-form-label">Rol </label>
+                                            <vs-select filter
+                                                :placeholder="(fillCrearUsuario.nIdRol.length > 0) ? '' : 'Seleccione una opción'"
+                                                v-model="fillCrearUsuario.nIdRol" v-if="listaRoles.length > 0" autocomplete="off"
+                                            >
+                                            
+                                                <vs-option 
+                                                v-for="(item, index) in listaRoles" 
+                                                :key="index" 
+                                                :label="item.nombre" 
+                                                :value="item.idRol">
+                                                {{ item.nombre }}
+                                                </vs-option>
+                                            </vs-select>
+                                            <div class="danger-message">
+                                                    <template v-if="errorRol.length > 0">
+                                                        {{ errorRol }}
+                                                    </template>
+                                                </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Departamento</label>
-                                            <div class="row">
-                                                <el-select v-model="fillCrearUsuario.nIdDepartamento"
-                                                    placeholder="Seleccione un Departamento">
-                                                    <el-option v-for="item in listarDepartamentos"
-                                                        :key="item.id_departamento" :label="item.departamento"
-                                                        :value="item.id_departamento">{{ item.departamento }}
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-md-6 pr-lg-5">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Cargo</label>
-                                            <div class="row">
-                                                <el-select v-model="fillCrearUsuario.nIdCargo"
-                                                    placeholder="Seleccione un Cargo">
-                                                    <el-option v-for="item in listarCargo" :key="item.id_cargo"
-                                                        :label="item.cargo" :value="item.id_cargo">{{ item.cargo }}
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="col-md-6 pl-lg-4 ml-lg-auto"> -->
-                                    <!-- <div class="col-md-6 pr-lg-5">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Fotografia</label>
-                                            <div class="row">
-                                                <vs-input type="file" @change="getFile"> </vs-input>
-                                            </div>
-                                        </div>
-                                    </div> -->
+
                                     <div class="col-md-6 pr-lg-5">
                                         <div class="form-group col">
-                                            <label class="row col-form-label">Folio</label>
-                                            <div class="row">
-                                                <vs-input type="text" placeholder="Ingresar el folio"
-                                                    v-model="fillCrearUsuario.nFolio" show-password />
-                                            </div>
+                                            <label class="row col-form-label">Departamento </label>
+                                            <vs-select filter
+                                                :placeholder="(fillCrearUsuario.nIdDepartamento.length > 0) ? '' : 'Seleccione una opción'"
+                                                v-model="fillCrearUsuario.nIdDepartamento" v-if="listarDepartamentos.length > 0" autocomplete="off"
+                                            >
+                                            
+                                                <vs-option v-for="(item, index) in listarDepartamentos" :key="index"
+                                                    :label="item.nombre" :value="item.id">
+                                                    {{ item.nombre }}
+                                                </vs-option>
+                                            </vs-select>
+                                            <div class="danger-message">
+                                                    <template v-if="errorDepartamento.length > 0">
+                                                        {{ errorDepartamento }}
+                                                    </template>
+                                                </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 pl-lg-4 ml-lg-auto">
+
+                                    <div class="col-md-6 pr-lg-5">
                                         <div class="form-group col">
                                             <label class="row col-form-label">Fecha Alta</label>
                                             <div class="row">
-                                                <el-date-picker class="wFull" v-model="fillCrearUsuario.dFechaAlta"
+                                                <el-date-picker 
+                                                class="wFull" v-model="fillCrearUsuario.dFechaAlta"
                                                     type="date" format="dd-MM-yyyy"
                                                     placeholder="Seleccione una fecha" />
+                                                    
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-6 pr-lg-5">
-                                        <div class="form-group col">
-                                            <label class="row col-form-label">Tipo de Plaza</label>
-                                            <div class="row">
-                                                <el-select v-model="fillCrearUsuario.cPlaza"
-                                                    placeholder="Seleccione una Plaza">
-                                                    <el-option v-for="item in listarPlaza" :key="item.id"
-                                                        :label="item.plaza" :value="item.id">{{ item.plaza }}
-                                                    </el-option>
-                                                </el-select>
-                                            </div>
-                                        </div>
-                                    </div> -->
+                                    
                                 </div>
                             </form>
+
+                            <div class=" d-flex flex-row mt-3 my-4 w-100 justify-content-center">
+
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'limpiar'+darkMode" 
+                                    @click.prevent="limpiarRegistroUsuario"
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
+                                        </div>
+                                    </vs-button>
+                                </div>
+
+                                <div class="d-flex justify-content-center">
+                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'guardar'+darkMode" 
+                                    @click.prevent="setRegistrarUsuario" 
+                                    style="padding: 0.20rem; font-size: 1rem;">
+                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                            Registrar
+                                        </div>
+                                    </vs-button>
+                                </div>
+                        
+                            </div>
                         </div>
-                        <div class="d-flex flex-wrap flex-sm-nowrap flex-row mb-4 btnResSize mx-auto">
-                            <vs-button color="rgb(175, 137, 9)" class=" mr-1" warn block
-                                @click.prevent="setRegistrarUsuario">
-                                <b>
-                                    Registrar
-                                </b>
-                            </vs-button>
-                            <vs-button transparent dark block black @click.prevent="limpiarRegistroUsuario">
-                                <b>
-                                    Limpiar
-                                </b>
-                            </vs-button>
-                            <!-- <vs-button class="botonder" block flat dark @click.prevent="generarContrasenas" >contraseña</vs-button> -->
-                        </div>
                     </div>
-                </div>
             </div>
-        </div>
-        <div class="modal fade" :class="{ show: modalShow }" :style="modalShow ? mostrarModal : ocultarModal">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Examen de conocimientos en materia electoral</h5>
-                        <button class="close" @click="abrirModal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="callout callout-danger" style="padding: 5px" v-for="(item, index) in mensajeError"
-                            :key="index" v-text="item"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" @click="abrirModal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -233,6 +224,7 @@
 export default {
     data() {
         return {
+            darkMode: localStorage.getItem('theme') == 'dark',
             fillCrearUsuario: {
                 nIdRol: '',
                 cPrimerNombre: '',
@@ -243,35 +235,35 @@ export default {
                 cContrasena: '',
                 oFotografia: '',
                 nIdDepartamento: '',
-                // nIdCargo: '',
                 nFolio: '',
                 dFechaAlta: '',
-                // cPlaza: '',
             },
+            rol : '',
             listaRoles: [],
             listarDepartamentos: [],
-            // listarCargo: [],
-            // listarPlaza: [],
+
             form: new FormData,
             fullscreenLoading: false,
-            modalShow: false,
-            mostrarModal: {
-                display: 'block',
-                background: 'rgba( 0 , 0 , 0 , 0.38 )'
-            },
-            ocultarModal: {
-                display: 'none'
-            },
-            error: 0,
+    
+            //errores de campos de formulario
+            errorNombre : '',
+            errorApellidoP : '',
+            errorApellidoM : '',
+            errorUsuario : '',
+            errorCorreo : '',
+            errorContraseña : '',
+            errorRol : '',
+            errorFecha : '',
+            errorDepartamento : '',
+
+            error: false,
             mensajeError: [],
             id: 0
         }
     },
-    mounted() {
-        this.getListarRoles();
-        this.getListarDepartamentos();
-        // this.getListarCargos();
-        // this.getListarPlazas();
+    async mounted() {
+        await this.obtenerDatos(12);
+        await this.obtenerDatos(13);
     },
     computed: {
         validEmail() {
@@ -287,75 +279,50 @@ export default {
         }
     },
     methods: {
-        abrirModal() {
-            this.modalShow = !this.modalShow;
+        async obtenerDatos(tipo) {
+            let url = '/administracion/usuario/obtenerDatos'
+            await axios.get(url, {
+                params: {
+                    'tipo': tipo,
+                    'consulta': 1
+                }
+            }).then(response => {
+                switch (tipo) {
+                    case 12:
+                        this.listaRoles = response.data
+                        break;
+                    case 13:
+                        this.listarDepartamentos = response.data
+                        break;
+                    default:
+                        break;
+                }
+            }).catch(error => {
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+
+            });
         },
         getFile(e) {
             this.fillCrearUsuario.oFotografia = e.target.files[0];
         },
-        getListarRoles() {
-            const loading = this.$vs.loading({
-                type: 'square',
-                color: '#00a19a',
-                background: '#FFFFFF',
-                text: 'Cargando...'
-            });
-            let url = '/administracion/rol/getListarRoles';
-            axios.get(url).then(response => {
-                this.listaRoles = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0);
-            }).catch(error => {
-
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
-        },
-        getListarDepartamentos() {
-            const loading = this.$vs.loading({
-                type: 'square',
-                color: '#00a19a',
-                background: '#FFFFFF',
-                text: 'Cargando...'
-            });
-            let url = '/administracion/departamento/getListarDepartamentos';
-            axios.get(url).then(response => {
-                this.listarDepartamentos = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0);
-            }).catch(error => {
-
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
-        },
         setRegistrarUsuario() {
-            if (this.validarRegistroUsuario()) {
-                this.modalShow = true;
+            this.validarRegistroUsuario();
+
+            // ⚠️ NO continuar si hay errores de validación
+            if (this.error) {
                 return;
             }
+
             const loading = this.$vs.loading({
                 type: 'square',
                 color: '#00a19a',
                 background: '#FFFFFF',
                 text: 'Cargando...'
-            });
+            }); 
+
             if (!this.fillCrearUsuario.oFotografia || this.fillCrearUsuario.oFotografia == undefined) {
-                this.setGuardarUsuario(0, loading);
+                this.setGuardarUsuario(null, loading);
             } else {
                 this.setRegistrarArchivo(loading);
             }
@@ -369,152 +336,121 @@ export default {
                 this.setGuardarUsuario(nIdFile, loading);
             });
         },
-        getListarCargos() {
-            const loading = this.$vs.loading({
-                type: 'square',
-                color: '#00a19a',
-                background: '#FFFFFF',
-                text: 'Cargando...'
-            });
-            let url = '/administracion/usuario/getListarCargos';
-            axios.get(url).then(response => {
-                this.listarCargo = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0);
-            }).catch(error => {
-
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
-        },
-        getListarPlazas() {
-            const loading = this.$vs.loading({
-                type: 'square',
-                color: '#00a19a',
-                background: '#FFFFFF',
-                text: 'Cargando...'
-            });
-            let url = '/administracion/usuario/getListarPlazas';
-            axios.get(url).then(response => {
-                this.listarPlaza = response.data;
-                setTimeout(() => {
-                    loading.close();
-                }, 0);
-            }).catch(error => {
-
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
-        },
         setGuardarUsuario(nIdFile, loading) {
-            var url = '/administracion/usuario/setRegistrarUsuario';
-            let fechaRaw = this.fillCrearUsuario.dFechaAlta;
-            let fechaCorta = fechaRaw.toLocaleDateString("fr-CA");
-            // let fechaMySQL =  fechaCorta.replaceAll('/', '-');
-            axios.post(url, {
-                'cPrimerNombre': this.fillCrearUsuario.cPrimerNombre,
-                'cSegundoNombre': this.fillCrearUsuario.cSegundoNombre,
-                'cApellido': this.fillCrearUsuario.cApellido,
-                'cUsuario': this.fillCrearUsuario.cUsuario,
-                'cCorreo': this.fillCrearUsuario.cCorreo,
-                'cContrasena': this.fillCrearUsuario.cContrasena,
-                'oFotografia': nIdFile,
-                'nIdDepartamento': this.fillCrearUsuario.nIdDepartamento,
-                // 'nIdCargo': this.fillCrearUsuario.nIdCargo,
-                'nFolio': this.fillCrearUsuario.nFolio,
-                'dFechaAlta': fechaCorta,
-                // 'nIdPlaza': this.fillCrearUsuario.cPlaza
+            var url = '/administracion/usuario/setRegistrarUser';
 
-            }).then(response => {
-                this.setEditarRolByUsuario(response.data, loading);
-            }).catch(error => {
+            let fechaRaw = this.fillCrearUsuario.dFechaAlta;
+            let fechaCorta = this.formatearFechaParaBD(fechaRaw);
+
+            axios.post(url, {
+                'cNombre': this.fillCrearUsuario.cPrimerNombre,
+                'cApaterno': this.fillCrearUsuario.cSegundoNombre,
+                'cAmaterno': this.fillCrearUsuario.cApellido,
+                'cEmail': this.fillCrearUsuario.cCorreo,
+                'cUser': this.fillCrearUsuario.cUsuario,
+                'pswd': this.fillCrearUsuario.cContrasena,
+                'oFotografia': nIdFile,
+                'nIdDPTO': this.fillCrearUsuario.nIdDepartamento,
+                'nIdRol': this.fillCrearUsuario.nIdRol,
+                'fRegistro': fechaCorta,
+            })
+            .then(response => {
+                loading.close();  
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Usuario registrado',
+                    text: 'El usuario se ha registrado correctamente.',
+                    confirmButtonText: 'Aceptar'
+                });
+                
+                this.limpiarRegistroUsuario();
+                this.limpiarErrores();
+            })
+            .catch(error => {
+                loading.close();
 
                 if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
                     sessionStorage.clear();
                     this.$router.push({ name: 'login' });
                     location.reload();
-                }
-                if (error.response.status == 500) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
+                } else if (error.response.status == 500) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Ha ocurrido un error, verifica que los datos sean correctos e inténtalo de nuevo',
-                        showConfirmButton: true
+                        title: 'Ha ocurrido un error',
+                        text: 'Verifica que los datos sean correctos e inténtalo de nuevo',
+                        confirmButtonText: 'Aceptar'
                     });
                 }
             });
         },
-        validarRegistroUsuario() {
-            this.error = 0;
-            this.mensajeError = [];
+        formatearFechaParaBD(fecha) {
+            if (!fecha) return null;
+            
+            const fechaNew = new Date(fecha);
+            const ahora = new Date(); // para obtener la hora actual
 
-            if (!this.fillCrearUsuario.cPrimerNombre) {
-                this.mensajeError.push("El Nombre(s) es un campo obligatorio");
+            const pad = (n) => n.toString().padStart(2, '0');
+
+            const year = fechaNew.getFullYear();
+            const month = pad(fechaNew.getMonth() + 1);
+            const day = pad(fechaNew.getDate());
+
+            const hours = pad(ahora.getHours());
+            const minutes = pad(ahora.getMinutes());
+            const seconds = pad(ahora.getSeconds());
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        },
+        validarRegistroUsuario() {
+            this.error = false;
+
+            if (this.fillCrearUsuario.cPrimerNombre === '') {
+                this.errorNombre = "El Nombre(s) es un campo obligatorio";
+                this.error = true;
             }
-            if (!this.fillCrearUsuario.cApellido) {
-                this.mensajeError.push("El Apellido Paterno es un campo obligatorio");
+            if (this.fillCrearUsuario.cSegundoNombre === '') {
+                this.errorApellidoP = "El Apellido Paterno es un campo obligatorio";
+                this.error = true;
             }
-            if (!this.fillCrearUsuario.cUsuario) {
-                this.mensajeError.push("El Usuario es un campo obligatorio");
+            if (this.fillCrearUsuario.cApellido === '') {
+                this.errorApellidoM = "El Apellido Materno es un campo obligatorio";
+                this.error = true;
             }
-            if (!this.fillCrearUsuario.cContrasena) {
-                this.mensajeError.push("La Contraseña es un campo obligatorio");
+            if (this.fillCrearUsuario.cCorreo === '') {
+                this.errorCorreo = "El correo electrónico es un campo obligatorio";
+                this.error = true;
+            }
+            if (this.fillCrearUsuario.cUsuario === '') {
+                this.errorUsuario = "El Usuario es un campo obligatorio";
+                this.error = true;
+            }
+            if (this.fillCrearUsuario.cContrasena === '') {
+                this.errorContraseña = "La Contraseña es un campo obligatorio";
+                this.error = true;
             }
             if (!this.fillCrearUsuario.nIdRol) {
-                this.mensajeError.push("El Rol es un campo obligatorio");
+                this.errorRol = 'Debe seleccionar un rol para el usuario';
+                this.error = true;
             }
+
             if (!this.fillCrearUsuario.nIdDepartamento) {
-                this.mensajeError.push("El Departamento es un campo obligatorio");
+                this.errorDepartamento = 'Debe seleccionar un departamento para el usuario';
+                this.error = true;
             }
-            // if (!this.fillCrearUsuario.cPlaza) {
-            //     this.mensajeError.push("La Plaza es un campo obligatorio");
-            // }
-            if (this.mensajeError.length) {
-                this.error = 1;
-            }
-            return this.error;
         },
-        setEditarRolByUsuario(nIdUsuario, loading) {
-            var url = '/administracion/usuario/setEditarRolByUsuario';
-            axios.post(url, {
-                'nIdUsuario': nIdUsuario,
-                'nIdRol': this.fillCrearUsuario.nIdRol,
-
-            }).then(response => {
-
-                setTimeout(() => {
-                    loading.close();
-                }, 0);
-                this.$router.push('/usuario');
-            }).catch(error => {
-
-                if (error.response.status == 401) {
-                    setTimeout(() => {
-                        loading.close();
-                    }, 0);
-                    sessionStorage.clear();
-                    this.$router.push({ name: 'login' });
-                    location.reload();
-                }
-            });
+        limpiarErrores() {
+            this.errorNombre  = '';
+            this.errorApellidoP  = '';
+            this.errorApellidoM  = '';
+            this.errorUsuario  = '';
+            this.errorCorreo  = '';
+            this.errorContraseña  = '';
+            this.errorRol  = '';
+            this.errorFecha  = '';
+            this.errorDepartamento  = '';
+            this.error = false;
+            this.mensajeError = [];
         },
         limpiarRegistroUsuario() {
             this.fillCrearUsuario.cPrimerNombre = '';
@@ -524,21 +460,20 @@ export default {
             this.fillCrearUsuario.cCorreo = '';
             this.fillCrearUsuario.cContrasena = '';
             this.fillCrearUsuario.oFotografia = '';
-            this.fillCrearUsuario.nIdDepartamento = '';
-            // this.fillCrearUsuario.nIdCargo = '';
+            this.fillCrearUsuario.nIdRol = '';
             this.fillCrearUsuario.nFolio = '';
             this.fillCrearUsuario.dFechaAlta = '';
-            // this.fillCrearUsuario.cPlaza = '';
-        }
+            this.fillCrearUsuario.nIdDepartamento = '';
+
+            this.limpiarErrores();
+        }/* 
+         */
     }
 }
 </script>
 
-<style>
-/* .vs-input-parent--state-danger .vs-input{
-    background: rgba(242, 19, 93, .2) !important;
-    background-color: rgba(242, 19, 93, .2) !important;
-    color: rgba(10, 19, 93,1);
-    border-radius: 14px !important;
-} */
+<style scoped>
+.vs-loading__background {
+    display: none !important;
+}
 </style>

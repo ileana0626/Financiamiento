@@ -99,15 +99,37 @@ Consulta de Errores
                 </template>
             </vs-sidebar-group>
 
-                <vs-sidebar-item v-if="listPermisos.includes('recordatorios.captura')" id="recordatorios.captura"
-                    to="/recordatorios">
+             <vs-sidebar-group>
+                <template #header>
+                    <vs-sidebar-item arrow>
+                        <template #icon>
+                            <span class="material-symbols-rounded">
+                                person
+                            </span>
+                        </template>
+                            Usuarios
+                    </vs-sidebar-item>
+                </template>
+
+                 <vs-sidebar-item v-if="listPermisos.includes('admin.usuarios')" id="admin.usuarios" to="/crear">
+                        <template #icon>
+                            <span class="material-symbols-rounded">
+                                person_add
+                            </span>
+                        </template>
+                            Capturar usuario
+                    </vs-sidebar-item>
+
+                <vs-sidebar-item v-if="listPermisos.includes('listado.ver')" id="listado.ver"
+                    to="/ver">
                     <template #icon>
                         <span class="material-symbols-rounded">
-                            notifications
+                            patient_list
                         </span>
-                    </template>
-                    Notificaciones
-                </vs-sidebar-item>
+                        </template>
+                        Listado de usuarios
+                    </vs-sidebar-item>
+            </vs-sidebar-group>
 
             </template>
             <template #footer>

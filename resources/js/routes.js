@@ -9,14 +9,11 @@ import Catalogos from "./components/modulos/catalogos/index.vue";
 import Cumplea from "./components/modulos/cumpleaños/index.vue";
 import IndexUsers from "./components/modulos/usuario/index.vue";
 import EditUser from "./components/modulos/usuario/edit.vue";
-// por depreciar
-import GestioSolicitudes from "./components/modulos/ver/gestiosSolicitudes.vue";
+
+import ListadoUsuarios from './components/modulos/usuario/index.vue';
 // en progreso 
 import IndexSolicitudes from './components/modulos/ver/indexSolicitudes.vue';
-import EditSolicitud from './components/modulos/captura/editSolicitud.vue';
-
-import Editar from './components/modulos/captura/editar.vue';
-import Capturav2 from './components/modulos/captura/registrov2.vue';
+import Crear from './components/modulos/usuario/create.vue';
 
 // Calculos de Prerrogativas Partidos Politicos
 import Calculo from './components/modulos/apartado/calculo.vue';
@@ -153,10 +150,12 @@ export default new Router({
         // Financiamiento
         { path: '/calculo', name: 'captura.index', component: Calculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/listado', name:'solicitudes.ver', component: ListadoCalculos, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/crear', name: 'admin.usuarios', component: Crear, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         
         { path: '/distribucion', name: 'distribucion.captura', component: DistribucionCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/ministracion', name: 'ministracion.captura', component: Ministraciones, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '/financiamiento', name: 'financiamientop.captura', component: Financiamiento_pCalculo, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
+        { path: '/ver', name: 'listado.ver', component: ListadoUsuarios, beforeEnter: (to, from, next) => { verificarAcceso(to, from, next); } },
         { path: '*', name: 'faq.index', component: Error404 }
 
 

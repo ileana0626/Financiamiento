@@ -24,13 +24,6 @@
                     <div class="card-header d-flex align-items-center">
                         <h3 class="card-title font-weight-bold">Usuarios</h3>
                         <div class="col card-tools d-flex justify-content-end" >
-                            <vs-button @click.prevent="showModalRegistrar = !showModalRegistrar"
-                                style="background-color: var(--iee-white) !important; color: var(--text-color) !important">
-                                <b>
-                                    <span class="material-symbols-rounded v-align-icon-bc"> add </span>
-                                    Agregar
-                                </b>
-                            </vs-button>
                         </div>
                     </div>
                     <div class="card-body container-fluid white-card-body">
@@ -53,7 +46,9 @@
                                         </vs-tr>
                                     </template>
                                     <template #tbody>
-                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)" :key="index" :data="item">
+                                        <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)" 
+                                            :key="item.id" 
+                                            :data="item">
                                             <vs-td style="width: 2%; text-align:center;" ><div v-text="index + 1"></div></vs-td>
                                             <vs-td style=""><div v-text="item.fullname"></div></vs-td>
                                             <vs-td style=""><div v-text="item.email"></div></vs-td>
@@ -78,17 +73,6 @@
                                                     </router-link>
                                                 </template>
                                                 <template v-if="item.state == 'A'">
-                                                    <template
-                                                        v-if="listRolPermisosByUsuario.includes('usuario.editar')">
-                                                        <el-tooltip placement="top">
-                                                            <router-link class="btn btn-flat btn-edit btn-sm p-2"
-                                                                :to="{ name: 'usuario.editar', params: { id: item.id } }"
-                                                                style="color : white !important ;">
-                                                                <i class="fas fa-pencil-alt pr-1" />
-                                                            </router-link>
-                                                            <div slot="content">Editar usuario</div>
-                                                        </el-tooltip>
-                                                    </template>
                                                     <template
                                                         v-if="listRolPermisosByUsuario.includes('usuario.permiso')">
                                                         <router-link class="btn btn-flat btn-success btn-sm"
@@ -143,6 +127,11 @@
                             <template v-else>
                                 <div class="callout callout-info">
                                     <h5>No se encontraron resultados...</h5>
+                                </div>
+                                <div
+                                class="d-flex flex-column jusitfy-content-center align-items-center noDataContainer mt-4 mt-sm-2 mb-3 mb-sm-4">
+                                <img src="../ver/images/no_data.webp" style="width: 30%;" alt="Sin resultados" class="imgNoData">
+                                <span class="noDataTitle">¡Sin Datos!</span>
                                 </div>
                             </template>
                         </div>
