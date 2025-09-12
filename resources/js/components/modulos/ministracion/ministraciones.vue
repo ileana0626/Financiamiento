@@ -166,7 +166,6 @@
 
                                     <vs-td v-for="(monto, i) in obtenerTotalesMensuales(calculo.id_calculo)"
                                         :key="'total-mes-' + i" style="text-align: left; font-weight: bold;">
-                                        <!-- {{ i === 11 ? monto : '$' + truncateTo2Decimals(monto) }} -->
                                         {{ formatCurrency(monto) }}
                                     </vs-td>
                                 </vs-tr>
@@ -295,78 +294,6 @@ export default {
         await this.obtenerDatos(11);
     },
     methods: {
-        /**
-         * Trunca un número a 2 decimales
-         * @param {number} value - Valor numérico a truncar
-         * @returns {string} - Valor truncado a 2 decimales
-         */
-        truncateTo2Decimals(value) {
-            if (!value && value !== 0) return '0.00';
-            const num = Number(value); // (falla si hay caracteres no numéricos)
-            return (Math.trunc(num * 100) / 100).toFixed(2);
-        },
-
-        /* DEPRECATED
-        formatoFecha(fechaStr) {
-            if (!fechaStr) return ''
-
-            // Parsear fecha en formato YYYY-MM-DD
-            const partes = fechaStr.split('-')
-            if (partes.length !== 3) return fechaStr
-
-            const anio = partes[0]
-            const mes = parseInt(partes[1], 10) - 1 // Meses van de 0 a 11
-            const dia = partes[2]
-
-            const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-            const mesAbreviado = meses[mes] || ''
-
-            return `${dia} ${mesAbreviado} ${anio}`
-        },
-        */
-        // #endregion Formateos
-
-        /** DEPRECATED
-         * Obtiene los calculos de financiamiento para listar
-         */
-        /*
-        getCalculos() {
-            const loader = loading(this.$vs);
-            loader.text = 'Cargando datos...';
-            let url = '/administracion/solicitud/getCalculosFinanciamiento';
-            this.NewlistCalculos = [];
-            axios.get(url).then((response) => {
-                if (response.data?.success) {
-                    this.NewlistCalculos = response.data.calculos || [];
-                } else {
-                    // success: false
-                    const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
-                    throw new Error(errorMessage);
-                }
-            }).catch((error) => {
-                console.error('Error al cargar cálculos:', error);
-                this.$vs.notification({
-                    title: 'Error',
-                    text: 'Error al cargar los cálculos',
-                    color: 'danger'
-                });
-
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3], this.$router);
-            })
-                .finally(() => {
-                    loader.close();
-                })
-        },
-        */
-        //DEPRECATED
-        // onChangeDistribucion(value) {
-        //     this.distribucion = value;
-        //     setTimeout(() => {
-        //         document.activeElement.blur();
-        //     }, 100);
-        // },
-
         // #region CATÁLOGOS 📜
         /**
          * Obtiene el año fiscal
@@ -436,6 +363,41 @@ export default {
         },
         // #endregion CATÁLOGOS 📜
 
+       // #region CONSULTAS A LA BASE DE DATOS 📚
+       
+        /** DEPRECATED
+         * Obtiene los calculos de financiamiento para listar
+         */
+        /*
+        getCalculos() {
+            const loader = loading(this.$vs);
+            loader.text = 'Cargando datos...';
+            let url = '/administracion/solicitud/getCalculosFinanciamiento';
+            this.NewlistCalculos = [];
+            axios.get(url).then((response) => {
+                if (response.data?.success) {
+                    this.NewlistCalculos = response.data.calculos || [];
+                } else {
+                    // success: false
+                    const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
+                    throw new Error(errorMessage);
+                }
+            }).catch((error) => {
+                console.error('Error al cargar cálculos:', error);
+                this.$vs.notification({
+                    title: 'Error',
+                    text: 'Error al cargar los cálculos',
+                    color: 'danger'
+                });
+
+                let nombreMetodo = url.split('/');
+                methods.catchHandler(error, nombreMetodo[3], this.$router);
+            })
+                .finally(() => {
+                    loader.close();
+                })
+        },
+        */
        
         /** 
          * Obtiene las distribuciones por año ✅
@@ -496,23 +458,6 @@ export default {
                 loader.close();
             }
         },
-
-        // 🚨 DEPRECATED
-        // Esta mal la referencia ya que se van a repetir los IDs
-        /*
-        actualizarAjusteDiciembre(idCalculo, idPartido, valor) {
-            const key = `con-${idCalculo}-${idPartido}`;
-            const partido = this.Partidos_Con_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido)
-                || this.Partidos_Sin_Representacion.find(p => p.id_calculo === idCalculo && p.id_partido === idPartido);
-            const total = partido ? (partido.C_fpaop || partido.monto_2_por_ciento) : 0;
-
-            let parsedValue = parseFloat(valor);
-            if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
-            if (parsedValue > total) parsedValue = total;
-
-            this.$set(this.ajustesDiciembre, key, parsedValue);
-        },
-        */
         /**
          * Solo verifica si existe una ministración para el cálculo y mostrar el botón de descarga ✅
          * @param {number} id_calculo - El ID del cálculo
@@ -549,15 +494,14 @@ export default {
             loader.text = 'Guardando cambios...';
             let url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
             //id del calculo seleccionado 
-            const idCalculo = id_calculo;
-            debug(' 🐛 ✨ Id del calculo: ' + idCalculo);
+            debug(' 🐛 ✨ Id del calculo: ' + id_calculo);
             // Obtener los partidos con representación y sin representación de un cálculo
-            const partidosConRepr = this.Partidos_Con_Representacion.filter(p => p.id_calculo === idCalculo);
-            const partidosSinRepr = this.Partidos_Sin_Representacion.filter(p => p.id_calculo === idCalculo);
+            const partidosConRepr = this.Partidos_Con_Representacion.filter(p => p.id_calculo === id_calculo);
+            const partidosSinRepr = this.Partidos_Sin_Representacion.filter(p => p.id_calculo === id_calculo);
 
             //Preparamos los datos para guardar
-            let totalesMensuales = this.obtenerTotalesMensuales(idCalculo);
-            let granTotal = this.obtenerTotalGeneral(idCalculo);
+            let totalesMensuales = this.obtenerTotalesMensuales(id_calculo);
+            let granTotal = this.obtenerTotalGeneral(id_calculo);
             debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
             debug(' 🐛 GranTotal: ' + granTotal);
             try{
@@ -663,46 +607,6 @@ export default {
             } finally {
                 loader.close();
             }
-            /*
-            totalesMensuales.forEach((monto, index) => {
-            const nombreMes = [
-                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-            ][index];
-
-            if (index === 11) {
-                // Diciembre: mostrar todos los decimales
-                debug(`  ${nombreMes}: ${monto}`);
-            } else {
-                // Mostrar monto completo, sin formatear
-                debug(`  ${nombreMes}: ${monto}`);
-            }
-            */
-            /*
-            partidosConRepr.forEach(partido => {
-                const totalFinanciamiento = partido.C_fpaop;
-                const overrideDiciembre = this.ajustesDiciembre['con-' + partido.id_calculo + '-' + partido.id_partido] ?? null;
-
-                //const montosMensuales = this.distribuirConEditableDiciembre(totalFinanciamiento, overrideDiciembre, 'con-' + partido.id_calculo + '-' + partido.id_partido, partido);
-
-                debug(`\n📌 Partido: ${partido.siglas}`);
-
-                totalesMensuales.forEach((monto, index) => {
-                    const nombreMes = [
-                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                    ][index];
-
-                    if (index === 11) {
-                        // Diciembre: mostrar todos los decimales
-                        debug(`  ${nombreMes}: ${monto}`);
-                    } else {
-                        // Mostrar monto completo, sin formatear
-                        debug(`  ${nombreMes}: ${monto}`);
-                    }
-                });
-            });
-            */
         },
         /**
          * Descarga el archivo Excel de la distribución
@@ -771,16 +675,6 @@ export default {
 
         // #region FORMATEOS 🔧🛠
 
-        // DEPRECATED
-        // onDecimalInput(event, idCalculo, idPartido) {
-        //     // const key = `con-${idCalculo}-${idPartido}`;
-        //     let valor = event.target.value;
-
-        //     valor = valor.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-
-        //     this.$set(this.ajustesDiciembre, key, parseFloat(valor));
-        // },
-
         /*
         * Formatea un valor numérico a moneda - Función local 💰
         * @param {Event} event - Evento del input
@@ -818,21 +712,6 @@ export default {
                 maximumFractionDigits: 2
             });
         },
-
-        // NO SE OCUPA - DEPRECATED
-        /*
-        getStepForMonto(monto) {
-            if (!monto || isNaN(monto)) return '0.01';
-
-            const parts = monto.toString().split('.');
-            if (parts.length === 2) {
-                const longitudDecimales = parts[1].length;
-                return '0.' + '0'.repeat(Math.max(0, longitudDecimales - 1)) + '1';
-            }
-            return '1';
-        },
-        */
-
         // #endregion FORMATEOS 🛠
 
        // #region OPERACIONES DE LA VISTA 📊
@@ -995,6 +874,7 @@ export default {
         },
         // #endregion OPERACIONES DE LA VISTA 📊
 
+        // #region VALIDACIONES Y LIMPIEZA ✔🧹
         /**
          * ✔ Validar campos
          * @returns {boolean}
@@ -1047,6 +927,7 @@ export default {
             this.error = false;
             this.errorAnio = '';
         },
+        // #endregion VALIDACIONES Y LIMPIEZA ✔🧹
     },
     computed: {
         // Solo referencia - DEPRECATED

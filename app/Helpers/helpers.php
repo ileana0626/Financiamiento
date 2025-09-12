@@ -5,6 +5,14 @@
 * @author Tony
 * @version 1.2.0
 * @date 19/08/2025
+Se hace la carga del archivo en composer.json
+    "autoload": {
+    ...
+        "files": [
+                    "app/Helpers/helpers.php"
+                ]
+        ...
+    }
 */
 use Carbon\Carbon;
 

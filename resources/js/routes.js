@@ -31,7 +31,7 @@ import SADecoder from './components/modulos/superadmin/decoder.vue';
 
 import methods from './methods';
 import Ministraciones from './components/modulos/ministracion/ministraciones.vue';
-import Financiamiento_pCalculo from './components/financiamiento_publico/Financiamiento_pCalculo.vue';
+import Financiamiento_pCalculo from './components/modulos/financiamiento_publico/Financiamiento_pCalculo.vue';
 
 Vue.use(Router)
 const { isNavigationFailure, NavigationFailureType } = Router;

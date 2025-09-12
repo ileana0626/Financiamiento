@@ -28,254 +28,195 @@
                         <div class="row p-4">
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Selecciona un año fiscal: </label>
-                               <vs-select
-                                    placeholder="Seleccione una opción"
-                                    v-model="anio"
-                                    v-if="catAnio.length > 0"
-                                    filter
-                                    :color="colors[0].color"
-                                    autocomplete="off"
-                                    >
+                                <vs-select placeholder="Seleccione una opción" v-model="anio" v-if="catAnio.length > 0"
+                                    filter :color="colors[0].color" autocomplete="off">
                                     <template #message-danger v-if="errorAnio.length > 0">
                                         {{ errorAnio }}
                                     </template>
 
-                                    <vs-option
-                                        v-for="(item, index) in catAnio"
-                                        :key="index"
-                                        :label="item.anio"
-                                        :value="item.anio"
-                                    >
+                                    <vs-option v-for="(item, index) in catAnio" :key="index" :label="item.anio"
+                                        :value="item.anio">
                                         {{ item.anio }}
                                     </vs-option>
-                                    </vs-select>
+                                </vs-select>
                             </div>
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label">Fecha de Publicación de la UMA</label>
-                                    <el-date-picker type="date" placeholder="Fecha de Publicación (dd-mm-aaaa)" format="dd-MM-yyyy"
-                                        value-format="yyyy-MM-dd" v-model="fechaRecibido">
-                                    </el-date-picker>
-                                    <div class="danger-message">
-                                        <template v-if="errorFechaRecibido.length > 0">
-                                            {{ errorFechaRecibido }}
-                                        </template>
-                                    </div>
+                                <label class="col-form-label">Fecha de Publicación de la UMA</label>
+                                <el-date-picker type="date" placeholder="Fecha de Publicación (dd-mm-aaaa)"
+                                    format="dd-MM-yyyy" value-format="yyyy-MM-dd" v-model="fechaRecibido">
+                                </el-date-picker>
+                                <div class="danger-message">
+                                    <template v-if="errorFechaRecibido.length > 0">
+                                        {{ errorFechaRecibido }}
+                                    </template>
+                                </div>
                             </div>
 
-                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-3 pb-3"> 
-                                <label class="col-form-label" for="dailyValue">UMA (Unidad de Medida y Actualización) </label>
-                                <vs-input
-                                v-model="umaInput"
-                                @blur="formatearUMA"
-                                type="text"
-                                placeholder="$0.00">
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-3 pb-3">
+                                <label class="col-form-label" for="dailyValue">UMA (Unidad de Medida y Actualización)
+                                </label>
+                                <vs-input v-model="umaInput" @blur="formatearUMA" type="text" placeholder="$0.00">
                                 </vs-input>
                                 <div class="danger-message">
-                                        <template v-if="errorUMA.length > 0">
-                                            {{ errorUMA }}
-                                        </template>
+                                    <template v-if="errorUMA.length > 0">
+                                        {{ errorUMA }}
+                                    </template>
                                 </div>
                             </div>
                             <!-- calculo de uma de 65%-->
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">65% de UMA</label>
-                                <vs-input
-                                class="disabled-bold"
-                                placeholder="65% UMA"
-                                :value="calculo_65_UMA_formatoMoneda"
-                                type="text"
-                                disabled
-                                >
+                                <vs-input class="disabled-bold" placeholder="65% UMA"
+                                    :value="calculo_65_UMA_formatoMoneda" type="text" disabled>
                                 </vs-input>
                             </div>
                         </div>
                         <div class="row px-4">
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">No. de personas en Padrón Electoral</label>
-                                <vs-input
-                                v-model="numeroPadron"
-                                type="text"
-                                @blur=" numeroPadron = validarNumeroEntero(numeroPadron)"
-                                :placeholder="(numeroPadron.length > 0) ? '' : 'Ingresa el número de personas'"
-                                >
+                                <vs-input v-model="numeroPadron" type="text"
+                                    @blur=" numeroPadron = validarNumeroEntero(numeroPadron)"
+                                    :placeholder="(numeroPadron.length > 0) ? '' : 'Ingresa el número de personas'">
                                 </vs-input>
                                 <div class="danger-message">
-                                        <template v-if="errorNumeroPadron.length > 0">
-                                            {{ errorNumeroPadron }}
-                                        </template>
+                                    <template v-if="errorNumeroPadron.length > 0">
+                                        {{ errorNumeroPadron }}
+                                    </template>
                                 </div>
                             </div>
-                        <!-- calculo de uma de 65% por el numero de personas-->
+                            <!-- calculo de uma de 65% por el numero de personas-->
                             <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Monto total de Financiamiento Público para AOP</label>
-                                <vs-input
-                                class="disabled-bold"
-                                placeholder="Monto total"
-                                :value="financiamientoAOP"
-                                type="text"
-                                disabled
-                                >
+                                <vs-input class="disabled-bold" placeholder="Monto total" :value="financiamientoAOP"
+                                    type="text" disabled>
                                 </vs-input>
                             </div>
                         </div>
                         <div class="row px-4">
                             <!-- seccion checkbox para los partidos politicos-->
-                                <div class="col-12">
-                                    <div class="col-sm-12 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
-                                        <label class="col-form-label">Partidos sin representación en el Congreso </label>
-                                        <vs-select multiple filter
-                                            :placeholder="(partidosPoliticos_sinRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="partidosPoliticos_sinRepr" v-if="cat_partido_sinRepresentacion.length > 0" autocomplete="off"
-                                            :color="colors[0].color">
-                                            <template #message-danger v-if="errorPartidosPoliticos_sinRepr.length > 0">
-                                                {{ errorPartidosPoliticos_sinRepr }}
-                                            </template>
-                                            <vs-option v-for="(item, index) in cat_partido_sinRepresentacion" :key="index"
-                                                :label="item.siglas" :value="item.id">
-                                                {{ item.siglas }}
-                                            </vs-option>
-                                        </vs-select>
-                                    </div>
+                            <div class="col-12">
+                                <div class="col-sm-12 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
+                                    <label class="col-form-label">Partidos sin representación en el Congreso </label>
+                                    <vs-select multiple filter
+                                        :placeholder="(partidosPoliticos_sinRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                        v-model="partidosPoliticos_sinRepr"
+                                        v-if="cat_partido_sinRepresentacion.length > 0" autocomplete="off"
+                                        :color="colors[0].color">
+                                        <template #message-danger v-if="errorPartidosPoliticos_sinRepr.length > 0">
+                                            {{ errorPartidosPoliticos_sinRepr }}
+                                        </template>
+                                        <vs-option v-for="(item, index) in cat_partido_sinRepresentacion" :key="index"
+                                            :label="item.siglas" :value="item.id">
+                                            {{ item.siglas }}
+                                        </vs-option>
+                                    </vs-select>
                                 </div>
+                            </div>
                         </div>
 
-                            <!-- 2% DEL FPAOP PARA cada partido politico seleccionado -->
-                            <div class="row px-4">
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label"> 2% del FPAOP para </label>
-                                        <div v-for="partido in partidos_sinRepr_Seleccionados" :key="partido.id" class="pb-2">
-                                            <div class="d-flex align-items-center">
-                                                <span class="mr-2">{{ partido.siglas }}</span>
-                                                <vs-input
-                                                class="flex-grow-1 disabled-bold"
-                                                placeholder="2% FPAOP"
-                                                :value="calculoFPAOP"
-                                                type="text"
-                                                disabled
-                                                />
-                                            </div>
-                                        </div>
-                                </div>
-
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                <label class="col-form-label"> Total de FP para Partidos sin representación en el Congreso </label>
+                        <!-- 2% DEL FPAOP PARA cada partido politico seleccionado -->
+                        <div class="row px-4">
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label"> 2% del FPAOP para </label>
+                                <div v-for="partido in partidos_sinRepr_Seleccionados" :key="partido.id" class="pb-2">
                                     <div class="d-flex align-items-center">
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        placeholder="total de FP"
-                                        :value="totalFP"
-                                        type="text"
-                                        disabled
-                                        />
+                                        <span class="mr-2">{{ partido.siglas }}</span>
+                                        <vs-input class="flex-grow-1 disabled-bold" placeholder="2% FPAOP"
+                                            :value="calculoFPAOP" type="text" disabled />
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label"> Total de FP para Partidos sin representación en el
+                                    Congreso </label>
+                                <div class="d-flex align-items-center">
+                                    <vs-input class="flex-grow-1 disabled-bold" placeholder="total de FP"
+                                        :value="totalFP" type="text" disabled />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">Monto total efectivo</label>
-                                    <div class="d-flex align-items-center">
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        placeholder="total de FP"
-                                        :value="montoTotal"
-                                        type="text"
-                                        disabled
-                                        />
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                    <vs-input class="flex-grow-1 disabled-bold" placeholder="total de FP"
+                                        :value="montoTotal" type="text" disabled />
                                 </div>
-                                
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                            </div>
+
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
                                 <label class="col-form-label">30% Monto total efectivo</label>
-                                    <div class="d-flex align-items-center">
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        placeholder="total de FP"
-                                        :value="montoTotal30"
-                                        type="text"
-                                        disabled
-                                        />
-                                    </div>
-                                </div>
-                           </div>
-                             <!-- seccion checkbox para los partidos politicos con representacion-->
-                                <div class="row px-4">
-                                    <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
-                                        <label class="col-form-label">Partidos con representación en el Congreso </label>
-                                        <vs-select multiple filter
-                                            :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
-                                            v-model="partidosPoliticos_conRepr" v-if="cat_partido_conRepresentacion.length > 0" autocomplete="off"
-                                            :color="colors[0].color">
-                                            <template #message-danger v-if="errorPartidosPoliticos_conRepr.length > 0">
-                                                {{ errorPartidosPoliticos_conRepr }}
-                                            </template>
-                                            <vs-option v-for="(item, index) in cat_partido_conRepresentacion" :key="index"
-                                                :label="item.siglas" :value="item.id">
-                                                {{ item.siglas }}
-                                            </vs-option>
-                                        </vs-select>
-                                    </div>
-                                </div>
-
-                                <div class="row px-4">
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label"> No. de  PP con representación en el Congreso</label>
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        type="text"
-                                        disabled
-                                        :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Ningún PP seleccionado'"
-                                        v-model="partidosPoliticos_conRepr.length"
-                                        :color="colors[0].color"
-                                        />
-                                </div>
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label"> 70% Monto total efectivo</label>
-                                        <div class="d-flex align-items-center">
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        placeholder="Monto total efectivo"
-                                        :value="montoTotal70"
-                                        type="text"
-                                        disabled
-                                        />
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
-                                    <label class="col-form-label"> Comprobación del Monto total de Financiamiento Público para AOP</label>
-                                        <div class="d-flex align-items-center">
-                                        <vs-input
-                                        class="flex-grow-1 disabled-bold"
-                                        placeholder="Monto total efectivo"
-                                        :value="comprobacionMonto"
-                                        type="text"
-                                        disabled
-                                        />
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                    <vs-input class="flex-grow-1 disabled-bold" placeholder="total de FP"
+                                        :value="montoTotal30" type="text" disabled />
                                 </div>
                             </div>
-                            
-                            <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="guardarCalculo" 
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
-                                            Guardar
-                                        </div>
-                                    </vs-button>
-                                </div>
-                           
-                                <div class="d-flex justify-content-center">
-                                    <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar'+darkMode" 
-                                    @click.prevent="limpiarCampos"
-                                    style="padding: 0.20rem; font-size: 1rem;">
-                                        <div style="color: var(--btn-txt-color); font-weight: 700;">
-                                            <i class="fas fa-eraser pr-2" style="font-size: 0.8125rem !important;"></i>Limpiar
-                                        </div>
-                                    </vs-button>
-                                </div>
-
+                        </div>
+                        <!-- seccion checkbox para los partidos politicos con representacion-->
+                        <div class="row px-4">
+                            <div class="col-sm-6 col-md-4 col-xl-4 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label">Partidos con representación en el Congreso </label>
+                                <vs-select multiple filter
+                                    :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Seleccione una o más opciones'"
+                                    v-model="partidosPoliticos_conRepr" v-if="cat_partido_conRepresentacion.length > 0"
+                                    autocomplete="off" :color="colors[0].color">
+                                    <template #message-danger v-if="errorPartidosPoliticos_conRepr.length > 0">
+                                        {{ errorPartidosPoliticos_conRepr }}
+                                    </template>
+                                    <vs-option v-for="(item, index) in cat_partido_conRepresentacion" :key="index"
+                                        :label="item.siglas" :value="item.id">
+                                        {{ item.siglas }}
+                                    </vs-option>
+                                </vs-select>
                             </div>
+                        </div>
+
+                        <div class="row px-4">
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label"> No. de PP con representación en el Congreso</label>
+                                <vs-input class="flex-grow-1 disabled-bold" type="text" disabled
+                                    :placeholder="(partidosPoliticos_conRepr.length > 0) ? '' : 'Ningún PP seleccionado'"
+                                    v-model="partidosPoliticos_conRepr.length" :color="colors[0].color" />
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label"> 70% Monto total efectivo</label>
+                                <div class="d-flex align-items-center">
+                                    <vs-input class="flex-grow-1 disabled-bold" placeholder="Monto total efectivo"
+                                        :value="montoTotal70" type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-xl-3 px-0 pr-sm-5 pb-3">
+                                <label class="col-form-label"> Comprobación del Monto total de Financiamiento Público
+                                    para AOP</label>
+                                <div class="d-flex align-items-center">
+                                    <vs-input class="flex-grow-1 disabled-bold" placeholder="Monto total efectivo"
+                                        :value="comprobacionMonto" type="text" disabled />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 px-3 d-flex justify-content-center flex-column flex-md-row">
+                            <div class="d-flex justify-content-center">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'" :key="'limpiar' + darkMode"
+                                    @click.prevent="guardarCalculo" style="padding: 0.20rem; font-size: 1rem;">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-save pr-2" style="font-size: 0.8125rem !important;"></i>
+                                        Guardar
+                                    </div>
+                                </vs-button>
+                            </div>
+
+                            <div class="d-flex justify-content-center">
+                                <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#a5904a'" :key="'limpiar' + darkMode"
+                                    @click.prevent="limpiarCampos" style="padding: 0.20rem; font-size: 1rem;">
+                                    <div style="color: var(--btn-txt-color); font-weight: 700;">
+                                        <i class="fas fa-eraser pr-2"
+                                            style="font-size: 0.8125rem !important;"></i>Limpiar
+                                    </div>
+                                </vs-button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -305,7 +246,7 @@ export default {
             totalMonto70: '',   // 70% Monto total efectivo 
             //comprobacion: '', // No se usa
             umaInput: '',   // valor de UMA para el input
-            
+
             fechaRecibido: '', // fecha de publicacion de la UMA
             numeroPadron: '', // número de personas en padrón electoral para el input
             seguimientoPartido: '', //No se usa
@@ -376,21 +317,21 @@ export default {
             let valorNumerico = parseFloat(this.umaInput.toString().replace(/[^0-9.]/g, ''));
 
             if (isNaN(valorNumerico)) { // Si no es un número recetea valores
-            this.errorUMA = 'Ingrese un valor válido para UMA';
-            // this.errorUMA = true; // No es necesario por el mensaje
-            this.uma = null;
-            this.umaInput = '';
+                this.errorUMA = 'Ingrese un valor válido para UMA';
+                // this.errorUMA = true; // No es necesario por el mensaje
+                this.uma = null;
+                this.umaInput = '';
             } else {
-            //this.errorUMA = false; // No es necesario
-            this.errorUMA = '';
-            this.uma = valorNumerico;
+                //this.errorUMA = false; // No es necesario
+                this.errorUMA = '';
+                this.uma = valorNumerico;
 
-            this.umaInput = valorNumerico.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+                this.umaInput = valorNumerico.toLocaleString('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             }
         },
         /**
@@ -476,7 +417,7 @@ export default {
                     reverseButtons: true,
                 }).then(async (result) => {
                     if (result.isConfirmed) {
-                         const load = methods.loading(this.$vs);
+                        const load = methods.loading(this.$vs);
                         // Registrar el archivo
                         const url = '/administracion/solicitud/setRegistrarCalculoFinanciamiento';
                         let idGenerado = 0;
@@ -493,7 +434,7 @@ export default {
                                 'cbPartidosPoliticosConRepr': this.formateaPartidosSeleccionadosConRepDB,
                                 'pp_sin_repr_siglas': this.formateaPartidosSeleccionadosSinRepSiglasDB,
                                 'pp_con_repr_siglas': this.formateaPartidosSeleccionadosConRepSiglasDB,
-                            
+
                             });
                             load.text = 'Registrando calculos...';
                             if (response.status === 200) {
@@ -512,8 +453,8 @@ export default {
                                 } else {
                                     console.error('No se recibió el ID del servidor');
                                 }
-                                
-                                 // Error del servidor
+
+                                // Error del servidor
                             } else {
                                 console.error('Error:', response.data.message);
                             }
@@ -539,10 +480,10 @@ export default {
                             // Fin del bloque
 
                             const method = url.split('/');
-                            methods.catchHandler(error, method[3], this.$router);c
+                            methods.catchHandler(error, method[3], this.$router); c
                             return idGenerado;
-                        }   
-                       
+                        }
+
                         load.close();
                     }
                 });
@@ -584,8 +525,8 @@ export default {
             this.errorPartidosPoliticos_sinRepr = '';
             this.errorPartidosPoliticos_conRepr = '';
             this.errorAnio = '',
-            this.errorFechaRecibido = '',
-            this.errorNumeroPadron = ''
+                this.errorFechaRecibido = '',
+                this.errorNumeroPadron = ''
         },
         /**
          * Limpia todos los campos del formulario
@@ -596,10 +537,10 @@ export default {
             this.anio = '';
             this.partidosPoliticos_sinRepr = [];
             this.partidosPoliticos_conRepr = [];
-            this.anio= '',
-            this.uma= '',
-            this.umaInput= '',
-            this.numeroPadron= ''
+            this.anio = '',
+            this.uma = '',
+            this.umaInput = '',
+            this.numeroPadron = ''
         },
         /**Recibe un objeto fecha y devuelve un string con las horas */
         hoursFormat(dateOBJ, tipo) {
@@ -613,217 +554,217 @@ export default {
          * Realiza los calculos 65% de UMA -> (UMA*65)/100
          * @returns {number}
          */
-        calculoForm_65_UMA() { 
-        return this.uma * 0.65;
-        
-    },
-    /**
-     * Formatea el valor 65% de UMA a moneda
-     * calculoForm_65_UMA {number}
-     * @returns {string}
-     */
-    calculo_65_UMA_formatoMoneda() {
-        const res = this.calculoForm_65_UMA;
-        if (isNaN(res)) return '$0.00';
+        calculoForm_65_UMA() {
+            return this.uma * 0.65;
 
-        return res.toLocaleString('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-        });
-    },
-    /**
-     * Realiza los calculos monto total de Financiamiento Público para AOP 
-     * -> (65% de UMA * personas)
-     * @returns {number}
-     */
-    financiamientoAOPForm() { //funcion para hacer calculos
-        const personas = parseInt(this.numeroPadron);
+        },
+        /**
+         * Formatea el valor 65% de UMA a moneda
+         * calculoForm_65_UMA {number}
+         * @returns {string}
+         */
+        calculo_65_UMA_formatoMoneda() {
+            const res = this.calculoForm_65_UMA;
+            if (isNaN(res)) return '$0.00';
 
-        return this.calculoForm_65_UMA  * personas;
-    },
+            return res.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * Realiza los calculos monto total de Financiamiento Público para AOP 
+         * -> (65% de UMA * personas)
+         * @returns {number}
+         */
+        financiamientoAOPForm() { //funcion para hacer calculos
+            const personas = parseInt(this.numeroPadron);
 
-    /**
-     * Formatea el monto total de Financiamiento Público para AOP a moneda
-     * financiamientoAOPForm {number}
-     * @returns {string}
-     */
-    financiamientoAOP() {
-        const resultado = this.financiamientoAOPForm;
+            return this.calculoForm_65_UMA * personas;
+        },
 
-        //validacion y limpieza de datos
-        if(isNaN(resultado)) return '$0.00';
+        /**
+         * Formatea el monto total de Financiamiento Público para AOP a moneda
+         * financiamientoAOPForm {number}
+         * @returns {string}
+         */
+        financiamientoAOP() {
+            const resultado = this.financiamientoAOPForm;
 
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-    /**
-     * Realiza los calculos del 2% del monto total de Financiamiento Público para AOP 
-     * por cada partido seleccionado sin representación
-     * -> (monto total de Financiamiento Público para AOP * 0.02)
-     * @returns {number}
-     */
-    calculoFPAOPForm() {
-        return this.financiamientoAOPForm * 0.02;      
-    },
-    /**
-     * Formatea el valor del 2% del monto total de Financiamiento Público para AOP a moneda
-     * calculoFPAOPForm {number}
-     * @returns {string}
-     */
-    calculoFPAOP() {
-        const resultado = this.calculoFPAOPForm;
-        //validacion y limpieza de datos
-        if(isNaN(resultado)) return '$0.00';
-        
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-    /**
-     * Suma  del "2% de FPAOP" de todos los partidos seleccionados sin representación 
-     * lo mismo que multiplicar calculoFPAOPForm por la cantidad de partidos seleccionados
-     * @returns {number}
-     */
-    totalFPForm() {
+            //validacion y limpieza de datos
+            if (isNaN(resultado)) return '$0.00';
 
-        return this.calculoFPAOPForm * this.partidos_sinRepr_Seleccionados.length; 
-    },
-    /**
-     * Da formato totalFPForm a moneda
-     * totalFPForm {number}
-     * @returns {string}
-     */
-    totalFP() {
-        const resultado = this.totalFPForm;
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * Realiza los calculos del 2% del monto total de Financiamiento Público para AOP 
+         * por cada partido seleccionado sin representación
+         * -> (monto total de Financiamiento Público para AOP * 0.02)
+         * @returns {number}
+         */
+        calculoFPAOPForm() {
+            return this.financiamientoAOPForm * 0.02;
+        },
+        /**
+         * Formatea el valor del 2% del monto total de Financiamiento Público para AOP a moneda
+         * calculoFPAOPForm {number}
+         * @returns {string}
+         */
+        calculoFPAOP() {
+            const resultado = this.calculoFPAOPForm;
+            //validacion y limpieza de datos
+            if (isNaN(resultado)) return '$0.00';
 
-        //validacion y limpieza de datos
-        if(isNaN(resultado)) return '$0.00';
-        
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-    /**
-     * Monto total efectivo
-     * Monto total de financiamiento púlico para AOP - el total de FP partidos sin representación en el congreso
-     * @returns {number}
-     */
-    montoTotalForm() {
-        return this.financiamientoAOPForm - this.totalFPForm; 
-    },
-    /**
-     * Formatea el valor monto total efectivo a moneda
-     * montoTotalForm {number}
-     * @returns {string}
-     */
-    montoTotal() {
-        const resultado = this.montoTotalForm;
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * Suma  del "2% de FPAOP" de todos los partidos seleccionados sin representación 
+         * lo mismo que multiplicar calculoFPAOPForm por la cantidad de partidos seleccionados
+         * @returns {number}
+         */
+        totalFPForm() {
 
-        //validacion y limpieza de datos
-        if(isNaN(resultado)) return '$0.00';
-        
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-    /**
-     * 30% Monto total efectivo 
-     * Monto total efectivo * 0.3
-     * @returns {number}
-     */
-    montoTotal30Form() {
+            return this.calculoFPAOPForm * this.partidos_sinRepr_Seleccionados.length;
+        },
+        /**
+         * Da formato totalFPForm a moneda
+         * totalFPForm {number}
+         * @returns {string}
+         */
+        totalFP() {
+            const resultado = this.totalFPForm;
 
-        return this.montoTotalForm * 0.3; 
+            //validacion y limpieza de datos
+            if (isNaN(resultado)) return '$0.00';
 
-    },
-    /**
-     * Formatea el 30% Monto total efectivo a moneda
-     * montoTotal30Form {number}
-     * @returns {string}
-     */
-    montoTotal30() {
-        const resultado = this.montoTotal30Form;
-        
-        if(isNaN(resultado)) return '$0.00';
-        
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-     /**
-     * 30% Monto total efectivo 
-     * Monto total efectivo * 0.7
-     * @returns {number}
-     */
-    montoTotal70Form() {
-        return this.montoTotalForm * 0.7; 
-        
-    },
-    /**
-     * Formatea el 70% Monto total efectivo a moneda
-     * montoTotal70Form {number}
-     * @returns {string}
-     */
-    montoTotal70() {
-        const resultado = this.montoTotal70Form;
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * Monto total efectivo
+         * Monto total de financiamiento púlico para AOP - el total de FP partidos sin representación en el congreso
+         * @returns {number}
+         */
+        montoTotalForm() {
+            return this.financiamientoAOPForm - this.totalFPForm;
+        },
+        /**
+         * Formatea el valor monto total efectivo a moneda
+         * montoTotalForm {number}
+         * @returns {string}
+         */
+        montoTotal() {
+            const resultado = this.montoTotalForm;
 
-        //validacion y limpieza de datos
-        if(isNaN(resultado)) return '$0.00';
-        
-        return resultado.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
-    /**
-     * Comprobación del monto total de financiamiento público para AOP
-     * 30% Monto total efectivo + 70% Monto total efectivo + Total FP partidos sin representación en el congreso
-     * @returns {number}
-     */
-    comprobacionMontoForm() {
-        
-        return this.montoTotal30Form + this.montoTotal70Form + this.totalFPForm; 
-    
-    },
-    /**
-     * Formatea el valor comprobacion monto a moneda
-     * comprobacionMontoForm {number}
-     * @returns {string}
-     */
-    comprobacionMonto() {
+            //validacion y limpieza de datos
+            if (isNaN(resultado)) return '$0.00';
 
-        const valorTotal = this.comprobacionMontoForm;
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * 30% Monto total efectivo 
+         * Monto total efectivo * 0.3
+         * @returns {number}
+         */
+        montoTotal30Form() {
 
-        //validacion y limpieza de datos
-        if(isNaN(valorTotal)) return '$0.00';
-        
-        return valorTotal.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    },
+            return this.montoTotalForm * 0.3;
+
+        },
+        /**
+         * Formatea el 30% Monto total efectivo a moneda
+         * montoTotal30Form {number}
+         * @returns {string}
+         */
+        montoTotal30() {
+            const resultado = this.montoTotal30Form;
+
+            if (isNaN(resultado)) return '$0.00';
+
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+        * 30% Monto total efectivo 
+        * Monto total efectivo * 0.7
+        * @returns {number}
+        */
+        montoTotal70Form() {
+            return this.montoTotalForm * 0.7;
+
+        },
+        /**
+         * Formatea el 70% Monto total efectivo a moneda
+         * montoTotal70Form {number}
+         * @returns {string}
+         */
+        montoTotal70() {
+            const resultado = this.montoTotal70Form;
+
+            //validacion y limpieza de datos
+            if (isNaN(resultado)) return '$0.00';
+
+            return resultado.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        /**
+         * Comprobación del monto total de financiamiento público para AOP
+         * 30% Monto total efectivo + 70% Monto total efectivo + Total FP partidos sin representación en el congreso
+         * @returns {number}
+         */
+        comprobacionMontoForm() {
+
+            return this.montoTotal30Form + this.montoTotal70Form + this.totalFPForm;
+
+        },
+        /**
+         * Formatea el valor comprobacion monto a moneda
+         * comprobacionMontoForm {number}
+         * @returns {string}
+         */
+        comprobacionMonto() {
+
+            const valorTotal = this.comprobacionMontoForm;
+
+            //validacion y limpieza de datos
+            if (isNaN(valorTotal)) return '$0.00';
+
+            return valorTotal.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
         /**
          * Filtra los partidos seleccionados sin representación del catálogo
          * @returns {Array}
@@ -850,9 +791,9 @@ export default {
         formateaPartidosSeleccionadosConRepDB() {
             return this.partidos_conRepr_Seleccionados.map(partido => partido.id).join(',');
         },
-         /*
-        * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
-        */
+        /*
+       * Formatea los partidos seleccionados sin refresentacion para guardarlos en la base de datos por sus 'id'
+       */
         formateaPartidosSeleccionadosSinRepSiglasDB() {
             return this.partidos_sinRepr_Seleccionados.map(partido => partido.siglas).join(', ');
         },
@@ -861,7 +802,7 @@ export default {
         */
         formateaPartidosSeleccionadosConRepSiglasDB() {
             return this.partidos_conRepr_Seleccionados.map(partido => partido.siglas).join(', ');
-        },  
+        },
     }
 }
 
@@ -869,21 +810,23 @@ export default {
 
 <style>
 .vs-checkbox--checked .vs-checkbox__check {
-  background-color: #1E90FF !important; /* azul visible */
-  border-color: #1E90FF !important;
+    background-color: #1E90FF !important;
+    /* azul visible */
+    border-color: #1E90FF !important;
 }
 
 .vs-checkbox__label {
-  color: #000 !important; /* asegura que el texto no se vea gris */
+    color: #000 !important;
+    /* asegura que el texto no se vea gris */
 }
 
 .vs-checkbox--checked .vs-checkbox__label {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .disabled-bold .vs-input {
-  font-weight: bold;
-  color: #000; /* Negro fuerte */
+    font-weight: bold;
+    color: #000;
+    /* Negro fuerte */
 }
-
 </style>

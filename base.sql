@@ -1641,6 +1641,8 @@ END;
 DROP PROCEDURE IF EXISTS sp_GetDistribucionesPorAnio;
 DELIMITER //
 /*
+* @Description Optiene los cálculos, distribuciones, y Partidos con y sin representación
+* @param p_anio Año fiscal
 * @example CALL sp_GetDistribucionesPorAnio(2025);
 */
 CREATE PROCEDURE sp_GetDistribucionesPorAnio(IN p_anio INT)
