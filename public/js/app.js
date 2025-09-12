@@ -24410,7 +24410,7 @@ var render = function render() {
       fn: function fn() {
         return _vm._l(_vm.$vs.getPage(_vm.$vs.getSearch(_vm.listaUsuario, _vm.searchTable), _vm.page, _vm.max), function (item, index) {
           return _c("vs-tr", {
-            key: item.id,
+            key: item.id + "-" + index,
             attrs: {
               data: item
             }
@@ -24567,7 +24567,7 @@ var render = function render() {
         })];
       },
       proxy: true
-    }], null, false, 2823672204)
+    }], null, false, 546627807)
   })] : [_vm._m(2), _vm._v(" "), _vm._m(3)]], 2)])])])]), _vm._v(" "), _c("vs-dialog", {
     attrs: {
       blur: "",

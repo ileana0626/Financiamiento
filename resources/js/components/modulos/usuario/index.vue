@@ -47,7 +47,7 @@
                                     </template>
                                     <template #tbody>
                                         <vs-tr v-for="(item, index) in $vs.getPage($vs.getSearch(listaUsuario, searchTable), page, max)" 
-                                            :key="item.id" 
+                                            :key="item.id + '-' + index" 
                                             :data="item">
                                             <vs-td style="width: 2%; text-align:center;" ><div v-text="index + 1"></div></vs-td>
                                             <vs-td style=""><div v-text="item.fullname"></div></vs-td>
