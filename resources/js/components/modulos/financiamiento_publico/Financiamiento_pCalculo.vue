@@ -181,6 +181,11 @@
                                                             @input="actualizarValorInput('topePresidencialInput', $event)"
                                                             @blur="formatearAlSalirBlur('topePresidencialInput','topePresidencial')"
                                                             placeholder="$0.00" />
+                                                            <div class="danger-message">
+                                                                <template v-if="errorTopePresidencial.length > 0">
+                                                                    {{ errorTopePresidencial }}
+                                                                </template>
+                                                            </div>
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Aportaciones en dinero o en especie de personas simpatizantes-->
@@ -231,6 +236,11 @@
                                                             @input="actualizarValorInput('topeGubernaturaInput', $event)"
                                                             @blur="formatearAlSalirBlur('topeGubernaturaInput','topeGubernatura')"
                                                             placeholder="$0.00" />
+                                                            <div class="danger-message">
+                                                                <template v-if="errorTopeGubernatura.length > 0">
+                                                                    {{ errorTopeGubernatura }}
+                                                                </template>
+                                                            </div>
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Aportaciones en dinero que realice cada persona simpatizante-->
@@ -344,6 +354,7 @@
 import methods from '../../../methods';
 import { loading } from '../../../methods';
 import { limpiarNumeroInput, formatoMonedaMX as formatoMonedaLocal} from '../../../utils/formatters'; // 😉
+import { isValidNumber } from '../../../utils/utils'; // 😉
 /**
  * 🐛 Función para depuración development
  * @param {...any} args - Uno o más mensajes a mostrar en consola
@@ -395,15 +406,12 @@ export default {
             calculo: {},
             montosFijos: {},
             cat_tipo_distribucion: [],
-            distribucion: [],
-            distribuciones: [],
             CalculosPorAnio: [],
             // Validaciones
             error: false,
             errorAnio: '',
-            errorDistribucion: '',
-            errorMonto30: '',
-            errorMonto70: '',
+            errorTopePresidencial: '',
+            errorTopeGubernatura: '',
             descargar_disabled: true, // true: disabled | false: enabled
         }
     },
@@ -1007,31 +1015,22 @@ export default {
          */
         validarCampos() {
             this.limpiarErrores();
-            if (this.anio === '') {
-                this.errorAnio = 'El campo año es obligatorio';
+            if(this.topeGubernaturaInput === '') {
+                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            if (this.monto30Input === '') {
-                this.errorMonto30 = 'Ingrese un monto 30% válido';
+            if(this.topePresidencialInput === '') {
+                this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-
-            if (this.monto70Input === '') {
-                this.errorMonto70 = 'Ingrese un monto 70% válido';
+            if (this.topePresidencial === '' || !isValidNumber(this.topePresidencial) || parseFloat(this.topePresidencial) <= 0) {
+                this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            if (this.distribucion === '') {
-                this.errorDistribucion = 'El campo distribución es obligatorio';
+            if (this.topeGubernatura === '' || !isValidNumber(this.topeGubernatura) || parseFloat(this.topeGubernatura) <= 0) {
+                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            // Validar que llenen todos los campos
-            this.Partidos_Con_Representacion.forEach(partido => {
-
-                if (partido.inputPorcentaje === '') {
-                    partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-                    this.error = true;
-                }
-            });
             return this.error;
         },
         /**
@@ -1039,34 +1038,13 @@ export default {
          * @returns {void}
          */
         limpiarCampos() {
-            this.monto30 = '',
-                this.monto30Input = '',
-                this.monto70 = '',
-                this.topesSinRep = '',
-                this.topesConRep = [];
-            this.opcionSelecionadaPorcentaje = '1'; //  Valor por defecto factorCalculo()
+            this.topePresidencial = 0,
+            this.topeGubernatura = 0,
+            this.errorTopePresidencial = '',
+            this.errorTopeGubernatura = '',
+            this.topesSinRep = '',
+            this.topesConRep = [];
             this.descargar_disabled = false; // Deshabilita el botón de descargar
-
-            // Reiniciar valores de partidos a 0.0 si existen
-            if (this.Partidos_Con_Representacion) {
-                this.Partidos_Con_Representacion = this.Partidos_Con_Representacion.map(partido => ({
-                    ...partido,
-                    porcentaje_votacion: 0.00,
-                    inputPorcentaje: '',
-                    errorPorcentajeVotacion: '',
-                    ajuste: 0.00,
-                }));
-            } else {
-                this.Partidos_Con_Representacion = [];
-            }
-            if (this.Partidos_Sin_Representacion) {
-                this.Partidos_Sin_Representacion = this.Partidos_Sin_Representacion.map(partido => ({
-                    ...partido,
-                    D_monto_2_por_ciento: 0.00,
-                }));
-            } else {
-                this.Partidos_Sin_Representacion = [];
-            }
             this.limpiarErrores();
         },
         /**
@@ -1076,12 +1054,8 @@ export default {
         limpiarErrores() {
             this.error = false;
             this.errorAnio = '';
-            this.errorMonto30 = '',
-                this.errorMonto70 = '',
-                this.errorDistribucion = '';
-            this.Partidos_Con_Representacion.forEach(partido => {
-                partido.errorPorcentajeVotacion = '';
-            });
+            this.errorTopePresidencial = '',
+            this.errorTopeGubernatura = '',
         },
         // #endregion VALIDACIONES Y LIMPIEZA ✔🧹
     },

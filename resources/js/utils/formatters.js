@@ -4,7 +4,7 @@
 * @author Tony 😉
 * @version 1.2.1
 * @date 18/08/2025
-* @updated 04/09/2025
+* @updated 15/09/2025
 */
 /**
  * Formatea una fecha de entrada a un formato específico con el separador indicado.
@@ -290,7 +290,7 @@ export const limpiarNumeroInput = (valor) => {
     if (typeof valor !== 'string') return '';
     
     // Elimina todo excepto números y puntos
-    const soloNumerosYPunto = valor.replace(/[^0-9.]/g, '');
+    const soloNumerosYPunto = valor.replace(/[^0-9.-]/g, '');
     // Maneja múltiples puntos, manteniendo solo el primero
     const partes = soloNumerosYPunto.split('.');
     const parteEntera = partes[0] || '';

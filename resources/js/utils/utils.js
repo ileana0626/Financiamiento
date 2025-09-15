@@ -45,3 +45,35 @@ export const truncateTo2Decimals = (value, decimals = 2) => {
     // Más eficiente al usar toFixed() directamente en lugar de operaciones matemáticas
     return Number.isNaN(num) ? '0.00' : num.toFixed(decimals);
 };
+
+
+// VALIDADORES 📝
+
+/**
+ * Valida que un valor sea un número válido
+ * @param {number|string} value - Valor a validar
+ * @returns {boolean} - True si el valor es un número válido, false en caso contrario
+ */
+export const isValidNumber = (value) => {
+    if (value === null || value === undefined || value === '') {
+        return false;
+    }
+    
+    // Convertir a string, reemplazar todo excepto números, punto decimal y signo negativo
+    const stringValue = String(value);
+    const cleanValue = stringValue.replace(/[^\d.-]/g, '');
+    
+    // Validar que solo haya un punto decimal
+    if ((cleanValue.match(/\./g) || []).length > 1) {
+        return false;
+    }
+    
+    // Validar que solo haya un signo negativo al inicio
+    if ((cleanValue.match(/-/g) || []).length > 1 || 
+        (cleanValue.includes('-') && !cleanValue.startsWith('-'))) {
+        return false;
+    }
+    
+    const num = Number(cleanValue);
+    return !Number.isNaN(num);
+};
