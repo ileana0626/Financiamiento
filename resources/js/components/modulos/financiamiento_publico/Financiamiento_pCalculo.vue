@@ -252,7 +252,7 @@
                                                     <!-- Partidos con representación -->
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'apCR-' + (partido.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesPresidencial(partido, topeGubernatura))}}
+                                                        {{formatCurrency(aportacionesSimpatizantesGubernatura(partido, topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partido, topesConRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -260,7 +260,7 @@
                                                     <!-- Partidos sin representación -->
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'apSR-' + (partidoS.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesPresidencial(partidoS, topeGubernatura))}}
+                                                        {{formatCurrency(aportacionesSimpatizantesGubernatura(partidoS, topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partidoS, topesSinRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -560,6 +560,7 @@ export default {
          * @param {number} id_calculo - El ID del cálculo
          */
         async guardarCambios(id_calculo){
+            if(this.validarCampos()) return; // Validamos campos
             const loader = loading(this.$vs);
             loader.text = 'Guardando cambios...';
             let url = '/administracion/solicitud/FinPriv_Update_Calculo';
@@ -1014,20 +1015,20 @@ export default {
          */
         validarCampos() {
             this.limpiarErrores();
-            if(this.topeGubernaturaInput === '') {
-                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
-                this.error = true;
-            }
-            if(this.topePresidencialInput === '') {
+            if(this.topePresidencialInput === '' || this.topePresidencialInput === '$0.00') {
                 this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            if (this.topePresidencial === '' || !isValidNumber(this.topePresidencial) || parseFloat(this.topePresidencial) <= 0) {
-                this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
+            if(this.topeGubernaturaInput === '' || this.topeGubernaturaInput === '$0.00') {
+                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            if (this.topeGubernatura === '' || !isValidNumber(this.topeGubernatura) || parseFloat(this.topeGubernatura) <= 0) {
-                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
+            if (this.topePresidencial === 0 || !isValidNumber(this.topePresidencial) || parseFloat(this.topePresidencial) <= 0) {
+                this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0.';
+                this.error = true;
+            }
+            if (this.topeGubernatura === 0 || !isValidNumber(this.topeGubernatura) || parseFloat(this.topeGubernatura) <= 0) {
+                this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0.';
                 this.error = true;
             }
             return this.error;

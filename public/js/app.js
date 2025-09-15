@@ -9295,12 +9295,19 @@ var debug = function debug() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
+              if (!_this6.validarCampos()) {
+                _context4.next = 2;
+                break;
+              }
+              return _context4.abrupt("return");
+            case 2:
+              // Validamos campos
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this6.$vs);
               loader.text = 'Guardando cambios...';
               url = '/administracion/solicitud/FinPriv_Update_Calculo'; //Preparamos los datos para guardar
               //let topes = this.obtenerTopes();
               debug(' 🐛 🌠 Id del cálculo a guardar: ' + id_calculo);
-              _context4.prev = 4;
+              _context4.prev = 6;
               // Preparamos los datos para guardar
               datos = {
                 //p_comando: "UPDATE", // INSERT, UPDATE
@@ -9309,52 +9316,52 @@ var debug = function debug() {
                 //this.selectedCalculo.finpriv_tope_presidencial,
                 p_finpriv_tope_gubernatura: _this6.topeGubernatura //this.selectedCalculo.finpriv_tope_gubernatura,
               };
-              _context4.next = 8;
+              _context4.next = 10;
               return axios.post(url, datos);
-            case 8:
+            case 10:
               response = _context4.sent;
               if (!(!response || !response.data)) {
-                _context4.next = 11;
-                break;
-              }
-              throw new Error('La respuesta del servidor no es válida');
-            case 11:
-              if (!(response.status !== 200)) {
                 _context4.next = 13;
                 break;
               }
-              throw new Error("Error en la petici\xF3n: ".concat(response.status, " ").concat(response.statusText));
+              throw new Error('La respuesta del servidor no es válida');
             case 13:
+              if (!(response.status !== 200)) {
+                _context4.next = 15;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(response.status, " ").concat(response.statusText));
+            case 15:
               if (response.data.success) {
-                _context4.next = 16;
+                _context4.next = 18;
                 break;
               }
               errorMessage = response.data.message || 'Error desconocido al guardar la ministración';
               throw new Error(errorMessage);
-            case 16:
+            case 18:
               if (!response.data.success) {
-                _context4.next = 20;
+                _context4.next = 22;
                 break;
               }
               debug(' 🐛 🌠 Id del response: ' + JSON.stringify(response.data.id));
-              _context4.next = 21;
+              _context4.next = 23;
               break;
-            case 20:
+            case 22:
               throw new Error(response.data.message);
-            case 21:
+            case 23:
               // Actualizamos cada campo del partido político por separado
               p_tipoPartido = 'CON';
               url = '/administracion/solicitud/FinPriv_Update_Partidos';
               _iterator = _createForOfIteratorHelper(_this6.Partidos_Con_Representacion);
-              _context4.prev = 24;
+              _context4.prev = 26;
               _iterator.s();
-            case 26:
+            case 28:
               if ((_step = _iterator.n()).done) {
-                _context4.next = 41;
+                _context4.next = 43;
                 break;
               }
               partido = _step.value;
-              _context4.next = 30;
+              _context4.next = 32;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
                 p_id_calculo: id_calculo,
@@ -9366,55 +9373,55 @@ var debug = function debug() {
                 p_finpriv_aportaciones_simpGuber: partido.finpriv_aportaciones_simpGuber,
                 p_finpriv_rendimientos: partido.finpriv_rendimientos
               });
-            case 30:
+            case 32:
               responsePartidos = _context4.sent;
               if (!(!responsePartidos || !responsePartidos.data)) {
-                _context4.next = 33;
-                break;
-              }
-              throw new Error('La respuesta del servidor no es válida');
-            case 33:
-              if (!(responsePartidos.status !== 200)) {
                 _context4.next = 35;
                 break;
               }
-              throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
+              throw new Error('La respuesta del servidor no es válida');
             case 35:
+              if (!(responsePartidos.status !== 200)) {
+                _context4.next = 37;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
+            case 37:
               if (responsePartidos.data.success) {
-                _context4.next = 38;
+                _context4.next = 40;
                 break;
               }
               _errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
               throw new Error(_errorMessage);
-            case 38:
+            case 40:
               debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
-            case 39:
-              _context4.next = 26;
-              break;
             case 41:
-              _context4.next = 46;
+              _context4.next = 28;
               break;
             case 43:
-              _context4.prev = 43;
-              _context4.t0 = _context4["catch"](24);
+              _context4.next = 48;
+              break;
+            case 45:
+              _context4.prev = 45;
+              _context4.t0 = _context4["catch"](26);
               _iterator.e(_context4.t0);
-            case 46:
-              _context4.prev = 46;
+            case 48:
+              _context4.prev = 48;
               _iterator.f();
-              return _context4.finish(46);
-            case 49:
+              return _context4.finish(48);
+            case 51:
               p_tipoPartido = 'SIN';
               url = '/administracion/solicitud/FinPriv_Update_Partidos';
               _iterator2 = _createForOfIteratorHelper(_this6.Partidos_Sin_Representacion);
-              _context4.prev = 52;
+              _context4.prev = 54;
               _iterator2.s();
-            case 54:
+            case 56:
               if ((_step2 = _iterator2.n()).done) {
-                _context4.next = 69;
+                _context4.next = 71;
                 break;
               }
               _partido = _step2.value;
-              _context4.next = 58;
+              _context4.next = 60;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
                 p_id_calculo: id_calculo,
@@ -9426,43 +9433,43 @@ var debug = function debug() {
                 p_finpriv_aportaciones_simpGuber: _partido.finpriv_aportaciones_simpGuber,
                 p_finpriv_rendimientos: _partido.finpriv_rendimientos
               });
-            case 58:
+            case 60:
               _responsePartidos = _context4.sent;
               if (!(!_responsePartidos || !_responsePartidos.data)) {
-                _context4.next = 61;
-                break;
-              }
-              throw new Error('La respuesta del servidor no es válida');
-            case 61:
-              if (!(_responsePartidos.status !== 200)) {
                 _context4.next = 63;
                 break;
               }
-              throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
+              throw new Error('La respuesta del servidor no es válida');
             case 63:
+              if (!(_responsePartidos.status !== 200)) {
+                _context4.next = 65;
+                break;
+              }
+              throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
+            case 65:
               if (_responsePartidos.data.success) {
-                _context4.next = 66;
+                _context4.next = 68;
                 break;
               }
               _errorMessage2 = _responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
               throw new Error(_errorMessage2);
-            case 66:
+            case 68:
               debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(_responsePartidos.data.ids));
-            case 67:
-              _context4.next = 54;
-              break;
             case 69:
-              _context4.next = 74;
+              _context4.next = 56;
               break;
             case 71:
-              _context4.prev = 71;
-              _context4.t1 = _context4["catch"](52);
+              _context4.next = 76;
+              break;
+            case 73:
+              _context4.prev = 73;
+              _context4.t1 = _context4["catch"](54);
               _iterator2.e(_context4.t1);
-            case 74:
-              _context4.prev = 74;
+            case 76:
+              _context4.prev = 76;
               _iterator2.f();
-              return _context4.finish(74);
-            case 77:
+              return _context4.finish(76);
+            case 79:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -9476,11 +9483,11 @@ var debug = function debug() {
                 text: 'Financiamiento privado guardado' + response.data.message
               });
               //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
-              _context4.next = 87;
+              _context4.next = 89;
               break;
-            case 81:
-              _context4.prev = 81;
-              _context4.t2 = _context4["catch"](4);
+            case 83:
+              _context4.prev = 83;
+              _context4.t2 = _context4["catch"](6);
               debug('🐛 Error al guardar el financiamiento privado:', _context4.t2);
               _this6.$vs.notification({
                 title: 'Error',
@@ -9489,15 +9496,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t2, nombreMetodo[3], _this6.$router);
-            case 87:
-              _context4.prev = 87;
+            case 89:
+              _context4.prev = 89;
               loader.close();
-              return _context4.finish(87);
-            case 90:
+              return _context4.finish(89);
+            case 92:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[4, 81, 87, 90], [24, 43, 46, 49], [52, 71, 74, 77]]);
+        }, _callee4, null, [[6, 83, 89, 92], [26, 45, 48, 51], [54, 73, 76, 79]]);
       }))();
     },
     /**
@@ -9832,20 +9839,20 @@ var debug = function debug() {
      */
     validarCampos: function validarCampos() {
       this.limpiarErrores();
-      if (this.topeGubernaturaInput === '') {
-        this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
-        this.error = true;
-      }
-      if (this.topePresidencialInput === '') {
+      if (this.topePresidencialInput === '' || this.topePresidencialInput === '$0.00') {
         this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
         this.error = true;
       }
-      if (this.topePresidencial === '' || !Object(_utils_utils__WEBPACK_IMPORTED_MODULE_2__["isValidNumber"])(this.topePresidencial) || parseFloat(this.topePresidencial) <= 0) {
-        this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
+      if (this.topeGubernaturaInput === '' || this.topeGubernaturaInput === '$0.00') {
+        this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
         this.error = true;
       }
-      if (this.topeGubernatura === '' || !Object(_utils_utils__WEBPACK_IMPORTED_MODULE_2__["isValidNumber"])(this.topeGubernatura) || parseFloat(this.topeGubernatura) <= 0) {
-        this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
+      if (this.topePresidencial === 0 || !Object(_utils_utils__WEBPACK_IMPORTED_MODULE_2__["isValidNumber"])(this.topePresidencial) || parseFloat(this.topePresidencial) <= 0) {
+        this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0.';
+        this.error = true;
+      }
+      if (this.topeGubernatura === 0 || !Object(_utils_utils__WEBPACK_IMPORTED_MODULE_2__["isValidNumber"])(this.topeGubernatura) || parseFloat(this.topeGubernatura) <= 0) {
+        this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0.';
         this.error = true;
       }
       return this.error;
@@ -22531,12 +22538,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "apCR-" + (partido.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partido, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partido, _vm.topeGubernatura))) + "\n                                                    ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "apSR-" + (partidoS.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partidoS, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partidoS, _vm.topeGubernatura))) + "\n                                                    ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {

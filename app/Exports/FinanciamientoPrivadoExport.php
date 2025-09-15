@@ -35,7 +35,7 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
     }
     public function title(): string
     {
-        return 'Ministraciones';
+        return 'Financiamiento Privado';
     }
     public function view(): View 
     {
@@ -127,16 +127,40 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
                 $sheet->setCellValue('A6', $this->crearTexto_0($anio));
                 $sheet->setCellValue('A8', $this->crearTexto_1());
                 $sheet->setCellValue('A10', $this->crearTexto_2());
+                // Combinar filas
+                $sheet->mergeCells('A10:' . 'A11');
+                // Combinar columnas
+                $sheet->mergeCells('C10:' . $endColumn . '10');
                 $sheet->setCellValue('A12', $this->crearTexto_3());
+                // Combinar filas
+                $sheet->mergeCells('A12:' . 'A13');
+                // Combinar columnas
+                $sheet->mergeCells('C12:' . $endColumn . '12');
                 $sheet->setCellValue('A14', $this->crearTexto_4());
+                // Combinar filas
+                $sheet->mergeCells('A14:' . 'A15');
+                // Combinar columnas
+                $sheet->mergeCells('C14:' . $endColumn . '14');
                 $sheet->setCellValue('A16', $this->crearTexto_5());
-                $sheet->setCellValue('A18', $this->crearFooter());
-                $sheet->mergeCells('A18:' . $endColumn . '18');
+                // Combinar filas
+                $sheet->mergeCells('A16:' . 'A17');
+                // Combinar columnas
+                $sheet->mergeCells('C16:' . $endColumn . '16');
+                $sheet->setCellValue('A19', $this->crearFooter());
+                // Combinar columnas
+                $sheet->mergeCells('A19:' . $endColumn . '19');
+
+                $wrapStyle = [
+                    'alignment' => [
+                        'wrapText' => true,
+                    ]
+                ];
+                // Aplicamos el estilo de envoltura a las celdas
+                $sheet->getStyle('A6:A16')->applyFromArray($wrapStyle);
 
                 // ***** Agregando Partidos Con Representación***** Empieza desde C5
                 $sheet->getRowDimension(4)->setRowHeight(30);
-                
-                $this->procesarPartidos($sheet, 'C', 4);
+                //$this->procesarPartidos($sheet, 'C', 4);
 
                 // for ($i = 1; $i <= $numPP; $i++) {
 
