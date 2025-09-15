@@ -757,7 +757,7 @@ class UsersController extends Controller
         }
     }
     public function setRegistrarUser(Request $request){
-        if (!$request->ajax()) return redirect('/');
+/*         if (!$request->ajax()) return redirect('/'); */
 
         $cNombre = $request->cNombre;
         $cApaterno = $request->cApaterno;

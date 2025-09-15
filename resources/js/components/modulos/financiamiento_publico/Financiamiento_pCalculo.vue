@@ -665,7 +665,6 @@ export default {
             } finally {
                 loader.close();
             }
-
         },
 
         /**
@@ -1054,8 +1053,8 @@ export default {
         limpiarErrores() {
             this.error = false;
             this.errorAnio = '';
-            this.errorTopePresidencial = '',
-            this.errorTopeGubernatura = '',
+            this.errorTopePresidencial = '';
+            this.errorTopeGubernatura = '';
         },
         // #endregion VALIDACIONES Y LIMPIEZA ✔🧹
     },
