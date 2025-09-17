@@ -50,7 +50,7 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
             /*Log::info('Datos para la exportación:', ['data' => json_decode(json_encode($data), true)]);*/
             //return view('reportes.financiamiento.excel.FinanciamientoPrivado', ['datos' => $data]);
             //return view('reportes.financiamiento.excel.FinanciamientoPrivado');
-            return view('reportes.financiamiento.excel');
+            return view('reportes.financiamiento.excel.empty');
         } catch (\Exception $e) {
             Log::error('Error en la generación de la vista de exportación', [
                 'error' => $e->getMessage()
