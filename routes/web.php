@@ -54,7 +54,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp', 'Administracion\SolicitudController@Mintr_Get_Insert_Update_ministraciones_dppp');
     Route::post('/administracion/solicitud/Mintr_Update_Partidos', 'Administracion\SolicitudController@Mintr_Update_Partidos');
     Route::get('/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoMinistracionesExcel');
-
+    
+    Route::post('/administracion/solicitud/FinPriv_Update_Calculo', 'Administracion\SolicitudController@FinPriv_Update_Calculo');
+    Route::post('/administracion/solicitud/FinPriv_Update_Partidos', 'Administracion\SolicitudController@FinPriv_Update_Partidos');
+    Route::get('/administracion/solicitud/exportarFinanciamientoPrivadoExcel/{id}', 'Administracion\SolicitudController@exportarFinanciamientoPrivadoExcel');
+    
+    
     Route::post('/administracion/solicitud/setRegistrarOficio','Administracion\SolicitudController@setRegistrarOficio');
     Route::post('/administracion/solicitud/setRegistrarCircular','Administracion\SolicitudController@setRegistrarCircular');
     Route::post('/administracion/solicitud/setRegistrarExtra','Administracion\SolicitudController@setRegistrarExtra');

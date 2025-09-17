@@ -3,7 +3,7 @@
 * @author Tony 😉
 * @version 1.0.2
 * @date 18/08/2025
-* @updated 08/09/2025
+* @updated 12/09/2025
 */
 /**
  * 🐛 Función para depuración development
@@ -32,49 +32,48 @@ export const debugWarn = (...args) => {
         console.warn(...args);
     }
 };
+
 /**
- * Trunca un número a 2 decimales
- * @param {number} value - Valor numérico a truncar
- * @returns {string} - Valor truncado a 2 decimales
+ * Trunca un número a la cantidad de decimales especificada
+ * @param {number|string} value - Valor numérico a truncar
+ * @param {number} [decimals=2] - Cantidad de decimales (por defecto: 2)
+ * @returns {string} - Valor truncado con los decimales especificados
  */
-export const truncateTo2Decimals = (value) => {
-    if (!value && value !== 0) return '0.00';
-    const num = Number(value); // (falla si hay caracteres no numéricos)
-    return (Math.trunc(num * 100) / 100).toFixed(2);
+export const truncateTo2Decimals = (value, decimals = 2) => {
+    const num = Number(value);
+    // return (Math.trunc(num * 100) / 100).toFixed(decimals); 
+    // Más eficiente al usar toFixed() directamente en lugar de operaciones matemáticas
+    return Number.isNaN(num) ? '0.00' : num.toFixed(decimals);
 };
 
 
+// VALIDADORES 📝
+
 /**
- * Trunca un número a 2 decimales
- * @param {number|string} value - Valor a truncar (número o string numérico)
- * @returns {string} - Valor truncado a 2 decimales o '0.00' si hay error
+ * Valida que un valor sea un número válido
+ * @param {number|string} value - Valor a validar
+ * @returns {boolean} - True si el valor es un número válido, false en caso contrario
  */
-export const truncateTo2DecimalsSafe = (value) => {
-    try {
-        // Manejo de null/undefined/string vacío
-        if (value === null || value === undefined || value === '') {
-            return '0.00';
-        }
-        
-        // Convertir a número
-        const num = Number(value);
-        
-        // Verificar si la conversión fue exitosa
-        if (isNaN(num)) {
-            console.warn('Valor no numérico recibido:', value);
-            return '0.00';
-        }
-        
-        // Manejar infinitos
-        if (!isFinite(num)) {
-            console.warn('Valor infinito recibido:', value);
-            return '0.00';
-        }
-        
-        // Truncar a 2 decimales
-        return (Math.trunc(num * 100) / 100).toFixed(2);
-    } catch (error) {
-        console.error('Error en truncateTo2Decimals:', error);
-        return '0.00';
+export const isValidNumber = (value) => {
+    if (value === null || value === undefined || value === '') {
+        return false;
     }
+    
+    // Convertir a string, reemplazar todo excepto números, punto decimal y signo negativo
+    const stringValue = String(value);
+    const cleanValue = stringValue.replace(/[^\d.-]/g, '');
+    
+    // Validar que solo haya un punto decimal
+    if ((cleanValue.match(/\./g) || []).length > 1) {
+        return false;
+    }
+    
+    // Validar que solo haya un signo negativo al inicio
+    if ((cleanValue.match(/-/g) || []).length > 1 || 
+        (cleanValue.includes('-') && !cleanValue.startsWith('-'))) {
+        return false;
+    }
+    
+    const num = Number(cleanValue);
+    return !Number.isNaN(num);
 };

@@ -564,6 +564,9 @@ CREATE TABLE calculo_dppp (
     monto_30_por_ciento DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT '30% Monto total efectivo -> monto_total_efectivo * 0.3',
     monto_70_por_ciento DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT '70% Monto total efectivo -> monto_total_efectivo * 0.7',
     comprobacion_monto DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Comprobación del monto total de financiamiento público para AOP',
+	-- Financiamiento Privado
+    finpriv_tope_presidencial DECIMAL(30,15) NULL COMMENT 'Tope de gastos para la elección presidencial inmediata anterior',
+    finpriv_tope_gubernatura DECIMAL(30,15) NULL COMMENT 'Tope de gastos para la elección presidencial inmediata anterior',
     -- -> monto_30_por_ciento * monto_70_por_ciento + monto_total_efectivo
 	created_at TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -574,9 +577,18 @@ DROP TABLE IF EXISTS calculo_partido_sin_repr;
 CREATE TABLE calculo_partido_sin_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
-    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso',
+     -- Cálculo
+    monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT '2% del FPAOP por partido sin representación en el congreso - también es C. de distribución',
+    -- Distribuciones
     D_monto_2_por_ciento DECIMAL(30,15) NOT NULL COMMENT 'Distribución -> monto_2_por_ciento * Factor de cálculo',
+    -- Ministraciones
     mintr_diciembre DECIMAL(30,15) NULL COMMENT 'Ministraciones - <<diciembre>> campo de ajuste de décimas de centavo',
+    -- Financiamiento Privado
+    finpriv_limite_finPrivado DECIMAL(30,15) NULL COMMENT '1. El límite de financiamiento privado de los institutos políticos',
+    finpriv_aportaciones_militantes DECIMAL(30,15) NULL COMMENT '2. Aportaciones en dinero y/o en especie de personas militantes',
+    finpriv_aportaciones_simpPres DECIMAL(30,15) NULL COMMENT '3. Las aportaciones de personas simpatizantes, elección Presidencial',
+    finpriv_aportaciones_simpGuber DECIMAL(30,15) NULL COMMENT '4. Las aportaciones de personas simpatizantes, elección a la Gubernatura',
+    finpriv_rendimientos DECIMAL(30,15) NULL COMMENT '5. El financiamiento por rendimientos financieros de los partidos políticos',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -588,7 +600,7 @@ DROP TABLE IF EXISTS calculo_partido_con_repr;
 CREATE TABLE calculo_partido_con_repr (
     id_calculo INT NOT NULL,
     id_partido INT NOT NULL,
-    -- Nuevos campos para distribución
+    -- Distribución
     porcentaje_votacion DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> % de votación por cada partido político en elección inmediata anterior de diputaciones',
     A_30_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> A. 30% en forma igualitaria',
     B_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> B. 70% conforme al % de votación',
@@ -596,7 +608,14 @@ CREATE TABLE calculo_partido_con_repr (
     B_Ajuste_70_por_ciento DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Total de B. 70% conforme al % de votación después del ajuste',
     C_fpaop DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades ordinarias permanentes (A+B)',
     D_fpatov DECIMAL(30,15) NULL DEFAULT 0.00 COMMENT 'Distribución -> Financiamiento público para actividades tendientes a la obtención del voto (D=C*Factor%)',
+    -- Ministraciones
     mintr_diciembre DECIMAL(30,15) NULL COMMENT 'Ministraciones - <<diciembre>> campo de ajuste de décimas de centavo',
+	-- Financiamiento Privado
+	finpriv_limite_finPrivado DECIMAL(30,15) NULL COMMENT '1. El límite de financiamiento privado de los institutos políticos',
+    finpriv_aportaciones_militantes DECIMAL(30,15) NULL COMMENT '2. Aportaciones en dinero y/o en especie de personas militantes',
+    finpriv_aportaciones_simpPres DECIMAL(30,15) NULL COMMENT '3. Las aportaciones de personas simpatizantes, elección Presidencial',
+    finpriv_aportaciones_simpGuber DECIMAL(30,15) NULL COMMENT '4. Las aportaciones de personas simpatizantes, elección a la Gubernatura',
+    finpriv_rendimientos DECIMAL(30,15) NULL COMMENT '5. El financiamiento por rendimientos financieros de los partidos políticos',
     PRIMARY KEY (id_calculo, id_partido),
     FOREIGN KEY (id_calculo) REFERENCES calculo_dppp(id_calculo)
 		ON DELETE RESTRICT,
@@ -1397,7 +1416,8 @@ BEGIN
 	-- Variable de usuario para la consulta
     SET @strQuery = "SELECT id_calculo AS 'id', anio_ejercicio AS 'anioFiscal', DATE_FORMAT(fecha_publicacion, '%Y-%m-%d') AS 'fecha_pub', uma, uma_65, personas_padron, financiamiento_aop, 
 		pp_sin_repr, pp_con_repr, pp_sin_repr_siglas, pp_con_repr_siglas, num_pp_sin_repr, num_pp_con_repr, 
-		total_fp_sin_repr, monto_total_efectivo, monto_30_por_ciento, monto_70_por_ciento, comprobacion_monto 
+		total_fp_sin_repr, monto_total_efectivo, monto_30_por_ciento, monto_70_por_ciento, comprobacion_monto,
+        finpriv_tope_presidencial, finpriv_tope_gubernatura
 		FROM calculo_dppp WHERE ? IS NULL OR id_calculo = ?;";
     SET @id = p_id_calculo;
 	PREPARE stmt FROM @strQuery;
@@ -1426,7 +1446,13 @@ BEGIN
 		psr.id_calculo, psr.id_partido, psr.monto_2_por_ciento,
         psr.D_monto_2_por_ciento,
         -- Datos de Ministraciones
-        psr.mintr_diciembre
+        psr.mintr_diciembre,
+        -- Financiamiento Privado
+        psr.finpriv_limite_finPrivado,
+        psr.finpriv_aportaciones_militantes,
+        psr.finpriv_aportaciones_simpPres,
+        psr.finpriv_aportaciones_simpGuber,
+        psr.finpriv_rendimientos
 		FROM calculo_partido_sin_repr psr 
         INNER JOIN cat_partido_sin_repr cat_psr ON psr.id_partido = cat_psr.id 
         WHERE psr.id_calculo = p_id_calculo;
@@ -1436,7 +1462,13 @@ BEGIN
 		pcr.id_calculo, pcr.id_partido, pcr.porcentaje_votacion, pcr.ajuste,
         pcr.A_30_por_ciento, pcr.B_70_por_ciento, pcr.B_Ajuste_70_por_ciento, pcr.C_fpaop, D_fpatov,
         -- Datos de Ministraciones
-        pcr.mintr_diciembre
+        pcr.mintr_diciembre,
+        -- Financiamiento Privado
+        pcr.finpriv_limite_finPrivado,
+        pcr.finpriv_aportaciones_militantes,
+        pcr.finpriv_aportaciones_simpPres,
+        pcr.finpriv_aportaciones_simpGuber,
+        pcr.finpriv_rendimientos
 		FROM calculo_partido_con_repr pcr
 		INNER JOIN cat_partido_con_repr cat_pcr ON pcr.id_partido = cat_pcr.id 
 		WHERE pcr.id_calculo = p_id_calculo;
@@ -1641,6 +1673,8 @@ END;
 DROP PROCEDURE IF EXISTS sp_GetDistribucionesPorAnio;
 DELIMITER //
 /*
+* @Description Optiene los cálculos, distribuciones, y Partidos con y sin representación
+* @param p_anio Año fiscal
 * @example CALL sp_GetDistribucionesPorAnio(2025);
 */
 CREATE PROCEDURE sp_GetDistribucionesPorAnio(IN p_anio INT)
@@ -1850,106 +1884,26 @@ BEGIN
 END;
 //DELIMITER ;
 
-DROP PROCEDURE IF EXISTS sp_Mintr_Get_Insert_Update_ministraciones_dppp;
+-- FINANCIAMIENTO PRIVADO
+DROP PROCEDURE IF EXISTS sp_FinPriv_Update_Partidos;
 DELIMITER //
 /*
-* @name Obtener o actualizar los datos del apartado de Ministraciones
-* @description
+* @name Actualizar datos de financiamiento privado para Partidos Politicos Con y Sin Representación en el Congreso
+* @description Actualiza un dato en común de los partidos <<p_>>
 * @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
-* @param p_comando -- 'UPDATE': Update, 'GET': Select, 'INSERT': Insert
-* @example 
-* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(true, 'GET', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-* CALL sp_Mintr_Get_Insert_Update_ministraciones_dppp(0, 'UPDATE', 1, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.851, 352684.85099999, 4232218.212);
-*/
-CREATE PROCEDURE sp_Mintr_Get_Insert_Update_ministraciones_dppp(
-	IN p_use_transaction BOOLEAN,
-    IN p_comando VARCHAR(6),
-	IN p_id_calculo INT UNSIGNED, -- Primary key
-    -- IN p_total_financiamiento DECIMAL (30,15), 
-	IN p_total_enero DECIMAL (30,15), 
-    IN p_total_febrero DECIMAL (30,15),
-    IN p_total_marzo DECIMAL (30,15), 
-    IN p_total_abril DECIMAL (30,15), 
-    IN p_total_mayo DECIMAL (30,15),
-    IN p_total_junio DECIMAL (30,15),
-    IN p_total_julio DECIMAL (30,15),
-    IN p_total_agosto DECIMAL (30,15),
-    IN p_total_septiembre DECIMAL (30,15), 
-    IN p_total_octubre DECIMAL (30,15),
-    IN p_total_noviembre DECIMAL (30,15), 
-    IN p_total_diciembre DECIMAL (30,15),
-    IN p_gran_total DECIMAL (30,15)
-)
-BEGIN
-    -- Manejador de errores
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-		IF p_use_transaction THEN
-			ROLLBACK;
-		END IF;
-		-- Propaga el error original
-		RESIGNAL;
-	END;
-    -- Inicia transacción si está habilitado
-    IF p_use_transaction THEN
-        START TRANSACTION;
-    END IF;
-    -- Inicia las consulta
-    IF p_comando = 'INSERT' OR p_comando = 'UPDATE' THEN
-		-- Verificar si ya existe un registro con el ID: p_id_calculo
-		SET @record_count = (SELECT COUNT(*) FROM ministraciones_dppp WHERE id_calculo = p_id_calculo);
-        IF @record_count = 0 THEN -- Si No existe 'INSERT'
-			INSERT INTO ministraciones_dppp(id_calculo, -- total_financiamiento, 
-				total_enero, total_febrero, total_marzo, total_abril, total_mayo, 
-				total_junio, total_julio, total_agosto, total_septiembre, total_octubre,
-				total_noviembre, total_diciembre,
-                gran_total
-				) VALUES
-                (p_id_calculo, -- p_total_financiamiento, 
-				p_total_enero, p_total_febrero, p_total_marzo, p_total_abril, p_total_mayo, 
-				p_total_junio, p_total_julio, total_agosto, p_total_septiembre, p_total_octubre,
-				p_total_noviembre, p_total_diciembre,
-                p_gran_total);
-			SELECT p_id_calculo AS id; -- Solo para retornar el ID
-        ELSE -- Si existe 'UPDATE'
-			UPDATE ministraciones_dppp SET id_calculo = p_id_calculo, -- total_financiamiento = p_total_financiamiento, 
-				total_enero = p_total_enero, total_febrero = p_total_febrero, total_marzo = p_total_marzo, total_abril = p_total_abril, total_mayo = p_total_mayo, 
-				total_junio = p_total_junio, total_julio = p_total_julio, total_agosto = p_total_agosto, total_septiembre = p_total_septiembre, total_octubre = p_total_octubre,
-				total_noviembre = p_total_noviembre, total_diciembre = p_total_diciembre,
-                gran_total = p_gran_total
-                WHERE id_calculo = p_id_calculo;
-			SELECT p_id_calculo AS id; -- Solo para retornar el ID
-		END IF;
-    ELSEIF p_comando = 'GET' THEN
-		SELECT id_calculo, -- total_financiamiento, 
-			total_enero, total_febrero, total_marzo, total_abril, total_mayo, 
-			total_junio, total_julio, total_agosto, total_septiembre, total_octubre,
-			total_noviembre, total_diciembre,
-            gran_total
-			FROM ministraciones_dppp WHERE id_calculo = p_id_calculo;
-	END IF;
-    -- Termina la consulta
-	IF p_use_transaction THEN
-        COMMIT;
-    END IF;
-END;
-//DELIMITER ;
-
-DROP PROCEDURE IF EXISTS sp_Mintr_Update_Partidos;
-DELIMITER //
-/*
-* @name Actualizar datos de distribución para Partidos Politicos Con y Sin Representación en el Congreso
-* @description Actualiza un dato en común de los partidos <<p_mintr_diciembre>>
-* @param p_use_transaction -- true: CALL desde Mysql, false: CALL desde Laravel
-* @
+* @param
 * @example
 */
-CREATE PROCEDURE sp_Mintr_Update_Partidos(
+CREATE PROCEDURE sp_FinPriv_Update_Partidos(
     IN p_use_transaction BOOLEAN,
 	IN p_id_calculo INT UNSIGNED,
     IN p_id_partido INT UNSIGNED,
     IN p_tipo_partido ENUM('CON','SIN'),
-    IN p_mintr_diciembre DECIMAL (30,15)
+    IN p_finpriv_limite_finPrivado DECIMAL (30,15),
+    IN p_finpriv_aportaciones_militantes DECIMAL (30,15),
+    IN p_finpriv_aportaciones_simpPres DECIMAL (30,15),
+    IN p_finpriv_aportaciones_simpGuber DECIMAL (30,15),
+    IN p_finpriv_rendimientos DECIMAL (30,15)
 )
 BEGIN
     -- Manejador de errores
@@ -1975,10 +1929,20 @@ BEGIN
 
     -- Empieza la sentencia para actualizar
 	IF p_tipo_partido = 'CON' THEN
-		UPDATE calculo_partido_con_repr SET mintr_diciembre = p_mintr_diciembre
+		UPDATE calculo_partido_con_repr SET 
+			finpriv_limite_finPrivado = p_finpriv_limite_finPrivado,
+			finpriv_aportaciones_militantes = p_finpriv_aportaciones_militantes,
+            finpriv_aportaciones_simpPres = p_finpriv_aportaciones_simpPres,
+            finpriv_aportaciones_simpGuber = p_finpriv_aportaciones_simpGuber,
+            finpriv_rendimientos = p_finpriv_rendimientos
 			WHERE id_calculo = p_id_calculo AND id_partido = p_id_partido;
 	ELSEIF p_tipo_partido = 'SIN' THEN
-		UPDATE calculo_partido_sin_repr SET mintr_diciembre =  p_mintr_diciembre
+		UPDATE calculo_partido_sin_repr SET
+			finpriv_limite_finPrivado = p_finpriv_limite_finPrivado,
+			finpriv_aportaciones_militantes = p_finpriv_aportaciones_militantes,
+            finpriv_aportaciones_simpPres = p_finpriv_aportaciones_simpPres,
+            finpriv_aportaciones_simpGuber = p_finpriv_aportaciones_simpGuber,
+            finpriv_rendimientos = p_finpriv_rendimientos
 			WHERE id_calculo = p_id_calculo AND id_partido = p_id_partido;
 	END IF;
     SELECT concat(p_tipo_partido, ' -> C:', p_id_calculo,'_P:', p_id_partido) AS 'ids';
@@ -1989,6 +1953,46 @@ BEGIN
 END;
 //DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS sp_FinPriv_Update_calculo;
+DELIMITER //
+/*
+* @name Actualizar datos de financiamiento privado
+* @description Actualiza los topes del financiamiento privado
+* @example
+*/
+CREATE PROCEDURE sp_FinPriv_Update_calculo(
+    IN p_use_transaction BOOLEAN,
+	IN p_id_calculo INT UNSIGNED,
+    IN p_finpriv_tope_presidencial DECIMAL(30,15),
+    IN p_finpriv_tope_gubernatura DECIMAL(30,15)
+)
+BEGIN
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		IF p_use_transaction THEN
+			ROLLBACK;
+		END IF;
+		-- Propaga el error original
+		RESIGNAL;
+	END;
+    
+    -- Inicia transacción si está habilitado
+    UPDATE calculo_dppp SET finpriv_tope_presidencial =  p_finpriv_tope_presidencial,
+		finpriv_tope_gubernatura = p_finpriv_tope_gubernatura;
+    SELECT p_id_calculo AS 'id';
+    
+    IF p_use_transaction THEN
+        START TRANSACTION;
+    END IF;
+	IF p_use_transaction THEN
+        COMMIT;
+    END IF;
+END;
+//DELIMITER ;
+
+-- FIN FINANCIAMIENTO PRIVADO
 
 /* FIN PROCEDURE */
 
