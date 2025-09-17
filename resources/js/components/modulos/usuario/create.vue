@@ -476,4 +476,4 @@ export default {
 .vs-loading__background {
     display: none !important;
 }
-</style>
+</style> 
