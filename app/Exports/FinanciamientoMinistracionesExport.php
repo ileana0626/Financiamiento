@@ -53,7 +53,9 @@ class FinanciamientoMinistracionesExport implements FromView, ShouldAutoSize, Wi
             //     'datos' => $data
             // ]);
             // Return an empty view since we're handling the Excel generation through registerEvents
-            return view('reportes.financiamiento.excel.empty');
+            return view('reportes.financiamiento.excel.FinanciamientoMinistraciones', [
+            'datos' => $data
+        ]);
     
         } catch (\Exception $e) {
             Log::error('Error en la generación de la vista de exportación', [

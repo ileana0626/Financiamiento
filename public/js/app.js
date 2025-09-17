@@ -10099,45 +10099,6 @@ var debug = function debug() {
         }, _callee3);
       }))();
     },
-    // #endregion CATÁLOGOS 📜
-    // #region CONSULTAS A LA BASE DE DATOS 📚
-    /** DEPRECATED
-     * Obtiene los calculos de financiamiento para listar
-     */
-    /*
-    getCalculos() {
-        const loader = loading(this.$vs);
-        loader.text = 'Cargando datos...';
-        let url = '/administracion/solicitud/getCalculosFinanciamiento';
-        this.NewlistCalculos = [];
-        axios.get(url).then((response) => {
-            if (response.data?.success) {
-                this.NewlistCalculos = response.data.calculos || [];
-            } else {
-                // success: false
-                const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
-                throw new Error(errorMessage);
-            }
-        }).catch((error) => {
-            console.error('Error al cargar cálculos:', error);
-            this.$vs.notification({
-                title: 'Error',
-                text: 'Error al cargar los cálculos',
-                color: 'danger'
-            });
-              let nombreMetodo = url.split('/');
-            methods.catchHandler(error, nombreMetodo[3], this.$router);
-        })
-            .finally(() => {
-                loader.close();
-            })
-    },
-    */
-    /** 
-     * Obtiene las distribuciones por año ✅
-     * Los partidos politicos estan mezclados en un solo array independientemente del año
-     * @param {number} anio - El año para obtener las distribuciones
-     */
     getDistribucionesPorAnio: function getDistribucionesPorAnio(anio) {
       var _this5 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
@@ -10299,7 +10260,7 @@ var debug = function debug() {
               datos = {
                 p_comando: "INSERT",
                 // INSERT, UPDATE
-                p_id_calculo: idCalculo,
+                p_id_calculo: id_calculo,
                 p_totales_mensuales_enero: totalesMensuales[0],
                 p_totales_mensuales_febrero: totalesMensuales[1],
                 p_totales_mensuales_marzo: totalesMensuales[2],
@@ -10362,7 +10323,7 @@ var debug = function debug() {
               _context6.next = 36;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
-                p_id_calculo: idCalculo,
+                p_id_calculo: id_calculo,
                 p_id_partido: partido.id_partido,
                 p_tipo_partido: p_tipoPartido,
                 p_mintr_diciembre: partido.mintr_diciembre
@@ -10418,7 +10379,7 @@ var debug = function debug() {
               _context6.next = 64;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Sin Representación
-                p_id_calculo: idCalculo,
+                p_id_calculo: id_calculo,
                 p_id_partido: _partido.id_partido,
                 p_tipo_partido: p_tipoPartido,
                 p_mintr_diciembre: _partido.mintr_diciembre
@@ -10473,7 +10434,7 @@ var debug = function debug() {
                 color: 'success',
                 text: 'Ministración guardada' + responseTotales.data.message
               });
-              _this7.descargar_disabled[idCalculo] = false; // Habilita descargar archivo
+              _this7.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
               _context6.next = 95;
               break;
             case 89:
@@ -10507,10 +10468,11 @@ var debug = function debug() {
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
       var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id_calculo);
+      console.log(apiUrl);
       var downloadUrl = null;
       var link = null;
-      if (this.id_calculo ? null : this.id_calculo === null || this.id_calculo === 0) {
-        throw new Error('❌ No se encontro el ID de la ministración');
+      if (!id_calculo || id_calculo === 0) {
+        throw new Error('❌ No se encontró el ID de la ministración');
       }
       // ⇋
       axios.get(apiUrl, {
@@ -10644,7 +10606,7 @@ var debug = function debug() {
           partido.sumado = true;
         } else {
           this.$vs.notification({
-            title: 'Aviso',
+            title: 'Error',
             text: 'Primero debes restar a otro partido antes de sumar.',
             color: 'danger'
           });
@@ -10686,9 +10648,9 @@ var debug = function debug() {
           partido.mintr_diciembre = actual.toNumber(); // actualiza el valor del monto de diciembre
         } else {
           this.$vs.notification({
-            title: 'Atención',
+            title: 'Error',
             text: 'Primero debes restar a otro partido antes de sumar.',
-            color: 'warning'
+            color: 'danger'
           });
         }
       } else if (operacion === 'restar') {
@@ -233140,7 +233102,7 @@ var isValidNumber = function isValidNumber(value) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\wamp64\www\25_IEE_Ileana\Financiamiento\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\github\Financiamiento\resources\js\app.js */"./resources/js/app.js");
 
 
 /***/ })
