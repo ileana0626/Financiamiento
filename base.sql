@@ -566,7 +566,7 @@ CREATE TABLE calculo_dppp (
     comprobacion_monto DECIMAL(30,15) NOT NULL DEFAULT 0.00 COMMENT 'Comprobación del monto total de financiamiento público para AOP',
 	-- Financiamiento Privado
     finpriv_tope_presidencial DECIMAL(30,15) NULL COMMENT 'Tope de gastos para la elección presidencial inmediata anterior',
-    finpriv_tope_gubernatura DECIMAL(30,15) NULL COMMENT 'Tope de gastos para la elección presidencial inmediata anterior',
+    finpriv_tope_gubernatura DECIMAL(30,15) NULL COMMENT 'Tope de gastos para la elección gubernatura inmediata anterior',
     -- -> monto_30_por_ciento * monto_70_por_ciento + monto_total_efectivo
 	created_at TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
