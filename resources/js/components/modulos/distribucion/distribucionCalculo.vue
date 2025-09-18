@@ -945,7 +945,7 @@ export default {
         /*
         * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
         * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
-         */
+        */
         calcularMontoProporcionalB(porcentajePartido) {
             const porcentaje = parseFloat(porcentajePartido);
             const totalPorcentajes = this.sumaTotalPorcentajes;

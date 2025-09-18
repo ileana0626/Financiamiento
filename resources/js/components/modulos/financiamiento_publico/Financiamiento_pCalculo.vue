@@ -159,22 +159,6 @@
                                                     <vs-td class="col-desc">
                                                         Tope de gastos para la elección presidencial inmediata anterior
                                                     </vs-td>
-                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                                        :key="'topeConRep-' + partido.id + '-' + i"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesConRep', i)"
-                                                            @input="updateValue(this.selectedCalculo ,'topesConRep', i, $event)"
-                                                            @focus="setFocus('topesConRep', i)" @blur="clearFocus"
-                                                            placeholder="$0.00" />
-                                                    </vs-td>
-                                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                                        :key="'topeSinRep-' + partidoS.id + '-' + i"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesSinRep', i)"
-                                                            @input="updateValue(this.selectedCalculo,'topesSinRep', i, $event)"
-                                                            @focus="setFocus('topesSinRep', i)" @blur="clearFocus"
-                                                            placeholder="$0.00" />
-                                                    </vs-td> -->
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topePresidencialInput"
                                                             :key="'txb_tope_presidencial'"
@@ -214,22 +198,6 @@
                                                         Tope de gastos para la elección inmediata anterior de
                                                         Gubernatura del Estado
                                                     </vs-td>
-                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                                        :key="'topeConRepGob-' + (partido.id || i)"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesConRepGobernatura', i)"
-                                                            @input="updateValue(this.selectedCalculo, 'topesConRepGobernatura', i, $event)"
-                                                            @focus="setFocus('topesConRepGobernatura', i)"
-                                                            @blur="clearFocus" placeholder="$0.00" />
-                                                    </vs-td>
-                                                    <vs-td v-for="(partido, i) in Partidos_Sin_Representacion"
-                                                        :key="'topeSinRepGob-' + (partido.id || i)"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesSinRepGobernatura', i)"
-                                                            @input="updateValue(this.selectedCalculo,'topesSinRepGobernatura', i, $event)"
-                                                            @focus="setFocus('topesSinRepGobernatura', i)"
-                                                            @blur="clearFocus" placeholder="$0.00" />
-                                                    </vs-td> -->
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topeGubernaturaInput"
                                                             :key="'txb_tope_gubernatura'"

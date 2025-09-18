@@ -8708,7 +8708,7 @@ var debug = function debug() {
     /*
     * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
     * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
-     */
+    */
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
       var porcentaje = parseFloat(porcentajePartido);
       var totalPorcentajes = this.sumaTotalPorcentajes;
