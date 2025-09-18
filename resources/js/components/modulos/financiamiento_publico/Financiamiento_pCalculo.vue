@@ -743,10 +743,15 @@ export default {
             const loader = loading(this.$vs);
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
             // debug('🐛 Calculo seleccionado:', calculo_tr);
+            this.limpiarCampos(); // 🧹
             this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+            this.topePresidencial = Number(calculo_tr.finpriv_tope_presidencial) || 0;
+            this.$set(this, 'topePresidencialInput', formatoMonedaLocal(Number(calculo_tr.finpriv_tope_presidencial) || 0));
+            this.topeGubernatura = Number(calculo_tr.finpriv_tope_gubernatura) || 0;
+            this.$set(this, 'topeGubernaturaInput', formatoMonedaLocal(Number(calculo_tr.finpriv_tope_gubernatura) || 0));
             this.Partidos_Sin_Representacion = [];
             this.Partidos_Con_Representacion = [];
-            this.limpiarCampos(); // 🧹
+            
             this.active = true; // activa el modal
             loader.text = 'Cargando datos...';
             //Obtener los datos principales del Cálculo Financiero
@@ -1038,6 +1043,7 @@ export default {
          * @returns {void}
          */
         limpiarCampos() {
+            this.selectedCalculo = null;
             this.topePresidencial = 0,
             this.topeGubernatura = 0,
             this.errorTopePresidencial = '',

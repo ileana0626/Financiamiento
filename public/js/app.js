@@ -9579,10 +9579,14 @@ var debug = function debug() {
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
       // debug('🐛 Calculo seleccionado:', calculo_tr);
+      this.limpiarCampos(); // 🧹
       this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
+      this.topePresidencial = Number(calculo_tr.finpriv_tope_presidencial) || 0;
+      this.$set(this, 'topePresidencialInput', Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatoMonedaMX"])(Number(calculo_tr.finpriv_tope_presidencial) || 0));
+      this.topeGubernatura = Number(calculo_tr.finpriv_tope_gubernatura) || 0;
+      this.$set(this, 'topeGubernaturaInput', Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatoMonedaMX"])(Number(calculo_tr.finpriv_tope_gubernatura) || 0));
       this.Partidos_Sin_Representacion = [];
       this.Partidos_Con_Representacion = [];
-      this.limpiarCampos(); // 🧹
       this.active = true; // activa el modal
       loader.text = 'Cargando datos...';
       //Obtener los datos principales del Cálculo Financiero
@@ -9862,6 +9866,7 @@ var debug = function debug() {
      * @returns {void}
      */
     limpiarCampos: function limpiarCampos() {
+      this.selectedCalculo = null;
       this.topePresidencial = 0, this.topeGubernatura = 0, this.errorTopePresidencial = '', this.errorTopeGubernatura = '', this.topesSinRep = '', this.topesConRep = [];
       this.descargar_disabled = false; // Deshabilita el botón de descargar
       this.limpiarErrores();
