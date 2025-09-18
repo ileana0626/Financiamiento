@@ -42,13 +42,13 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
     {
         try {
             //Convertimos los datos a objetos
-            $data = (object) [
+            /* $data = (object) [
                 'calculo' => (object) $this->datos['calculo'],
                 'finan_Privado' => (object) $this->datos['finan_Privado'],
                 'partidos_sin_rep' => (array) $this->datos['partidos_sin_rep'],
                 'partidos_con_rep' => (array) $this->datos['partidos_con_rep']
             ];
-            Log::info('Datos para la exportación:', ['data' => json_decode(json_encode($data), true)]);
+            Log::info('Datos para la exportación:', ['data' => json_decode(json_encode($data), true)]); */
             //return view('reportes.financiamiento.excel.FinanciamientoPrivado', ['datos' => $data]);
             return view('reportes.financiamiento.excel.empty');
         } catch (\Exception $e) {
