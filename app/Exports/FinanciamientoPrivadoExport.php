@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Mockery\Undefined;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvents, WithStyles
 {
@@ -49,8 +50,7 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
             ];*/
             /*Log::info('Datos para la exportación:', ['data' => json_decode(json_encode($data), true)]);*/
             //return view('reportes.financiamiento.excel.FinanciamientoPrivado', ['datos' => $data]);
-            //return view('reportes.financiamiento.excel.FinanciamientoPrivado');
-            return view('reportes.financiamiento.excel.FinanciamientoPrivado');
+            return view('reportes.financiamiento.excel.empty');
         } catch (\Exception $e) {
             Log::error('Error en la generación de la vista de exportación', [
                 'error' => $e->getMessage()
@@ -66,9 +66,10 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
                 'name' => 'Calibri',
                 'size' => 10,
             ],
-            'alignment' => [
-                'wrapText' => true,
-            ],
+            // 'alignment' => [
+            //     'wrapText' => true,
+            //     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+            // ],
         ]);
         $sheet->getStyle('B1:Z1000')->applyFromArray([
             'alignment' => [
@@ -79,7 +80,7 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
 
          // Ajustar el ancho de las columnas
          $sheet->getColumnDimension('A')->setAutoSize(false);
-         $sheet->getColumnDimension('A')->setWidth(30);
+         $sheet->getColumnDimension('A')->setWidth(36);
          $sheet->getColumnDimension('B')->setAutoSize(false);
          $sheet->getColumnDimension('B')->setWidth(2);
 
@@ -120,56 +121,77 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
                 $sheet->getStyle('A2')
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER)
-                    ->setVertical(Alignment::VERTICAL_CENTER);
-                $sheet->getRowDimension(2)->setRowHeight(40);
+                    ->setVertical(Alignment::VERTICAL_CENTER)
+                    ->setWrapText(true);
+                $sheet->getRowDimension(2)->setRowHeight(48);
 
-                // ***** Formateando Textos *****
-                $sheet->setCellValue('A6', $this->crearTexto_0($anio));
-                $sheet->setCellValue('A8', $this->crearTexto_1());
-                $sheet->setCellValue('A10', $this->crearTexto_2());
-                // Combinar filas
-                $sheet->mergeCells('A10:' . 'A11');
-                // Combinar columnas
-                $sheet->mergeCells('C10:' . $endColumn . '10');
-                $sheet->setCellValue('A12', $this->crearTexto_3());
-                // Combinar filas
-                $sheet->mergeCells('A12:' . 'A13');
-                // Combinar columnas
-                $sheet->mergeCells('C12:' . $endColumn . '12');
-                $sheet->setCellValue('A14', $this->crearTexto_4());
-                // Combinar filas
-                $sheet->mergeCells('A14:' . 'A15');
-                // Combinar columnas
-                $sheet->mergeCells('C14:' . $endColumn . '14');
-                $sheet->setCellValue('A16', $this->crearTexto_5());
-                // Combinar filas
-                $sheet->mergeCells('A16:' . 'A17');
-                // Combinar columnas
-                $sheet->mergeCells('C16:' . $endColumn . '16');
-                $sheet->setCellValue('A19', $this->crearFooter());
-                // Combinar columnas
-                $sheet->mergeCells('A19:' . $endColumn . '19');
+                //Definimos el estilo de los bordes arriba y abajo
+                $bordeEstilo = [
+                    'borders' => [
+                        'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFAE8700']],
+                        'bottom' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => 'FFAE8700']]
+                    ]
+                ];
 
+                // Estilo de envoltura a las celdas combinadas por filas
                 $wrapStyle = [
                     'alignment' => [
                         'wrapText' => true,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Alinea el texto en la parte superior
                     ]
                 ];
+
+                // ***** Formateando Textos *****
+                $sheet->setCellValue('A6', $this->crearTexto_0($anio));
+
+                $sheet->setCellValue('A8', $this->crearTexto_1());
+
+                $sheet->setCellValue('A10', $this->crearTexto_2());
+                // Combinar filas
+                $sheet->mergeCells('A10:' . 'A11');
+                $sheet->getRowDimension(11)->setRowHeight(228);
+                // $sheet->getStyle('A10:' . 'A11')->applyFromArray($wrapStyle); // Ejemplo de envoltura a filas combinadas
+                // Combinar columnas
+                $sheet->mergeCells('C10:' . $endColumn . '10');
+                $sheet->getStyle('C10:' . $endColumn . '10')->applyFromArray($bordeEstilo);
+
+                $sheet->setCellValue('A13', $this->crearTexto_3());
+                // Combinar filas
+                $sheet->mergeCells('A13:' . 'A14');
+                $sheet->getRowDimension(14)->setRowHeight(108);
+                // Combinar columnas
+                $sheet->mergeCells('C13:' . $endColumn . '13');
+                $sheet->getStyle('C13:' . $endColumn . '13')->applyFromArray($bordeEstilo);
+
+                $sheet->setCellValue('A16', $this->crearTexto_4());
+                // Combinar filas
+                $sheet->mergeCells('A16:' . 'A17');
+                $sheet->getRowDimension(17)->setRowHeight(92);
+                // Combinar columnas
+                $sheet->mergeCells('C16:' . $endColumn . '16');
+                $sheet->getStyle('C16:' . $endColumn . '16')->applyFromArray($bordeEstilo);
+
+                $sheet->setCellValue('A19', $this->crearTexto_5());
+                // Combinar filas
+                $sheet->mergeCells('A19:' . 'A20');
+                $sheet->getRowDimension(20)->setRowHeight(92);
+                // Combinar columnas
+                $sheet->mergeCells('C19:' . $endColumn . '19');
+                $sheet->getStyle('C19:' . $endColumn . '19')->applyFromArray($bordeEstilo);
+
+                $sheet->setCellValue('A22', $this->crearFooter());
+                // Combinar columnas
+                $sheet->mergeCells('A22:' . $endColumn . '22');
+
                 // Aplicamos el estilo de envoltura a las celdas
-                $sheet->getStyle('A6:A16')->applyFromArray($wrapStyle);
+                $sheet->getStyle('A6:A22')->applyFromArray($wrapStyle);
 
                 // ***** Agregando Partidos Con Representación***** Empieza desde C5
                 $sheet->getRowDimension(4)->setRowHeight(30);
-                //$this->procesarPartidos($sheet, 'C', 4);
+                $this->procesarPartidos($sheet, 'C', 4);
 
-                // for ($i = 1; $i <= $numPP; $i++) {
-
-                //     $sheet->getStyle('A'.($i * 2))
-                //         ->getAlignment()
-                //         ->setHorizontal(Alignment::HORIZONTAL_CENTER)
-                //         ->setVertical(Alignment::VERTICAL_CENTER);
-                // }
-
+                // Zoom de la interfaz de Excel
+                $sheet->getSheetView()->setZoomScale(90);
             }
         ];
     }
@@ -271,21 +293,24 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
     private function procesarPartidos($sheet, $colInit, $rowInit)
     {
         $col = $colInit;
-        
+        // Obtenemos los datos o cálculos que se van a presentar en el Excel
+        $calculo = $this->datos['calculo'];
+        $financiamiento_aop = $calculo['financiamiento_aop']; // Monto Total de Financiamiento Público a distribuir entre los partidos políticos.
+        $tope_presidencial = $calculo['finpriv_tope_presidencial']; // Tope de gastos para la elección presidencial inmediata anterior
+        $tope_gubernatura = $calculo['finpriv_tope_gubernatura']; // Tope de gastos para la elección gubernatura inmediata anterior
         $partidos = [...$this->datos['partidos_con_rep'],...$this->datos['partidos_sin_rep']]; // mezcla los arreglos
 
-        // Encabezados, logos de los partidos
+        // Recorremos los partidos de izquierda a derecha de forma dinámica
         foreach ($partidos as $key => $partido) {
             $row = $rowInit;
             // ***** Logo *****
             //$sheet->setCellValue($col . $row, $partido->siglas); // Siglas
             $sheet->getColumnDimension($col)->setWidth(20);
             $this->procesarLogo($sheet, $col, $row, $partido);
-            $sheet->getStyle($col . $row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFAE8700'); // Color #AE8700 
-            
+            $sheet->getStyle($col . $row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFAE8700'); // Color #AE8700
 
             // ***** Financiamiento público para actividades ordinarias permanentes *****
-            $row = $row + 2; // Avanza 2 filas
+            $row = $row + 2; // Avanza 2 filas hacia abajo
             $value = $partido->C_fpaop ?? $partido->monto_2_por_ciento ?? 'Valor no disponible';
             $sheet->setCellValue($col . $row, $value);
             if (isset($partido->C_fpaop) && $partido->C_fpaop !== null) {
@@ -297,7 +322,7 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
             }
             $sheet->setCellValue($col . $row, $value); // Asignamos el valor de Financiamiento público
              // Aplicar formato de moneda
-             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
+            $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
         
             // ***** 1. El límite de financiamiento privado de los institutos políticos
             $row = $row + 2;
@@ -305,31 +330,55 @@ class FinanciamientoPrivadoExport implements FromView, ShouldAutoSize, WithEvent
             // Aplicar formato de moneda
             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
             
+            // TOTAL DE FINANCIAMIENTO PÚBLICO PARA ACTIVIDADES ORDINARIAS PERMANENTES PARA EL AÑO ???? 
+            $sheet->setCellValue('C10', $financiamiento_aop);
+            // Aplicar formato de moneda
+            $sheet->getStyle('C10')->getNumberFormat()->setFormatCode('"2% DE "$#,##0.00');
+            $sheet->getStyle('C10')->getFont()->setBold(true);
+
             // ***** 2. Las aportaciones en dinero y/o en especie de personas militantes
-            $row = $row + 2;
+            $row = $row + 3;
             $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_militantes ?? 'Valor no disponible');
             // Aplicar formato de moneda
             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
 
+            // Tope de gastos para la elección presidencial inmediata anterior
+            $sheet->setCellValue('C13', $tope_presidencial);
+            // Aplicar formato de moneda
+            $sheet->getStyle('C13')->getNumberFormat()->setFormatCode('"5% DE "$#,##0.00');
+            $sheet->getStyle('C13')->getFont()->setBold(true);
+
             // ***** 3. Las aportaciones en dinero o en especie de personas simpatizantes
-            $row = $row + 2;
+            $row = $row + 3;
             $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_simpPres ?? 'Valor no disponible');
             // Aplicar formato de moneda
             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
             
+            // Tope de gastos para la elección gubernatura inmediata anterior
+            $sheet->setCellValue('C16', $tope_gubernatura);
+            // Aplicar formato de moneda
+            $sheet->getStyle('C16')->getNumberFormat()->setFormatCode('"5% DE "$#,##0.00');
+            $sheet->getStyle('C16')->getFont()->setBold(true);
+            
             // ***** 4. Las aportaciones que en dinero realice cada persona simpatizante
-            $row = $row + 2;
+            $row = $row + 3;
             $sheet->setCellValue($col . $row, $partido->finpriv_aportaciones_simpGuber ?? 'Valor no disponible');
             // Aplicar formato de moneda
             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
 
+            // Tope de gastos para la elección gubernatura inmediata anterior
+            $sheet->setCellValue('C19', $tope_gubernatura);
+            // Aplicar formato de moneda
+            $sheet->getStyle('C19')->getNumberFormat()->setFormatCode('"5% DE "$#,##0.00');
+            $sheet->getStyle('C19')->getFont()->setBold(true);
+
             // ***** 5.  El financiamiento por rendimientos financieros de los partidos políticos
-            $row = $row + 2;
+            $row = $row + 3;
             $sheet->setCellValue($col . $row, $partido->finpriv_rendimientos ?? 'Valor no disponible');
             // Aplicar formato de moneda
             $sheet->getStyle($col . $row)->getNumberFormat()->setFormatCode('[Red]$#,##0.00_);[Blue]($#,##0.00)');
             
-            // Avanzamos a la siguiente columna
+            // Avanzamos a la siguiente columna, Columna de división
             $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1); // avanza una columna
             $sheet->getColumnDimension($col)->setWidth(2); // asigna un ancho de 2 caracteres a la columna
             $col = Coordinate::stringFromColumnIndex( Coordinate::columnIndexFromString($col) + 1); // avanza una columna
