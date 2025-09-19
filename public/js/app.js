@@ -8181,7 +8181,7 @@ var debug = function debug() {
               restado: false,
               // valor temporal para el input
               inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
-              // Variable temporarl en el Front
+              // Variable temporal en el Front
               errorPorcentajeVotacion: '' // Variable temporarl en el Front
             });
           });
@@ -8706,16 +8706,21 @@ var debug = function debug() {
       }
     },
     /*
-    * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
-    * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+    * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones
+    * ENTRE % de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
      */
     calcularMontoProporcionalB: function calcularMontoProporcionalB(porcentajePartido) {
-      var porcentaje = parseFloat(porcentajePartido);
-      var totalPorcentajes = this.sumaTotalPorcentajes;
+      // Hay que convertir el porcentaje de 18.75% a 0.1875 como el ejemplo en Excel
+      var porcentaje = parseFloat(porcentajePartido) / 100;
+      // Hay que convertir el porcentaje de 88.22185% a 0.1875 como el ejemplo en Excel 
+      var totalPorcentajes = this.sumaTotalPorcentajes / 100;
+      //debug('🐛 totalPorcentajes: ', totalPorcentajes);
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-      return monto * porcentaje / totalPorcentajes;
+      debug('🐛 monto: ', monto, ' * (porcentaje: ', porcentaje, ' / totalPorcentajes: ', totalPorcentajes, ')');
+      debug('🐛 Resultado: ', monto * (porcentaje / totalPorcentajes));
+      return monto * (porcentaje / totalPorcentajes);
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);
@@ -8780,7 +8785,7 @@ var debug = function debug() {
     formatearPorcentaje: function formatearPorcentaje(valor) {
       if (!valor) return '0.00000 %';
       var numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-      return isNaN(numero) ? '0.00000 %' : numero.toFixed(5) + ' %';
+      return isNaN(numero) ? '0.00000 %' : numero.toFixed(2) + ' %';
     },
     /*
     * Formatea a decimal
@@ -8799,13 +8804,14 @@ var debug = function debug() {
     */
     onBlurPorcentaje: function onBlurPorcentaje(partido) {
       var valorCrudo = partido.inputPorcentaje;
+      // Verifica si el valor es nulo o vacío
       if (!valorCrudo) {
         partido.inputPorcentaje = ''; // input vacío, no mostrar nada
         partido.porcentaje_votacion = 0;
         return;
       }
 
-      // Obtener número completo del input
+      // Obtener número completo del input limpiandolo
       var valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
 
       // Guardar valor completo para los cálculos
@@ -8900,6 +8906,7 @@ var debug = function debug() {
       return this.Partidos_Con_Representacion.reduce(function (total, partido) {
         // Convierte a número y evita NaN si el input está vacío
         var valor = parseFloat(partido.porcentaje_votacion);
+        debug('🐛 Partido: ', partido.siglas, 'porcentaje_votacion: ', valor);
         return total + (isNaN(valor) ? 0 : valor);
       }, 0); //.toFixed(2);
     },
@@ -21995,7 +22002,15 @@ var render = function render() {
               "text-danger": partido.ajuste < 0
             }
           }, [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoBConAjuste(partido.porcentaje_votacion, partido.ajuste))) + "\n                                    ")])]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoC(partido))) + "\n                                    ")]), _vm._v(" "), _vm.distribucion.includes(2) ? _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.calcularMontoD(partido))) + "\n                                    ")]) : _vm._e()], 1);
-        }), _vm._v(" "), _c("vs-tr", {
+        }), _vm._v(" "), _c("vs-tr", [_c("vs-td", {
+          attrs: {
+            colspan: "2"
+          }
+        }), _vm._v(" "), _c("vs-td", [_c("span", [_vm._v(_vm._s(_vm.sumaTotalPorcentajes + " %"))])]), _vm._v(" "), _c("vs-td", {
+          attrs: {
+            colspan: "5"
+          }
+        })], 1), _vm._v(" "), _c("vs-tr", {
           staticClass: "font-weight-bold bg-light"
         }, [_c("vs-td", {
           staticClass: "text-right",
@@ -22087,7 +22102,7 @@ var render = function render() {
         }, [_vm._v("Gran total:")]), _vm._v(" "), _c("vs-td", [_vm._v("\n                                        " + _vm._s(_vm.formatoMoneda(_vm.granTotal)) + "\n                                    ")])], 1)];
       },
       proxy: true
-    }], null, false, 1963411703)
+    }], null, false, 2826615687)
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 px-3 d-flex justify-content-center flex-column flex-md-row mt-4"
   }, [_c("div", {

@@ -265,6 +265,14 @@
                                             {{ formatoMoneda(calcularMontoD(partido))}}
                                         </vs-td>
                                     </vs-tr>
+                                    <!-- Totales de porcentajes y montos de columnas-->
+                                    <vs-tr>
+                                        <vs-td colspan="2"></vs-td>
+                                        <vs-td>
+                                            <span>{{sumaTotalPorcentajes + ' %'}}</span>
+                                        </vs-td>
+                                        <vs-td colspan="5"></vs-td>
+                                    </vs-tr>
                                     <!-- Subtotal para partidos con representación -->
                                     <vs-tr class="font-weight-bold bg-light">
                                     <vs-td colspan="6" class="text-right">Subtotal partidos con representación:</vs-td>
@@ -554,7 +562,7 @@ export default {
                         // valor temporal para el input
                         inputPorcentaje: p.porcentaje_votacion != null ? parseFloat(p.porcentaje_votacion).toFixed(2) + ' %' : '',
 
-                        // Variable temporarl en el Front
+                        // Variable temporal en el Front
                         errorPorcentajeVotacion: '' // Variable temporarl en el Front
                     }));
                 } else {
@@ -943,16 +951,21 @@ export default {
             }
         },
         /*
-        * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones)
-        * ENTRE (% de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
+        * (Monto Total Efectivo (70%)) POR (% de votación por cada partido político en elección inmediata anterior de diputaciones
+        * ENTRE % de votación de TODOS los partidos políticos en elección inmediata anterior de diputaciones)
          */
         calcularMontoProporcionalB(porcentajePartido) {
-            const porcentaje = parseFloat(porcentajePartido);
-            const totalPorcentajes = this.sumaTotalPorcentajes;
+            // Hay que convertir el porcentaje de 18.75% a 0.1875 como el ejemplo en Excel
+            const porcentaje = parseFloat(porcentajePartido) / 100;
+            // Hay que convertir el porcentaje de 88.22185% a 0.1875 como el ejemplo en Excel 
+            const totalPorcentajes = this.sumaTotalPorcentajes / 100;
+            //debug('🐛 totalPorcentajes: ', totalPorcentajes);
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
             
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            return (monto * porcentaje) / totalPorcentajes;
+            debug('🐛 monto: ', monto, ' * (porcentaje: ', porcentaje, ' / totalPorcentajes: ', totalPorcentajes,')');
+            debug('🐛 Resultado: ', monto * (porcentaje / totalPorcentajes));
+            return (monto * (porcentaje / totalPorcentajes));
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
@@ -1016,7 +1029,7 @@ export default {
         formatearPorcentaje(valor) {
             if (!valor) return '0.00000 %';
             const numero = parseFloat(valor.toString().replace(/[^0-9.]/g, ''));
-            return isNaN(numero) ? '0.00000 %' : numero.toFixed(5) + ' %';
+            return isNaN(numero) ? '0.00000 %' : numero.toFixed(2) + ' %';
         },
         /*
         * Formatea a decimal
@@ -1035,14 +1048,14 @@ export default {
         */
         onBlurPorcentaje(partido) {
             const valorCrudo = partido.inputPorcentaje;
-
+            // Verifica si el valor es nulo o vacío
             if (!valorCrudo) {
                 partido.inputPorcentaje = ''; // input vacío, no mostrar nada
                 partido.porcentaje_votacion = 0;
                 return;
             }
 
-            // Obtener número completo del input
+            // Obtener número completo del input limpiandolo
             const valorNumerico = parseFloat(valorCrudo.toString().replace(/[^0-9.]/g, ''));
 
             // Guardar valor completo para los cálculos
@@ -1143,6 +1156,7 @@ export default {
             return this.Partidos_Con_Representacion.reduce((total, partido) => {
                 // Convierte a número y evita NaN si el input está vacío
                 const valor = parseFloat(partido.porcentaje_votacion);
+                debug('🐛 Partido: ', partido.siglas, 'porcentaje_votacion: ', valor);
                 return total + (isNaN(valor) ? 0 : valor);
             }, 0);//.toFixed(2);
         },
