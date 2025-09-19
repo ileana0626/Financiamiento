@@ -4935,7 +4935,6 @@ __webpack_require__.r(__webpack_exports__);
           throw new Error(errorMessage);
         }
       })["catch"](function (error) {
-        console.error('Error al cargar cálculos:', error);
         _this2.$vs.notification({
           title: 'Error',
           text: 'Error al cargar los cálculos',
@@ -4982,7 +4981,6 @@ __webpack_require__.r(__webpack_exports__);
         link.href = url;
 
         // Establecer el nombre del archivo
-        //const filename = `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`;
         var filename = "Anexo 1. C\xE1lculo.xlsx";
         link.setAttribute('download', filename);
 
@@ -5000,7 +4998,6 @@ __webpack_require__.r(__webpack_exports__);
         });
       })["catch"](function (error) {
         var _error$response;
-        console.error('Error al exportar a Excel:', error);
         var errorMessage = 'Error al exportar a Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
@@ -7969,10 +7966,10 @@ var methods = __webpack_require__(/*! ../../../methods */ "./resources/js/method
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../methods */ "./resources/js/methods.js");
 /* harmony import */ var _methods__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_methods__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -7996,7 +7993,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
  * 🐛 Función para depuración development
  * @param {...any} args - Uno o más mensajes a mostrar en consola
  * @example
- * debug('Mensaje de prueba', {data: 123});
  */
 var debug = function debug() {
   if (true) {
@@ -8170,7 +8166,6 @@ var debug = function debug() {
         }
       }).then(function (response) {
         var _response$data3;
-        debug('🐛 Datos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
           _this5.Partidos_Sin_Representacion = response.data.partidosSinRep;
@@ -8347,43 +8342,31 @@ var debug = function debug() {
             case 7:
               response = _context4.sent;
               // ⇋ Se manda post aunque sea GET por el controlador
-              debug('🐛 response.data:', response.data);
               // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
-              if (!(response.data && response.data.success && response.data.distribucion.length > 0)) {
-                _context4.next = 24;
-                break;
+              if (response.data && response.data.success && response.data.distribucion.length > 0) {
+                _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
+                _this8.distribucionId = _this8.DataDistribucion.id_calculo;
+                // Empieza a cargar los datos guardados
+                _this8.anio = _this8.DataDistribucion.anio_ejercicio; // asigna año
+                if ((_this8$DataDistribuci = _this8.DataDistribucion) !== null && _this8$DataDistribuci !== void 0 && _this8$DataDistribuci.tipo_distribucion) {
+                  _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
+                    return !isNaN(item);
+                  });
+                }
+                _this8.monto30Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_30_por_ciento);
+                _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
+                _this8.monto70Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_70_por_ciento);
+                _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
+                _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
+                _this8.$nextTick(function () {});
+                if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
+                  _this8.descargar_disabled = false;
+                }
               }
-              _this8.DataDistribucion = response.data.distribucion[0]; // Solo con GET
-              _this8.distribucionId = _this8.DataDistribucion.id_calculo;
-              // Empieza a cargar los datos guardados
-              _this8.anio = _this8.DataDistribucion.anio_ejercicio; // asigna año
-              if ((_this8$DataDistribuci = _this8.DataDistribucion) !== null && _this8$DataDistribuci !== void 0 && _this8$DataDistribuci.tipo_distribucion) {
-                _this8.distribucion = _this8.DataDistribucion.tipo_distribucion.split(',').map(Number).filter(function (item) {
-                  return !isNaN(item);
-                });
-              }
-              _this8.monto30Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_30_por_ciento);
-              _this8.monto30 = _this8.DataDistribucion.monto_30_por_ciento;
-              _this8.monto70Input = _this8.formatoMoneda(_this8.DataDistribucion.monto_70_por_ciento);
-              _this8.monto70 = _this8.DataDistribucion.monto_70_por_ciento;
-              _this8.opcionSelecionadaPorcentaje = String(_this8.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
-              _this8.$nextTick(function () {
-                debug('🐛 Factor de porcentaje: ', _this8.factorCalculo, 'Opción seleccionada: ', _this8.opcionSelecionadaPorcentaje, 'tipo:', _typeof(_this8.opcionSelecionadaPorcentaje));
-              });
-              if (((_this8$distribucionId = _this8.distribucionId) !== null && _this8$distribucionId !== void 0 ? _this8$distribucionId : null) !== null) {
-                _this8.descargar_disabled = false;
-              }
-              debug('✅ Distribución cargada.');
-              _context4.next = 26;
+              _context4.next = 17;
               break;
-            case 24:
-              debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
-              return _context4.abrupt("return");
-            case 26:
-              _context4.next = 34;
-              break;
-            case 28:
-              _context4.prev = 28;
+            case 11:
+              _context4.prev = 11;
               _context4.t0 = _context4["catch"](4);
               console.error('Error al cargar distribución', _context4.t0);
               _this8.$vs.notification({
@@ -8393,15 +8376,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this8.$router);
-            case 34:
-              _context4.prev = 34;
+            case 17:
+              _context4.prev = 17;
               loader.close();
-              return _context4.finish(34);
-            case 37:
+              return _context4.finish(17);
+            case 20:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[4, 28, 34, 37]]);
+        }, _callee4, null, [[4, 11, 17, 20]]);
       }))();
     },
     guardarDistribucion: function guardarDistribucion() {
@@ -8448,138 +8431,131 @@ var debug = function debug() {
                 p_subtotal_D_candidatura: _this9.candidatura
               };
               _this9.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
-              console.log('Datos a guardar: ', datos, _this9.Partidos_Con_Representacion, _this9.Partidos_Sin_Representacion);
-              _context5.prev = 9;
+              _context5.prev = 8;
               if (!_this9.distribucionId) {
-                _context5.next = 23;
+                _context5.next = 21;
                 break;
               }
-              _context5.next = 13;
+              _context5.next = 12;
               return axios.post(url, datos);
-            case 13:
+            case 12:
               response = _context5.sent;
               if (!(response.data && response.data.success)) {
-                _context5.next = 19;
+                _context5.next = 17;
                 break;
               }
               _this9.distribucionId = response.data.id; // || this.distribucionId;
-              debug('🐛 Update response.data.id:', response.data.id);
-              _context5.next = 21;
+              _context5.next = 19;
               break;
-            case 19:
+            case 17:
               errorMsg = ((_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.message) || 'Error al actualizar la distribución';
               throw new Error(errorMsg);
-            case 21:
-              _context5.next = 33;
+            case 19:
+              _context5.next = 30;
               break;
-            case 23:
-              _context5.next = 25;
+            case 21:
+              _context5.next = 23;
               return axios.post(url, datos);
-            case 25:
+            case 23:
               _response = _context5.sent;
               if (!(_response.data && _response.data.success)) {
-                _context5.next = 31;
+                _context5.next = 28;
                 break;
               }
               _this9.distribucionId = _response.data.id;
-              debug('🐛 Insert response.data.id:', _response.data.id);
-              _context5.next = 33;
+              _context5.next = 30;
               break;
-            case 31:
+            case 28:
               _errorMsg = ((_response$data6 = _response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.message) || 'Error al guardar la distribución';
               throw new Error(_errorMsg);
-            case 33:
+            case 30:
               url = '/administracion/solicitud/Update_Partidos_Con_Representacion';
               // Actualizamos la tabla de partidos políticos con representación
               // Crear un array de promesas
               //const promesas = this.Partidos_Con_Representacion.map(async partido => {
               _iterator = _createForOfIteratorHelper(_this9.Partidos_Con_Representacion);
-              _context5.prev = 35;
+              _context5.prev = 32;
               _iterator.s();
-            case 37:
+            case 34:
               if ((_step = _iterator.n()).done) {
-                _context5.next = 52;
+                _context5.next = 49;
                 break;
               }
               partido = _step.value;
-              _context5.prev = 39;
-              _context5.next = 42;
+              _context5.prev = 36;
+              _context5.next = 39;
               return axios.post(url, partido);
-            case 42:
+            case 39:
               _response2 = _context5.sent;
               // ⇋
-              if (_response2.data && _response2.data.ids) {
-                //debug('🐛 response.data.ids:', response.data.ids);
-              }
-              _context5.next = 50;
+              if (_response2.data && _response2.data.ids) {}
+              _context5.next = 47;
               break;
-            case 46:
-              _context5.prev = 46;
-              _context5.t0 = _context5["catch"](39);
+            case 43:
+              _context5.prev = 43;
+              _context5.t0 = _context5["catch"](36);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(partido.siglas)
               });
               throw _context5.t0;
-            case 50:
-              _context5.next = 37;
+            case 47:
+              _context5.next = 34;
               break;
-            case 52:
-              _context5.next = 57;
+            case 49:
+              _context5.next = 54;
               break;
+            case 51:
+              _context5.prev = 51;
+              _context5.t1 = _context5["catch"](32);
+              _iterator.e(_context5.t1);
             case 54:
               _context5.prev = 54;
-              _context5.t1 = _context5["catch"](35);
-              _iterator.e(_context5.t1);
-            case 57:
-              _context5.prev = 57;
               _iterator.f();
-              return _context5.finish(57);
-            case 60:
+              return _context5.finish(54);
+            case 57:
               url = '/administracion/solicitud/Update_Partidos_Sin_Representacion';
               _iterator2 = _createForOfIteratorHelper(_this9.Partidos_Sin_Representacion);
-              _context5.prev = 62;
+              _context5.prev = 59;
               _iterator2.s();
-            case 64:
+            case 61:
               if ((_step2 = _iterator2.n()).done) {
-                _context5.next = 79;
+                _context5.next = 76;
                 break;
               }
               _partido = _step2.value;
-              _context5.prev = 66;
-              _context5.next = 69;
+              _context5.prev = 63;
+              _context5.next = 66;
               return axios.post(url, _partido);
-            case 69:
+            case 66:
               _response3 = _context5.sent;
               // ⇋
-              if (_response3.data && _response3.data.ids) {
-                //debug('🐛 response.data.ids:', response.data.ids);
-              }
-              _context5.next = 77;
+              if (_response3.data && _response3.data.ids) {}
+              _context5.next = 74;
               break;
-            case 73:
-              _context5.prev = 73;
-              _context5.t2 = _context5["catch"](66);
+            case 70:
+              _context5.prev = 70;
+              _context5.t2 = _context5["catch"](63);
               _this9.$vs.notification({
                 color: 'danger',
                 text: "Error al actualizar ".concat(_partido.siglas)
               });
               throw _context5.t2;
-            case 77:
-              _context5.next = 64;
+            case 74:
+              _context5.next = 61;
               break;
-            case 79:
-              _context5.next = 84;
+            case 76:
+              _context5.next = 81;
               break;
+            case 78:
+              _context5.prev = 78;
+              _context5.t3 = _context5["catch"](59);
+              _iterator2.e(_context5.t3);
             case 81:
               _context5.prev = 81;
-              _context5.t3 = _context5["catch"](62);
-              _iterator2.e(_context5.t3);
-            case 84:
-              _context5.prev = 84;
               _iterator2.f();
-              return _context5.finish(84);
-            case 87:
+              return _context5.finish(81);
+            case 84:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -8589,15 +8565,12 @@ var debug = function debug() {
                 confirmButtonText: 'Aceptar'
               });
               // Habilita descargar archivo
-              //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
-              debug('🐛 this.distribucionId: ', _this9.distribucionId);
               _this9.descargar_disabled = false;
-              _context5.next = 98;
+              _context5.next = 93;
               break;
-            case 92:
-              _context5.prev = 92;
-              _context5.t4 = _context5["catch"](9);
-              console.error('Error al guardar:', _context5.t4);
+            case 88:
+              _context5.prev = 88;
+              _context5.t4 = _context5["catch"](8);
               _this9.$vs.notification({
                 title: 'Error',
                 color: 'danger',
@@ -8605,15 +8578,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t4, nombreMetodo[3], _this9.$router);
-            case 98:
-              _context5.prev = 98;
+            case 93:
+              _context5.prev = 93;
               loader.close();
-              return _context5.finish(98);
-            case 101:
+              return _context5.finish(93);
+            case 96:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[9, 92, 98, 101], [35, 54, 57, 60], [39, 46], [62, 81, 84, 87], [66, 73]]);
+        }, _callee5, null, [[8, 88, 93, 96], [32, 51, 54, 57], [36, 43], [59, 78, 81, 84], [63, 70]]);
       }))();
     },
     /**
@@ -8649,7 +8622,6 @@ var debug = function debug() {
         });
       })["catch"](function (error) {
         var _error$response;
-        debug('🐛 Error al descargar Excel:', error);
         var errorMessage = 'Error al descargar Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
@@ -8939,7 +8911,6 @@ var debug = function debug() {
       }, 0);
     },
     factorCalculo: function factorCalculo() {
-      //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
       if (this.opcionSelecionadaPorcentaje === '1') {
         return 0.5; // 50% Gubernatura
       } else if (this.opcionSelecionadaPorcentaje === '2') {
@@ -9064,13 +9035,6 @@ var debug = function debug() {
       active: false,
       anio: '',
       id: null,
-      /*topesConRep: [],
-      topesSinRep: [],
-      focused: { arr: null, index: null },
-      topesConRepGobernatura: [],
-      topesSinRepGobernatura: [],
-      */
-      // Valores Input
       topePresidencial: 0.0,
       topeGubernatura: 0.0,
       topePresidencialInput: '$0.00',
@@ -9155,55 +9119,6 @@ var debug = function debug() {
         }, _callee2);
       }))();
     },
-    /*DEPRECATED
-    async obtenerDatos(tipo) {
-        let url = '/administracion/usuario/obtenerDatos'
-        await axios.get(url, {
-            params: {
-                'tipo': tipo,
-                'consulta': 1
-            }
-        }).then(response => {
-            switch (tipo) {
-                case 1:
-                    this.catCargos = response.data
-                    break;
-                case 2:
-                    this.catRemitente = response.data
-                    break;
-                case 3:
-                    this.catTermino = response.data
-                    break;
-                case 4:
-                    this.cat_diasTermino = response.data
-                    break;
-                case 5:
-                    this.cat_seguimiento = response.data
-                    break;
-                case 6:
-                    this.cat_departamentos = response.data
-                    break;
-                case 7:
-                    this.cat_tipo = response.data
-                    break;
-                case 8:
-                    this.cat_estutus = response.data
-                    break;
-                case 9:
-                    this.cat_partido = response.data
-                    break;
-                case 11:
-                    this.cat_tipo_distribucion = response.data
-                    break;
-                default:
-                    break;
-            }
-        }).catch(error => {
-            let nombreMetodo = url.split('/');
-            methods.catchHandler(error, nombreMetodo[3], this.$router);
-          });
-    },*/
-    // #endregion CATÁLOGOS 📜
     // #region CONSULTAS A LA BASE DE DATOS 📚
     /**
      * Obtiene las distribuciones por año
@@ -9234,9 +9149,6 @@ var debug = function debug() {
               data = _yield$axios$get.data;
               if (data.success) {
                 _this4.CalculosPorAnio = data.calculos;
-                //this.distribuciones = data.distribuciones;
-                //this.Partidos_Con_Representacion = data.partidos_con_repr;
-                //this.Partidos_Sin_Representacion = data.partidos_sin_repr;
               }
               _context3.next = 13;
               break;
@@ -9305,63 +9217,59 @@ var debug = function debug() {
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this6.$vs);
               loader.text = 'Guardando cambios...';
               url = '/administracion/solicitud/FinPriv_Update_Calculo'; //Preparamos los datos para guardar
-              //let topes = this.obtenerTopes();
-              debug(' 🐛 🌠 Id del cálculo a guardar: ' + id_calculo);
-              _context4.prev = 6;
+              _context4.prev = 5;
               // Preparamos los datos para guardar
               datos = {
-                //p_comando: "UPDATE", // INSERT, UPDATE
                 p_id_calculo: id_calculo,
                 p_finpriv_tope_presidencial: _this6.topePresidencial,
                 //this.selectedCalculo.finpriv_tope_presidencial,
                 p_finpriv_tope_gubernatura: _this6.topeGubernatura //this.selectedCalculo.finpriv_tope_gubernatura,
               };
-              _context4.next = 10;
+              _context4.next = 9;
               return axios.post(url, datos);
-            case 10:
+            case 9:
               response = _context4.sent;
               if (!(!response || !response.data)) {
-                _context4.next = 13;
+                _context4.next = 12;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 13:
+            case 12:
               if (!(response.status !== 200)) {
-                _context4.next = 15;
+                _context4.next = 14;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(response.status, " ").concat(response.statusText));
-            case 15:
+            case 14:
               if (response.data.success) {
-                _context4.next = 18;
+                _context4.next = 17;
                 break;
               }
               errorMessage = response.data.message || 'Error desconocido al guardar la ministración';
               throw new Error(errorMessage);
-            case 18:
+            case 17:
               if (!response.data.success) {
-                _context4.next = 22;
+                _context4.next = 20;
                 break;
               }
-              debug(' 🐛 🌠 Id del response: ' + JSON.stringify(response.data.id));
-              _context4.next = 23;
+              _context4.next = 21;
               break;
-            case 22:
+            case 20:
               throw new Error(response.data.message);
-            case 23:
+            case 21:
               // Actualizamos cada campo del partido político por separado
               p_tipoPartido = 'CON';
               url = '/administracion/solicitud/FinPriv_Update_Partidos';
               _iterator = _createForOfIteratorHelper(_this6.Partidos_Con_Representacion);
-              _context4.prev = 26;
+              _context4.prev = 24;
               _iterator.s();
-            case 28:
+            case 26:
               if ((_step = _iterator.n()).done) {
-                _context4.next = 43;
+                _context4.next = 40;
                 break;
               }
               partido = _step.value;
-              _context4.next = 32;
+              _context4.next = 30;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
                 p_id_calculo: id_calculo,
@@ -9373,55 +9281,53 @@ var debug = function debug() {
                 p_finpriv_aportaciones_simpGuber: partido.finpriv_aportaciones_simpGuber,
                 p_finpriv_rendimientos: partido.finpriv_rendimientos
               });
-            case 32:
+            case 30:
               responsePartidos = _context4.sent;
               if (!(!responsePartidos || !responsePartidos.data)) {
-                _context4.next = 35;
+                _context4.next = 33;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 35:
+            case 33:
               if (!(responsePartidos.status !== 200)) {
-                _context4.next = 37;
+                _context4.next = 35;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
-            case 37:
+            case 35:
               if (responsePartidos.data.success) {
-                _context4.next = 40;
+                _context4.next = 38;
                 break;
               }
               _errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
               throw new Error(_errorMessage);
+            case 38:
+              _context4.next = 26;
+              break;
             case 40:
-              debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
-            case 41:
-              _context4.next = 28;
+              _context4.next = 45;
               break;
-            case 43:
-              _context4.next = 48;
-              break;
+            case 42:
+              _context4.prev = 42;
+              _context4.t0 = _context4["catch"](24);
+              _iterator.e(_context4.t0);
             case 45:
               _context4.prev = 45;
-              _context4.t0 = _context4["catch"](26);
-              _iterator.e(_context4.t0);
-            case 48:
-              _context4.prev = 48;
               _iterator.f();
-              return _context4.finish(48);
-            case 51:
+              return _context4.finish(45);
+            case 48:
               p_tipoPartido = 'SIN';
               url = '/administracion/solicitud/FinPriv_Update_Partidos';
               _iterator2 = _createForOfIteratorHelper(_this6.Partidos_Sin_Representacion);
-              _context4.prev = 54;
+              _context4.prev = 51;
               _iterator2.s();
-            case 56:
+            case 53:
               if ((_step2 = _iterator2.n()).done) {
-                _context4.next = 71;
+                _context4.next = 67;
                 break;
               }
               _partido = _step2.value;
-              _context4.next = 60;
+              _context4.next = 57;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
                 p_id_calculo: id_calculo,
@@ -9433,43 +9339,41 @@ var debug = function debug() {
                 p_finpriv_aportaciones_simpGuber: _partido.finpriv_aportaciones_simpGuber,
                 p_finpriv_rendimientos: _partido.finpriv_rendimientos
               });
-            case 60:
+            case 57:
               _responsePartidos = _context4.sent;
               if (!(!_responsePartidos || !_responsePartidos.data)) {
-                _context4.next = 63;
+                _context4.next = 60;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 63:
+            case 60:
               if (!(_responsePartidos.status !== 200)) {
-                _context4.next = 65;
+                _context4.next = 62;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
-            case 65:
+            case 62:
               if (_responsePartidos.data.success) {
-                _context4.next = 68;
+                _context4.next = 65;
                 break;
               }
               _errorMessage2 = _responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
               throw new Error(_errorMessage2);
-            case 68:
-              debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(_responsePartidos.data.ids));
+            case 65:
+              _context4.next = 53;
+              break;
+            case 67:
+              _context4.next = 72;
+              break;
             case 69:
-              _context4.next = 56;
-              break;
-            case 71:
-              _context4.next = 76;
-              break;
-            case 73:
-              _context4.prev = 73;
-              _context4.t1 = _context4["catch"](54);
+              _context4.prev = 69;
+              _context4.t1 = _context4["catch"](51);
               _iterator2.e(_context4.t1);
-            case 76:
-              _context4.prev = 76;
+            case 72:
+              _context4.prev = 72;
               _iterator2.f();
-              return _context4.finish(76);
-            case 79:
+              return _context4.finish(72);
+            case 75:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -9483,12 +9387,11 @@ var debug = function debug() {
                 text: 'Financiamiento privado guardado' + response.data.message
               });
               //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
-              _context4.next = 89;
+              _context4.next = 84;
               break;
-            case 83:
-              _context4.prev = 83;
-              _context4.t2 = _context4["catch"](6);
-              debug('🐛 Error al guardar el financiamiento privado:', _context4.t2);
+            case 79:
+              _context4.prev = 79;
+              _context4.t2 = _context4["catch"](5);
               _this6.$vs.notification({
                 title: 'Error',
                 color: 'danger',
@@ -9496,15 +9399,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t2, nombreMetodo[3], _this6.$router);
-            case 89:
-              _context4.prev = 89;
+            case 84:
+              _context4.prev = 84;
               loader.close();
-              return _context4.finish(89);
-            case 92:
+              return _context4.finish(84);
+            case 87:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[6, 83, 89, 92], [26, 45, 48, 51], [54, 73, 76, 79]]);
+        }, _callee4, null, [[5, 79, 84, 87], [24, 42, 45, 48], [51, 69, 72, 75]]);
       }))();
     },
     /**
@@ -9540,7 +9443,6 @@ var debug = function debug() {
         });
       })["catch"](function (error) {
         var _error$response;
-        debug('🔴 Error al descargar Excel:', error);
         var errorMessage = 'Error al descargar Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
@@ -9578,7 +9480,6 @@ var debug = function debug() {
       var _this8 = this;
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       var url = '/administracion/solicitud/get_Partidos_Calculo_porId';
-      // debug('🐛 Calculo seleccionado:', calculo_tr);
       this.limpiarCampos(); // 🧹
       this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
       this.topePresidencial = Number(calculo_tr.finpriv_tope_presidencial) || 0;
@@ -9597,13 +9498,10 @@ var debug = function debug() {
         }
       }).then(function (response) {
         var _response$data3;
-        debug('🐛 Datos partidos recibidos:', response.data);
         if (response.status === 200 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.success) {
           //Obtenemos los datos de los partidos politicos
           _this8.Partidos_Sin_Representacion = response.data.partidosSinRep;
-          // debug('🐛 Partidos Sin Representacion:', this.Partidos_Sin_Representacion);
           _this8.Partidos_Con_Representacion = response.data.partidosConRep;
-          // debug('🐛 Partidos Con Representacion:', this.Partidos_Con_Representacion);
         } else {
           var _response$data4;
           // success: false
@@ -9624,23 +9522,6 @@ var debug = function debug() {
         loader.close();
       });
     },
-    /*
-    calcularFinanciamientoPublicoTotalidad() {
-        let finanPublicTotal = [this.Partidos_Con_Representacion,...this.Partidos_Sin_Representacion].
-            reduce((total, partido) => {
-            return total + partido.C_fpaop ?? partido.monto_2_por_ciento ?? 0}, 0);
-        finanPublicTotal = finanPublicTotal / 2;
-        return finanPublicTotal;
-    },
-    */
-    /*
-    * Calcula el limite de financiamiento privado por cada partido político
-    * Financiamiento público para actividades ordinarias permanentes (de cada partido político) * 0.50
-    * 
-    * Cuando el límite anual del financiamiento privado sea superior al 50% del financiamiento público 
-    * asignado en el año correspondiente a la totalidad de los partidos políticos, 
-    * para asegurar que el financiamiento público prevalezca sobre el privado.
-    */
     limiteFinanciamientoPrivado: function limiteFinanciamientoPrivado(partido, valor) {
       var resultado = valor * 0.50;
       partido.finpriv_limite_finPrivado = resultado;
@@ -9670,40 +9551,6 @@ var debug = function debug() {
       partido.finpriv_rendimientos = resultado;
       return resultado;
     },
-    /*
-    limite(partido, valor) {
-        const resultado = valor * 0.50;
-        partido.finpriv_limite_finPrivado = resultado;
-        const resultadoConvertido = this.formatCurrency(resultado);
-        return resultadoConvertido;
-    },
-    aportaciones(partido, valor) {
-        const resultado = valor * 0.20;
-        partido.finpriv_aportaciones_militantes = resultado;
-        const resultadoConvertido = this.formatCurrency(resultado);
-        return resultadoConvertido;
-    },
-    aportacionSimpatizantes(partido, tope) {
-        if (!tope) return 0;
-        const resultado = tope * 0.005;
-        partido.finpriv_aportaciones_simpPres = resultado;
-        return resultado;
-    },
-    aportacionDinero(partido, tope) {
-        if (!tope) return 0;
-        const resultado = tope * 0.005;
-        partido.finpriv_aportaciones_simpGuber = resultado;
-        partido.finpriv_rendimientos = resultado; // Hay que checarlo porque es igual
-        return resultado;
-    },
-    */
-    /* DEPRECATED
-    inicializarTopes() {
-        this.topesConRep = new Array(this.Partidos_Con_Representacion.length).fill(null);
-        this.topesConRepGobernatura = new Array(this.Partidos_Con_Representacion.length).fill(null);
-        this.topesSinRep = new Array(this.Partidos_Sin_Representacion.length).fill(null);
-        this.topesSinRepGobernatura = new Array(this.Partidos_Sin_Representacion.length).fill(null);
-    },*/
     // #endregion OPERACIONES DE LA VISTA 📊
     // #region FORMATEOS 🔧🛠
     /**
@@ -9745,48 +9592,11 @@ var debug = function debug() {
     * @param {String} propertyNameStr - Nombre de la propiedad que contiene la variable a actualizar
     */
     formatearAlSalirBlur: function formatearAlSalirBlur(propertyNameStr, propertyNameInt) {
-      //const cleanValue = String(rawValue || '').replace(/[^0-9.]/g, '');
-      debug("🦖 blur propertyNameStr: ", propertyNameStr, ':', this[propertyNameStr]);
       var cleanValue = Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(this[propertyNameStr]);
-      debug("🦖 blur cleanValue: ", cleanValue);
       var valorNumerico = parseFloat(cleanValue) || 0;
-      //debug("🦖 blur ValorNumerico: ", valorNumerico);
       this.$set(this, propertyNameInt, valorNumerico);
       this.$set(this, propertyNameStr, Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["formatoMonedaMX"])(valorNumerico));
     },
-    /*
-    updateValue(calculo, arr, index, val) {
-        if (!this[arr]) this.$set(this, arr, []); // inicializa el array si no existe
-          // Si viene de un input nativo (event) toma target.value, si es vs-input ya es el valor
-        const rawValue = (val && val.target) ? val.target.value : val;
-          const clean = String(rawValue || '').replace(/[^0-9.]/g, '');
-        this.$set(this[arr], index, clean ? parseFloat(clean) : null);
-          if(arr === 'topesConRepGobernatura' || arr === 'topesSinRepGobernatura') {
-            this.selectedCalculo.finpriv_tope_gubernatura = parseFloat(clean);
-        }
-        else if(arr === 'topesConRep' || arr === 'topesSinRep') {
-            this.selectedCalculo.finpriv_tope_presidencial = parseFloat(clean);
-        }
-    },*/
-    /*
-    setFocus(arrayName, index) {
-        this.focused = { arr: arrayName, index };
-    },
-    clearFocus() {
-        this.focused = { arr: null, index: null };
-    },
-    formatInput(arrayName, index) {
-        const value = this[arrayName][index];
-          if (this.focused.arr === arrayName && this.focused.index === index) {
-            return value ?? ''; // mostrar crudo en focus
-        }
-        if (value == null || isNaN(value)) return '';
-        return value.toLocaleString('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            minimumFractionDigits: 2
-        });
-    },*/
     formatoFecha: function formatoFecha(fechaStr) {
       if (!fechaStr) return '';
       // Parsear fecha en formato YYYY-MM-DD
@@ -9952,7 +9762,6 @@ var debug = function debug() {
       Partidos_Con_Representacion: [],
       Partidos_Sin_Representacion: [],
       NewlistCalculos: [],
-      //ministracionId: {}, // Para saber si ya se ha guardado un registro
       search: '',
       page: 1,
       max: 10,
@@ -9963,11 +9772,6 @@ var debug = function debug() {
         color: 'warn'
       }],
       catAnio: [],
-      //calculo: {}, // Se usa para cargar el cálculo seleccionado
-      //montosFijos: {},
-      //ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación -- DEPRECATED
-      //cat_tipo_distribucion: [],
-      //distribucion: [],
       distribuciones: [],
       CalculosPorAnio: [],
       // Se usan para listar los calculos por año
@@ -9977,13 +9781,6 @@ var debug = function debug() {
       descargar_disabled: {} // true: disabled | false: enabled
     };
   },
-  // watch: {
-  //     anio(newAnio) {
-  //         if (newAnio) {
-  //             this.getDistribucionesPorAnio(newAnio);
-  //         }
-  //     }
-  // },
   created: function created() {
     var _this = this;
     EventBus.$on('darkMode', function (data) {
@@ -10013,10 +9810,6 @@ var debug = function debug() {
     }))();
   },
   methods: {
-    // #region CATÁLOGOS 📜
-    /**
-     * Obtiene el año fiscal
-     */
     getAnio: function getAnio() {
       var _this3 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
@@ -10131,10 +9924,8 @@ var debug = function debug() {
               _yield$axios$get = _context4.sent;
               data = _yield$axios$get.data;
               if (data.success) {
-                //debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                 _this5.CalculosPorAnio = data.calculos;
                 _this5.distribuciones = data.distribuciones;
-                // this.ministraciones = data.ministraciones;
                 _this5.Partidos_Con_Representacion = data.partidos_con_repr;
                 _this5.Partidos_Sin_Representacion = data.partidos_sin_repr;
 
@@ -10142,49 +9933,33 @@ var debug = function debug() {
                 // Usar $set para que Vue detecte los cambios y sean reactivos
                 _this5.Partidos_Con_Representacion.map(function (partido) {
                   return _this5.$set(partido, 'ajusteDiciembre', 0.0);
-                }
-                //this.$set(partido, 'mintr_diciembre', 0.0)
-                );
-
+                });
                 _this5.Partidos_Sin_Representacion.map(function (partido) {
                   return _this5.$set(partido, 'ajusteDiciembre', 0.0);
-                }
-                //this.$set(partido, 'mintr_diciembre', 0.0)
-                );
-
-                debug('🐛 ✅ Datos cargados.');
-              } else {
-                debug('🐛 ❌ Error al obtener datos.');
-              }
-
-              //Cargar ministraciones para el botón de descarga
-              // this.CalculosPorAnio.forEach(calculo => {
-              //     this.cargarMinistracion(calculo.id_calculo);
-              // });
-
+                });
+              } else {}
               //Cargar ministraciones para el botón de descarga
               _context4.next = 13;
               return Promise.all(_this5.CalculosPorAnio.map(function (calculo) {
                 return _this5.cargarMinistracion(calculo.id_calculo);
               }));
             case 13:
-              _context4.next = 20;
+              _context4.next = 19;
               break;
             case 15:
               _context4.prev = 15;
               _context4.t0 = _context4["catch"](5);
-              debug("🐛 ❌ Error al obtener distribuciones:", _context4.t0);
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context4.t0, nombreMetodo[3], _this5.$router);
-            case 20:
-              _context4.prev = 20;
+            case 19:
+              _context4.prev = 19;
               loader.close();
-              return _context4.finish(20);
-            case 23:
+              return _context4.finish(19);
+            case 22:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[5, 15, 20, 23]]);
+        }, _callee4, null, [[5, 15, 19, 22]]);
       }))();
     },
     /**
@@ -10213,21 +9988,18 @@ var debug = function debug() {
                 // Si se quieren rescatar los totales hay que convertirlo a objeto {} y declararlo en data{...}
                 _this6.DataMinistracion = response.data.ministracion[0]; // Solo con GET
                 _this6.ministracionId = _this6.DataMinistracion.id_calculo; // Id del calculo seleccionado es de la base de datos
-                //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
                 _this6.$set(_this6.descargar_disabled, id_calculo, false); // Habilita descargar archivo
               } else {
                 _this6.$set(_this6.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
               }
-              // debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
-              _context5.next = 14;
+              _context5.next = 13;
               break;
             case 9:
               _context5.prev = 9;
               _context5.t0 = _context5["catch"](2);
-              debug("🐛 ❌ Error al cargar datos de la ministración:", _context5.t0);
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context5.t0, nombreMetodo[3], _this6.$router);
-            case 14:
+            case 13:
             case "end":
               return _context5.stop();
           }
@@ -10247,9 +10019,7 @@ var debug = function debug() {
             case 0:
               loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(_this7.$vs);
               loader.text = 'Guardando cambios...';
-              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp'; //id del calculo seleccionado 
-              debug(' 🐛 ✨ Id del calculo: ' + id_calculo);
-              // Obtener los partidos con representación y sin representación de un cálculo
+              url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp'; // Obtener los partidos con representación y sin representación de un cálculo
               partidosConRepr = _this7.Partidos_Con_Representacion.filter(function (p) {
                 return p.id_calculo === id_calculo;
               });
@@ -10258,9 +10028,7 @@ var debug = function debug() {
               }); //Preparamos los datos para guardar
               totalesMensuales = _this7.obtenerTotalesMensuales(id_calculo);
               granTotal = _this7.obtenerTotalGeneral(id_calculo);
-              debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
-              debug(' 🐛 GranTotal: ' + granTotal);
-              _context6.prev = 10;
+              _context6.prev = 7;
               //Actualizamos los totales
               datos = {
                 p_comando: "INSERT",
@@ -10280,52 +10048,51 @@ var debug = function debug() {
                 p_totales_mensuales_diciembre: totalesMensuales[11],
                 p_gran_total: granTotal
               };
-              _context6.next = 14;
+              _context6.next = 11;
               return axios.post(url, datos);
-            case 14:
+            case 11:
               responseTotales = _context6.sent;
               if (!(!responseTotales || !responseTotales.data)) {
-                _context6.next = 17;
+                _context6.next = 14;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 17:
+            case 14:
               if (!(responseTotales.status !== 200)) {
-                _context6.next = 19;
+                _context6.next = 16;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(responseTotales.status, " ").concat(responseTotales.statusText));
-            case 19:
+            case 16:
               if (responseTotales.data.success) {
-                _context6.next = 22;
+                _context6.next = 19;
                 break;
               }
               errorMessage = responseTotales.data.message || 'Error desconocido al guardar la ministración';
               throw new Error(errorMessage);
-            case 22:
+            case 19:
               if (!responseTotales.data.success) {
-                _context6.next = 26;
+                _context6.next = 22;
                 break;
               }
-              debug(' 🐛 🌠 Id del responseTotales: ' + JSON.stringify(responseTotales.data.id));
-              _context6.next = 27;
+              _context6.next = 23;
               break;
-            case 26:
+            case 22:
               throw new Error(responseTotales.data.message);
-            case 27:
+            case 23:
               // Actualizamos cada campo del partido político por separado
               p_tipoPartido = 'CON';
               url = '/administracion/solicitud/Mintr_Update_Partidos';
               _iterator = _createForOfIteratorHelper(partidosConRepr);
-              _context6.prev = 30;
+              _context6.prev = 26;
               _iterator.s();
-            case 32:
+            case 28:
               if ((_step = _iterator.n()).done) {
-                _context6.next = 48;
+                _context6.next = 42;
                 break;
               }
               partido = _step.value;
-              _context6.next = 36;
+              _context6.next = 32;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Con Representación
                 p_id_calculo: id_calculo,
@@ -10333,55 +10100,52 @@ var debug = function debug() {
                 p_tipo_partido: p_tipoPartido,
                 p_mintr_diciembre: partido.mintr_diciembre
               });
-            case 36:
+            case 32:
               responsePartidos = _context6.sent;
               if (!(!responsePartidos || !responsePartidos.data)) {
-                _context6.next = 39;
+                _context6.next = 35;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 39:
+            case 35:
               if (!(responsePartidos.status !== 200)) {
-                _context6.next = 41;
+                _context6.next = 37;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(responsePartidos.status, " ").concat(responsePartidos.statusText));
-            case 41:
+            case 37:
               if (responsePartidos.data.success) {
-                _context6.next = 44;
+                _context6.next = 40;
                 break;
               }
               _errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
               throw new Error(_errorMessage);
+            case 40:
+              _context6.next = 28;
+              break;
+            case 42:
+              _context6.next = 47;
+              break;
             case 44:
-              debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
-              debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
-            case 46:
-              _context6.next = 32;
-              break;
-            case 48:
-              _context6.next = 53;
-              break;
-            case 50:
-              _context6.prev = 50;
-              _context6.t0 = _context6["catch"](30);
+              _context6.prev = 44;
+              _context6.t0 = _context6["catch"](26);
               _iterator.e(_context6.t0);
-            case 53:
-              _context6.prev = 53;
+            case 47:
+              _context6.prev = 47;
               _iterator.f();
-              return _context6.finish(53);
-            case 56:
+              return _context6.finish(47);
+            case 50:
               p_tipoPartido = 'SIN';
               _iterator2 = _createForOfIteratorHelper(partidosSinRepr);
-              _context6.prev = 58;
+              _context6.prev = 52;
               _iterator2.s();
-            case 60:
+            case 54:
               if ((_step2 = _iterator2.n()).done) {
-                _context6.next = 76;
+                _context6.next = 68;
                 break;
               }
               _partido = _step2.value;
-              _context6.next = 64;
+              _context6.next = 58;
               return axios.post(url, {
                 // ⇋ UPDATE Partidos Sin Representación
                 p_id_calculo: id_calculo,
@@ -10389,44 +10153,41 @@ var debug = function debug() {
                 p_tipo_partido: p_tipoPartido,
                 p_mintr_diciembre: _partido.mintr_diciembre
               });
-            case 64:
+            case 58:
               _responsePartidos = _context6.sent;
               if (!(!_responsePartidos || !_responsePartidos.data)) {
-                _context6.next = 67;
+                _context6.next = 61;
                 break;
               }
               throw new Error('La respuesta del servidor no es válida');
-            case 67:
+            case 61:
               if (!(_responsePartidos.status !== 200)) {
-                _context6.next = 69;
+                _context6.next = 63;
                 break;
               }
               throw new Error("Error en la petici\xF3n: ".concat(_responsePartidos.status, " ").concat(_responsePartidos.statusText));
-            case 69:
+            case 63:
               if (_responsePartidos.data.success) {
-                _context6.next = 72;
+                _context6.next = 66;
                 break;
               }
               _errorMessage2 = _responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
               throw new Error(_errorMessage2);
-            case 72:
-              debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(_responsePartidos.data.ids));
-              debug(' 🐛 📌 Id del partido: ' + _partido.id_partido, 'Mintr Diciembre: ' + _partido.mintr_diciembre);
-            case 74:
-              _context6.next = 60;
+            case 66:
+              _context6.next = 54;
               break;
-            case 76:
-              _context6.next = 81;
+            case 68:
+              _context6.next = 73;
               break;
-            case 78:
-              _context6.prev = 78;
-              _context6.t1 = _context6["catch"](58);
+            case 70:
+              _context6.prev = 70;
+              _context6.t1 = _context6["catch"](52);
               _iterator2.e(_context6.t1);
-            case 81:
-              _context6.prev = 81;
+            case 73:
+              _context6.prev = 73;
               _iterator2.f();
-              return _context6.finish(81);
-            case 84:
+              return _context6.finish(73);
+            case 76:
               // Notificación de éxito
               Swal.fire({
                 icon: 'success',
@@ -10440,12 +10201,11 @@ var debug = function debug() {
                 text: 'Ministración guardada' + responseTotales.data.message
               });
               _this7.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
-              _context6.next = 95;
+              _context6.next = 86;
               break;
-            case 89:
-              _context6.prev = 89;
-              _context6.t2 = _context6["catch"](10);
-              debug('🐛 Error al guardar la ministración:', _context6.t2);
+            case 81:
+              _context6.prev = 81;
+              _context6.t2 = _context6["catch"](7);
               _this7.$vs.notification({
                 title: 'Error',
                 color: 'danger',
@@ -10453,15 +10213,15 @@ var debug = function debug() {
               });
               nombreMetodo = url.split('/');
               _methods__WEBPACK_IMPORTED_MODULE_0___default.a.catchHandler(_context6.t2, nombreMetodo[3], _this7.$router);
-            case 95:
-              _context6.prev = 95;
+            case 86:
+              _context6.prev = 86;
               loader.close();
-              return _context6.finish(95);
-            case 98:
+              return _context6.finish(86);
+            case 89:
             case "end":
               return _context6.stop();
           }
-        }, _callee6, null, [[10, 89, 95, 98], [30, 50, 53, 56], [58, 78, 81, 84]]);
+        }, _callee6, null, [[7, 81, 86, 89], [26, 44, 47, 50], [52, 70, 73, 76]]);
       }))();
     },
     /**
@@ -10473,7 +10233,6 @@ var debug = function debug() {
       var loader = Object(_methods__WEBPACK_IMPORTED_MODULE_0__["loading"])(this.$vs);
       loader.text = 'Generando archivo Excel...';
       var apiUrl = "/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/".concat(id_calculo);
-      console.log(apiUrl);
       var downloadUrl = null;
       var link = null;
       if (!id_calculo || id_calculo === 0) {
@@ -10498,7 +10257,6 @@ var debug = function debug() {
         });
       })["catch"](function (error) {
         var _error$response;
-        debug('🔴 Error al descargar Excel:', error);
         var errorMessage = 'Error al descargar Excel';
         if ((_error$response = error.response) !== null && _error$response !== void 0 && (_error$response = _error$response.data) !== null && _error$response !== void 0 && _error$response.message) {
           errorMessage = error.response.data.message;
@@ -10539,13 +10297,8 @@ var debug = function debug() {
       var key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
       // Limpia el valor del input | quita los caracteres no numéricos
       var valorLimpio = parseFloat(Object(_utils_formatters__WEBPACK_IMPORTED_MODULE_1__["limpiarNumeroInput"])(event.target.value));
-
-      // Almacena el valor limpio en el objeto ajustesDiciembre
-      //this.$set(this.ajustesDiciembre, key, valorLimpio); // DEPRECATED
       partido.mintr_diciembre = valorLimpio; // Almacena el valor limpio en el objeto partido
 
-      // Formatear el valor limpio y mostrarlo en la caja de texto
-      //event.target.value = formatoMonedaLocal(valorLimpio); // Por si se quiere formatear
       event.target.value = valorLimpio;
     },
     /**
@@ -10555,8 +10308,6 @@ var debug = function debug() {
      */
     formatCurrency: function formatCurrency(value) {
       if (value === null || value === undefined || isNaN(value)) return '$0.00';
-      //Con style: 'currency', ya no es necesario truncar manualmente
-      //const num = Math.floor(parseFloat(value) * 100) / 100;
       var num = parseFloat(value);
       return num.toLocaleString('es-MX', {
         style: 'currency',
@@ -10577,7 +10328,6 @@ var debug = function debug() {
       * @returns {Array<number>} - Array con los montos distribuidos
       */
     distribuirConEditableDiciembre: function distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
-      //const key = `${prefix}-${partido.id_calculo}-${partido.id_partido}`;
       var mensual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](totalFinanciamientoPartido).dividedBy(12); // objeto Decimal
 
       // Validar y convertir el valor de diciembre
@@ -10587,8 +10337,6 @@ var debug = function debug() {
 
       // Actualizar estado del valor de diciembre temporal
       partido.mintr_diciembre = montoDiciembre;
-      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
-      //this.$set(this.ajustesDiciembre, key, montoDiciembre); -- DEPRECATED
 
       // Retornar array con 11 meses iguales + diciembre
       return [].concat(_toConsumableArray(Array(11).fill(mensual)), [montoDiciembre]).map(function (v) {
@@ -10629,22 +10377,7 @@ var debug = function debug() {
     */
     ajustarDecimalManual: function ajustarDecimalManual(operacion, partido, prefix) {
       var ajusteUnitario = 0.01;
-      //const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
-      //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
       var actual = new decimal_js__WEBPACK_IMPORTED_MODULE_2__["Decimal"](parseFloat(partido.mintr_diciembre));
-      // Asegurar que el campo ajuste exista y sea reactivo
-      //if (partido.ajusteDiciembre === undefined) this.$set(partido, 'ajusteDiciembre', 0.0);
-
-      // Detectar número de decimales en el valor actual 
-      // Toma la parte decimal (después del punto) y obtiene la longitud de los decimales
-      //const decimales = partido.mintr_diciembre.toString().split('.')[1]?.length || 0;
-
-      // Divide 1 entre 10 elevado al número de decimales detectados
-      // Por ejemplo, si el valor actual tiene 2 decimales, el paso será 0.01
-      // decimales = 2 → 10^2 = 100
-      // Si el valor actual tiene 0 decimales, el paso será 0.001
-      //const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
-
       if (operacion === 'sumar') {
         // Si totalAjusteDecimalesCalculo es negativo se puede sumar a otro partido
         if (this.totalAjusteDecimalesCalculo(partido.id_calculo) < 0) {
@@ -10703,10 +10436,6 @@ var debug = function debug() {
           var key = "".concat(hasFpaop ? 'con' : 'sin', "-").concat(partido.id_calculo, "-").concat(partido.id_partido);
           // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
           var total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
-          //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
-
-          //const override = this.ajustesDiciembre[key]; // No se ocupa
-
           var montos = _this9.distribuirConEditableDiciembre(total, partido, key);
           montos.forEach(function (monto, i) {
             // Precisión total
@@ -10719,7 +10448,6 @@ var debug = function debug() {
           return t.toNumber();
         });
       } catch (error) {
-        debug('🐛 ❌ Error al obtener totales mensuales:', error);
         return [];
       }
     },
@@ -10740,35 +10468,6 @@ var debug = function debug() {
      * ✔ Validar campos
      * @returns {boolean}
      */
-    /*
-    validarCampos() {
-        this.limpiarErrores();
-        if (this.anio === '') {
-            this.errorAnio = 'El campo año es obligatorio';
-            this.error = true;
-        }
-        if (this.monto30Input === '') {
-            this.errorMonto30 = 'Ingrese un monto 30% válido';
-            this.error = true;
-        }
-          if (this.monto70Input === '') {
-            this.errorMonto70 = 'Ingrese un monto 70% válido';
-            this.error = true;
-        }
-        if (this.distribucion === '') {
-            this.errorDistribucion = 'El campo distribución es obligatorio';
-            this.error = true;
-        }
-        // Validar que llenen todos los campos
-        this.Partidos_Con_Representacion.forEach(partido => {
-              if (partido.inputPorcentaje === '') {
-                partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-                this.error = true;
-            }
-        });
-        return this.error;
-    },
-    */
     /**
      * 🧹 Limpia todos los campos del formulario
      * @returns {void}
@@ -17022,7 +16721,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.getRolUsuario();
-    console.log('Permisos recibidos:', this.listPermisos);
   },
   methods: {
     // Método que obtiene eltamaño del margin top que se debe aplicar al elemento
@@ -17105,12 +16803,8 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         localStorage.setItem('theme', 'light');
         document.documentElement.setAttribute('data-theme', 'light');
-        // this.darkmode = !this.darkmode;
       }
-
       this.darkmode = !this.darkmode;
-      // console.log(localStorage.getItem('theme'));
-      // console.log(this.darkmode);
       EventBus.$emit('darkMode', this.darkmode);
     }
   }
@@ -22419,12 +22113,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "row1-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.limiteFinanciamientoPrivado(partido, partido.C_fpaop))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.limiteFinanciamientoPrivado(partido, partido.C_fpaop))) + "\n                                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "row1s-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.limiteFinanciamientoPrivado(partidoS, partidoS.monto_2_por_ciento))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.limiteFinanciamientoPrivado(partidoS, partidoS.monto_2_por_ciento))) + "\n                                                ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
@@ -22433,12 +22127,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "row1-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesMilitantes(partido, partido.C_fpaop))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesMilitantes(partido, partido.C_fpaop))) + "\n                                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "row1s-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesMilitantes(partidoS, partidoS.monto_2_por_ciento))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesMilitantes(partidoS, partidoS.monto_2_por_ciento))) + "\n                                                ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
@@ -22469,12 +22163,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "apCR-" + partido.id + "-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partido, _vm.topePresidencial))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partido, _vm.topePresidencial))) + "\n                                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "apSR-" + partidoS.id + "-" + i,
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partidoS, _vm.topePresidencial))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesPresidencial(partidoS, _vm.topePresidencial))) + "\n                                                ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
@@ -22505,12 +22199,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "apCR-" + (partido.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partido, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partido, _vm.topeGubernatura))) + "\n                                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "apSR-" + (partidoS.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partidoS, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.aportacionesSimpatizantesGubernatura(partidoS, _vm.topeGubernatura))) + "\n                                                ")]);
         })], 2), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
@@ -22519,12 +22213,12 @@ var render = function render() {
           return _c("vs-td", {
             key: "apCR-" + (partido.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.rendimientosFinanciamientoPrivado(partido, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.rendimientosFinanciamientoPrivado(partido, _vm.topeGubernatura))) + "\n                                                ")]);
         }), _vm._v(" "), _vm._l(_vm.Partidos_Sin_Representacion, function (partidoS, i) {
           return _c("vs-td", {
             key: "apSR-" + (partidoS.id || i),
             staticClass: "col-partido monto"
-          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.rendimientosFinanciamientoPrivado(partidoS, _vm.topeGubernatura))) + "\n                                                    ")]);
+          }, [_vm._v("\n                                                    " + _vm._s(_vm.formatCurrency(_vm.rendimientosFinanciamientoPrivado(partidoS, _vm.topeGubernatura))) + "\n                                                ")]);
         })], 2)];
       },
       proxy: true
@@ -23380,6 +23074,13 @@ var render = function render() {
       type: "text",
       placeholder: "Usuario"
     },
+    scopedSlots: _vm._u([{
+      key: "message-danger",
+      fn: function fn() {
+        return [_vm._v("\n                                                    El usuario debe tener máximo 10 caracteres.\n                                                ")];
+      },
+      proxy: true
+    }]),
     model: {
       value: _vm.fillCrearUsuario.cUsuario,
       callback: function callback($$v) {
@@ -23439,7 +23140,7 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "message-danger",
       fn: function fn() {
-        return [_vm._v("\n                                                    La contraseña debe de tener al menos 8 caracteres\n                                                ")];
+        return [_vm._v("\n                                                    La contraseña debe de tener máximo 8 caracteres, una mayúscula, un número y un caracter especial.\n                                                ")];
       },
       proxy: true
     }]),
@@ -24544,412 +24245,7 @@ var render = function render() {
       },
       proxy: true
     }], null, false, 546627807)
-  })] : [_vm._m(2), _vm._v(" "), _vm._m(3)]], 2)])])])]), _vm._v(" "), _c("vs-dialog", {
-    attrs: {
-      blur: "",
-      id: "registrarUser",
-      "auto-width": "",
-      "prevent-close": ""
-    },
-    scopedSlots: _vm._u([{
-      key: "header",
-      fn: function fn() {
-        return [_c("div", {
-          staticClass: "col text-center"
-        }, [_c("div", [_c("br"), _vm._v(" "), _c("h4", {
-          staticClass: "not-margin"
-        }, [_c("b", [_vm._v("Registrar nuevo usuario")])])])])];
-      },
-      proxy: true
-    }, {
-      key: "footer",
-      fn: function fn() {
-        return [_c("div", {
-          staticClass: "footer-dialog"
-        }, [_c("div", {
-          staticClass: "px-3 d-flex justify-content-center flex-column flex-md-row"
-        }, [_c("vs-button", {
-          key: "limpiar" + _vm.darkMode,
-          attrs: {
-            color: !!_vm.darkMode ? "#f5f5f5" : "#595959"
-          },
-          on: {
-            click: function click($event) {
-              $event.preventDefault();
-              return _vm.limpiarFormRegistro();
-            }
-          }
-        }, [_c("div", {
-          staticStyle: {
-            color: "var(--btn-txt-color)",
-            "font-weight": "700"
-          }
-        }, [_c("i", {
-          staticClass: "fas fa-eraser pr-2",
-          staticStyle: {
-            "font-size": "0.8125rem !important"
-          }
-        }), _vm._v("Limpiar\n                        ")])]), _vm._v(" "), _c("vs-button", {
-          key: "pass" + _vm.darkMode,
-          attrs: {
-            color: !!_vm.darkMode ? "#f5f5f5" : "#595959"
-          },
-          on: {
-            click: function click($event) {
-              $event.preventDefault();
-              return _vm.accionRegistrar();
-            }
-          }
-        }, [_c("div", {
-          staticStyle: {
-            color: "var(--btn-txt-color)",
-            "font-weight": "700"
-          }
-        }, [_c("i", {
-          staticClass: "fas fa-pencil-alt pr-2",
-          staticStyle: {
-            "font-size": "0.8125rem !important"
-          }
-        }), _vm._v("Registrar usuario\n                        ")])])], 1)])];
-      },
-      proxy: true
-    }]),
-    model: {
-      value: _vm.showModalRegistrar,
-      callback: function callback($$v) {
-        _vm.showModalRegistrar = $$v;
-      },
-      expression: "showModalRegistrar"
-    }
-  }, [_vm._v(" "), _c("div", {
-    staticClass: "con-form"
-  }, [_c("div", {
-    staticClass: "row overflow-hidden"
-  }, [_c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Nombre(s)")]), _vm._v(" "), _c("vs-input", {
-    attrs: {
-      id: "Nombres",
-      type: "text",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Nombre(s)",
-      autocomplete: "off",
-      state: _vm.error.Nombre ? "danger" : ""
-    },
-    on: {
-      input: function input($event) {
-        return _vm.inputNombr("nombre");
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.Nombre.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.Nombre) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.Nombre,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "Nombre", $$v);
-      },
-      expression: "datosUsuario.Nombre"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Primer Apellido")]), _vm._v(" "), _c("vs-input", {
-    attrs: {
-      id: "Apaterno",
-      type: "text",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Primer Apellido",
-      autocomplete: "off",
-      state: _vm.error.Apaterno ? "danger" : ""
-    },
-    on: {
-      input: function input($event) {
-        return _vm.inputNombr("app");
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.Apaterno.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.Apaterno) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.Apaterno,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "Apaterno", $$v);
-      },
-      expression: "datosUsuario.Apaterno"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Segundo Apellido")]), _vm._v(" "), _c("vs-input", {
-    attrs: {
-      id: "Amaterno",
-      type: "text",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Segundo Apellido",
-      autocomplete: "off",
-      state: _vm.error.Amaterno ? "danger" : ""
-    },
-    on: {
-      input: function input($event) {
-        return _vm.inputNombr("apm");
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.Amaterno.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.Amaterno) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.Amaterno,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "Amaterno", $$v);
-      },
-      expression: "datosUsuario.Amaterno"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Correo electrónico")]), _vm._v(" "), _c("vs-input", {
-    key: "em" + _vm.error.email.length,
-    attrs: {
-      id: "email",
-      type: "email",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Correo electrónico",
-      autocomplete: "off",
-      state: _vm.error.email ? "danger" : ""
-    },
-    scopedSlots: _vm._u([_vm.error.email.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.email) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.email,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "email", $$v);
-      },
-      expression: "datosUsuario.email"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Usuario")]), _vm._v(" "), _c("vs-input", {
-    key: "user" + _vm.error.username.length,
-    attrs: {
-      id: "username",
-      type: "text",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Nombre de usuario",
-      autocomplete: "off",
-      state: _vm.error.username ? "danger" : ""
-    },
-    on: {
-      input: function input($event) {
-        return _vm.inputUsername();
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.username.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.username) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.username,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "username", $$v);
-      },
-      expression: "datosUsuario.username"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3 d-none d-lg-flex"
-  }), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label",
-    attrs: {
-      title: _vm.passLabel
-    }
-  }, [_vm._v("\n                        Contraseña\n                    ")]), _vm._v(" "), _c("vs-input", {
-    key: "ps" + _vm.error.pswd.length,
-    attrs: {
-      id: "contrasenaNueva",
-      type: "password",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Escriba la nueva contraseña",
-      autocomplete: "off",
-      visiblePassword: _vm.visiblePSWD.nueva,
-      state: _vm.error.pswd ? "danger" : ""
-    },
-    on: {
-      "click-icon": function clickIcon($event) {
-        _vm.visiblePSWD.nueva = !_vm.visiblePSWD.nueva;
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.pswd.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.pswd) + "\n                        ")];
-      },
-      proxy: true
-    } : null, {
-      key: "icon",
-      fn: function fn() {
-        return [!_vm.visiblePSWD.nueva ? _c("span", {
-          staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            visibility\n                            ")]) : _c("span", {
-          staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            visibility_off\n                            ")])];
-      },
-      proxy: true
-    }], null, true),
-    model: {
-      value: _vm.datosUsuario.pswd,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "pswd", $$v);
-      },
-      expression: "datosUsuario.pswd"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-4 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Confirmar Contraseña")]), _vm._v(" "), _c("vs-input", {
-    key: "psc" + _vm.error.pswd.length,
-    attrs: {
-      id: "contrasenaConfirma",
-      type: "password",
-      color: "#C2B280",
-      "icon-after": "",
-      placeholder: "Confirme la nueva contraseña",
-      autocomplete: "off",
-      visiblePassword: _vm.visiblePSWD.confirmar,
-      state: _vm.error.pswdConfirmar ? "danger" : ""
-    },
-    on: {
-      "click-icon": function clickIcon($event) {
-        _vm.visiblePSWD.confirmar = !_vm.visiblePSWD.confirmar;
-      }
-    },
-    scopedSlots: _vm._u([_vm.error.pswd.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.pswd) + "\n                        ")];
-      },
-      proxy: true
-    } : null, {
-      key: "icon",
-      fn: function fn() {
-        return [!_vm.visiblePSWD.confirmar ? _c("span", {
-          staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            visibility\n                            ")]) : _c("span", {
-          staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            visibility_off\n                            ")])];
-      },
-      proxy: true
-    }], null, true),
-    model: {
-      value: _vm.datosUsuario.pswdConfirmar,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "pswdConfirmar", $$v);
-      },
-      expression: "datosUsuario.pswdConfirmar"
-    }
-  })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-6 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Rol")]), _vm._v(" "), _vm.cat_rol.length > 0 ? _c("vs-select", {
-    attrs: {
-      filter: "",
-      state: _vm.error.rol.length > 0 ? "danger" : "",
-      placeholder: "Seleccione un rol para el usuario",
-      autocomplete: "off"
-    },
-    scopedSlots: _vm._u([_vm.error.rol.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.rol) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.rol,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "rol", $$v);
-      },
-      expression: "datosUsuario.rol"
-    }
-  }, [_vm._v(" "), _vm._l(_vm.cat_rol, function (item, index) {
-    return _c("vs-option", {
-      key: index,
-      attrs: {
-        label: item.nombre,
-        value: item.idRol
-      }
-    }, [_vm._v("\n                            " + _vm._s(item.nombre) + "\n                        ")]);
-  })], 2) : _vm._e()], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 col-lg-6 px-3 pb-3"
-  }, [_c("label", {
-    staticClass: "col-form-label"
-  }, [_vm._v("Departamento")]), _vm._v(" "), _vm.cat_DPTO.length > 0 ? _c("vs-select", {
-    key: _vm.cat_DPTO.length,
-    attrs: {
-      filter: "",
-      state: _vm.error.dpto.length ? "danger" : "",
-      placeholder: "Seleccione un departamento para el usuario",
-      autocomplete: "off"
-    },
-    scopedSlots: _vm._u([_vm.error.dpto.length > 0 ? {
-      key: "message-danger",
-      fn: function fn() {
-        return [_vm._v("\n                            " + _vm._s(_vm.error.dpto) + "\n                        ")];
-      },
-      proxy: true
-    } : null], null, true),
-    model: {
-      value: _vm.datosUsuario.dpto,
-      callback: function callback($$v) {
-        _vm.$set(_vm.datosUsuario, "dpto", $$v);
-      },
-      expression: "datosUsuario.dpto"
-    }
-  }, [_vm._v(" "), _vm._l(_vm.cat_DPTO, function (item, index) {
-    return _c("vs-option", {
-      key: index,
-      attrs: {
-        label: item.nombre,
-        value: item.idSeguimiento
-      }
-    }, [_vm._v("\n                            " + _vm._s(item.nombre) + "\n                        ")]);
-  })], 2) : _vm._e()], 1)])])])], 1);
+  })] : [_vm._m(2), _vm._v(" "), _vm._m(3)]], 2)])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -30183,7 +29479,7 @@ var staticRenderFns = [function () {
     staticClass: "fas fa-heart pulse-heart"
   }), _vm._v("   por la Coordinación de\n                Informática")])]), _vm._v(" "), _c("div", {
     staticClass: "d-sm-block ml-2 text-right text-sm-center"
-  }, [_c("small", [_vm._v("Versión 1..0.18072025")])])])]);
+  }, [_c("small", [_vm._v("Versión 1.7.0.19092025")])])])]);
 }];
 render._withStripped = true;
 
@@ -30508,7 +29804,7 @@ var render = function render() {
           staticStyle: {
             color: "var(--iee-bg-color) !important"
           }
-        }, [_vm._v("\n                                help\n                            ")])])], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
+        }, [_vm._v("\n                            help\n                        ")])])], 1)], 1) : _vm._e(), _vm._v(" "), _c("div", {
           staticClass: "d-flex align-items-center pb-4"
         }, [_c("div", {
           staticClass: "toggle-switch"
@@ -30548,12 +29844,12 @@ var render = function render() {
           staticClass: "slider py-1"
         }, [_vm.darkmode ? _c("span", {
           staticClass: "material-symbols-rounded d-flex justify-content-start align-items-center ml-0 pl-1 text-white"
-        }, [_vm._v("light_mode\n                                    ")]) : _c("span", {
+        }, [_vm._v("light_mode\n                                ")]) : _c("span", {
           staticClass: "material-symbols-rounded d-flex justify-content-end align-items-center mr-0 pr-1",
           staticStyle: {
             color: "black !important"
           }
-        }, [_vm._v("dark_mode\n                                    ")])])])])])], 1)];
+        }, [_vm._v("dark_mode\n                                ")])])])])])], 1)];
       },
       proxy: true
     }]),
@@ -30574,11 +29870,11 @@ var render = function render() {
       fn: function fn() {
         return [_c("span", {
           staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            home\n                        ")])];
+        }, [_vm._v("\n                        home\n                    ")])];
       },
       proxy: true
     }])
-  }, [_vm._v("\n                    Inicio\n                ")])], _vm._v(" "), [_c("vs-sidebar-group", {
+  }, [_vm._v("\n                Inicio\n            ")])], _vm._v(" "), [_c("vs-sidebar-group", {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
@@ -30591,11 +29887,11 @@ var render = function render() {
             fn: function fn() {
               return [_c("span", {
                 staticClass: "material-symbols-rounded"
-              }, [_vm._v("\n                                calculate\n                            ")])];
+              }, [_vm._v("\n                            calculate\n                        ")])];
             },
             proxy: true
           }])
-        }, [_vm._v("\n                        Cálculo\n                    ")])];
+        }, [_vm._v("\n                    Cálculo\n                ")])];
       },
       proxy: true
     }])
@@ -30617,7 +29913,7 @@ var render = function render() {
     attrs: {
       to: "/calculo"
     }
-  }, [_vm._v("\n                    Registrar Calculo\n                ")])], 1), _vm._v(" "), _c("vs-sidebar-item", {
+  }, [_vm._v("\n                Registrar Calculo\n            ")])], 1), _vm._v(" "), _c("vs-sidebar-item", {
     attrs: {
       id: "listado"
     },
@@ -30635,7 +29931,7 @@ var render = function render() {
     attrs: {
       to: "/listado"
     }
-  }, [_vm._v("\n                    Listado de cálculos\n                ")])], 1)], 1), _vm._v(" "), _c("vs-sidebar-group", {
+  }, [_vm._v("\n                Listado de cálculos\n            ")])], 1)], 1), _vm._v(" "), _c("vs-sidebar-group", {
     scopedSlots: _vm._u([{
       key: "header",
       fn: function fn() {
@@ -30653,7 +29949,7 @@ var render = function render() {
             },
             proxy: true
           }], null, false, 928617608)
-        }, [_vm._v("\n                        Distribución\n                    ")]) : _vm._e()];
+        }, [_vm._v("\n                    Distribución\n                ")]) : _vm._e()];
       },
       proxy: true
     }])
@@ -30675,7 +29971,7 @@ var render = function render() {
             },
             proxy: true
           }], null, false, 3619510047)
-        }, [_vm._v("\n                        Ministraciones\n                    ")]) : _vm._e()];
+        }, [_vm._v("\n                    Ministraciones\n                ")]) : _vm._e()];
       },
       proxy: true
     }])
@@ -30697,7 +29993,7 @@ var render = function render() {
             },
             proxy: true
           }], null, false, 1220450770)
-        }, [_vm._v("\n                        Financiamiento Privado\n                    ")]) : _vm._e()];
+        }, [_vm._v("\n                    Financiamiento Privado\n                ")]) : _vm._e()];
       },
       proxy: true
     }])
@@ -30714,11 +30010,11 @@ var render = function render() {
             fn: function fn() {
               return [_c("span", {
                 staticClass: "material-symbols-rounded"
-              }, [_vm._v("\n                                person\n                            ")])];
+              }, [_vm._v("\n                            person\n                        ")])];
             },
             proxy: true
           }])
-        }, [_vm._v("\n                            Usuarios\n                    ")])];
+        }, [_vm._v("\n                        Usuarios\n                ")])];
       },
       proxy: true
     }])
@@ -30732,11 +30028,11 @@ var render = function render() {
       fn: function fn() {
         return [_c("span", {
           staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                                person_add\n                            ")])];
+        }, [_vm._v("\n                            person_add\n                        ")])];
       },
       proxy: true
-    }], null, false, 1386743645)
-  }, [_vm._v("\n                            Capturar usuario\n                    ")]) : _vm._e(), _vm._v(" "), _vm.listPermisos.includes("listado.ver") ? _c("vs-sidebar-item", {
+    }], null, false, 1139257437)
+  }, [_vm._v("\n                        Capturar usuario\n                ")]) : _vm._e(), _vm._v(" "), _vm.listPermisos.includes("listado.ver") ? _c("vs-sidebar-item", {
     attrs: {
       id: "listado.ver",
       to: "/ver"
@@ -30746,11 +30042,11 @@ var render = function render() {
       fn: function fn() {
         return [_c("span", {
           staticClass: "material-symbols-rounded"
-        }, [_vm._v("\n                            patient_list\n                        ")])];
+        }, [_vm._v("\n                        patient_list\n                    ")])];
       },
       proxy: true
-    }], null, false, 130758712)
-  }, [_vm._v("\n                        Listado de usuarios\n                    ")]) : _vm._e()], 1)]], 2)], 1);
+    }], null, false, 2780694072)
+  }, [_vm._v("\n                    Listado de usuarios\n                ")]) : _vm._e()], 1)]], 2)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;

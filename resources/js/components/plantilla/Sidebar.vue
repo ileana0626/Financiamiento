@@ -21,13 +21,6 @@
                 </vs-sidebar-item>
             </template>
             <template>
-                <!-- <vs-sidebar-item v-if="listPermisos.includes('errores.index')" id="errores.index"
-                    to="/consultaErrorcodes">
-                    <template #icon>
-                        <i class="fa fa-search"></i>
-                    </template>
-Consulta de Errores
-</vs-sidebar-item> -->
             <vs-sidebar-group>
                 <template #header>
                     <vs-sidebar-item arrow>
@@ -208,7 +201,6 @@ export default {
     },
     mounted() {
         this.getRolUsuario();
-        console.log('Permisos recibidos:', this.listPermisos);
     },
     methods: {
         // Método que obtiene eltamaño del margin top que se debe aplicar al elemento
@@ -289,11 +281,9 @@ export default {
             } else {
                 localStorage.setItem('theme', 'light');
                 document.documentElement.setAttribute('data-theme', 'light');
-                // this.darkmode = !this.darkmode;
+               
             }
             this.darkmode = !this.darkmode;
-            // console.log(localStorage.getItem('theme'));
-            // console.log(this.darkmode);
             EventBus.$emit('darkMode', this.darkmode);
         },
     }

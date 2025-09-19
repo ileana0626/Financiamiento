@@ -207,7 +207,6 @@ export default {
                     throw new Error(errorMessage);
                 }
             }).catch((error) => {
-                console.error('Error al cargar cálculos:', error);
                 this.$vs.notification({
                     title: 'Error',
                     text: 'Error al cargar los cálculos',
@@ -259,7 +258,6 @@ export default {
                 link.href = url;
                 
                 // Establecer el nombre del archivo
-                //const filename = `calculos_financiamiento_${new Date().toISOString().split('T')[0]}.xlsx`;
                 const filename = `Anexo 1. Cálculo.xlsx`;
                 link.setAttribute('download', filename);
                 
@@ -277,7 +275,6 @@ export default {
                     color: 'success'
                 });
             }).catch((error) => {
-                console.error('Error al exportar a Excel:', error);
                 
                 let errorMessage = 'Error al exportar a Excel';
                 if (error.response?.data?.message) {

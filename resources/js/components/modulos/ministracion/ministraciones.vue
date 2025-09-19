@@ -93,8 +93,6 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <!-- <span :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"></span>
-                                                {{partido.mintr_diciembre}} -->
                                                 <input type="text" :value="partido.mintr_diciembre" class="form-control" 
                                                     :key="'txbD_Con-' + partido.id_calculo + '-' + partido.id_partido"
                                                     :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"
@@ -137,8 +135,6 @@
                                         <!-- Solo diciembre (índice 11) es editable -->
                                         <template v-if="mesIndex === 11">
                                             <div class="d-flex align-items-center">
-                                                <!-- <span :class="{ 'text-success': partido.ajusteDiciembre > 0, 'text-danger': partido.ajusteDiciembre < 0 }"></span>
-                                                {{partidoS.mintr_diciembre}} -->
                                                 <input type="text" :value="partidoS.mintr_diciembre" class="form-control" 
                                                     :key="'txbD_Sin-' + partidoS.id_calculo + '-' + partidoS.id_partido"
                                                     :class="{ 'text-success': partidoS.ajusteDiciembre > 0, 'text-danger': partidoS.ajusteDiciembre < 0 }"
@@ -247,7 +243,6 @@ export default {
             Partidos_Con_Representacion: [],
             Partidos_Sin_Representacion: [],
             NewlistCalculos: [],
-            //ministracionId: {}, // Para saber si ya se ha guardado un registro
             search: '',
             page: 1,
             max: 10,
@@ -261,11 +256,6 @@ export default {
             ],
 
             catAnio: [],
-            //calculo: {}, // Se usa para cargar el cálculo seleccionado
-            //montosFijos: {},
-            //ajustesDiciembre: {}, // como un objeto para almacenar pares clave-valor para partidos con y sin representación -- DEPRECATED
-            //cat_tipo_distribucion: [],
-            //distribucion: [],
             distribuciones: [],
             CalculosPorAnio: [], // Se usan para listar los calculos por año
             // Validaciones
@@ -274,13 +264,6 @@ export default {
             descargar_disabled: {}, // true: disabled | false: enabled
         }
     },
-    // watch: {
-    //     anio(newAnio) {
-    //         if (newAnio) {
-    //             this.getDistribucionesPorAnio(newAnio);
-    //         }
-    //     }
-    // },
     created() {
         EventBus.$on('darkMode', (data) => { this.darkMode = data })
     },
@@ -289,15 +272,10 @@ export default {
         EventBus.$off('darkMode');
     },
     async mounted() {
-        //this.getCalculos();
         await this.getAnio();
         await this.obtenerDatos(11);
     },
     methods: {
-        // #region CATÁLOGOS 📜
-        /**
-         * Obtiene el año fiscal
-         */
         async getAnio() {
             this.catAnio = []
             let url = '/administracion/usuario/getAnioFiscal'
@@ -369,10 +347,8 @@ export default {
             try {
                 const { data } = await axios.get(url, { params: { anio } });
                 if (data.success) {
-                    //debug('🐛 📝 Distribuciones cargadas.', JSON.stringify(data));
                     this.CalculosPorAnio = data.calculos;
                     this.distribuciones = data.distribuciones;
-                    // this.ministraciones = data.ministraciones;
                     this.Partidos_Con_Representacion = data.partidos_con_repr;
                     this.Partidos_Sin_Representacion = data.partidos_sin_repr;
 
@@ -380,34 +356,20 @@ export default {
                     // Usar $set para que Vue detecte los cambios y sean reactivos
                     this.Partidos_Con_Representacion.map(partido =>
                         this.$set(partido, 'ajusteDiciembre', 0.0),
-                        //this.$set(partido, 'mintr_diciembre', 0.0)
                     );
                     this.Partidos_Sin_Representacion.map(partido =>
                         this.$set(partido, 'ajusteDiciembre', 0.0),
-                        //this.$set(partido, 'mintr_diciembre', 0.0)
                     );
-
-                    debug('🐛 ✅ Datos cargados.');
                 }
                 else {
-                    debug('🐛 ❌ Error al obtener datos.');
                 }
-
-                //Cargar ministraciones para el botón de descarga
-                // this.CalculosPorAnio.forEach(calculo => {
-                //     this.cargarMinistracion(calculo.id_calculo);
-                // });
-
                 //Cargar ministraciones para el botón de descarga
                 await Promise.all(
                     this.CalculosPorAnio.map(calculo => 
                         this.cargarMinistracion(calculo.id_calculo)
                     )
                 );
-                //debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
             } catch (error) {
-                debug("🐛 ❌ Error al obtener distribuciones:", error);
-                
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             }
@@ -428,16 +390,13 @@ export default {
                     // Si se quieren rescatar los totales hay que convertirlo a objeto {} y declararlo en data{...}
                     this.DataMinistracion = response.data.ministracion[0]; // Solo con GET
                     this.ministracionId = this.DataMinistracion.id_calculo; // Id del calculo seleccionado es de la base de datos
-                    //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
                     this.$set(this.descargar_disabled, id_calculo, false); // Habilita descargar archivo
                 }
                 else{
                     this.$set(this.descargar_disabled, id_calculo, true); // Deshabilita descargar archivo
                 }
-                // debug('🐛 📥 Descargas:', JSON.stringify(this.descargar_disabled));
             }
             catch (error) {
-                debug("🐛 ❌ Error al cargar datos de la ministración:", error);
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             }
@@ -450,8 +409,6 @@ export default {
             const loader = loading(this.$vs);
             loader.text = 'Guardando cambios...';
             let url = '/administracion/solicitud/Mintr_Get_Insert_Update_ministraciones_dppp';
-            //id del calculo seleccionado 
-            debug(' 🐛 ✨ Id del calculo: ' + id_calculo);
             // Obtener los partidos con representación y sin representación de un cálculo
             const partidosConRepr = this.Partidos_Con_Representacion.filter(p => p.id_calculo === id_calculo);
             const partidosSinRepr = this.Partidos_Sin_Representacion.filter(p => p.id_calculo === id_calculo);
@@ -459,8 +416,6 @@ export default {
             //Preparamos los datos para guardar
             let totalesMensuales = this.obtenerTotalesMensuales(id_calculo);
             let granTotal = this.obtenerTotalGeneral(id_calculo);
-            debug(' 🐛 TotalesMensuales: ' + JSON.stringify(totalesMensuales));
-            debug(' 🐛 GranTotal: ' + granTotal);
             try{
                 //Actualizamos los totales
                 let datos = {
@@ -493,7 +448,6 @@ export default {
                     throw new Error(errorMessage);
                 }
                 if(responseTotales.data.success){
-                    debug(' 🐛 🌠 Id del responseTotales: ' + JSON.stringify(responseTotales.data.id));
                 }
                 else{
                     throw new Error(responseTotales.data.message);
@@ -520,8 +474,6 @@ export default {
                         const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
                         throw new Error(errorMessage);
                     }
-                    debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
-                    debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
                 }
                 p_tipoPartido = 'SIN';
                 for (let partido of partidosSinRepr) {
@@ -542,8 +494,6 @@ export default {
                         const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
                         throw new Error(errorMessage);
                     }
-                    debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(responsePartidos.data.ids));
-                    debug(' 🐛 📌 Id del partido: ' + partido.id_partido, 'Mintr Diciembre: ' + partido.mintr_diciembre);
                 }
                 // Notificación de éxito
                 Swal.fire({
@@ -556,7 +506,6 @@ export default {
                 this.$vs.notification({ color: 'success', text: 'Ministración guardada' + responseTotales.data.message});
                 this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
             }catch(error){
-                debug('🐛 Error al guardar la ministración:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar la ministración' });
 
                 let nombreMetodo = url.split('/');
@@ -573,7 +522,6 @@ export default {
             const loader = loading(this.$vs);
             loader.text = 'Generando archivo Excel...';
             const apiUrl = `/administracion/solicitud/exportarFinanciamientoMinistracionesExcel/${id_calculo}`;
-            console.log(apiUrl);
             let downloadUrl = null;
             let link = null;
 
@@ -600,7 +548,6 @@ export default {
                 });
             })
             .catch(error => {
-                debug('🔴 Error al descargar Excel:', error);
 
                 let errorMessage = 'Error al descargar Excel';
                 if (error.response?.data?.message) {
@@ -645,12 +592,8 @@ export default {
             // Limpia el valor del input | quita los caracteres no numéricos
             const valorLimpio = parseFloat(limpiarNumeroInput(event.target.value));
 
-            // Almacena el valor limpio en el objeto ajustesDiciembre
-            //this.$set(this.ajustesDiciembre, key, valorLimpio); // DEPRECATED
             partido.mintr_diciembre = valorLimpio; // Almacena el valor limpio en el objeto partido
 
-            // Formatear el valor limpio y mostrarlo en la caja de texto
-            //event.target.value = formatoMonedaLocal(valorLimpio); // Por si se quiere formatear
             event.target.value = valorLimpio;
         },
         /**
@@ -660,8 +603,6 @@ export default {
          */
         formatCurrency(value) {
             if (value === null || value === undefined || isNaN(value)) return '$0.00';
-            //Con style: 'currency', ya no es necesario truncar manualmente
-            //const num = Math.floor(parseFloat(value) * 100) / 100;
             const num = parseFloat(value);
             return num.toLocaleString('es-MX', {
                 style: 'currency',
@@ -683,7 +624,6 @@ export default {
          * @returns {Array<number>} - Array con los montos distribuidos
          */
          distribuirConEditableDiciembre(totalFinanciamientoPartido, partido, key) {
-            //const key = `${prefix}-${partido.id_calculo}-${partido.id_partido}`;
             const mensual = new Decimal(totalFinanciamientoPartido).dividedBy(12); // objeto Decimal
 
             // Validar y convertir el valor de diciembre
@@ -693,8 +633,6 @@ export default {
             
             // Actualizar estado del valor de diciembre temporal
             partido.mintr_diciembre = montoDiciembre;
-            //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
-            //this.$set(this.ajustesDiciembre, key, montoDiciembre); -- DEPRECATED
 
             // Retornar array con 11 meses iguales + diciembre
             return [...Array(11).fill(mensual), montoDiciembre].map(v => v.toNumber ? v.toNumber() : v); // 123.456 Decimal->toNumber()
@@ -735,21 +673,7 @@ export default {
         */
         ajustarDecimalManual(operacion, partido, prefix) {
             const ajusteUnitario = 0.01;
-            //const key = prefix + '-' + partido.id_calculo + '-' + partido.id_partido;
-            //debug('🐛 partido.mintr_diciembre: ', partido.mintr_diciembre, 'tipo: ', typeof partido.mintr_diciembre);
             let actual = new Decimal(parseFloat(partido.mintr_diciembre));
-            // Asegurar que el campo ajuste exista y sea reactivo
-            //if (partido.ajusteDiciembre === undefined) this.$set(partido, 'ajusteDiciembre', 0.0);
-
-            // Detectar número de decimales en el valor actual 
-            // Toma la parte decimal (después del punto) y obtiene la longitud de los decimales
-            //const decimales = partido.mintr_diciembre.toString().split('.')[1]?.length || 0;
-            
-            // Divide 1 entre 10 elevado al número de decimales detectados
-            // Por ejemplo, si el valor actual tiene 2 decimales, el paso será 0.01
-            // decimales = 2 → 10^2 = 100
-            // Si el valor actual tiene 0 decimales, el paso será 0.001
-            //const paso = new Decimal('1').dividedBy(new Decimal('10').pow(decimales || 3)); // default 0.001
 
             if (operacion === 'sumar') {
                 // Si totalAjusteDecimalesCalculo es negativo se puede sumar a otro partido
@@ -803,9 +727,6 @@ export default {
                     const key = `${hasFpaop ? 'con' : 'sin'}-${partido.id_calculo}-${partido.id_partido}`;
                     // Se tiene que diferenciar para mandar el financiamiento público de cada partido si es 'con' o 'sin'
                     const total = hasFpaop ? partido.C_fpaop : partido.monto_2_por_ciento;
-                    //const total = partido.C_fpaop || partido.monto_2_por_ciento; // Otra forma
-
-                    //const override = this.ajustesDiciembre[key]; // No se ocupa
 
                     const montos = this.distribuirConEditableDiciembre(total, partido, key);
                     montos.forEach((monto, i) => {
@@ -817,7 +738,6 @@ export default {
                 // Convertir a números del objeto Decimal para mostrar
                 return totales.map(t => t.toNumber());
             } catch (error) {
-                debug('🐛 ❌ Error al obtener totales mensuales:', error);
                 return [];
             }
         },
@@ -837,38 +757,6 @@ export default {
          * ✔ Validar campos
          * @returns {boolean}
          */
-        /*
-        validarCampos() {
-            this.limpiarErrores();
-            if (this.anio === '') {
-                this.errorAnio = 'El campo año es obligatorio';
-                this.error = true;
-            }
-            if (this.monto30Input === '') {
-                this.errorMonto30 = 'Ingrese un monto 30% válido';
-                this.error = true;
-            }
-
-            if (this.monto70Input === '') {
-                this.errorMonto70 = 'Ingrese un monto 70% válido';
-                this.error = true;
-            }
-            if (this.distribucion === '') {
-                this.errorDistribucion = 'El campo distribución es obligatorio';
-                this.error = true;
-            }
-            // Validar que llenen todos los campos
-            this.Partidos_Con_Representacion.forEach(partido => {
-
-                if (partido.inputPorcentaje === '') {
-                    partido.errorPorcentajeVotacion = 'Ingrese un porcentaje válido';
-                    this.error = true;
-                }
-            });
-            return this.error;
-        },
-        */
-       
         /**
          * 🧹 Limpia todos los campos del formulario
          * @returns {void}

@@ -396,7 +396,6 @@ import { loading } from '../../../methods';
  * 🐛 Función para depuración development
  * @param {...any} args - Uno o más mensajes a mostrar en consola
  * @example
- * debug('Mensaje de prueba', {data: 123});
  */
 const debug = (...args) => {
     if (process.env.NODE_ENV === 'development') {
@@ -542,7 +541,6 @@ export default {
                     'id': calculo_tr.id
                 }
             }).then(response => {
-                debug('🐛 Datos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
                     this.Partidos_Sin_Representacion = response.data.partidosSinRep;
@@ -694,7 +692,6 @@ export default {
             }
             try{
                 const response = await axios.post(url, datos); // ⇋ Se manda post aunque sea GET por el controlador
-                debug('🐛 response.data:', response.data); 
                 // Verifica si hay una distribucion cargada, si no hay Distribución encontrada en la base de datos prosigue a cargar
                 if( response.data && response.data.success && response.data.distribucion.length > 0){
                     this.DataDistribucion = response.data.distribucion[0]; // Solo con GET
@@ -713,15 +710,11 @@ export default {
                     this.monto70 = this.DataDistribucion.monto_70_por_ciento;
                     this.opcionSelecionadaPorcentaje = String(this.DataDistribucion['tipoPorcentaje']); // !Importante que parse a String
                     this.$nextTick(() => {
-                        debug('🐛 Factor de porcentaje: ', this.factorCalculo, 'Opción seleccionada: ',this.opcionSelecionadaPorcentaje,'tipo:', typeof this.opcionSelecionadaPorcentaje);
-                    });
+                        });
                     if((this.distribucionId ?? null) !== null){
                         this.descargar_disabled = false;
                     }
-                    debug('✅ Distribución cargada.');
-                }else{
-                    debug('❌ No se encontro distribución, ➜ 👍 continua normalmente...');
-                    return;
+                    
                 }
             }catch(error){
                 console.error('Error al cargar distribución', error);
@@ -768,7 +761,6 @@ export default {
                 p_subtotal_D_candidatura: this.candidatura,
             };
             this.AlmacenarCalculos_Partidos(); // Actualizamos los calculos de los partidos mostrados en la tabla
-            console.log('Datos a guardar: ', datos, this.Partidos_Con_Representacion, this.Partidos_Sin_Representacion);
             try {
                 // Actualizar distribución
                 if (this.distribucionId) {
@@ -776,7 +768,6 @@ export default {
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id; // || this.distribucionId;
-                        debug('🐛 Update response.data.id:', response.data.id);
                     } else {
                         const errorMsg = response.data?.message || 'Error al actualizar la distribución';
                         throw new Error(errorMsg);
@@ -786,7 +777,6 @@ export default {
                     
                     if (response.data && response.data.success) {
                         this.distribucionId = response.data.id;
-                        debug('🐛 Insert response.data.id:', response.data.id);
                         
                     } else {
                         const errorMsg = response.data?.message || 'Error al guardar la distribución';
@@ -801,7 +791,6 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
-                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -816,7 +805,6 @@ export default {
                     try {
                     const response = await axios.post(url, partido); // ⇋
                     if (response.data && response.data.ids) {
-                        //debug('🐛 response.data.ids:', response.data.ids);
                     }
                     } catch (error) {
                         this.$vs.notification({ 
@@ -836,11 +824,8 @@ export default {
                 confirmButtonText: 'Aceptar'
                 })
                 // Habilita descargar archivo
-                //this.distribucionId = this.selectedCalculo.id_calculo; // Parche para que funcione el descargar
-                debug('🐛 this.distribucionId: ', this.distribucionId);
                 this.descargar_disabled = false;
             } catch (error) {
-                console.error('Error al guardar:', error);
                 this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar' });
 
                 let nombreMetodo = url.split('/');
@@ -883,7 +868,6 @@ export default {
                 });
             })
             .catch(error => {
-                debug('🐛 Error al descargar Excel:', error);
                 
                 let errorMessage = 'Error al descargar Excel';
                 if (error.response?.data?.message) {
@@ -1179,7 +1163,6 @@ export default {
             }, 0);
         },
         factorCalculo() {
-            //debug('🐛 En factorCalculo, opción:', this.opcionSelecionadaPorcentaje, 'tipo:', typeof this.opcionSelecionadaPorcentaje);
             if (this.opcionSelecionadaPorcentaje === '1') {
                 return 0.5;  // 50% Gubernatura
             } else if (this.opcionSelecionadaPorcentaje === '2') {

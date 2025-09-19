@@ -81,6 +81,9 @@
                                             <div class="row">
                                                 <vs-input danger :state="(error) ? 'danger' : ''" type="text"
                                                     placeholder="Usuario" v-model="fillCrearUsuario.cUsuario">
+                                                    <template #message-danger>
+                                                        El usuario debe tener máximo 10 caracteres.
+                                                    </template>
                                                 </vs-input>
                                                 <div class="danger-message">
                                                     <template v-if="errorUsuario.length > 0">
@@ -117,7 +120,7 @@
                                                     placeholder="Ingresar una contraseña"
                                                     v-model="fillCrearUsuario.cContrasena" show-password>
                                                     <template #message-danger>
-                                                        La contraseña debe de tener al menos 8 caracteres
+                                                        La contraseña debe de tener máximo 8 caracteres, una mayúscula, un número y un caracter especial.
                                                     </template>
                                                 </vs-input>
                                                 <div class="danger-message">

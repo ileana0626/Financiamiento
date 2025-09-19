@@ -131,13 +131,11 @@
                                                         :key="'row1-' + i" class="col-partido monto">
                                                         {{ formatCurrency(limiteFinanciamientoPrivado(partido,
                                                         partido.C_fpaop)) }}
-                                                        <!-- {{ limite(partido, partido.C_fpaop) }} -->
                                                     </vs-td>
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'row1s-' + i" class="col-partido monto">
                                                         {{ formatCurrency(limiteFinanciamientoPrivado(partidoS,
                                                         partidoS.monto_2_por_ciento)) }}
-                                                        <!-- {{ limite(partidoS, partidoS.monto_2_por_ciento) }} -->
                                                     </vs-td>
                                                 </vs-tr>
 
@@ -150,13 +148,11 @@
                                                         :key="'row1-' + i" class="col-partido monto">
                                                         {{ formatCurrency(aportacionesMilitantes(partido,
                                                         partido.C_fpaop)) }}
-                                                        <!-- {{ aportaciones(partido,partido.C_fpaop) }} -->
                                                     </vs-td>
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'row1s-' + i" class="col-partido monto">
                                                         {{ formatCurrency(aportacionesMilitantes(partidoS,
                                                         partidoS.monto_2_por_ciento)) }}
-                                                        <!-- {{ aportaciones(partidoS,partidoS.monto_2_por_ciento) }} -->
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Tope de gastos para la elección presidencial inmediata anterior-->
@@ -164,22 +160,7 @@
                                                     <vs-td class="col-desc">
                                                         Tope de gastos para la elección presidencial inmediata anterior
                                                     </vs-td>
-                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                                        :key="'topeConRep-' + partido.id + '-' + i"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesConRep', i)"
-                                                            @input="updateValue(this.selectedCalculo ,'topesConRep', i, $event)"
-                                                            @focus="setFocus('topesConRep', i)" @blur="clearFocus"
-                                                            placeholder="$0.00" />
-                                                    </vs-td>
-                                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                                        :key="'topeSinRep-' + partidoS.id + '-' + i"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesSinRep', i)"
-                                                            @input="updateValue(this.selectedCalculo,'topesSinRep', i, $event)"
-                                                            @focus="setFocus('topesSinRep', i)" @blur="clearFocus"
-                                                            placeholder="$0.00" />
-                                                    </vs-td> -->
+                                                   
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topePresidencialInput"
                                                             :key="'txb_tope_presidencial'"
@@ -204,7 +185,6 @@
                                                         :key="'apCR-' + partido.id + '-' + i" class="col-partido monto">
                                                         {{ formatCurrency(aportacionesSimpatizantesPresidencial(partido,
                                                         topePresidencial))}}
-                                                        <!-- {{ formatCurrency(aportacionSimpatizantes(partido, topesConRep[i])) }} -->
                                                     </vs-td>
 
                                                     <!-- Partidos sin representación -->
@@ -213,7 +193,6 @@
                                                         class="col-partido monto">
                                                         {{ formatCurrency(aportacionesSimpatizantesPresidencial(partidoS,
                                                         topePresidencial))}}
-                                                        <!-- {{ formatCurrency(aportacionSimpatizantes(partidoS, topesSinRep[i])) }} -->
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Tope de gastos para la elección inmediata anterior de Gubernatura del Estado-->
@@ -222,22 +201,6 @@
                                                         Tope de gastos para la elección inmediata anterior de
                                                         Gubernatura del Estado
                                                     </vs-td>
-                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
-                                                        :key="'topeConRepGob-' + (partido.id || i)"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesConRepGobernatura', i)"
-                                                            @input="updateValue(this.selectedCalculo, 'topesConRepGobernatura', i, $event)"
-                                                            @focus="setFocus('topesConRepGobernatura', i)"
-                                                            @blur="clearFocus" placeholder="$0.00" />
-                                                    </vs-td>
-                                                    <vs-td v-for="(partido, i) in Partidos_Sin_Representacion"
-                                                        :key="'topeSinRepGob-' + (partido.id || i)"
-                                                        class="col-partido monto">
-                                                        <vs-input :value="formatInput('topesSinRepGobernatura', i)"
-                                                            @input="updateValue(this.selectedCalculo,'topesSinRepGobernatura', i, $event)"
-                                                            @focus="setFocus('topesSinRepGobernatura', i)"
-                                                            @blur="clearFocus" placeholder="$0.00" />
-                                                    </vs-td> -->
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topeGubernaturaInput"
                                                             :key="'txb_tope_gubernatura'"
@@ -262,8 +225,6 @@
                                                         :key="'apCR-' + (partido.id || i)" class="col-partido monto">
                                                         {{ formatCurrency(aportacionesSimpatizantesGubernatura(partido,
                                                         topeGubernatura))}}
-                                                        <!-- {{ formatCurrency(aportacionDinero(partido, topesConRepGobernatura[i]))
-                                                        }} -->
                                                     </vs-td>
 
                                                     <!-- Partidos sin representación -->
@@ -271,8 +232,6 @@
                                                         :key="'apSR-' + (partidoS.id || i)" class="col-partido monto">
                                                         {{ formatCurrency(aportacionesSimpatizantesGubernatura(partidoS,
                                                         topeGubernatura))}}
-                                                        <!-- {{ formatCurrency(aportacionDinero(partidoS, topesSinRepGobernatura[i]))
-                                                        }} -->
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Financiamiento por rendimientos financieros de los partidos políticos-->
@@ -287,8 +246,6 @@
                                                         :key="'apCR-' + (partido.id || i)" class="col-partido monto">
                                                         {{ formatCurrency(rendimientosFinanciamientoPrivado(partido,
                                                         topeGubernatura))}}
-                                                        <!-- {{ formatCurrency(aportacionDinero(partido, topesConRepGobernatura[i]))
-                                                        }} -->
                                                     </vs-td>
 
                                                     <!-- Partidos sin representación -->
@@ -296,8 +253,6 @@
                                                         :key="'apSR-' + (partidoS.id || i)" class="col-partido monto">
                                                         {{ formatCurrency(rendimientosFinanciamientoPrivado(partidoS,
                                                         topeGubernatura))}}
-                                                        <!-- {{ formatCurrency(aportacionDinero(partidoS, topesSinRepGobernatura[i]))
-                                                        }} -->
                                                     </vs-td>
                                                 </vs-tr>
                                             </template>
@@ -397,13 +352,6 @@ export default {
             active: false,
             anio: '',
             id: null,
-            /*topesConRep: [],
-            topesSinRep: [],
-            focused: { arr: null, index: null },
-            topesConRepGobernatura: [],
-            topesSinRepGobernatura: [],
-            */
-            // Valores Input
             topePresidencial: 0.0,
             topeGubernatura: 0.0,
             topePresidencialInput: '$0.00',  // Inicializar como string
@@ -447,9 +395,6 @@ export default {
         this.opcionSelecionadaPorcentaje = '1'; // '1': gubernatura | '2': intermedia
         this.getCalculos();
         await this.getAnio();
-        //await this.obtenerDatos(11);
-        //this.inicializarTopes();
-
     },
     methods: {
         // #region CATÁLOGOS 📜
@@ -465,57 +410,6 @@ export default {
                 methods.catchHandler(error, nombreMetodo[3], this.$router)
             })
         },
-        /*DEPRECATED
-        async obtenerDatos(tipo) {
-            let url = '/administracion/usuario/obtenerDatos'
-            await axios.get(url, {
-                params: {
-                    'tipo': tipo,
-                    'consulta': 1
-                }
-            }).then(response => {
-                switch (tipo) {
-                    case 1:
-                        this.catCargos = response.data
-                        break;
-                    case 2:
-                        this.catRemitente = response.data
-                        break;
-                    case 3:
-                        this.catTermino = response.data
-                        break;
-                    case 4:
-                        this.cat_diasTermino = response.data
-                        break;
-                    case 5:
-                        this.cat_seguimiento = response.data
-                        break;
-                    case 6:
-                        this.cat_departamentos = response.data
-                        break;
-                    case 7:
-                        this.cat_tipo = response.data
-                        break;
-                    case 8:
-                        this.cat_estutus = response.data
-                        break;
-                    case 9:
-                        this.cat_partido = response.data
-                        break;
-                    case 11:
-                        this.cat_tipo_distribucion = response.data
-                        break;
-                    default:
-                        break;
-                }
-            }).catch(error => {
-                let nombreMetodo = url.split('/');
-                methods.catchHandler(error, nombreMetodo[3], this.$router);
-
-            });
-        },*/
-        // #endregion CATÁLOGOS 📜
-
         // #region CONSULTAS A LA BASE DE DATOS 📚
 
         /**
@@ -528,9 +422,6 @@ export default {
                 const { data } = await axios.get('/administracion/solicitud/getDistribucionesPorAnio', { params: { anio } });
                 if (data.success) {
                     this.CalculosPorAnio = data.calculos;
-                    //this.distribuciones = data.distribuciones;
-                    //this.Partidos_Con_Representacion = data.partidos_con_repr;
-                    //this.Partidos_Sin_Representacion = data.partidos_sin_repr;
                 }
             } catch (error) {
                 console.error("Error al obtener distribuciones:", error);
@@ -578,12 +469,9 @@ export default {
             loader.text = 'Guardando cambios...';
             let url = '/administracion/solicitud/FinPriv_Update_Calculo';
             //Preparamos los datos para guardar
-            //let topes = this.obtenerTopes();
-            debug(' 🐛 🌠 Id del cálculo a guardar: ' + id_calculo);
             try {
                 // Preparamos los datos para guardar
                 let datos = {
-                    //p_comando: "UPDATE", // INSERT, UPDATE
                     p_id_calculo: id_calculo,
                     p_finpriv_tope_presidencial: this.topePresidencial,//this.selectedCalculo.finpriv_tope_presidencial,
                     p_finpriv_tope_gubernatura: this.topeGubernatura,//this.selectedCalculo.finpriv_tope_gubernatura,
@@ -601,7 +489,7 @@ export default {
                     throw new Error(errorMessage);
                 }
                 if (response.data.success) {
-                    debug(' 🐛 🌠 Id del response: ' + JSON.stringify(response.data.id));
+                    
                 }
                 else {
                     throw new Error(response.data.message);
@@ -632,7 +520,6 @@ export default {
                         const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Con';
                         throw new Error(errorMessage);
                     }
-                    debug(' 🐛 🌠 Id del responsePartidos Con: ' + JSON.stringify(responsePartidos.data.ids));
                 }
                 p_tipoPartido = 'SIN';
                 url = '/administracion/solicitud/FinPriv_Update_Partidos';
@@ -658,7 +545,6 @@ export default {
                         const errorMessage = responsePartidos.data.message || 'Error desconocido al actualizar el partido - Sin';
                         throw new Error(errorMessage);
                     }
-                    debug(' 🐛 🌠 Id del responsePartidos Sin: ' + JSON.stringify(responsePartidos.data.ids));
                 }
                 // Notificación de éxito
                 Swal.fire({
@@ -671,7 +557,6 @@ export default {
                 this.$vs.notification({ color: 'success', text: 'Financiamiento privado guardado' + response.data.message });
                 //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
             } catch (error) {
-                debug('🐛 Error al guardar el financiamiento privado:', error);
                 this.$vs.notification({ title: 'Error', color: 'danger', text: 'Error al guardar el financiamiento privado' });
 
                 let nombreMetodo = url.split('/');
@@ -715,7 +600,6 @@ export default {
                     });
                 })
                 .catch(error => {
-                    debug('🔴 Error al descargar Excel:', error);
 
                     let errorMessage = 'Error al descargar Excel';
                     if (error.response?.data?.message) {
@@ -755,7 +639,6 @@ export default {
         abrirDialog(calculo_tr) {
             const loader = loading(this.$vs);
             let url = '/administracion/solicitud/get_Partidos_Calculo_porId';
-            // debug('🐛 Calculo seleccionado:', calculo_tr);
             this.limpiarCampos(); // 🧹
             this.selectedCalculo = calculo_tr; // Se trae el calculo seleccionado para usar los datos después
             this.topePresidencial = Number(calculo_tr.finpriv_tope_presidencial) || 0;
@@ -773,13 +656,10 @@ export default {
                     'id': calculo_tr.id_calculo
                 }
             }).then(response => {
-                debug('🐛 Datos partidos recibidos:', response.data);
                 if (response.status === 200 && response.data?.success) {
                     //Obtenemos los datos de los partidos politicos
                     this.Partidos_Sin_Representacion = response.data.partidosSinRep;
-                    // debug('🐛 Partidos Sin Representacion:', this.Partidos_Sin_Representacion);
                     this.Partidos_Con_Representacion = response.data.partidosConRep;
-                    // debug('🐛 Partidos Con Representacion:', this.Partidos_Con_Representacion);
                 } else {
                     // success: false
                     const errorMessage = response.data?.message || 'Error en la respuesta del servidor';
@@ -802,24 +682,6 @@ export default {
                     loader.close();
                 })
         },
-        /*
-        calcularFinanciamientoPublicoTotalidad() {
-            let finanPublicTotal = [this.Partidos_Con_Representacion,...this.Partidos_Sin_Representacion].
-                reduce((total, partido) => {
-                return total + partido.C_fpaop ?? partido.monto_2_por_ciento ?? 0}, 0);
-            finanPublicTotal = finanPublicTotal / 2;
-            return finanPublicTotal;
-        },
-        */
-
-        /*
-        * Calcula el limite de financiamiento privado por cada partido político
-        * Financiamiento público para actividades ordinarias permanentes (de cada partido político) * 0.50
-        * 
-        * Cuando el límite anual del financiamiento privado sea superior al 50% del financiamiento público 
-        * asignado en el año correspondiente a la totalidad de los partidos políticos, 
-        * para asegurar que el financiamiento público prevalezca sobre el privado.
-        */
         limiteFinanciamientoPrivado(partido, valor) {
             const resultado = valor * 0.50;
             partido.finpriv_limite_finPrivado = resultado;
@@ -849,40 +711,6 @@ export default {
             partido.finpriv_rendimientos = resultado;
             return resultado;
         },
-        /*
-        limite(partido, valor) {
-            const resultado = valor * 0.50;
-            partido.finpriv_limite_finPrivado = resultado;
-            const resultadoConvertido = this.formatCurrency(resultado);
-            return resultadoConvertido;
-        },
-        aportaciones(partido, valor) {
-            const resultado = valor * 0.20;
-            partido.finpriv_aportaciones_militantes = resultado;
-            const resultadoConvertido = this.formatCurrency(resultado);
-            return resultadoConvertido;
-        },
-        aportacionSimpatizantes(partido, tope) {
-            if (!tope) return 0;
-            const resultado = tope * 0.005;
-            partido.finpriv_aportaciones_simpPres = resultado;
-            return resultado;
-        },
-        aportacionDinero(partido, tope) {
-            if (!tope) return 0;
-            const resultado = tope * 0.005;
-            partido.finpriv_aportaciones_simpGuber = resultado;
-            partido.finpriv_rendimientos = resultado; // Hay que checarlo porque es igual
-            return resultado;
-        },
-        */
-        /* DEPRECATED
-        inicializarTopes() {
-            this.topesConRep = new Array(this.Partidos_Con_Representacion.length).fill(null);
-            this.topesConRepGobernatura = new Array(this.Partidos_Con_Representacion.length).fill(null);
-            this.topesSinRep = new Array(this.Partidos_Sin_Representacion.length).fill(null);
-            this.topesSinRepGobernatura = new Array(this.Partidos_Sin_Representacion.length).fill(null);
-        },*/
         // #endregion OPERACIONES DE LA VISTA 📊
 
         // #region FORMATEOS 🔧🛠
@@ -927,52 +755,11 @@ export default {
         * @param {String} propertyNameStr - Nombre de la propiedad que contiene la variable a actualizar
         */
         formatearAlSalirBlur(propertyNameStr, propertyNameInt) {
-            //const cleanValue = String(rawValue || '').replace(/[^0-9.]/g, '');
-            debug("🦖 blur propertyNameStr: ", propertyNameStr, ':', this[propertyNameStr]);
             const cleanValue = limpiarNumeroInput(this[propertyNameStr]);
-            debug("🦖 blur cleanValue: ", cleanValue);
             const valorNumerico = parseFloat(cleanValue) || 0;
-            //debug("🦖 blur ValorNumerico: ", valorNumerico);
             this.$set(this, propertyNameInt, valorNumerico);
             this.$set(this, propertyNameStr, formatoMonedaLocal(valorNumerico));
         },
-        /*
-        updateValue(calculo, arr, index, val) {
-            if (!this[arr]) this.$set(this, arr, []); // inicializa el array si no existe
-
-            // Si viene de un input nativo (event) toma target.value, si es vs-input ya es el valor
-            const rawValue = (val && val.target) ? val.target.value : val;
-
-            const clean = String(rawValue || '').replace(/[^0-9.]/g, '');
-            this.$set(this[arr], index, clean ? parseFloat(clean) : null);
-
-            if(arr === 'topesConRepGobernatura' || arr === 'topesSinRepGobernatura') {
-                this.selectedCalculo.finpriv_tope_gubernatura = parseFloat(clean);
-            }
-            else if(arr === 'topesConRep' || arr === 'topesSinRep') {
-                this.selectedCalculo.finpriv_tope_presidencial = parseFloat(clean);
-            }
-        },*/
-        /*
-        setFocus(arrayName, index) {
-            this.focused = { arr: arrayName, index };
-        },
-        clearFocus() {
-            this.focused = { arr: null, index: null };
-        },
-        formatInput(arrayName, index) {
-            const value = this[arrayName][index];
-
-            if (this.focused.arr === arrayName && this.focused.index === index) {
-                return value ?? ''; // mostrar crudo en focus
-            }
-            if (value == null || isNaN(value)) return '';
-            return value.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2
-            });
-        },*/
         formatoFecha(fechaStr) {
             if (!fechaStr) return ''
             // Parsear fecha en formato YYYY-MM-DD
