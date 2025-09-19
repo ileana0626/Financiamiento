@@ -627,12 +627,12 @@ class SolicitudController extends Controller
         }
     }
 
-    /** DEPRECATED
-     * Actualiza los totales del Financiamiento Privado
+    /** SIN UTILIZAR, AÚN EN DESARROLLO
+     * Actualiza los limites totales de candidatura presidencial y gubernatura del Financiamiento Privado
      * @param Request $request, datos del financiamiento privado
      * @return void
      */
-    /*public function FinPriv_Get_Insert_Update_financiamiento_privado_dppp(Request $request){
+    public function FinPriv_Get_Insert_Update_financiamiento_privado_dppp(Request $request){
         if(!$request->ajax()) return redirect('/');
         try{
             DB::beginTransaction();
@@ -641,21 +641,22 @@ class SolicitudController extends Controller
             $comando = $request->input('p_comando', null);
             if ($comando === "UPDATE" || $comando === "INSERT") {
                  // Verificar si ya existe un registro para este cálculo
-                 $existe = DB::table('ministraciones_dppp')
+                 $existe = DB::table('financiamiento_privado_dppp')
                  ->where('id_calculo', $request->input('p_id_calculo'))
                  ->exists();
 
                  // Si ya existe, cambiamos el comando INSERT a UPDATE
                  $comando = $existe ? "UPDATE" : "INSERT";
-                 Log::info('Ministraciones -> Comando: ' . $comando);
+                 Log::info('Financiamiento Privado -> Comando: ' . $comando);
             } // else -> el comando es 'GET', se rellenan los demas datos automaticamente con null (͠≖ ͜ʖ͠≖)👌
             
-            $ministracion = $request->all();
+            $finPrivado = $request->all();
             $response = DB::select('CALL sp_FinPriv_Get_Insert_Update_financiamiento_privado_dppp(?, ?, ? , ?, ?, ?, ?, ?)', [
                 self::$useTransaction, // bandera estática
                 $comando,
-                $ministracion['p_id_calculo'] ?? null,
-                $ministracion['p_totales_mensuales'] ?? null
+                $finPrivado['p_id_calculo'] ?? null,
+                $finPrivado['p_finpriv_tope_presidencial'] ?? null,
+                $finPrivado['p_finpriv_tope_gubernatura'] ?? null
             ]);
             DB::commit();
 
@@ -663,12 +664,12 @@ class SolicitudController extends Controller
             // en 'GET' no se obtiene el ID
             if($comando === 'UPDATE' || $comando === 'INSERT'){
                 $id = !empty($response) ? $response[0]->id : null;
-                Log::info('Ministraciones -> ID obtenido:', ['id' => $id, 'comando' => $comando]);
+                Log::info('Financiamiento Privado -> ID obtenido:', ['id' => $id, 'comando' => $comando]);
             }
 
             // Obtener y loguear la consulta
             $queryLog = DB::getQueryLog();
-            Log::info('Ministraciones -> Consulta SQL ejecutada:', $queryLog);
+            Log::info('Financiamiento Privado -> Consulta SQL ejecutada:', $queryLog);
 
             // Verificar si hubo un error en el procedimiento almacenado
             if (isset($response[0]->error) && $response[0]->error) {
@@ -677,8 +678,8 @@ class SolicitudController extends Controller
             return response()->json([
                 'success' => true,
                 'id' => $id,
-                'ministracion' => $comando === 'GET' ? $response : null, // Solo con GET
-                'message' => 'Ministración actualizada exitosamente'
+                'finPrivado' => $comando === 'GET' ? $response : null, // Solo con GET
+                'message' => 'Financiamiento Privado actualizado exitosamente'
             ]);
         }
         catch(\Exception $e){
@@ -697,7 +698,6 @@ class SolicitudController extends Controller
             ], 500);
         }
     }
-        */
 
     /**
      * Apartado de Financiamiento Privado
