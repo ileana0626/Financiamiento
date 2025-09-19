@@ -8687,7 +8687,7 @@ var debug = function debug() {
       var monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
 
       if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-      return monto * porcentaje / totalPorcentajes;
+      return monto * (porcentaje / totalPorcentajes);
     },
     calcularMontoBConAjuste: function calcularMontoBConAjuste(porcentajePartido, ajuste) {
       var base = this.calcularMontoProporcionalB(porcentajePartido);

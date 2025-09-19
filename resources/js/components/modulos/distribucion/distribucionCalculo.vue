@@ -936,7 +936,7 @@ export default {
             const monto = parseFloat(this.monto70); // parcea  el valor del input a decimal
             
             if (isNaN(porcentaje) || isNaN(monto) || totalPorcentajes === 0) return 0;
-            return (monto * porcentaje) / totalPorcentajes;
+            return monto * (porcentaje / totalPorcentajes);
         },
         calcularMontoBConAjuste(porcentajePartido, ajuste) {
             const base = this.calcularMontoProporcionalB(porcentajePartido);
