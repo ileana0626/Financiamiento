@@ -65,7 +65,8 @@
                         <!-- Estado vacío -->
                         <template #notFound>
                             <div class="noDataContainer">
-                                <img src="../../modulos/ver/images/no_data.webp" class="imgNoData" alt="Sin resultados" />
+                                <img src="../../modulos/ver/images/no_data.webp" class="imgNoData"
+                                    alt="Sin resultados" />
                                 <span class="noDataTitle">¡Sin Datos!</span>
                             </div>
                         </template>
@@ -128,12 +129,14 @@
                                                     </vs-td>
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'row1-' + i" class="col-partido monto">
-                                                        {{ formatCurrency(limiteFinanciamientoPrivado(partido, partido.C_fpaop)) }}
+                                                        {{ formatCurrency(limiteFinanciamientoPrivado(partido,
+                                                        partido.C_fpaop)) }}
                                                         <!-- {{ limite(partido, partido.C_fpaop) }} -->
                                                     </vs-td>
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'row1s-' + i" class="col-partido monto">
-                                                        {{ formatCurrency(limiteFinanciamientoPrivado(partidoS, partidoS.monto_2_por_ciento)) }}
+                                                        {{ formatCurrency(limiteFinanciamientoPrivado(partidoS,
+                                                        partidoS.monto_2_por_ciento)) }}
                                                         <!-- {{ limite(partidoS, partidoS.monto_2_por_ciento) }} -->
                                                     </vs-td>
                                                 </vs-tr>
@@ -145,12 +148,14 @@
                                                     </vs-td>
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'row1-' + i" class="col-partido monto">
-                                                        {{ formatCurrency(aportacionesMilitantes(partido, partido.C_fpaop)) }}
+                                                        {{ formatCurrency(aportacionesMilitantes(partido,
+                                                        partido.C_fpaop)) }}
                                                         <!-- {{ aportaciones(partido,partido.C_fpaop) }} -->
                                                     </vs-td>
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'row1s-' + i" class="col-partido monto">
-                                                        {{ formatCurrency(aportacionesMilitantes(partidoS, partidoS.monto_2_por_ciento)) }}
+                                                        {{ formatCurrency(aportacionesMilitantes(partidoS,
+                                                        partidoS.monto_2_por_ciento)) }}
                                                         <!-- {{ aportaciones(partidoS,partidoS.monto_2_por_ciento) }} -->
                                                     </vs-td>
                                                 </vs-tr>
@@ -159,17 +164,33 @@
                                                     <vs-td class="col-desc">
                                                         Tope de gastos para la elección presidencial inmediata anterior
                                                     </vs-td>
+                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                                        :key="'topeConRep-' + partido.id + '-' + i"
+                                                        class="col-partido monto">
+                                                        <vs-input :value="formatInput('topesConRep', i)"
+                                                            @input="updateValue(this.selectedCalculo ,'topesConRep', i, $event)"
+                                                            @focus="setFocus('topesConRep', i)" @blur="clearFocus"
+                                                            placeholder="$0.00" />
+                                                    </vs-td>
+                                                    <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
+                                                        :key="'topeSinRep-' + partidoS.id + '-' + i"
+                                                        class="col-partido monto">
+                                                        <vs-input :value="formatInput('topesSinRep', i)"
+                                                            @input="updateValue(this.selectedCalculo,'topesSinRep', i, $event)"
+                                                            @focus="setFocus('topesSinRep', i)" @blur="clearFocus"
+                                                            placeholder="$0.00" />
+                                                    </vs-td> -->
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topePresidencialInput"
                                                             :key="'txb_tope_presidencial'"
                                                             @input="actualizarValorInput('topePresidencialInput', $event)"
-                                                            @blur="formatearAlSalirBlur('topePresidencialInput','topePresidencial')"
+                                                            @blur="formatearAlSalirBlur('topePresidencialInput', 'topePresidencial')"
                                                             placeholder="$0.00" />
-                                                            <div class="danger-message">
-                                                                <template v-if="errorTopePresidencial.length > 0">
-                                                                    {{ errorTopePresidencial }}
-                                                                </template>
-                                                            </div>
+                                                        <div class="danger-message">
+                                                            <template v-if="errorTopePresidencial.length > 0">
+                                                                {{ errorTopePresidencial }}
+                                                            </template>
+                                                        </div>
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Aportaciones en dinero o en especie de personas simpatizantes-->
@@ -181,14 +202,17 @@
                                                     <!-- Partidos con representación -->
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'apCR-' + partido.id + '-' + i" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesPresidencial(partido, topePresidencial))}}
+                                                        {{ formatCurrency(aportacionesSimpatizantesPresidencial(partido,
+                                                        topePresidencial))}}
                                                         <!-- {{ formatCurrency(aportacionSimpatizantes(partido, topesConRep[i])) }} -->
                                                     </vs-td>
 
                                                     <!-- Partidos sin representación -->
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
-                                                        :key="'apSR-' + partidoS.id + '-' + i" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesPresidencial(partidoS, topePresidencial))}}
+                                                        :key="'apSR-' + partidoS.id + '-' + i"
+                                                        class="col-partido monto">
+                                                        {{ formatCurrency(aportacionesSimpatizantesPresidencial(partidoS,
+                                                        topePresidencial))}}
                                                         <!-- {{ formatCurrency(aportacionSimpatizantes(partidoS, topesSinRep[i])) }} -->
                                                     </vs-td>
                                                 </vs-tr>
@@ -198,17 +222,33 @@
                                                         Tope de gastos para la elección inmediata anterior de
                                                         Gubernatura del Estado
                                                     </vs-td>
+                                                    <!-- <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
+                                                        :key="'topeConRepGob-' + (partido.id || i)"
+                                                        class="col-partido monto">
+                                                        <vs-input :value="formatInput('topesConRepGobernatura', i)"
+                                                            @input="updateValue(this.selectedCalculo, 'topesConRepGobernatura', i, $event)"
+                                                            @focus="setFocus('topesConRepGobernatura', i)"
+                                                            @blur="clearFocus" placeholder="$0.00" />
+                                                    </vs-td>
+                                                    <vs-td v-for="(partido, i) in Partidos_Sin_Representacion"
+                                                        :key="'topeSinRepGob-' + (partido.id || i)"
+                                                        class="col-partido monto">
+                                                        <vs-input :value="formatInput('topesSinRepGobernatura', i)"
+                                                            @input="updateValue(this.selectedCalculo,'topesSinRepGobernatura', i, $event)"
+                                                            @focus="setFocus('topesSinRepGobernatura', i)"
+                                                            @blur="clearFocus" placeholder="$0.00" />
+                                                    </vs-td> -->
                                                     <vs-td class="col-partido monto">
                                                         <vs-input :value="topeGubernaturaInput"
                                                             :key="'txb_tope_gubernatura'"
                                                             @input="actualizarValorInput('topeGubernaturaInput', $event)"
-                                                            @blur="formatearAlSalirBlur('topeGubernaturaInput','topeGubernatura')"
+                                                            @blur="formatearAlSalirBlur('topeGubernaturaInput', 'topeGubernatura')"
                                                             placeholder="$0.00" />
-                                                            <div class="danger-message">
-                                                                <template v-if="errorTopeGubernatura.length > 0">
-                                                                    {{ errorTopeGubernatura }}
-                                                                </template>
-                                                            </div>
+                                                        <div class="danger-message">
+                                                            <template v-if="errorTopeGubernatura.length > 0">
+                                                                {{ errorTopeGubernatura }}
+                                                            </template>
+                                                        </div>
                                                     </vs-td>
                                                 </vs-tr>
                                                 <!-- Aportaciones en dinero que realice cada persona simpatizante-->
@@ -220,7 +260,8 @@
                                                     <!-- Partidos con representación -->
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'apCR-' + (partido.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesGubernatura(partido, topeGubernatura))}}
+                                                        {{ formatCurrency(aportacionesSimpatizantesGubernatura(partido,
+                                                        topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partido, topesConRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -228,7 +269,8 @@
                                                     <!-- Partidos sin representación -->
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'apSR-' + (partidoS.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(aportacionesSimpatizantesGubernatura(partidoS, topeGubernatura))}}
+                                                        {{ formatCurrency(aportacionesSimpatizantesGubernatura(partidoS,
+                                                        topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partidoS, topesSinRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -243,7 +285,8 @@
                                                     <!-- Partidos con representación -->
                                                     <vs-td v-for="(partido, i) in Partidos_Con_Representacion"
                                                         :key="'apCR-' + (partido.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(rendimientosFinanciamientoPrivado(partido, topeGubernatura))}}
+                                                        {{ formatCurrency(rendimientosFinanciamientoPrivado(partido,
+                                                        topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partido, topesConRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -251,7 +294,8 @@
                                                     <!-- Partidos sin representación -->
                                                     <vs-td v-for="(partidoS, i) in Partidos_Sin_Representacion"
                                                         :key="'apSR-' + (partidoS.id || i)" class="col-partido monto">
-                                                        {{formatCurrency(rendimientosFinanciamientoPrivado(partidoS, topeGubernatura))}}
+                                                        {{ formatCurrency(rendimientosFinanciamientoPrivado(partidoS,
+                                                        topeGubernatura))}}
                                                         <!-- {{ formatCurrency(aportacionDinero(partidoS, topesSinRepGobernatura[i]))
                                                         }} -->
                                                     </vs-td>
@@ -272,7 +316,8 @@
                                             </div>
                                             <div class="d-flex justify-content-center">
                                                 <vs-button :color="!!(darkMode) ? '#f5f5f5' : '#1a2e35'"
-                                                    :key="'guardar' + darkMode" @click.stop="guardarCambios(selectedCalculo.id_calculo)"
+                                                    :key="'guardar' + darkMode"
+                                                    @click.stop="guardarCambios(selectedCalculo.id_calculo)"
                                                     style="padding: 0.20rem; font-size: 1rem;">
                                                     <div style="color: var(--btn-txt-color); font-weight: 700;">
                                                         <i class="fas fa-save pr-2"
@@ -321,7 +366,7 @@
 //import { forEach } from 'lodash';
 import methods from '../../../methods';
 import { loading } from '../../../methods';
-import { limpiarNumeroInput, formatoMonedaMX as formatoMonedaLocal} from '../../../utils/formatters'; // 😉
+import { limpiarNumeroInput, formatoMonedaMX as formatoMonedaLocal } from '../../../utils/formatters'; // 😉
 import { isValidNumber } from '../../../utils/utils'; // 😉
 /**
  * 🐛 Función para depuración development
@@ -363,7 +408,7 @@ export default {
             topeGubernatura: 0.0,
             topePresidencialInput: '$0.00',  // Inicializar como string
             topeGubernaturaInput: '$0.00',  // Inicializar como string
-            
+
             colors: [
                 {
                     color: 'warn'
@@ -470,7 +515,7 @@ export default {
             });
         },*/
         // #endregion CATÁLOGOS 📜
-        
+
         // #region CONSULTAS A LA BASE DE DATOS 📚
 
         /**
@@ -519,23 +564,23 @@ export default {
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
             })
-            .finally(() => {
-                loader.close();
-            })
+                .finally(() => {
+                    loader.close();
+                })
         },
         /**
          * Guarda los cambios del Financiamiento Privado
          * @param {number} id_calculo - El ID del cálculo
          */
-        async guardarCambios(id_calculo){
-            if(this.validarCampos()) return; // Validamos campos
+        async guardarCambios(id_calculo) {
+            if (this.validarCampos()) return; // Validamos campos
             const loader = loading(this.$vs);
             loader.text = 'Guardando cambios...';
             let url = '/administracion/solicitud/FinPriv_Update_Calculo';
             //Preparamos los datos para guardar
             //let topes = this.obtenerTopes();
             debug(' 🐛 🌠 Id del cálculo a guardar: ' + id_calculo);
-            try{
+            try {
                 // Preparamos los datos para guardar
                 let datos = {
                     //p_comando: "UPDATE", // INSERT, UPDATE
@@ -555,10 +600,10 @@ export default {
                     const errorMessage = response.data.message || 'Error desconocido al guardar la ministración';
                     throw new Error(errorMessage);
                 }
-                if(response.data.success){
+                if (response.data.success) {
                     debug(' 🐛 🌠 Id del response: ' + JSON.stringify(response.data.id));
                 }
-                else{
+                else {
                     throw new Error(response.data.message);
                 }
 
@@ -617,17 +662,17 @@ export default {
                 }
                 // Notificación de éxito
                 Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Datos guardados correctamente',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Aceptar'
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Datos guardados correctamente',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
                 })
-                this.$vs.notification({ color: 'success', text: 'Financiamiento privado guardado' + response.data.message});
+                this.$vs.notification({ color: 'success', text: 'Financiamiento privado guardado' + response.data.message });
                 //this.descargar_disabled[id_calculo] = false; // Habilita descargar archivo
-            }catch(error){
+            } catch (error) {
                 debug('🐛 Error al guardar el financiamiento privado:', error);
-                this.$vs.notification({title: 'Error', color: 'danger', text: 'Error al guardar el financiamiento privado' });
+                this.$vs.notification({ title: 'Error', color: 'danger', text: 'Error al guardar el financiamiento privado' });
 
                 let nombreMetodo = url.split('/');
                 methods.catchHandler(error, nombreMetodo[3], this.$router);
@@ -700,7 +745,7 @@ export default {
                 });
         },
         // #endregion CONSULTAS A LA BASE DE DATOS 📚
-        
+
         // #region OPERACIONES DE LA VISTA 📊
 
         /**
@@ -842,18 +887,18 @@ export default {
          * @param {Event} event - Evento del input
          * @param {String} propertyName - Nombre de la propiedad que contiene la variable a actualizar
          */
-         updateValueTopes(propertyName, value) {
+        updateValueTopes(propertyName, value) {
             try {
                 // Obtener el valor crudo
                 const rawValue = (value && value.target) ? value.target.value : value;
-                
+
                 // Limpiar y convertir a número
                 const cleanValue = limpiarNumeroInput(String(rawValue));
                 const valorNumerico = parseFloat(cleanValue) || 0;
-                
+
                 // Actualizar la propiedad reactiva
                 this.$set(this, propertyName, valorNumerico);
-                                
+
             } catch (error) {
                 console.error('Error en updateValueTopes:', error);
                 this.$set(this, propertyName, 0);
@@ -878,7 +923,7 @@ export default {
         */
         formatearAlSalirBlur(propertyNameStr, propertyNameInt) {
             //const cleanValue = String(rawValue || '').replace(/[^0-9.]/g, '');
-            debug("🦖 blur propertyNameStr: ", propertyNameStr, ':',this[propertyNameStr]);
+            debug("🦖 blur propertyNameStr: ", propertyNameStr, ':', this[propertyNameStr]);
             const cleanValue = limpiarNumeroInput(this[propertyNameStr]);
             debug("🦖 blur cleanValue: ", cleanValue);
             const valorNumerico = parseFloat(cleanValue) || 0;
@@ -983,11 +1028,11 @@ export default {
          */
         validarCampos() {
             this.limpiarErrores();
-            if(this.topePresidencialInput === '' || this.topePresidencialInput === '$0.00') {
+            if (this.topePresidencialInput === '' || this.topePresidencialInput === '$0.00') {
                 this.errorTopePresidencial = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
-            if(this.topeGubernaturaInput === '' || this.topeGubernaturaInput === '$0.00') {
+            if (this.topeGubernaturaInput === '' || this.topeGubernaturaInput === '$0.00') {
                 this.errorTopeGubernatura = 'Ingrese un número positivo y mayor de 0';
                 this.error = true;
             }
@@ -1007,11 +1052,11 @@ export default {
          */
         limpiarCampos() {
             this.topePresidencial = 0,
-            this.topeGubernatura = 0,
-            this.errorTopePresidencial = '',
-            this.errorTopeGubernatura = '',
-            this.topesSinRep = '',
-            this.topesConRep = [];
+                this.topeGubernatura = 0,
+                this.errorTopePresidencial = '',
+                this.errorTopeGubernatura = '',
+                this.topesSinRep = '',
+                this.topesConRep = [];
             this.descargar_disabled = false; // Deshabilita el botón de descargar
             this.limpiarErrores();
         },

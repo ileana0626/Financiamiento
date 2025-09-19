@@ -22456,7 +22456,7 @@ var render = function render() {
           }
         }), _vm._v(" "), _c("div", {
           staticClass: "danger-message"
-        }, [_vm.errorTopePresidencial.length > 0 ? [_vm._v("\n                                                                " + _vm._s(_vm.errorTopePresidencial) + "\n                                                            ")] : _vm._e()], 2)], 1)], 1), _vm._v(" "), _c("vs-tr", {
+        }, [_vm.errorTopePresidencial.length > 0 ? [_vm._v("\n                                                            " + _vm._s(_vm.errorTopePresidencial) + "\n                                                        ")] : _vm._e()], 2)], 1)], 1), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
           staticClass: "col-desc"
@@ -22492,7 +22492,7 @@ var render = function render() {
           }
         }), _vm._v(" "), _c("div", {
           staticClass: "danger-message"
-        }, [_vm.errorTopeGubernatura.length > 0 ? [_vm._v("\n                                                                " + _vm._s(_vm.errorTopeGubernatura) + "\n                                                            ")] : _vm._e()], 2)], 1)], 1), _vm._v(" "), _c("vs-tr", {
+        }, [_vm.errorTopeGubernatura.length > 0 ? [_vm._v("\n                                                            " + _vm._s(_vm.errorTopeGubernatura) + "\n                                                        ")] : _vm._e()], 2)], 1)], 1), _vm._v(" "), _c("vs-tr", {
           staticClass: "fila-flex"
         }, [_c("vs-td", {
           staticClass: "col-desc"
